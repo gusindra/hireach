@@ -2,25 +2,13 @@
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 
 <head>
-    <title>Telixcel</title>
+    <title>HiReach - We Reach to All Channel</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="description" content="Telixcel by MGI" />
     <meta name="keywords" content="Chat Templating CMS" />
     <meta name="author" content="Gusindra" />
-    <link rel="apple-touch-icon" sizes="57x57" href="/favicon/apple-icon-57x57.png">
-    <link rel="apple-touch-icon" sizes="60x60" href="/favicon/apple-icon-60x60.png">
-    <link rel="apple-touch-icon" sizes="72x72" href="/favicon/apple-icon-72x72.png">
-    <link rel="apple-touch-icon" sizes="76x76" href="/favicon/apple-icon-76x76.png">
-    <link rel="apple-touch-icon" sizes="114x114" href="/favicon/apple-icon-114x114.png">
-    <link rel="apple-touch-icon" sizes="120x120" href="/favicon/apple-icon-120x120.png">
-    <link rel="apple-touch-icon" sizes="144x144" href="/favicon/apple-icon-144x144.png">
-    <link rel="apple-touch-icon" sizes="152x152" href="/favicon/apple-icon-152x152.png">
-    <link rel="apple-touch-icon" sizes="180x180" href="/favicon/apple-icon-180x180.png">
-    <link rel="icon" type="image/png" sizes="192x192" href="/android-icon-192x192.png">
-    <link rel="icon" type="image/png" sizes="32x32" href="/favicon/favicon-32x32.png">
-    <link rel="icon" type="image/png" sizes="96x96" href="/favicon/favicon-96x96.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="/favicon/favicon-16x16.png">
+    <link rel="icon" type="image/png" href="/frontend/images/favicon.png">
     <link rel="manifest" href="/manifest.json">
     <meta name="msapplication-TileColor" content="#ffffff">
     <meta name="msapplication-TileImage" content="/ms-icon-144x144.png">
@@ -28,24 +16,25 @@
     <link href="https://fonts.googleapis.com/css?family=Raleway" rel="stylesheet">
     <link rel="stylesheet" href="https://telixcel.s3.ap-southeast-1.amazonaws.com/frontend/all.min.css?v=26112021">
     <link rel="stylesheet" href="frontend/css/cookieconsent.css" media="print" onload="this.media='all'">
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
 
 <body data-spy="scroll" data-target="#ftco-navbar" data-offset="200">
 
     <nav class="navbar navbar-expand-lg navbar-dark ftco_navbar bg-dark ftco-navbar-light" id="ftco-navbar">
-        <div class="container">
+        <div class="container1 flex">
             <a class="navbar-brand" href="/">
-                <img class="logo-white" src="#" title="HiReach">
-                <img class="logo" src="#" title="HiReach">
+                <img class="logo-white w-50" src="https://hireach.archeeshop.com/frontend/images/logo-trans.png" title="HiReach">
+                <img class="logo w-50" src="https://hireach.archeeshop.com/frontend/images/logo.png" title="HiReach">
             </a>
-            <button style="display: flex;" class="navbar-toggler" type="button" data-toggle="collapse" data-target="#ftco-nav" aria-controls="ftco-nav" aria-expanded="false" aria-label="Toggle navigation">
+            <button class="navbar-toggler lg:hidden flex p-1 mt-2" type="button" data-toggle="collapse" data-target="#ftco-nav" aria-controls="ftco-nav" aria-expanded="false" aria-label="Toggle navigation">
                 <svg style="height: 20px;width: 20px;" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16" />
                 </svg>
-                <div class="[hidden] sm:block" style="margin-top: 2px;">Menu</div>
+                <div class="sm:block" style="margin-top: 2px;">Menu</div>
             </button>
-
-            <div class="collapse navbar-collapse" id="ftco-nav">
+        </div>
+        <div class="collapse navbar-collapse visible" id="ftco-nav">
                 <ul class="navbar-nav ml-auto">
                     <li class="nav-item active"><a href="#section-home" class="nav-link">Home</a></li>
                     <li class="nav-item"><a href="#section-features" class="nav-link">Features</a></li>
@@ -60,11 +49,12 @@
                     @endif
                 </ul>
             </div>
-        </div>
     </nav>
     <!-- END nav -->
-
-    <section class="ftco-cover ftco-slant" style="background-image: url(https://telixcel.s3.ap-southeast-1.amazonaws.com/imgs/bg_5.jpg);" id="section-home">
+    <video class="w-full fixed top-0 grayscale brightness-50" autoplay muted loop id="myVideo">
+        <source src="frontend/images/preview2.mp4" type="video/mp4">
+    </video>
+    <section class="ftco-cover ftco-slant" style="background-image: url(frontend/images/bg_81.jpg);" id="section-home">
         <div class="container">
             <div class="row align-items-center justify-content-center text-center ftco-vh-100">
 
@@ -94,7 +84,7 @@
                 </div>
                 <div class="col-lg-3 col-md-6">
                     <div class="media d-block mb-4 text-center ftco-media p-md-5 p-4 ftco-animate">
-                        <div class="ftco-icon mb-3">
+                        <div class="ftco-icon mb-3 flex justify-center">
                             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path>
                             </svg>
@@ -108,7 +98,7 @@
                 </div>
                 <div class="col-lg-3 col-md-6">
                     <div class="media d-block mb-4 text-center ftco-media p-md-5 p-4 ftco-animate">
-                        <div class="ftco-icon mb-3">
+                        <div class="ftco-icon mb-3 flex justify-center">
                             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8h2a2 2 0 012 2v6a2 2 0 01-2 2h-2v4l-4-4H9a1.994 1.994 0 01-1.414-.586m0 0L11 14h4a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2v4l.586-.586z"></path>
                             </svg>
@@ -122,7 +112,7 @@
                 </div>
                 <div class="col-lg-3 col-md-6">
                     <div class="media d-block mb-4 text-center ftco-media p-md-5 p-4 ftco-animate">
-                        <div class="ftco-icon mb-3">
+                        <div class="ftco-icon mb-3 flex justify-center">
                             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
                             </svg>
@@ -137,7 +127,7 @@
 
                 <div class="col-lg-3 col-md-6">
                     <div class="media d-block mb-4 text-center ftco-media p-md-5 p-4 ftco-animate">
-                        <div class="ftco-icon mb-3">
+                        <div class="ftco-icon mb-3 flex justify-center">
                             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
                             </svg>
@@ -151,7 +141,7 @@
                 </div>
                 <div class="col-lg-3 col-md-6">
                     <div class="media d-block mb-4 text-center ftco-media p-md-5 p-4 ftco-animate">
-                        <div class="ftco-icon mb-3">
+                        <div class="ftco-icon mb-3 flex justify-center">
                             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"></path>
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
@@ -166,7 +156,7 @@
                 </div>
                 <div class="col-lg-3 col-md-6">
                     <div class="media d-block mb-4 text-center ftco-media p-md-5 p-4 ftco-animate">
-                        <div class="ftco-icon mb-3">
+                        <div class="ftco-icon mb-3 flex justify-center">
                             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"></path>
                             </svg>
@@ -180,7 +170,7 @@
                 </div>
                 <div class="col-lg-3 col-md-6">
                     <div class="media d-block mb-4 text-center ftco-media p-md-5 p-4 ftco-animate">
-                        <div class="ftco-icon mb-3">
+                        <div class="ftco-icon mb-3 flex justify-center">
                             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 3h5m0 0v5m0-5l-6 6M5 3a2 2 0 00-2 2v1c0 8.284 6.716 15 15 15h1a2 2 0 002-2v-3.28a1 1 0 00-.684-.948l-4.493-1.498a1 1 0 00-1.21.502l-1.13 2.257a11.042 11.042 0 01-5.516-5.517l2.257-1.128a1 1 0 00.502-1.21L9.228 3.683A1 1 0 008.279 3H5z"></path>
                             </svg>
@@ -194,7 +184,7 @@
                 </div>
                 <div class="col-lg-3 col-md-6">
                     <div class="media d-block mb-4 text-center ftco-media p-md-5 p-4 ftco-animate">
-                        <div class="ftco-icon mb-3">
+                        <div class="ftco-icon mb-3 flex justify-center">
                             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 14v6m-3-3h6M6 10h2a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v2a2 2 0 002 2zm10 0h2a2 2 0 002-2V6a2 2 0 00-2-2h-2a2 2 0 00-2 2v2a2 2 0 002 2zM6 20h2a2 2 0 002-2v-2a2 2 0 00-2-2H6a2 2 0 00-2 2v2a2 2 0 002 2z"></path>
                             </svg>
@@ -482,21 +472,22 @@
                 <div class="col-md-9 text-center ftco-animate">
                     <div class="rext-right mb-5">
                         <div class="text-left">
-                            <p class="lead">HiReach is a Communication Bussiness Solution provider founded in 2018 based in Indonesia. </p>
-
-                            Vision
-                            <ul>
+                            <p class="lead">HiReach is a Communication Bussiness Solution provider. </p>
+                            <br>
+                            <p>Vision</p>
+                            <ul class="list-disc ml-4">
                                 <li>To be the most trusted partner in providing reliable business solutions that adds value to our customers.</li>
                             </ul>
-
-                            Mission<br>
-                            <ul>
+                            <br>
+                            <p>Mission</p>
+                            <ul class="list-disc ml-4">
                                 <li>To provide total solution of Customer Experience Management</li>
                                 <li>To add values to client's business</li>
                                 <li>To bring tangible benefits to clients</li>
                                 <li>To be preferred partner and good place to work</li>
                             </ul>
-                            Feel free to send us an email to <a href="mailto:support@telixcel.com">support@telixcel.com </a>
+                            <br>
+                            Feel free to send us an email to <a href="mailto:hireach@firmapps.ai">hireach@firmapps.ai </a>
                         </div>
                     </div>
                 </div>
@@ -528,19 +519,18 @@
         </div>
     </section>
 
-    <section class="ftco-section bg-white ftco-slant ftco-slant-dark" id="section-counter">
+    <section class="ftco-section bg-white ftco-slant1 ftco-slant-dark1" id="section-counter">
         <div class="container">
-            <div class="row mb-5">
-                <div class="col-md-3 text-center ftco-animate">
-                    <h5 class="text-uppercase ftco-uppercase">The Best tool for</h5>
+            <div class="flex justify-center">
+                <div class=" text-center ftco-animate">
+                    <h5 class="text-uppercase ftco-uppercase text-white">The Best tool for</h5>
                 </div>
-                <div class="col-md-9 text-center ftco-animate">
+                <div class=" text-center ftco-animate w-2/5">
                     <div class="row justify-content-center mb-5">
                         <div class="col-md-7">
-
                             <h1 class="tool-1" style="display: none;">E-Commerce.</h1>
                             <h1 class="tool-2" style="display: none;">Customer Service.</h1>
-                            <h1 id="best"></h1>
+                            <h1 class="text-4xl text-white"  id="best"></h1>
                         </div>
                     </div>
                 </div>
@@ -593,7 +583,7 @@
                             <div class="ftco-footer-widget mb-4">
                                 <h2 class="ftco-heading-2">Our Contact</h2>
                                 <ul class="list-unstyled">
-                                    <li><a href="mailto:support@telixcel.com" class="py-2 d-block">Support</a></li>
+                                    <li><a href="mailto:hireach@firmapps.ai" class="py-2 d-block">Support</a></li>
                                     <li><a href="https://goo.gl/maps/X67teAF98m9YZFhN7" class="py-2 d-block">Offices</a></li>
                                 </ul>
                             </div>
@@ -623,7 +613,7 @@
                 </div>
                 <div class="col-md-4">
                     <div class="ftco-footer-widget mb-4 text-center">
-                        <h2 class="ftco-heading-2 ">Follow us</h2>
+                        <!-- <h2 class="ftco-heading-2 ">Follow us</h2>
 
                         <ul class="ftco-footer-social1 list-unstyled float-md-right1 float-lft" style=" display: flex;align-items: center;justify-content: center;">
                             <li class="px-2"><a href="#">
@@ -641,8 +631,8 @@
                                         <path d="M 11.46875 5 C 7.917969 5 5 7.914063 5 11.46875 L 5 20.53125 C 5 24.082031 7.914063 27 11.46875 27 L 20.53125 27 C 24.082031 27 27 24.085938 27 20.53125 L 27 11.46875 C 27 7.917969 24.085938 5 20.53125 5 Z M 11.46875 7 L 20.53125 7 C 23.003906 7 25 8.996094 25 11.46875 L 25 20.53125 C 25 23.003906 23.003906 25 20.53125 25 L 11.46875 25 C 8.996094 25 7 23.003906 7 20.53125 L 7 11.46875 C 7 8.996094 8.996094 7 11.46875 7 Z M 21.90625 9.1875 C 21.402344 9.1875 21 9.589844 21 10.09375 C 21 10.597656 21.402344 11 21.90625 11 C 22.410156 11 22.8125 10.597656 22.8125 10.09375 C 22.8125 9.589844 22.410156 9.1875 21.90625 9.1875 Z M 16 10 C 12.699219 10 10 12.699219 10 16 C 10 19.300781 12.699219 22 16 22 C 19.300781 22 22 19.300781 22 16 C 22 12.699219 19.300781 10 16 10 Z M 16 12 C 18.222656 12 20 13.777344 20 16 C 20 18.222656 18.222656 20 16 20 C 13.777344 20 12 18.222656 12 16 C 12 13.777344 13.777344 12 16 12 Z"></path>
                                     </svg>
                                 </a></li>
-                        </ul>
-                        <h1 class="ftco-heading-21 text-white navbar-brand"><img src="#" title="{{ env('APP_NAME')}}" style="width: 200px;-webkit-filter: brightness(1000%); /* Safari 6.0 - 9.0 */
+                        </ul> -->
+                        <h1 class="ftco-heading-21 text-white navbar-brand"><img src="https://hireach.archeeshop.com/frontend/images/logo-trans.png" title="{{ env('APP_NAME')}}" style="width: 200px;-webkit-filter: brightness(1000%); /* Safari 6.0 - 9.0 */
   filter: brightness(1000%);" /></h2>
                             <p>&copy; {{ env('APP_NAME')}} {{date('Y')}}. All Rights Reserved.</p>
                     </div>
