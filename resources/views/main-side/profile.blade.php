@@ -14,12 +14,21 @@
         <nav>
             <ol class="flex flex-wrap pt-1 pl-2 pr-4 mr-12 bg-transparent rounded-lg sm:mr-16">
                 <li class="leading-normal text-sm">
-                    <a class="text-white opacity-50" href="javascript:;">User</a>
+                    <a class="text-white opacity-50" href="javascript:;">Settings</a>
                 </li>
-                <li class="text-sm pl-2 capitalize leading-normal before:float-left before:pr-2 before:content-['/']" aria-current="page">Project</li>
+                <li class="text-sm pl-2 capitalize leading-normal before:float-left before:pr-2 before:content-['/']" aria-current="page">User</li>
             </ol>
-            <h6 class="mb-2 ml-2 font-bold text-white capitalize">List</h6>
+            <h6 class="mb-2 ml-2 font-bold text-white capitalize">Profile</h6>
         </nav>
+        <div class="flex items-center">
+            <a mini-sidenav-burger href="javascript:;" class="hidden p-0 text-white transition-all ease-nav-brand text-sm xl:block" aria-expanded="false">
+                <div class="w-4.5 overflow-hidden">
+                    <i class="ease-soft mb-0.75 relative block h-0.5 translate-x-[5px] rounded-sm bg-white transition-all dark:bg-white"></i>
+                    <i class="ease-soft mb-0.75 relative block h-0.5 rounded-sm bg-white transition-all dark:bg-white"></i>
+                    <i class="ease-soft relative block h-0.5 translate-x-[5px] rounded-sm bg-white transition-all dark:bg-white"></i>
+                </div>
+            </a>
+        </div>
         @include('navigation.header')
     </div>
 </nav>

@@ -14,7 +14,7 @@ class CommerceItem extends LivewireDatatable
     public function columns()
     {
         return [
-            Column::callback(['type'], function ($y) {
+    		Column::callback(['type'], function ($y) {
                 return view('label.type', ['type' => $y]);
             })->label('Type')->filterable(["SKU", "NOSKU", "ONE_TIME", "MONTHLY", "YEARLY"]),
             Column::callback(['name', 'sku'], function ($name, $sku) {

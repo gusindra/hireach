@@ -13,6 +13,7 @@
                 <h3 class="font-semibold text-gray-800 dark:text-slate-300 leading-tight pb-2">
                     {{ __('SMS Blast Table') }}
                 </h3>
+                
                 <div class="bg-white dark:bg-slate-600 overflow-hidden shadow-xl sm:rounded-lg">
                     <livewire:table.sms-blast-table searchable="{{auth()->user()->super->first()->role == 'superadmin' ? 'user_id, status, created_at':'status, msisdn, created_at, message_content'" exportable />
                 </div>

@@ -1,9 +1,9 @@
 <div>
     <x-jet-action-section>
-        <x-slot name="title">2. Payment Account :</x-slot>
+        <x-slot name="title">2. Payable Account :</x-slot>
 
         <x-slot name="description">
-            {{ __('Company Payment Account.') }}
+            {{ __('Company Payable Account.') }}
         </x-slot>
 
         <!-- Team Action List -->

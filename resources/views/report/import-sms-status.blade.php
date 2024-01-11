@@ -1,7 +1,7 @@
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Topup Detail') }}
+            {{ __('Update Status Detail') }}
         </h2>
     </x-slot>
     <!-- Topup Dashboard -->
@@ -38,8 +38,7 @@
                                     </button>
                                 </div>
                             </form>
-                        </div>
-                        @if(@$data)
+                        </div> 
                             <div class="mt-2 md:mt-0 md:col-span-2">
                                 <div class="px-4 py-5 bg-white dark:bg-slate-600 sm:p-10 shadow sm:rounded-tl-md sm:rounded-tr-md">
                                     <div class="flex flex-col">
@@ -56,30 +55,18 @@
                                                         </thead>
                                                         <tbody>
                                                             <tr class="border-b dark:border-neutral-500">
-                                                                <td class="px-6 py-4"> {{$updated}}</td>
-                                                                <td class="px-6 py-4"> {{$unpass}}</td>
-                                                                <td class="px-6 py-4"> {{$notmatch}}</td>
+                                                                <td class="px-6 py-4"> {{@$updated}}</td>
+                                                                <td class="px-6 py-4"> {{@$unpass}}</td>
+                                                                <td class="px-6 py-4"> {{@$notmatch}}</td>
                                                             </tr>
                                                         </tbody>
-                                                    </table>
-                                                    <!-- <table class="min-w-full text-left text-sm font-light">
-                                                        <tbody>
-                                                            @foreach ($data as $items)
-                                                            <tr class="border-b dark:border-neutral-500">
-                                                                @foreach ($items as $item)
-                                                                    <td class="px-6 py-4"> {{$item}}</td>
-                                                                @endforeach
-                                                            </tr>
-                                                            @endforeach
-                                                        </tbody>
-                                                    </table> -->
+                                                    </table> 
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-                        @endif
+                            </div> 
                     </div>
 
                 </div>

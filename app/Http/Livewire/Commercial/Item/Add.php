@@ -13,15 +13,14 @@ class Add extends Component
     public $name;
     public $sku;
     public $price;
-    public $theme;
 
     public function rules()
     {
         return [
             'type' => 'required',
             'name' => 'required',
-            'sku' => 'required|unique:commerce_items',
-            'price' => 'required|numeric',
+            'sku' => 'required',
+            'price' => 'required',
         ];
     }
 

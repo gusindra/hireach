@@ -48,7 +48,7 @@
                     </a>
                 </span>
 
-                <x-jet-button class="ml-4 border-gray-900">
+                <x-jet-button class="ml-4">
                     {{ __('Log in') }}
                 </x-jet-button>
             </div>

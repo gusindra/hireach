@@ -79,7 +79,7 @@ class TemplateController extends Controller
         }
         // return $arrayLevel;
         // return $array;
-        // return $template;
+        return $template;
         return view('template.view', ['data'=>json_encode($array)]);
     }
 

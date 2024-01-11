@@ -2,6 +2,7 @@
     <div wire:poll>
         @if($orders->count() > 0)
             <!-- Order -->
+            <x-jet-section-border />
             <x-jet-action-section>
                 <x-slot name="title">
                     {{ __('Order') }}

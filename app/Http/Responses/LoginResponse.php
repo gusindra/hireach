@@ -28,7 +28,7 @@ class LoginResponse implements LoginResponseContract
                 'status' => 'Online'
             ]);
 
-            if(auth()->user()->role){
+            if(auth()->user()->role && auth()->user()->currentTeam){
                 $role = RoleUser::where('user_id', auth()->user()->id)->where('team_id', auth()->user()->currentTeam->id)->first();
                 if($role){
                     $role->update([

@@ -143,8 +143,8 @@
                     </div>
                 </div>
             </div>
-            @if(auth()->user()->team->team->user->company)
-                @foreach (listProjects(app('request')->input('status')?app('request')->input('status'):'all', auth()->user()->team->team->user->company->id) as $project)
+            @if(auth()->user()->company || auth()->user()->team->team->user->company)
+                @foreach (listProjects(app('request')->input('status')?app('request')->input('status'):'all', (auth()->user()->company?auth()->user()->company->id:auth()->user()->team->team->user->company->id)) as $project)
                     <div class="w-full max-w-full px-3 mb-6 md:flex-0 shrink-0 md:w-6/12 lg:w-4/12">
                         <div class="relative flex flex-col min-w-0 break-words bg-white border-0 dark:bg-gray-950 dark:shadow-soft-dark-xl shadow-soft-xl rounded-2xl bg-clip-border">
                             <div class="flex-auto p-4">

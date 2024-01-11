@@ -11,7 +11,7 @@
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-2">
             <div class="sm:px-6 lg:px-6">
                 <h3 class="font-semibold text-gray-800 leading-tight pb-2">
-                    {{ __('Billing Table') }}
+                    {{ __('Log Request API SMS') }}
                 </h3>
                 <div class="overflow-hidden shadow-xl sm:rounded-lg">
                     @livewire('report.log')

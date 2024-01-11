@@ -2,8 +2,6 @@
 
 namespace App\Http\Livewire\Saldo;
 
-use App\Jobs\ProcessEmail;
-use App\Mail\OrderTelixcel;
 use App\Models\Order;
 use App\Models\OrderProduct;
 use Livewire\Component;
@@ -11,7 +9,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use App\Models\Client;
 use App\Models\Team;
-use Illuminate\Support\Facades\Mail;
+use App\Jobs\ProcessEmail;
 
 class TopupUser extends Component
 {
@@ -38,7 +36,7 @@ class TopupUser extends Component
             'no'                => 'TCI'.date("YmdHis"),
             'type'              => 'selling',
             'entity_party'      => '1',
-            'total'             => $this->nominal + ($this->nominal*(11/100)),
+            'total'             => 0,
             'status'            => 'unpaid',
             'customer_id'       => $this->chechClient(),
             'user_id'           => 0,
@@ -62,6 +60,7 @@ class TopupUser extends Component
             $customer->teams()->attach($team);
         } catch (\Throwable $th) {
             //throw $th;
+            dd($th);
         }
         return $customer->uuid;
 
@@ -88,18 +87,19 @@ class TopupUser extends Component
                     'model_id'          => $order->id,
                     'qty'               => '1',
                     'unit'              => '1',
-                    'name'              => 'tax',
+                    'name'              => 'Tax',
                     'price'             => $this->nominal*(11/100),
                     'note'              => 'VAT/PPN @ 11%',
                     'user_id'           => 0,
                 ]);
             }
-
+            
             ProcessEmail::dispatch($order, 'create_order');
-
+            
             return redirect()->to('/payment/invoice/'.$order->id);
         } catch (\Throwable $th) {
             //throw $th;
+            dd($th);
         }
         $this->emit('fail');
     }

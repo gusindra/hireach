@@ -65,6 +65,8 @@
                                         Sent error message to customer.
                                     @elseif($template->type == 'helper')
                                         Helper template for agent.
+                                    @else
+                                        Manual Template
                                     @endif
                                 </div>
                             </div>
@@ -77,7 +79,7 @@
                         <div class="p-3 pl-0 pt-0">
                             <div class="p-1 rounded-lg">
                                 <div class="text-gray-700 dark:text-slate-300 text-sm capitalize">
-                                    {{$template->createdBy->name}}
+                                    {{$template->user_id && $template->createdBy ? $template->createdBy->name:''}}
                                 </div>
                             </div>
                         </div>
@@ -108,6 +110,7 @@
                     </div>
                 </div>
             </div>
+
             <!-- Template Name -->
             <div class="col-span-6 sm:col-span-6">
                 <x-jet-label for="name" value="{{ __('Name') }}" />
@@ -146,7 +149,7 @@
                 </div>
             </div>
 
-            @if($template->type!='helper')
+            @if($template->type!='helper' && $template->type!='template')
             <!-- is_wait_for_chat -->
             <div class="col-span-6 sm:col-span-6">
 
@@ -178,7 +181,7 @@
         @endif
     </x-jet-form-section>
 
-    @if($template->type!='welcome' && $template->type!='helper')
+    @if($template->type!='welcome' && $template->type!='helper' && $template->type!='template')
     @livewire('template.edit-trigger', ['template' => $template])
     @endif
 
@@ -193,7 +196,7 @@
     @livewire('template.edit-answer', ['template' => $template])
     @endif
 
-    @if($template->type!='error' && $template->type!='text' && $template->type!='welcome' && $template->type!='helper')
+    @if($template->type!='error' && $template->type!='text' && $template->type!='welcome' && $template->type!='helper' && $template->type!='template')
     @livewire('template.add-error', ['template' => $template])
     @endif
 

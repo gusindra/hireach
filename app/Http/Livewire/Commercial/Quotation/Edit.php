@@ -125,7 +125,7 @@ class Edit extends Component
             $this->addressed = '';
         }
     }
-
+    
     public function generateNo(){
         $code = '';
         if($this->type=='PROJECT'){

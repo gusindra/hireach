@@ -9,31 +9,20 @@ class EditType extends Component
 {
     public $projectId;
     public $project;
-    public $disabled;
-    public $referrer_name;
-    public $status;
-    public $entity;
-    public $type;
 
-    public function rules()
-    {
-        return [
-            'referrer_name' => 'required'
-        ];
-    }
-
-    public function mount($id, $disabled)
+    public function mount($id)
     {
         $this->projectId = $id;
-        $this->disabled = $disabled;
         $this->project = Project::find($id);
-        $this->referrer_name = $this->project->referrer_name;
     }
 
     public function modelData()
     {
         return [
-            'referrer_name' => $this->referrer_name,
+            'name'                  => $this->name,
+            'status'                => $this->status,
+            'entity'                => $this->entity,
+            'type'                  => $this->type
         ];
     }
     /**

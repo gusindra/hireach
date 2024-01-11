@@ -27,7 +27,7 @@ class TwoFactorLoginResponse implements TwoFactorLoginResponseContract
             $teamuser->update([
                 'status' => 'Online'
             ]);
-
+            
             if(auth()->user()->role){
                 $role = RoleUser::where('user_id', auth()->user()->id)->where('team_id', auth()->user()->currentTeam->id)->first();
                 if($role){

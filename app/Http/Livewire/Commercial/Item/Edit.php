@@ -47,6 +47,7 @@ class Edit extends Component
             'name' => 'required',
             'price' => 'required',
             'sku' => 'required',
+            'type' => 'required',
         ];
     }
 
@@ -67,18 +68,16 @@ class Edit extends Component
             'unit_price'        => $this->price,
             'unit'              => $this->unit,
             'general_discount'  => $this->discount,
-            'type'              => $this->type,
             'way_import'        => $this->import,
+            'type'              => $this->type
         ];
     }
 
     public function update($id)
     {
         $this->validate();
-        // dd($this->modelData());
-        $product = CommerceItem::find($id)->update($this->modelData());
-        // dd($product);
-        $this->emit('product_saved');
+        CommerceItem::find($id)->update($this->modelData());
+        $this->emit('saved');
     }
 
     public function render()

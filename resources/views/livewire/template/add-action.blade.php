@@ -83,7 +83,6 @@
                                                     </td>
                                                 </tr>
                                             @endforeach
-
                                         </tbody>
                                     </table>
                                 </div>
@@ -118,10 +117,51 @@
                 @livewire('template.add-data-action', ['actionId' => $actionId], key($actionId))
             @endif
 
+            <div class="col-span-6 sm:col-span-4 p-3">
+                <x-jet-label for="content" value="{{ __('Resource') }}" />
+                <select
+                    name="content"
+                    id="content"
+                    class="border-gray-300 dark:bg-slate-800 dark:text-slate-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 rounded-md shadow-sm mt-1 block w-full"
+                    wire:model.debunce.800ms="content"
+                    >
+                    <option selected value="text">Text</option>
+                    <option value="file">File</option>
+                    <option value="html">HTML</option>
+                </select>
+                <x-jet-input-error for="content" class="mt-2" />
+            </div>
 
+            @if($content=='text')
+            <div>
+                <div class="col-span-6 sm:col-span-4 p-3">
+                    <x-jet-label for="photo" value="{{ __('Message') }}" />
+                    <x-textarea role="textbox"
+                        contenteditable wire:model="message"
+                        wire:model.defer="message"
+                        value="message" class="mt-1 block w-full" :disabled="! Gate::check('update', $template)" placeholder="message"></x-textarea>
+                    <x-jet-input-error for="name" class="mt-2" />
+                </div>
+            </div>
+            @elseif($content=='file')
+            <div>
+                <div class="col-span-6 sm:col-span-4 p-3"><x-jet-label for="photo" value="{{ __('Link') }}" />
+                    <input class="border-gray-300 dark:bg-slate-800 focus:border-indigo-300 w-full my-1 text-sm" type="text" placeholder="{{ __('Link Attachment') }}"
+                        x-ref="link_attachment"
+                        wire:model.defer="link_attachment">
+                </div>
+            </div>
+            @elseif($content=='html')
+            <div>
+                <div class="col-span-6 sm:col-span-4 p-3">
+                    <x-jet-label for="photo" value="{{ __('HTML Code') }}" />
+                    @livewire('trix', ['value' => ''])
+                </div>
+            </div>
+            @endif
             <div x-data="{toggle: '{{$type}}'}">
 
-                <div class="flex justify-center items-center mt-8">
+                <!-- <div class="flex justify-center items-center mt-8">
                     <span class=" block mr-3 text-xs">Text</span>
 
                     <div class="relative rounded-full w-12 h-7 transition duration-200 ease-linear"
@@ -142,15 +182,15 @@
                     </div>
 
                     <span class=" block ml-3 text-xs">Attachment</span>
-                </div>
+                </div> -->
 
-                <div id="toggleOff" x-show="!toggle">
+                <!-- <div id="toggleOff" x-show="!toggle">
                     <div class="col-span-6 sm:col-span-4 p-3">
                         <x-jet-label for="photo" value="{{ __('Message') }}" />
                         <x-textarea role="textbox"
-                                    contenteditable wire:model="message"
-                                    wire:model.defer="message"
-                                    value="message" class="mt-1 block w-full" :disabled="! Gate::check('update', $template)" placeholder="message"></x-textarea>
+                            contenteditable wire:model="message"
+                            wire:model.defer="message"
+                            value="message" class="mt-1 block w-full" :disabled="! Gate::check('update', $template)" placeholder="message"></x-textarea>
                         <x-jet-input-error for="name" class="mt-2" />
                     </div>
                 </div>
@@ -158,9 +198,9 @@
                 <div id="toggleOn" x-show="toggle">
                     <x-jet-label for="photo" value="{{ __('Link') }}" />
                     <input class="border-gray-300 dark:bg-slate-800 focus:border-indigo-300 w-full my-1 text-sm" type="text" placeholder="{{ __('Link Attachment') }}"
-                                x-ref="link_attachment"
-                                wire:model.defer="link_attachment">
-                </div>
+                        x-ref="link_attachment"
+                        wire:model.defer="link_attachment">
+                </div> -->
 
             </div>
 

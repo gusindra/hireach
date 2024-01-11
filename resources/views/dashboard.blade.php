@@ -6,20 +6,19 @@
     </x-slot>
 
     @if(Auth::user()->role)
-
+        
     @endif
-
-    @includeWhen(@auth()->user()->listTeams->where('status','!=', NULL)->first()->role=='superadmin', 'dashboard.online', ['status' => 'complete'])
 
     <!-- First User Member to create Team -->
     @if (Auth::user()->currentTeam && Laravel\Jetstream\Jetstream::hasTeamFeatures())
     <!-- {{Auth::user()->currentTeam}} -->
     @endif
 
+    @includeWhen(auth()->user()->super->first() && auth()->user()->super->first()->role == 'superadmin', 'dashboard.online', ['status' => 'complete'])
 
     @if(auth()->user()->currentTeam)
         <!-- Stat -->
-        @includeWhen(!auth()->user()->currentTeam && auth()->user()->currentTeam->id!=env('IN_HOUSE_TEAM_ID'), 'dashboard.statistic', ['status' => 'complete'])
+        @includeWhen(false && auth()->user()->currentTeam && auth()->user()->currentTeam->id!=env('IN_HOUSE_TEAM_ID'), 'dashboard.statistic', ['status' => 'complete'])
         <!-- Asset -->
         @includeWhen(auth()->user()->super->first() && auth()->user()->super->first()->role == 'superadmin', 'dashboard.asset', ['status' => 'complete'])
         <!-- Task List -->
@@ -40,3 +39,5 @@
     @endif
 
 </x-app-layout>
+
+x

@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
+use Illuminate\Http\Request;
 
 class ReportController extends Controller
 {
@@ -10,8 +11,13 @@ class ReportController extends Controller
         return view('report.billing');
     }
 
-    public function show($key)
+    public function show(Request $request, $key)
     {
+        if($request->has('v')){ 
+          if($key=='sms'){ 
+              return view('main-side.report-sms');
+          }
+        }
         if($key=='request'){
             return view('report.request');
         }elseif($key=='sms'){

@@ -55,7 +55,7 @@
                         <!--            @if($data->model == 'COMPANY')-->
                         <!--                @if($data->company && $data->company->img_logo)-->
                         <!--                <img style="height:100px;" src="https://telixcel.s3.ap-southeast-1.amazonaws.com/{{$data->company->img_logo->file}}" />-->
-
+                                        
                         <!--                @endif-->
                         <!--            @elseif($data->model == 'PROJECT')-->
                         <!--                @if($data->project->company && $data->project->company->img_logo)-->
@@ -78,7 +78,7 @@
                                         @if($data->model == 'COMPANY')
                                             @if($data->company && $data->company->img_logo)
                                             <img style="height:100px;" src="https://telixcel.s3.ap-southeast-1.amazonaws.com/{{$data->company->img_logo->file}}" />
-
+                                            
                                             @endif
                                         @elseif($data->model == 'PROJECT')
                                             @if($data->project->company && $data->project->company->img_logo)

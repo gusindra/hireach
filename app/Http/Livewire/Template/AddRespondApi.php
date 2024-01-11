@@ -82,7 +82,6 @@ class AddRespondApi extends Component
         $this->resetForm();
         $this->emit('added');
         $this->actionId = null;
-
     }
 
     /**
@@ -93,7 +92,11 @@ class AddRespondApi extends Component
      */
     public function loadModel()
     {
-        $this->selectionTemplate = Template::where('user_id', Auth::user()->id)->where('id', '!=', $this->templateId)->where('template_id', NULL)->get();
+        $this->selectionTemplate = Template::where('id', '!=', $this->templateId)->whereHas('teams', function ($query) {
+            $query->where([
+                'teams.id' => auth()->user()->currentTeam->id
+            ]);
+        })->get();
     }
 
     /**

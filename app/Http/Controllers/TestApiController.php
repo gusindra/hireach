@@ -7,23 +7,21 @@ use Illuminate\Support\Facades\Log;
 
 class TestApiController extends Controller
 {
-    public function get()
+    public function get(Request $request)
     {
-        // return 1;
-        $data = response()->json([
+        Log::debug($request->all()); 
+        return response()->json([
+            'Msg' => "MO telah diterima",
+            'Status' => 200
+        ]);
+        return response()->json([
             'team' => auth()->user(),
             'old' => 'this is get request'
         ]);
-
-        Log::debug($data);
-
-        return $data;
     }
 
     public function show($id)
     {
-        // return $id;
-        Log::debug('Job Failed : servid invalid');
         return response()->json([
             'old' => $id
         ]);
@@ -48,11 +46,11 @@ class TestApiController extends Controller
     {
         $phones = explode (",", $request->to);
         $headers = $request->header('accept');
-        if($headers == 'application/json'){
+        if($headers == 'application/json1'){
             $array = [];
             foreach($phones as $key => $phone){
                 $array[$key] = [
-                    'MsgID' => date("YmdHis").rand(1,10),
+                    'MsgID' => "TEST".date("YmdHis").rand(1,10),
                     'Msisdn' => $phone,
                     'Status' => "200",
                     'Currency' => "IDR",
@@ -63,6 +61,7 @@ class TestApiController extends Controller
                 'Balance' => "99.8500",
                 'TotalMSISDN' => $key+1
             ];
+            
             return response()->json([
                 $array
             ]);
@@ -78,13 +77,31 @@ class TestApiController extends Controller
                 }
             }
             // return $string = $string; //."=99.9500,".$key+1;
-            return $string = $string;
+            return $string;
         }
 
         return response()->json([
             'MsgID' => "",
             'Msisdn' => "",
             'Status' => "400"
+        ]);
+    }
+    
+    public function message(Request $request)
+    {
+        Log::debug($request->all()); 
+        return response()->json([
+            'Msg' => "MO telah diterima",
+            'Status' => 200
+        ]);
+    }
+    
+    public function status(Request $request)
+    {
+        Log::debug($request->all()); 
+        return response()->json([
+            'Msg' => "Status is updated",
+            'Status' => 200
         ]);
     }
 }

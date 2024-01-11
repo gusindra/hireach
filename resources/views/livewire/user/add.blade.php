@@ -1,12 +1,14 @@
 <div>
-    <div>
-        <a wire:click="actionShowModal">{{__('New Costumer')}}</a>
+    <div class="flex items-center text-right">
+        <a wire:click="actionShowModal" class="inline-flex items-center px-2 py-1 dark:bg-slate-900 border border-green-700 text-green-500 cursor-pointer border-transparent rounded-sm font-normal text-xs  1g-widest hover:bg-green-300 active:bg-green-600 focus:outline-none focus:border-gray-900 focus:shadow-outline-gray disabled:opacity-25 transition" wire:click="actionShowModal">
+            {{__('+ User')}}
+        </a>
     </div>
 
     <!-- Form Action Modal -->
     <x-jet-dialog-modal wire:model="modalActionVisible">
         <x-slot name="title">
-            {{ __('Add Costumer') }}
+            {{ __('New User') }}
         </x-slot>
 
         <x-slot name="content">
@@ -159,7 +161,7 @@
             </x-jet-secondary-button>
 
             <x-jet-button class="ml-2" wire:click="create" wire:loading.attr="disabled">
-                {{ __('Add') }}
+                {{ __('Save') }}
             </x-jet-button>
         </x-slot>
     </x-jet-dialog-modal>

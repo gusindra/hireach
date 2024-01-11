@@ -20,7 +20,7 @@ class ChatController extends Controller
             return view('chat.show', ['team' => $team]);
         abort(404);
     }
-
+    
     public function chatme(Request $request)
     {
         // $team = Team::where('slug', $request->id)->first();

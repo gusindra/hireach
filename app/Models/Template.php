@@ -25,6 +25,7 @@ class Template extends Model
         'template_id',
         'is_enabled',
         'user_id',
+        'resource',
         'error_template_id',
         'is_wait_for_chat'
     ];

@@ -57,7 +57,7 @@
                         <div>
                             <div class="items-center py-3 text-center">
                                 <a href="{{route('chat.slug', $team->slug)}}" target="_blank" class="inline-flex items-center bg-gray-800 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-gray-700 active:bg-gray-900 focus:outline-none focus:border-gray-900 focus:shadow-outline-gray disabled:opacity-25 transition px-4 py-3 pb-10">
-                                    Chat Now
+                                    {{$status}}
                                 </a>
                             </div>
                         </div>

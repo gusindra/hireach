@@ -12,13 +12,12 @@ use Mediconesystems\LivewireDatatables\DateColumn;
 class Quotation extends LivewireDatatable
 {
     public $model = ModelsQuotation::class;
-    public $export_name = 'DATA_QUOTATION';
 
     public function columns()
     {
         return [
     		Column::name('title')->label('Title'),
-    		Column::name('model')->callback('model, project.name, company.name, client.name', function ($m, $pn, $com, $cn) {
+    		Column::name('model')->callback('model, model_id, project.name, company.name, client.name', function ($m, $mi, $pn, $com, $cn) {
                 if($m=='PROJECT'){
                     return $m.' : '.$pn;
                 }elseif($m=='COMPANY'){
@@ -27,9 +26,7 @@ class Quotation extends LivewireDatatable
                     return $m.' : '.$cn;
                 }
                 return $m;
-            })->label('Source')->filterable()->exportCallback(function ($value) {
-                return (string) $value;
-            }),
+            })->label('Source')->filterable(),
     		DateColumn::name('date')->label('Date')->filterable(),
     		NumberColumn::name('valid_day')->label('Duration (Day)')->filterable(),
     		Column::callback(['status'], function ($status) {

@@ -6,13 +6,7 @@
                 <div class="bg-gray-400 dark:bg-slate-600  h-10">
                     <div class="w-full mx-auto">
                         <div class="flex items-center justify-between flex-wrap">
-                            <div class="w-0 flex-1 flex items-center">
-                                <!-- <x-jet-nav-link href="#active" >
-                                    {{ __('Active') }}
-                                </x-jet-nav-link>
-                                <x-jet-nav-link href="#waiting" >
-                                    {{ __('Waiting') }}
-                                </x-jet-nav-link> -->
+                            <div class="w-0 flex-1 flex items-center"> 
                                 <div class="form-check mx-2 mt-2">
                                     <label class="form-check-label ps-2 text-sm " for="active">
                                         <input class="hidden" value="active" type="radio" name="filter" id="active" wire:model="filter">
@@ -52,7 +46,7 @@
                                 </div>
                             </a>
                         @endforeach
-
+                        
                         <!-- //CHAT -->
                         @foreach ($data as $item)
                             <a x-on:click="window.scrollBy(0, $refs.blue.getBoundingClientRect().top - 50" wire:click="chatCustomer('{{ Hashids::encode($item->id) }}')" class="cursor-pointer client-click">
@@ -257,7 +251,14 @@
         </x-slot>
     </x-jet-dialog-modal>
 
-
+    <script>
+        $(".client-click").click(function() {
+            alert(1);
+            $('html, body').animate({
+                scrollTop: $("#chatArea").offset().top
+            }, 2000);
+        });
+    </script>
 
     @push('chat-websocket')
         <script>
@@ -397,7 +398,6 @@
                 document.getElementById('chat-event').innerHTML = notificationMessage;
             }
         </script>
-
     @endpush
 
     @push('chat-waweb')
@@ -501,4 +501,5 @@
         </script>
     @endpush
     <link rel="stylesheet" href="{{ url('js/emoji/docs/assets/css/style.css') }}">
+
 </div>

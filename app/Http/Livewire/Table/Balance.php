@@ -18,13 +18,13 @@ class Balance extends LivewireDatatable
         // if(auth()->user()->super && auth()->user()->super->first() && auth()->user()->super->first()->role == 'superadmin'){
         //     return SaldoUser::query();
         // }
-        return SaldoUser::query()->where('user_id', $this->user);
+        return SaldoUser::query()->where('user_id', $this->user)->orderBy('id', 'desc');
     }
 
     public function columns()
     {
         return [
-    		DateColumn::name('created_at')->label('DATE')->format('d/m/Y H:i')->filterable(),
+    		DateColumn::name('created_at')->label('DATE')->format('d/m/Y H:i:s')->filterable(),
     		Column::callback(['mutation'], function ($y) {
                 return view('label.type', ['type' => $y]);
             })->label('MUTATION (DEBIT/CREDIT)')->filterable(['debit', 'credit'])->exportCallback(function ($value) {

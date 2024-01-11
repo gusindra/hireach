@@ -158,7 +158,7 @@ class ChatComponent extends Component
         }
 
         if($this->search!=""){
-            $sorted = $sorted->filter(function($client){
+            $sorted  = $sorted->filter(function($client){
                 if(str_contains(strtolower($client->name), strtolower($this->search))){
                     return $client;
                 }
@@ -256,8 +256,6 @@ class ChatComponent extends Component
         ]);
 
         $this->message = null;
-        $this->dispatchBrowserEvent('contentChanged', ['slide' => true]);
-
     }
 
     /**
@@ -373,7 +371,7 @@ class ChatComponent extends Component
         }
         $this->message = $message;
     }
-
+    
     public function getTicket()
     {
         $data = Ticket::with('request')->get();

@@ -1,7 +1,7 @@
 <div>
-    <div class="flex items-center text-right">
-        <a wire:click="actionShowModal" class="inline-flex dark:hover:bg-slate-600 cursor-pointer items-center px-2 py-2 text-gray-600 dark:bg-slate-800 border border-transparent rounded-md font-normal text-xs dark:text-white 1g-widest hover:text-slate-700 active:bg-green-900 focus:outline-none focus:border-gray-900 focus:shadow-outline-gray disabled:opacity-25 transition" wire:click="actionShowModal">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+    <div class="flex items-center p-4 text-right">
+        <a wire:click="actionShowModal" class="inline-flex dark:hover:bg-slate-600 cursor-pointer items-center px-2 py-1 text-gray-600 dark:bg-slate-800 border border-transparent rounded-md font-normal text-xs dark:text-white 1g-widest hover:text-slate-700 active:bg-green-900 focus:outline-none focus:border-gray-900 focus:shadow-outline-gray disabled:opacity-25 transition" wire:click="actionShowModal">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
             </svg>
         </a>
@@ -14,7 +14,8 @@
         </x-slot>
 
         <x-slot name="content">
-            <div class="col-span-6 sm:col-span-4">
+
+            <div class="col-span-6 sm:col-span-4 p-3">
                 <x-jet-input wire:keydown.enter="search" placeholder="Press enter to search" id="keyword" type="text" class="mt-1 block w-full" wire:model.debunce.800ms="keyword" autofocus />
                 <x-jet-input-error for="keyword" class="mt-2" />
                 <p class="text-right text-xs p-2 text-slate-400">Press Enter to Search</p>
@@ -30,13 +31,13 @@
                                 <div  class="text-sm font-medium"></div>
                                 <div class="mt-2">
                                     <div class="font-bold">
-                                        <span class="text-red-600 dark:text-white opacity-75">#</span> <span>{{$key}}</span>
+                                        <span class="text-red-600 opacity-75">#</span> <span>{{$key}}</span>
                                     </div>
 
                                     @foreach ($model as $data)
                                     <div class="focus:text-gray-200 hover:text-gray-200" @keydown.arrow-up.prevent="focusPreviousResult(index)" @keydown.arrow-down.prevent="focusNextResult(index)">
                                         &gt;
-                                        <a href="{{$data['url']}}" class="dark:text-slate-300 focus:text-gray-200 hover:text-gray-200 dark:hover:text-slate-400">
+                                        <a href="{{$data['url']}}">
                                             @foreach ($data['fields_formatted'] as $k => $res)
                                                 <span>{{$res}} : {{@$data[$k]}}</span>
                                             @endforeach

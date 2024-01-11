@@ -2,6 +2,7 @@
     <div wire:poll>
         @if($quotations->count() > 0)
             <!-- Quotation -->
+            <x-jet-section-border />
             <x-jet-action-section>
                 <x-slot name="title">
                     {{ __('Quotation') }}

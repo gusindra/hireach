@@ -2,11 +2,9 @@
 
 namespace App\Http\Livewire\Payment;
 
-use App\Jobs\ProcessEmail;
-
 use App\Models\Notification;
 use Livewire\Component;
-
+use App\Jobs\ProcessEmail;
 
 class Transfer extends Component
 {
@@ -32,9 +30,8 @@ class Transfer extends Component
                 'user_id' => 0,
                 'status' => 'unread'
             ]);
-
+            
             ProcessEmail::dispatch($this->order, 'payment_order');
-
         }else{
             $this->emit('already');
         }
@@ -46,7 +43,6 @@ class Transfer extends Component
 
     public function actionShowModal($modal)
     {
-        dd($modal);
         if($modal=='detail'){
             $this->modalDetail = true;
         }elseif($modal=='upload'){

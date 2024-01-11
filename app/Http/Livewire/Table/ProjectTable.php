@@ -12,7 +12,7 @@ class ProjectTable extends LivewireDatatable
 {
     public $model = Project::class;
     public $companyid;
-
+    
     public function builder()
     {
         return Project::query()->where('party_b', $this->companyid)->orderBy('updated_at', 'desc');

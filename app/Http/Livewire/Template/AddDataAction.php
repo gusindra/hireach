@@ -53,10 +53,27 @@ class AddDataAction extends Component
         }
     }
 
+     /**
+     * The read function.
+     *
+     * @return void
+     */
+    public function read()
+    {
+        return DataAction::where('action_id', $this->actionId)->get();
+    }
+
     public function create()
     {
         $this->validate();
-        DataAction::create($this->modelData());
+        $data = DataAction::create($this->modelData());
+        foreach($this->read() as $variable){
+            $this->dataArray[$variable->id] = [
+                'name'          => $variable->name,
+                'value'         => $variable->value,
+                'action_id'     => $variable->id
+            ];
+        }
         $this->resetForm();
         $this->emit('added');
         $this->actionId = null;
@@ -97,15 +114,7 @@ class AddDataAction extends Component
         $this->value = null;
     }
 
-     /**
-     * The read function.
-     *
-     * @return void
-     */
-    public function read()
-    {
-        return DataAction::where('action_id', $this->actionId)->get();
-    }
+
 
     public function render()
     {

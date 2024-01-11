@@ -21,7 +21,7 @@ class NotificationController extends Controller
             $value =  $notification->ticket->request->client->id;
         }elseif($notification->model=='Order'){
             return redirect()->to("/order/" . $notification->model_id);
-        }elseif($notification->model=='Invoice'){
+        }elseif($notification->model=='Invoice' || $notification->model=='INVOICE'){
             return redirect()->to("/invoice-order/". $notification->model_id);
         }elseif($notification->model=='Balance'){
             return redirect()->to("/payment/deposit/");
@@ -49,7 +49,7 @@ class NotificationController extends Controller
         }
         return redirect('dashboard');
     }
-
+    
     public function readAll(){
         $notification = Notification::where('user_id', auth()->user()->id)->where('status', 'unread')->update([
             'status' => 'read'

@@ -20,7 +20,7 @@ class Progress extends Component
     public $approval = false;
     public $remark;
     public $theme;
-
+    
     public function mount($model, $id)
     {
         $this->model_type = $model;
@@ -98,7 +98,7 @@ class Progress extends Component
         return redirect(request()->header('Referer'));
         $this->emit('saved');
     }
-
+    
     public function revise(){
         $this->model->update([
             'status' => 'draft'

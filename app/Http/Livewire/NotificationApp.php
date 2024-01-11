@@ -7,6 +7,7 @@ use Livewire\Component;
 
 class NotificationApp extends Component
 {
+    public $client;
     public $client_id;
     public $modalActionVisible = false;
     public $currentMessage;
@@ -77,7 +78,7 @@ class NotificationApp extends Component
     public function read()
     {
         //$data = [];
-        $data['waiting'] = $this->waiting();
+        $data['waiting'] = []; //$this->waiting();
         $data['notif'] = Notification::where('user_id', $this->client_id)->orderBy('id', 'desc')->take(15)->get();
         $data['count'] = Notification::where('user_id', $this->client_id)->whereIn('status', ['new','unread'])->count() + count($data['waiting']);
 
@@ -85,6 +86,7 @@ class NotificationApp extends Component
             'eventName' => 'Sound Alert',
             'eventMessage' => $data['count']
         ]);
+
         return $data;
     }
 

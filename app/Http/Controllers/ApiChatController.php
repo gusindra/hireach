@@ -10,7 +10,6 @@ use App\Jobs\ProcessSmsApi;
 use App\Models\ApiCredential;
 use App\Models\Client;
 use App\Models\Request as ModelsRequest;
-use App\Models\Team;
 use Vinkla\Hashids\Facades\Hashids;
 
 class ApiChatController extends Controller

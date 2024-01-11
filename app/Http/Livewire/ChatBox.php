@@ -134,6 +134,7 @@ class ChatBox extends Component
 
     public function actionShowModal()
     {
+
         $this->modalAttachment = true;
     }
 
@@ -302,7 +303,7 @@ class ChatBox extends Component
         $session = HandlingSession::where('agent_id', $this->user_id)->first();
         if(!$session)
             $session = HandlingSession::where('client_id', $this->client_id)->where('user_id', $this->owner)->first();
-
+        
         $this->session = $session;
         return $session;
     }
@@ -311,7 +312,7 @@ class ChatBox extends Component
     {
         $this->transcript = !$this->transcript;
     }
-
+    
     public function updateTransript($selected){
         $status = $selected == 'yes' ? 'approve':'reject';
         $this->session->update(['view_transcript'=>$status]);
@@ -335,7 +336,7 @@ class ChatBox extends Component
         }else{
             $data['request'] = [];
         }
-
+        
         $data['count'] = count($data['request']);
 
         if(substr($this->message,0, 1)=='/'){

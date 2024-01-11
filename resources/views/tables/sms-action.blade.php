@@ -17,18 +17,13 @@
             </tr>
             <tr>
                 <td class="border border-light-blue-500 px-2 py-2 text-light-blue-600 font-medium">To</td>
-                <td class="border border-light-blue-500 px-2 py-2 text-light-blue-600 font-medium w-full" x-data="{alert:false}">
-                    <input class="bg-white bordered dark:bg-slate-300" value="{{$msisdn}}" />
-                </td>
+                <td class="border border-light-blue-500 px-2 py-2 text-light-blue-600 font-medium w-full">{{$msisdn}}</td>
             </tr>
             <tr>
                 <td class="border border-light-blue-500 px-2 py-2 text-light-blue-600 font-medium">Status</td>
                 <td class="border border-light-blue-500 px-2 py-2 text-light-blue-600 font-medium w-full">{{$status}}</td>
             </tr>
         </table>
-
-        <input id="phone" class="hidden" value="{{$msisdn}}" />
-
         <p class="text-sm mb-2 text-black">Update to Status</p>
         <a href="{{ route('admin.update.sms.status', [$id,'DELIVERED']) }}" class="p-1 m-1 text-xs bg-green-100 text-green-600 hover:bg-green-500 hover:text-white rounded">
             DELIVERED
@@ -40,37 +35,5 @@
             UNDELIVERED
         </a>
     </x-modal>
-    <script>
-        // Prepare action buttons
-        const buttonContainers = document.querySelectorAll('.copy');
-
-        for (const buttonContainer of buttonContainers) {
-            const buttons = buttonContainer.querySelectorAll('button');
-            const pasteTarget = buttonContainer.getAttribute('data-for');
-
-            for (const button of buttons) {
-                const elementName = button.getAttribute('data-el');
-                button.addEventListener('click', () => insertText(pasteTarget))
-            }
-        }
-
-        // Inserts text at cursor, or replaces selected text
-        function insertText(selector) {
-            const text = document.querySelector(selector);
-            try {
-                // Security exception may be thrown by some browsers
-                const textArea = document.createElement('textarea');
-                textArea.value = text.value;
-                document.body.appendChild(textArea);
-                textArea.select();
-                document.execCommand('Copy');
-                textArea.remove();
-            } catch (ex) {
-                console.warn("Copy to clipboard failed.", ex);
-                return false;
-            } finally {
-            }
-        }
-    </script>
     @endif
 </div>

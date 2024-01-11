@@ -19,13 +19,13 @@ class AddAction extends Component
     public $confirmingActionRemoval = false;
     public $link_attachment;
     public $type;
+    public $content = 'text';
 
     public function mount($template)
     {
         $this->template = $template;
         $this->templateId = $this->template->id;
         $this->type = false;
-
     }
 
     public function rules()

@@ -30,7 +30,7 @@ class ClientDatatables extends LivewireDatatable
     function columns()
     {
     	return [
-            Column::callback(['uuid'], function ($x) {
+    		Column::callback(['uuid'], function ($x) {
                 return $x;
             })->label('Type')->label('ID')->searchable(),
     		// Column::name('uuid')->label('ID')->sortBy('id')->searchable(),

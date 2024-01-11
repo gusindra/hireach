@@ -5,7 +5,7 @@ return [
     'documentations' => [
         'default' => [
             'api' => [
-                'title' => 'Documentation',
+                'title' => 'HiReach API Documentation',
             ],
 
             'routes' => [

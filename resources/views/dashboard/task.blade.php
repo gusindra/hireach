@@ -3,6 +3,7 @@
         <div class="bg-white dark:bg-slate-600 overflow-hidden shadow-xl sm:rounded-lg">
             <div class="container mx-auto">
                 <div>
+                    <p class="pt-4 pl-4 font-bold">Table Approval</p>
                     <livewire:table.approval user="{{auth()->user()->id}}" />
                 </div>
             </div>

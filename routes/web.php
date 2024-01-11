@@ -30,6 +30,7 @@ use App\Http\Controllers\SynProductController;
 use App\Http\Controllers\TeamInvitationController;
 use App\Http\Controllers\TemplateController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\ResourceController;
 use App\Jobs\ProcessEmail;
 use App\Models\ApiCredential;
 use App\Models\BlastMessage;
@@ -71,8 +72,9 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
     Route::get('/resources', function () {
-        return view('resources');
-    })->name('resources');
+        return view('resource.index');
+    })->name('resources.index');
+    Route::get('/resources/create', [ResourceController::class, 'show'])->name('show.resource');
 
     Route::get('/contents', function () {
         return view('contents');

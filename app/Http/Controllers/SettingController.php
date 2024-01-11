@@ -12,8 +12,14 @@ class SettingController extends Controller
     {
         $this->middleware(function ($request, $next) {
             // Your auth here
-            $this->user_info=Auth::user()->super->first();
-            if($this->user_info && $this->user_info->role=='superadmin'){
+            $user = auth()->user();
+
+            if($user->super->first()){
+                if($user->super->first()->role=='superadmin'){
+                    return $next($request);
+                }
+            }
+            if((auth()->user()->activeRole && str_contains(auth()->user()->activeRole->role->name, "Admin"))){
                 return $next($request);
             }
             abort(404);

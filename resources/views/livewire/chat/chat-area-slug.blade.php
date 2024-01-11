@@ -1,6 +1,6 @@
 <div>
     <div class="bg-gray-400 h-14">
-        <div class="w-full mx-auto p-3 px-3">
+        <div class="w-full mx-auto pt-3 px-3">
             <div class="flex items-center justify-between flex-wrap">
                 <div class="w-0 flex-1 flex items-center">
                 @if($client)
@@ -9,7 +9,7 @@
                             <img class="h-8 w-8 rounded-full object-cover" src="{{ $client->profile_photo_url }}" alt="{{ $client->name }}" />
                         </div>
                         <span class="hidden md:inline">
-                            {{$client->name}}
+                            {{$client->name}}1
                         </span>
                     </p>
                 @endif
@@ -37,7 +37,7 @@
 
         </div>
         @if($client)
-        <div class="bg-gray-200 py-3 grid grid-rows-3">
+        <div class="bg-gray-200 py-3 grid grid-rows-3 sm:absolute sm:bottom-0">
             <div class="md:flex">
                 <button class="cursor-pointer text-sm text-grey-500 p-2" wire:click="actionShowModal">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">

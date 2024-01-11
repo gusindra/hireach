@@ -10,6 +10,7 @@ use Illuminate\Support\Str;
 class Templates extends Component
 {
     public $modalActionVisible = false;
+    public $way = 1;
     public $type;
     public $name;
     public $description;
@@ -36,8 +37,9 @@ class Templates extends Component
     {
         return [
             'uuid'          => Str::uuid(),
-            'type'          => $this->type,
+            'type'          => $this->way == 2 ? $this->type : 'template',
             'name'          => $this->name,
+            'resource'      => $this->way,
             'description'   => $this->description,
             'user_id'       => Auth::user()->id,
         ];
@@ -45,8 +47,9 @@ class Templates extends Component
 
     public function resetForm()
     {
-        $this->title = null;
-        $this->slug = null;
+        $this->type = null;
+        $this->name = null;
+        $this->way = null;
         $this->description = null;
     }
 
@@ -55,7 +58,7 @@ class Templates extends Component
      *
      * @return void
      */
-    public function actionShowModal()
+    public function actionShowModal1()
     {
         $this->modalActionVisible = true;
     }

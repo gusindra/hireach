@@ -43,7 +43,11 @@ class All extends Component
             $query = $modelClass::query();
             $fields = $modelClass::$searchable;
             foreach($fields as $field){
+              if(auth()->user()->super->first()){
                 $query->orWhere($field, 'LIKE', '%'.$this->keyword.'%');
+              }else{
+                $query->where('user_id', auth()->user()->id)->where($field, 'LIKE', '%'.$this->keyword.'%');
+              }
             }
 
             $results = $query->take(10)->get();

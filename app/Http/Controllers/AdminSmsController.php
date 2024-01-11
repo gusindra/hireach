@@ -6,7 +6,6 @@ use App\Jobs\ProcessSmsStatus;
 use App\Models\BlastMessage;
 use Illuminate\Support\Facades\Auth as FacadesAuth;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
 
 class AdminSmsController extends Controller
 {
@@ -35,7 +34,7 @@ class AdminSmsController extends Controller
         ]);
         return redirect()->back();
     }
-
+    
     // show form to import file and show item
     public function formImportStatus(){
         return view('report.import-sms-status');
@@ -81,29 +80,14 @@ class AdminSmsController extends Controller
                 $messageid = strip_tags($data["0"]);
                 $senderid = strip_tags($data["2"]);
                 $msisdn = strip_tags($data["3"]);
-                $status = strip_tags($data["6"]);
-
+                $status = strip_tags($data["6"]); 
+                
                 $request = [
                     "msgID" => $messageid,
                     "msisdn" => $msisdn,
                     "status" => $status,
                 ];
-                // foreach($data as $key => $item){
-                //     echo "<br>";
-                //     echo $key." ".$item;
-                // }
-                // return $data[6];
-                if($status=="DELIVERED"){
-                    $updateStatus ='dELIVERED';
-                    Log::debug($updateStatus." - ".$status);
-                }elseif($status=="UNDELIVERED"){
-                    $updateStatus ='unDELIVERED';
-                    Log::debug($updateStatus." - ".$status);
-                }else{
-                    $updateStatus ='aCCEPTED';
-                    Log::debug($updateStatus." - ".$status);
-                }
-                //ProcessSmsStatus::dispatch($request);
+                ProcessSmsStatus::dispatch($request);
                 $updateData+=1;
             }else{
                 // return $data;

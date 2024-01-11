@@ -15,7 +15,7 @@
                 </div>
                 <div class="container mx-auto">
                     <div>
-                        <livewire:table.all-billing-table searchable="name, email, gender" exportable />
+                        <livewire:table.all-billing-table searchable="id" exportable />
                     </div>
                 </div>
             </div>

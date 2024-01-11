@@ -3,7 +3,7 @@
         {{ __('Create') }}
     </a> -->
     <div class="flex items-center justify-end">
-        <x-jet-button wire:click="actionShowModal">
+        <x-jet-button wire:click="actionShowModal1">
             {{__('Add Template')}}
         </x-jet-button>
     </div>
@@ -16,7 +16,22 @@
 
         <x-slot name="content">
             <div class="col-span-6 sm:col-span-4 p-3">
-                <x-jet-label for="type" value="{{ __('Type') }}" />
+                <x-jet-label for="way" value="{{ __('Resource') }}" />
+                <select
+                    name="way"
+                    id="way"
+                    class="border-gray-300 dark:bg-slate-800 dark:text-slate-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 rounded-md shadow-sm mt-1 block w-full"
+                    wire:model.debunce.800ms="way"
+                    >
+                    <option selected>-- Select Resource --</option>
+                    <option value="1">1Way</option>
+                    <option value="2">2Way</option>
+                </select>
+                <x-jet-input-error for="way" class="mt-2" />
+            </div>
+            @if($way==2)
+            <div class="col-span-6 sm:col-span-4 p-3">
+                <x-jet-label for="type" value="{{ __('Type 2Way') }}" />
                 <select
                     name="type"
                     id="type"
@@ -32,6 +47,7 @@
                 </select>
                 <x-jet-input-error for="type" class="mt-2" />
             </div>
+            @endif
             <div class="col-span-6 sm:col-span-4 p-3">
                 <x-jet-label for="name" value="{{ __('Template Name') }}" />
                 <x-jet-input id="name" type="text" class="mt-1 block w-full" wire:model.debunce.800ms="name" autofocus />

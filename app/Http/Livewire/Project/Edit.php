@@ -40,7 +40,7 @@ class Edit extends Component
         return [
             'name'                  => $this->name,
             'status'                => $this->status,
-            'entity_party'          => $this->entity,
+            'entity'                => $this->entity,
             'type'                  => $this->type
         ];
     }

@@ -11,15 +11,21 @@ use Mediconesystems\LivewireDatatables\BooleanColumn;
 class TemplatesTable extends LivewireDatatable
 {
     public $model = Template::class;
+    public $resource = '';
 
     public function builder()
     {
-        return Template::query()->with('teams')
-            ->whereHas('teams', function ($query) {
-                $query->where([
-                    'teams.id' => auth()->user()->currentTeam->id
-                ]);
-            }); //->where('user_id', auth()->user()->currentTeam->user_id);
+        $template = Template::query();
+        if($this->resource!=''){
+            $template = $template->where('resource', $this->resource);
+        }
+        return $template;
+        // ->with('teams')
+        //     ->whereHas('teams', function ($query) {
+        //         $query->where([
+        //             'teams.id' => auth()->user()->currentTeam->id
+        //         ]);
+        //     }); //->where('user_id', auth()->user()->currentTeam->user_id);
     }
 
     public function columns()

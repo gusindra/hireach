@@ -47,7 +47,7 @@
                                                         {{ number_format($item->price) }}
                                                     </td>
                                                     <td class="px-3 py-4 text-xs whitespace-no-wrap w-100">
-                                                        {{ $item->qty }} {{$item->unit }}
+                                                        {{ number_format($item->qty) }} {{$item->unit }}
                                                     </td>
                                                     <td class="px-3 py-4 text-xs whitespace-no-wrap w-auto">
                                                         {{$item->total_percentage!=100?$item->total_percentage.'%':''}}
@@ -125,6 +125,7 @@
         </x-slot>
 
     </x-jet-action-section>
+
 
     <!-- Form Input Modal -->
     <x-jet-dialog-modal wire:model="modalVisible">

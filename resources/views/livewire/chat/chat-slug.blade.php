@@ -12,9 +12,9 @@
                 @if($name=='' && $number=='')
                 <button x-cloak x-on:click="darkMode==='true' || darkMode==true ? darkMode=false : darkMode=true;" onclick="showhide()" class="px-4 py-1 mb-4">
                     <!-- Icon Moon -->
-                    <svg id="moon" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
-                    </svg>
+                    <!--<svg id="moon" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">-->
+                    <!--    <path stroke-linecap="round" stroke-linejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />-->
+                    <!--</svg>-->
                     <!-- Icon Sun -->
                     <svg id="sun" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
@@ -42,7 +42,7 @@
                 </div>
 
                 <div class="mt-4">
-                    <x-jet-label for="phone" value="{{ __('Phone Number') }}" />
+                    <x-jet-label for="phone" value="{{ __('Phone Number / Email Account / User ID') }}" />
                     <x-jet-input
                     wire:model="number" wire:model.defer="number"
                     id="phone" class="block mt-1 w-full" type="text" name="phone" required autocomplete="current-phone" />
@@ -55,7 +55,8 @@
                 </div>
             </div>
         @endif
-        <div>
+        
+        <div >
             <div class="{{$data && $data->id?'block':'hidden'}}">
                 <div class="bg-gray-400 dark:bg-slate-700 h-12 lg:h-14 lg:static md:static sm:fixed sm:inset-x-0 sm:top-0 shadow-md">
                     <div class="w-full mx-auto p-1">
@@ -80,17 +81,17 @@
                 </div>
 
                 <div id="messageArea" class="lg:max-h-screen">
-                    <div wire:poll.visible id="messageBox" class="overflow-auto h-96 bg-green-50 dark:bg-slate-600" style="display: flex;flex-direction: column;height: 80vh;overflow: auto;">
-                        @if(!$transcript && count($messages)>10)
-                        <p class="text-center dark:bg-slate-300 {{$requestTransript ? 'bg-gray-600 text-gray-100' : 'bg-gray-200 text-gray-800'}}">
-                            @if(is_null($requestTransript))
-                                <a class="text-xs p-4 underline cursor-pointer" wire:click="requestTransript">See transcript</a>
-                            @elseif($requestTransript=='requested')
-                                <a class="text-xs p-4 underline cursor-pointer" wire:click="requestTransript">Your request was submited, click to recheck status!</a>
-                            @elseif($requestTransript=='reject')
-                                <a class="text-xs p-4 underline">Your request was rejected</a>
-                            @endif
-                        </p>
+                    <div wire:poll.visible id="messageBox" class="overflow-auto h-96 bg-green-50 dark:bg-slate-600 py-4" style="display: flex;flex-direction: column;height: 80vh;overflow: auto;">
+                        @if(!$transcript && count($messages)>2)
+                            <p class="text-center dark:bg-slate-300 {{$requestTransript ? 'bg-gray-600 text-gray-100' : 'bg-gray-200 text-gray-800'}}">
+                                @if(is_null($requestTransript))
+                                    <a class="text-xs p-4 underline cursor-pointer" wire:click="requestTransript">See transcript</a>
+                                @elseif($requestTransript=='requested')
+                                    <a class="text-xs p-4 underline cursor-pointer" wire:click="requestTransript">Your request was submited, click to recheck status!</a>
+                                @elseif($requestTransript=='reject')
+                                    <a class="text-xs p-4 underline">Your request was rejected</a>
+                                @endif
+                            </p>
                         @endif
                         @foreach($messages as $item)
                         <div class="pb-1 px-4 sm:p-2 sm:px-3 buble-chat object-left {{$item->source_id?'':'text-right right-0'}}">

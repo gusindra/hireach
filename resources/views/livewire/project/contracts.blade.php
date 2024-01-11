@@ -2,6 +2,7 @@
     <div wire:poll>
         @if($contracts->count() > 0)
             <!-- Contract -->
+            <x-jet-section-border />
             <x-jet-action-section>
                 <x-slot name="title">
                     {{ __('Contract') }}

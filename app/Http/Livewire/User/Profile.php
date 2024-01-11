@@ -70,14 +70,26 @@ class Profile extends Component
                 'address'   => $this->inputclient['address'],
                 'note'      => $this->inputclient['notes'],
             ]);
-            $this->user->userBilling->update([
-                'tax_id'        => $this->inputclient['tax_id'],
-                'name'          => $this->inputclient['name'],
-                'post_code'     => $this->inputclient['postcode'],
-                'address'       => $this->inputclient['address'],
-                'province'      => $this->inputclient['province'],
-                'city'          => $this->inputclient['city'],
-            ]);
+            if(!$this->user->userBilling){
+                $billing = BillingUser::create([
+                    'tax_id'        => $this->inputclient['tax_id'],
+                    'name'          => $this->inputclient['name'],
+                    'post_code'     => $this->inputclient['postcode'],
+                    'address'       => $this->inputclient['address'],
+                    'province'      => $this->inputclient['province'],
+                    'city'          => $this->inputclient['city'],
+                    'user_id'       => $this->user->id
+                ]);
+            }else{
+                $this->user->userBilling->update([
+                    'tax_id'        => $this->inputclient['tax_id'],
+                    'name'          => $this->inputclient['name'],
+                    'post_code'     => $this->inputclient['postcode'],
+                    'address'       => $this->inputclient['address'],
+                    'province'      => $this->inputclient['province'],
+                    'city'          => $this->inputclient['city'],
+                ]);
+            }
         }else{
             $customer =  Client::create([
                 'title'     => $this->inputclient['title'],

@@ -27,4 +27,4 @@ If you discover a security vulnerability within Laravel, please send an e-mail t
 
 ## License
 
-Telixcel Application software licensed under the FirmApps AI license.
+FirmApps Application software licensed under the FirmApps AI license.

@@ -27,10 +27,12 @@
         <!-- Popper -->
         <script src="https://unpkg.com/@popperjs/core@2"></script>
         <!-- Main Styling -->
-        <link rel="stylesheet" href="{{ url('css/app.css') }}">
+        <!--<link rel="stylesheet" href="{{ url('css/app.css') }}">-->
+        <link rel="stylesheet" href="https://telixcel.s3.ap-southeast-1.amazonaws.com/assets/2022/app.min.css">
         <link href="{{ url('css/soft-tailwind.min.css') }}" rel="stylesheet" />
         @livewireStyles
-        <script src="{{ url('js/app.js') }}" defer></script>
+        <!--<script src="{{ url('js/app.js') }}" defer></script>-->
+        <script src="https://telixcel.s3.ap-southeast-1.amazonaws.com/assets/app.js" defer></script>
         <link href="{{ url('assets/css/choices.css') }}" type="text/css" rel="stylesheet">
         @yield('header')
     </head>

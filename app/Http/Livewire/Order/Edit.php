@@ -99,16 +99,6 @@ class Edit extends Component
         $this->emit('update_status');
     }
 
-    public function generateNo(){
-        $code = '';
-        if($this->order->source=='PROJECT'){
-            $code = $this->order->project->company->code;
-        }elseif($this->order->source=='COMPANY'){
-            $code = $this->order->company->code;
-        }
-        $this->input['no'] = $code.date('Ymd').$this->order->id;
-    }
-
     public function onChangeModelId()
     {
         if($this->model_id!=0){

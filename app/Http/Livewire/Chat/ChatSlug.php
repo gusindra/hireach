@@ -5,9 +5,9 @@ namespace App\Http\Livewire\Chat;
 use App\Models\Attachment;
 use Livewire\Component;
 use App\Models\Client;
-use App\Models\HandlingSession;
 use App\Models\Request;
 use App\Models\Team;
+use App\Models\HandlingSession;
 use Illuminate\Support\Str;
 use Livewire\WithFileUploads;
 use Vinkla\Hashids\Facades\Hashids;
@@ -82,8 +82,8 @@ class ChatSlug extends Component
             'sent_at'   => date('Y-m-d H:i:s'),
             'team_id'   => $this->team->id
         ]);
-        $this->message = null;
-
+        $this->message = null; 
+        
         $this->dispatchBrowserEvent('contentChanged', ['newName' => $request->id]);
     }
 
@@ -139,7 +139,7 @@ class ChatSlug extends Component
             dd('Format link false');
         }
     }
-
+    
     /**
      * Request to see transcript
      *
@@ -188,7 +188,7 @@ class ChatSlug extends Component
         }
         return [];
     }
-
+    
     public function actionShowModal()
     {
         $this->modalAttachment = true;

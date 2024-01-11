@@ -35,7 +35,7 @@
                         </thead>
                         <tbody>
                             <template x-for="(item, index) in items" :key="index">
-                                <tr x-show="checkView(index + 1)" class="hover:bg-gray-200 text-gray-900 text-xs">
+                                <tr x-show="checkView(index + 1)" class="hover:bg-gray-200 dark:text-slate-300 dark:hover:bg-slate-600 text-gray-900 text-xs">
                                     <td class="p-3">
                                         <span x-text="item.time"></span>
                                     </td>
@@ -57,21 +57,21 @@
                     </table>
                     <div class="flex mt-5">
                         <div class="border px-2 cursor-pointer" @click.prevent="changePage(1)">
-                            <span class="text-gray-700">First</span>
+                            <span class="text-gray-700 dark:text-slate-300">First</span>
                         </div>
                         <div class="border px-2 cursor-pointer" @click="changePage(currentPage - 1)">
-                            <span class="text-gray-700"><</span>
+                            <span class="text-gray-700 dark:text-slate-300"><</span>
                         </div>
                         <template x-for="item in pages">
-                            <div @click="changePage(item)" class="border px-2 cursor-pointer" x-bind:class="{ 'bg-gray-300': currentPage === item }">
-                                <span class="text-gray-700" x-text="item"></span>
+                            <div @click="changePage(item)" class="border px-2 cursor-pointer dark:bg-slate-700" x-bind:class="{ 'bg-gray-300 dark:bg-slate-800': currentPage === item }">
+                                <span class="text-gray-700 dark:text-slate-300" x-text="item"></span>
                             </div>
                         </template>
                         <div class="border px-2 cursor-pointer" @click="changePage(currentPage + 1)">
-                            <span class="text-gray-700">></span>
+                            <span class="text-gray-700 dark:text-slate-300">></span>
                         </div>
                         <div class="border px-2 cursor-pointer" @click.prevent="changePage(pagination.lastPage)">
-                            <span class="text-gray-700">Last</span>
+                            <span class="text-gray-700 dark:text-slate-300">Last</span>
                         </div>
                     </div>
                 </div>
@@ -109,7 +109,7 @@
                     perPage: 5,
                     currentPage: 1,
                     from: 1,
-                    to: 1 * 5
+                    to: 1 * 10
                 },
                 currentPage: 1,
                 sorted: {

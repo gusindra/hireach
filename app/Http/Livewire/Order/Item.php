@@ -11,7 +11,6 @@ use Illuminate\Support\Facades\Auth;
 
 class Item extends Component
 {
-    public $input;
     public $data;
     public $products;
     public $item_id;
@@ -20,10 +19,10 @@ class Item extends Component
     public $unit;
     public $qty;
     public $description;
-    public $selectedProduct;
     public $tax = 0;
     public $total;
     public $percentage = 100;
+    public $selectedProduct;
     public $modalVisible = false;
     public $modalProductVisible = false;
     public $confirmingModalRemoval = false;
@@ -52,7 +51,7 @@ class Item extends Component
             'model'         => 'Order',
             'name'          => $this->name,
             'unit'          => $this->unit,
-            'qty'           => $this->qty,
+            'qty'          => $this->qty,
             'price'         => $this->price,
             'total_percentage'  => $this->percentage,
             'note'          => $this->description,
@@ -89,15 +88,8 @@ class Item extends Component
         $this->emit('added');
     }
 
-    public function updateTax()
-    {
-        // dd($this->tax);
-        $order = Order::find($this->data->id);
-        $order->update(['vat'=>$this->tax]);
-    }
-
     /**
-     * The update function.
+     * The update order item.
      *
      * @return void
      */
@@ -112,7 +104,20 @@ class Item extends Component
             'note' => $this->description
         ]);
         $this->modalVisible = false;
+
         $this->emit('saved');
+    }
+    
+    /**
+     * The update order vat.
+     *
+     * @return void
+     */
+    public function updateTax()
+    {
+        // dd($this->tax);
+        $order = Order::find($this->data->id);
+        $order->update(['vat'=>$this->tax]);
     }
 
     /**
@@ -198,10 +203,10 @@ class Item extends Component
     public function read()
     {
         $items = OrderProduct::orderBy('id', 'asc')->where('model', 'Order')->where('model_id', $this->data->id)->get();
-        $this->total = Order::find($this->data->id)->total;
+        $total = Order::find($this->data->id)->total;
         return [
             'items' => $items,
-            'total' => $this->total
+            'total' => $total
         ];
     }
 

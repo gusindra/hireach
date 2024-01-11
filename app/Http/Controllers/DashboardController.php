@@ -19,20 +19,23 @@ class DashboardController extends Controller
     {
         // $this->middleware(function ($request, $next) {
         //     // Your auth here
-        //     $this->user_info=Auth::user()->super->first();
-        //     if($this->user_info && $this->user_info->role=='superadmin'){
-        //         return $next($request);
-        //     }
-        //     abort(404);
+        //     // $this->user_info=Auth::user()->super->first();
+        //     // if($this->user_info && $this->user_info->role=='superadmin'){
+        //     //     return $next($request);
+        //     // }
+        //     // abort(404);
         // });
     }
 
     public function index(Request $request)
     {
+
         if(empty(auth()->user()->currentTeam)){
             return redirect()->route('teams.create');
         }
+
         if($request->has('v')){
+
             $dateS = Carbon::now()->startOfMonth();
             $dateE = Carbon::now()->startOfMonth()->addMonth(1);
             $event = Contract::whereBetween('expired_at',[$dateS,$dateE])->get();
@@ -54,8 +57,11 @@ class DashboardController extends Controller
             }
 
             return view('main-side.dashboard', ['event' => $arr_event, 'stat' => $stat]);
+        }else{
+            return view('dashboard');
         }
-        return view('dashboard');
+
+
 
     }
 }

@@ -20,7 +20,6 @@ class TeamTable extends LivewireDatatable
     public function columns()
     {
         return [
-    		Column::name('user.id')->filterable()->label('ID'),
     		Column::name('user.name')->filterable()->label('Name'),
     		Column::name('user.email')->filterable()->label('Email'),
     		DateColumn::name('created_at')->label('Register Date'),

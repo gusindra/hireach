@@ -36,7 +36,7 @@
             <x-jet-label for="slug" value="{{ __('Embed Script to Website') }}" />
             <div>
                 <div class="mt-1 flex rounded-md shadow-sm">
-                    <textarea class="dark:text-slate-300 dark:bg-slate-700 w-full h-40 text-sm" readonly="true"><!--Start of Telixcel Chat Script-->
+                    <textarea class="dark:text-slate-300 dark:bg-slate-700 w-full h-40" readonly="true"><!--Start of Telixcel Chat Script-->
 <div style="position: fixed;bottom: 0;padding: 10px;z-index: 99;text-align: right;"><div id="frame" data-id="{{$dataId}}" style="position: fixed;bottom: -15px;width: auto;right: 10px;"></div></div>
 <script src="https://telixcel.s3.ap-southeast-1.amazonaws.com/assets/telixcel-chat.min.js" type="text/javascript"></script>
 <!--End of Telixcel Chat Script--></textarea>

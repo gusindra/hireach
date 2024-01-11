@@ -46,12 +46,6 @@ class SmsBlastTable extends LivewireDatatable
     		DateColumn::name('created_at')->label('Creation Date')->sortBy('created_at', 'desc')->format('d-m-Y H:i:s')->filterable()->alignRight(),
     		DateColumn::name('updated_at')->label('Updated Status')->format('H:i:s'),
     		Column::name('status')->label('Status')->hide(),
-    		Column::callback(['msisdn'], function ($nohp) {
-                if(strlen($nohp)>6){
-                    return OperatorPhoneNumber::where('code', substr($nohp, 0, 5))->first()->operator;
-                }
-                return "-";
-            })->label('OP')->hide(),
     		BooleanColumn::name('otp')->hide()->label('OTP')
     	];
     }
@@ -63,7 +57,7 @@ class SmsBlastTable extends LivewireDatatable
             })->label('Action'),
     		Column::callback(['status'], function ($y) {
                 return view('label.type', ['type' => $y]);
-            })->label('Status')->filterable(['DELIVERED', 'UNDELIVERED', 'ACCEPTED', 'PROCESSING', 'PROCESSED'])->label('Status')->exportCallback(function ($value) {
+            })->label('Status')->filterable(['DELIVERED', 'UNDELIVERED', 'ACCEPTED', 'PROCESSING', 'PROCESSED', 'REJECT INVALID SERVID'])->label('Status')->exportCallback(function ($value) {
                 return (string) $value;
             }),
     		Column::name('user_id')->callback(['user_id'], function ($value) {
@@ -84,11 +78,15 @@ class SmsBlastTable extends LivewireDatatable
     		Column::name('sender_id')->label('Sender Name')->filterable(),
     		Column::name('status')->label('Status')->hide(),
     		Column::callback(['msisdn'], function ($nohp) {
+    		    $text = "-";
                 if(strlen($nohp)>6){
-                    return OperatorPhoneNumber::where('code', substr($nohp, 0, 5))->first()->operator;
+                    $op = OperatorPhoneNumber::where('code', substr($nohp, 0, 5))->first();
+                    if($op){
+                        return $op->operator;
+                    }
                 }
-                return "-";
-            })->label('OP')->hide(),
+                return $text;
+            })->label('OP')->hide()->filterable(),
     		BooleanColumn::name('otp')->hide()->label('OTP')
     	];
     }
@@ -100,7 +98,7 @@ class SmsBlastTable extends LivewireDatatable
         }
         return $this->clientTbl();
     }
-
+    
     public function cellClasses($row, $column)
     {
         //return $row->{'status'};

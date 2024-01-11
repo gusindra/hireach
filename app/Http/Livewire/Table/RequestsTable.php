@@ -12,7 +12,6 @@ class RequestsTable extends LivewireDatatable
 {
     public $model = Request::class;
     public $hideable = 'select';
-    public $export_name = 'CHAT_REQUEST';
 
     public function builder()
     {
@@ -28,35 +27,16 @@ class RequestsTable extends LivewireDatatable
             Column::name('user_id')->label('User ID')->filterable(),
             Column::name('created_at')->label('Creation Date')->filterable(),
     		NumberColumn::name('id')->label('ID')->sortBy('id'),
-    		Column::callback(['from', 'agent.name'], function ($from, $agent) {
+    		Column::callback(['agent.name', 'from'], function ($agent, $from) {
                 if($from == 'bot'){
                     return 'BOT';
                 }
                 if($from == 'api'){
                     return 'API';
                 }
-            })->label('Agent ID'),
-            Column::callback(['agent.name'], function ($agent) {
-                if($agent){
-                    return $agent;
-                }
-                return '-';
-            })->label('Agent Name')->hide()->exportCallback(function ($value) {
-                return (string) $value ?? '-';
-            }),
-    		Column::callback(['client_id'], function ($id) {
-                return $id;
-            })->label('Client ID')->exportCallback(function ($value) {
-                return (string) $value;
-            }),
-            Column::callback(['client.name'], function ($client) {
-                if($client){
-                    return $client;
-                }
-                return '-';
-            })->label('Client Name')->hide()->exportCallback(function ($value) {
-                return (string) $value ?? '-';
-            }),
+                return $agent;
+            })->label('Agent'),
+    		Column::name('client.name')->label('Client'),
     		Column::name('reply')->label('Message'),
     		Column::callback(['type'], function ($y) {
                 return view('label.type', ['type' => $y]);

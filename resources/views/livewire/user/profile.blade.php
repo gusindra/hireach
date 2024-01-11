@@ -75,7 +75,6 @@
                 </div>
             </div>
         </x-slot>
-        
         <x-slot name="actions">
             <x-jet-action-message class="mr-3" on="user_saved">
                 {{ __('Profile user saved.') }}

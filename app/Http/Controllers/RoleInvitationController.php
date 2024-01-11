@@ -35,24 +35,24 @@ class RoleInvitationController extends Controller
                     }
                 }
             }
-
+            
             $roleUser = RoleUser::where('user_id', $newTeamMember->id)->get();
             if($roleUser){
                 RoleUser::where('user_id', $newTeamMember->id)->update(['active'=>NULL]);
             }
-
+            
             RoleUser::create([
                 'user_id' => $newTeamMember->id,
                 'role_id' => $invitation->role_id,
                 'team_id' => $invitation->team_id
             ]);
-
+            
             $teamUser = TeamUser::firstOrCreate(
                 ['user_id' =>  $newTeamMember->id],
                 ['team_id' => $invitation->team_id],
                 ['role' => 'member']
             );
-
+            
             // TeamUser::create([
             //     'user_id'   => $newTeamMember->id,
             //     'role'      => 'member',

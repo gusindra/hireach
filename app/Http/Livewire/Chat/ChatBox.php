@@ -24,14 +24,13 @@ class ChatBox extends Component
     public $transcript = false;
     public $modalAttachment = false;
 
-    public function mount($client_id=null)
+    public function mount($client_id, $team)
     {
-        if(!is_null($client_id)){
-            $this->client = Client::find($client_id);
-            $this->client_id = $client_id;
-            $this->owner =  $this->client->user_id;
-            $this->team =  $this->client->team->detail;
-        }
+        $this->client = Client::find($client_id);
+        $this->client_id = $client_id;
+        $this->owner =  $this->client->user_id;
+        $this->team =  $team;
+
     }
 
     public function sendMessage(){
@@ -44,6 +43,7 @@ class ChatBox extends Component
             'type'      => 'text',
             'client_id' => $this->client->uuid,
             'sent_at'   => date('Y-m-d H:i:s'),
+            'team_id'   => $this->team->id
         ]);
         $this->message = null;
         // dd($request->client->team->detail);
@@ -59,7 +59,8 @@ class ChatBox extends Component
             'reply'     => $this->message,
             'from'      => $this->client->id,
             'user_id'   => $this->owner,
-            'type'      => $this->type
+            'type'      => $this->type,
+            'team_id'   => $this->team->id
         ]);
         $this->message = null;
 
@@ -97,7 +98,7 @@ class ChatBox extends Component
     {
         return view('livewire.chat.chat-box', [
             'data' => $this->read(),
-            'cid' => $this->client_id
+            'cid' => $this->client_id,
         ]);
     }
 }

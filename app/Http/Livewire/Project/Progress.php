@@ -30,9 +30,8 @@ class Progress extends Component
         $this->project->update([
             'status' => 'submit'
         ]);
-        return redirect(request()->header('Referer'));
-
         $this->emit('saved');
+        return redirect(request()->header('Referer'));
     }
 
     public function next(){
@@ -47,9 +46,9 @@ class Progress extends Component
         $flow->comment = $this->remark;
 
         $flow->save();
-        return redirect(request()->header('Referer'));
 
         $this->emit('saved');
+        return redirect(request()->header('Referer'));
     }
 
     public function decline(){
@@ -64,9 +63,9 @@ class Progress extends Component
         $flow->comment = $this->remark;
 
         $flow->save();
-        return redirect(request()->header('Referer'));
 
         $this->emit('saved');
+        return redirect(request()->header('Referer'));
     }
 
     public function render()

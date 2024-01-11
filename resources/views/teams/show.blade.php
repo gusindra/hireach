@@ -43,10 +43,6 @@
 
             @livewire('teams.team-member-manager', ['team' => $team])
 
-            <div class="hidden">
-                @livewire('team.wa-web', ['team' => $team])
-            </div>
-
             @if (Gate::check('delete', $team) && ! $team->personal_team)
                 <x-jet-section-border />
 
