@@ -28,7 +28,7 @@ class ProcessSmsApi implements ShouldQueue
      */
     public function __construct($request, $user)
     {
-        $this->request = $request;
+        $request = $request;
         $this->user = $user;
     }
 
@@ -41,7 +41,15 @@ class ProcessSmsApi implements ShouldQueue
     {
         //Log::debug($this->service);
         //filter OTP & Non OTP
-        if($this->request['otp']==false){
+        if($this->request['provider']=='provider1' || $this->request['otp']){
+            $this->MKProvider($this->request);
+        }elseif($this->request['provider']=='provider2'){
+            $this->EMProvider($this->request);
+        }
+    }
+
+    private function MKProvider($request){
+        if($request['otp']==false){
             $user   = env('MK_NON_OTP_USER');
             $pass   = env('MK_NON_OTP_PSW');
             $serve  = env('MK_NON_OTP_SERVICE');
@@ -51,15 +59,15 @@ class ProcessSmsApi implements ShouldQueue
             $serve  = env('MK_OTP_SERVICE');
         }
         $msg    = '';
-        // if(array_key_exists('servid', $this->request)){
-        //     $serve  = $this->request['servid'];
+        // if(array_key_exists('servid', $request)){
+        //     $serve  = $request['servid'];
         // }
-        if($serve==$this->request['servid']){
+        if($serve==$request['servid']){
             $url = 'http://www.etracker.cc/bulksms/mesapi.aspx';
             //$url = 'http://telixcel.com/api/send/smsbulk';
             //$url = 'http://telixnet.test/api/send/smsbulk';
             $response = '';
-            if($this->request['type']=="0"){
+            if($request['type']=="0"){
                 // $response = Http::asForm()->accept('application/xml')->post($url, [
                 //     'user' => $user,
                 //     'pass' => $pass,
@@ -75,23 +83,23 @@ class ProcessSmsApi implements ShouldQueue
                 $response = Http::get($url, [
                     'user' => $user,
                     'pass' => $pass,
-                    'type' => $this->request['type'],
-                    'to' => $this->request['to'],
-                    'from' => $this->request['from'],
-                    'text' => $this->request['text'],
+                    'type' => $request['type'],
+                    'to' => $request['to'],
+                    'from' => $request['from'],
+                    'text' => $request['text'],
                     'servid' => $serve,
-                    'title' => $this->request['title'],
+                    'title' => $request['title'],
                     'detail' => 1,
                 ]);
                 // $response = Http::get($url, [
                 //     'user' => $user,
                 //     'pass' => $pass,
-                //     'type' => $this->request['type'],
-                //     'to' => $this->request['to'],
-                //     'from' => $this->request['from'],
-                //     'text' => $this->request['text'],
+                //     'type' => $request['type'],
+                //     'to' => $request['to'],
+                //     'from' => $request['from'],
+                //     'text' => $request['text'],
                 //     'servid' => $serve,
-                //     'title' => $this->request['title'],
+                //     'title' => $request['title'],
                 //     'detail' => 1,
                 // ]);
             }
@@ -189,12 +197,12 @@ class ProcessSmsApi implements ShouldQueue
                     //         'msg_id'    => preg_replace('/\s+/', '', $msg_msis[1]),
                     //         'user_id'   => $this->user->id,
                     //         'client_id' => $this->chechClient("200", $msg_msis[0]),
-                    //         'sender_id' => $this->request['from'],
-                    //         'type'      => $this->request['type'],
-                    //         'otp'       => $this->request['otp'],
+                    //         'sender_id' => $request['from'],
+                    //         'type'      => $request['type'],
+                    //         'otp'       => $request['otp'],
                     //         'status'    => "PROCESSED",
                     //         'code'      => $msg_msis[2],
-                    //         'message_content'  => $this->request['text'],
+                    //         'message_content'  => $request['text'],
                     //         'currency'  => $msg_msis[3],
                     //         'price'     => $msg_msis[4],
                     //         'balance'   => $balance,
@@ -211,12 +219,12 @@ class ProcessSmsApi implements ShouldQueue
                                 'msg_id'    => preg_replace('/\s+/', '', $msg_msis[1]),
                                 'user_id'   => $this->user->id,
                                 'client_id' => $this->chechClient("200", $msg_msis[0]),
-                                'sender_id' => $this->request['from'],
-                                'type'      => $this->request['type'],
-                                'otp'       => $this->request['otp'],
+                                'sender_id' => $request['from'],
+                                'type'      => $request['type'],
+                                'otp'       => $request['otp'],
                                 'status'    => "PROCESSED",
                                 'code'      => $msg_msis[2],
-                                'message_content'  => $this->request['text'],
+                                'message_content'  => $request['text'],
                                 'currency'  => $msg_msis[3],
                                 'price'     => $msg_msis[4],
                                 'balance'   => $balance,
@@ -239,7 +247,40 @@ class ProcessSmsApi implements ShouldQueue
         }else{
             $this->saveResult('Reject invalid servid');
         }
+    }
 
+    private function EMProvider($request){
+        $msg = $this->saveResult('progress');
+        if($msg){
+            $url = 'https://enjoymov.co/prod-api/kstbCore/sms/send';
+            $md5_key = env('EM_MD5_KEY'); //'AFD4274C39AB55D8C8D08FA6E145D535';
+            $merchantId = env('EM_MERCHANT_ID'); //'KSTB904790';
+            $callbackUrl = 'http://hireach.archeeshop.com/receive-sms-status';
+            $phone = '81339668556';
+            $content = 'test enjoymov api';
+            $msgChannel = 'SM'; //WA
+            $countryCode = '62';
+
+            
+            $code = str_split($request->to, 2);
+            $countryCode = $code[0];
+            $phone = substr($request->to, 2);
+    
+            $sb = $md5_key . $merchantId . $phone . $content;
+            $sign = md5($sb);
+            //return $sign;
+            $response = Http::get($url, [
+                'merchantId' => $merchantId,
+                'sign' => $sign,
+                'type' => $request->type,
+                'phone' => $phone,
+                'content' => $request->text,
+                "callbackUrl" => $callbackUrl,
+                'countryCode' => $countryCode,
+                'msgChannel' => $request['msgChannel'],
+                "msgId" => $msg->id
+            ]);
+        }
     }
 
     private function saveResult($msg){
@@ -257,7 +298,8 @@ class ProcessSmsApi implements ShouldQueue
             'balance'           => 0,
             'msisdn'            => $this->request['to'],
         ];
-        BlastMessage::create($modelData);
+        $mms = BlastMessage::create($modelData);
+        return $mms;
     }
 
     private function chechClient($status, $msisdn=null){

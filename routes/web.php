@@ -208,54 +208,54 @@ Route::get('queue/{id}', function ($id) {
     }elseif($id=="restart"){
         \Artisan::call('queue:restart');
     }elseif($id=='json'){
-        $path = storage_path() . "/csvjson.json";
-        $path = public_path() . "/csvjson.json";
-        $content = json_decode(file_get_contents($path), true);
-        try {
-            foreach($content as $sms){
-                $msg_id = preg_replace('/\s+/', '', $sms['Message ID']);
-                $msisdn = preg_replace('/\s+/', '', $sms['Send to']);
-                $user_id = 16;
-                // return $sms['Date/Time'];
-                // return $sms['From'];
-                // return $sms['Send to'];
-                // return $sms['Message Title'];
-                // return $sms['Message Content'];
-                // return $sms['Message Status'];
-                $myDate = $sms['Date/Time'];
-                $smsDate = Carbon::createFromFormat('d/m/Y H:i', $myDate)->format('Y-m-d H:i');
-                $client = Client::where('phone', $msisdn)->where('user_id', $user_id)->firstOr(function () use ($msisdn, $user_id) {
-                    return Client::create([
-                        'phone' => $msisdn,
-                        'user_id' => $user_id,
-                        'uuid' => Str::uuid()
-                    ]);
-                });
-                $modelData = [
-                    'msg_id'    => $msg_id,
-                    'user_id'   => $user_id,
-                    'client_id' => $client->uuid,
-                    'sender_id' => $sms['From'],
-                    'type'      => '0',
-                    'status'    => $sms['Message Status'],
-                    'code'      => '200',
-                    'message_content'  => $sms['Message Content'],
-                    'currency'  => 'IDR',
-                    'price'     => 500,
-                    'balance'   => 0,
-                    'msisdn'    => $msisdn,
-                    'created_by'=> $date,
-                    'updated_by'=> $date,
-                ];
-                $blast = BlastMessage::create($modelData);
+        // $path = storage_path() . "/csvjson.json";
+        // $path = public_path() . "/csvjson.json";
+        // $content = json_decode(file_get_contents($path), true);
+        // try {
+        //     foreach($content as $sms){
+        //         $msg_id = preg_replace('/\s+/', '', $sms['Message ID']);
+        //         $msisdn = preg_replace('/\s+/', '', $sms['Send to']);
+        //         $user_id = 16;
+        //         // return $sms['Date/Time'];
+        //         // return $sms['From'];
+        //         // return $sms['Send to'];
+        //         // return $sms['Message Title'];
+        //         // return $sms['Message Content'];
+        //         // return $sms['Message Status'];
+        //         $myDate = $sms['Date/Time'];
+        //         $smsDate = Carbon::createFromFormat('d/m/Y H:i', $myDate)->format('Y-m-d H:i');
+        //         $client = Client::where('phone', $msisdn)->where('user_id', $user_id)->firstOr(function () use ($msisdn, $user_id) {
+        //             return Client::create([
+        //                 'phone' => $msisdn,
+        //                 'user_id' => $user_id,
+        //                 'uuid' => Str::uuid()
+        //             ]);
+        //         });
+        //         $modelData = [
+        //             'msg_id'    => $msg_id,
+        //             'user_id'   => $user_id,
+        //             'client_id' => $client->uuid,
+        //             'sender_id' => $sms['From'],
+        //             'type'      => '0',
+        //             'status'    => $sms['Message Status'],
+        //             'code'      => '200',
+        //             'message_content'  => $sms['Message Content'],
+        //             'currency'  => 'IDR',
+        //             'price'     => 500,
+        //             'balance'   => 0,
+        //             'msisdn'    => $msisdn,
+        //             'created_by'=> $date,
+        //             'updated_by'=> $date,
+        //         ];
+        //         $blast = BlastMessage::create($modelData);
 
-                $blast->created_at = $smsDate;
-                $blast->updated_at = $smsDate;
-                $blast->save();
-            }
-        } catch (\Throwable $th) {
-            dd($th);
-        }
+        //         $blast->created_at = $smsDate;
+        //         $blast->updated_at = $smsDate;
+        //         $blast->save();
+        //     }
+        // } catch (\Throwable $th) {
+        //     dd($th);
+        // }
 
     }
     dd("Job is done");
@@ -763,13 +763,30 @@ Route::get('/joymove', function(HttpRequest $request){
     $url = 'https://enjoymov.co/prod-api/kstbCore/sms/send';
     $md5_key = 'AFD4274C39AB55D8C8D08FA6E145D535';
     $merchantId = 'KSTB904790';
+    $callbackUrl = 'http://hireach.archeeshop.com/receive-sms-status';
+    $phone = '6281339668556';
+    $content = 'test enjoymov api wa';
 
-    $phone = '081339668556';
-    $content = 'test enjoymov api';
-
+    $code = str_split($phone, 2);
+    
+    echo $code[0];
+    echo "<br>";
+    echo substr($phone, 2);
+    return 1;
     $sb = $md5_key . $merchantId . $phone . $content;
     $sign = md5($sb);
-    return $sign;
+    //return $sign;
+    $response = Http::get($url, [
+        'merchantId' => $merchantId,
+        'sign' => $sign,
+        'type' => $request['type'],
+        'phone' => $request['to'],
+        'countryCode' => $request['countryCode'],
+        'content' => $request['text'],
+        'msgChannel' => $request['msgChannel'],
+        "callbackUrl" => $callbackUrl,
+        "msgId" => 'intenalID001'
+    ]);
 
     return $request->all();
 });

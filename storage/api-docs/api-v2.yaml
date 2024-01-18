@@ -18,9 +18,9 @@ paths:
       tags:
         - one way
       summary: 'Send sms to list of Recipients mobile number with given input array'
-      operationId: sendBulkSms
+      operationId: postOneWayResource
       requestBody:
-        $ref: '#/components/requestBodies/SmsArray'
+        $ref: '#/components/requestBodies/OneWayArray'
       responses:
         '200':
           description: 'successful operation'
@@ -28,6 +28,56 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ApiResponse'
+      security:
+        - bearerAuth: []
+    get:
+      tags:
+        - one way
+      summary: 'Get all one way resource'
+      operationId: getOneWayResource
+      parameters:
+        -
+          name: provider
+          in: query
+          required: true
+          schema:
+            type: string
+            enum: [provider-1, provider-2]
+        -
+          name: page
+          in: query
+          required: true
+          default: 0
+          schema:
+            type: integer
+        -
+          name: pageSize
+          in: query
+          required: true
+          default: 10
+          schema:
+            type: integer
+        -
+          name: order
+          in: query
+          required: false
+          schema:
+            type: string
+            enum: [id, newest, oldnest]
+      responses:
+        '200':
+          description: 'successful operation'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SingleSms'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/SingleSms'
+        '400':
+          description: 'Invalid supplied'
+        '404':
+          description: 'Record not found'
       security:
         - bearerAuth: []
   /two-way:
@@ -340,6 +390,63 @@ components:
       type: object
       xml:
         name: BulkSms
+    OneWayRequest:
+      title: 'One Way Model'
+      description: 'One Way Model'
+      required:
+        - channel
+        - type
+        - to
+        - text
+        - title
+      properties:
+        channel:
+          title: 'channel'
+          description: 'Channel resource to send content: email, wa, sms_otp_sid, sms_notp_sid, sms, talkbot'
+          type: string
+          default: 'email'
+        type:
+          title: 'type'
+          description: 'Type for content. Default is 0 for text.'
+          type: integer
+          format: int64
+        title:
+          title: 'title'
+          description: 'Broadcast Title'
+          type: string
+          default: 'New Product Launch'
+        text:
+          title: 'text'
+          description: 'Message Content'
+          type: string
+          default: 'Hi, [Name], your canvasdesign account has been updated with the following features in March. Find out more on our website!'
+        templateid:
+          title: 'templateid'
+          description: ''
+          type: integer
+          default: 1
+        to:
+          title: 'to'
+          description: 'The recipient`s mobile number must have the country code (without the “+” sign). Ex: 6281223344556'
+          type: string
+          format: msisdn
+        from:
+          title: 'from'
+          description: 'Sender Name if using SenderID for channel sms_otp_sid or sms_notp_sid.'
+          type: string
+        provider:
+          title: 'provider'
+          description: 'Provider is base price to sending Notification: provider1, provider2'
+          type: string
+          default: 'provider2'
+        otp:
+          title: 'otp'
+          description: 'SMS Type OTP or NON OTP: 0, 1'
+          type: boolean
+          default: 0
+      type: object
+      xml:
+        name: BulkSms
     SendSms:
       title: 'Send SMS model'
       description: 'Send SMS model'
@@ -452,6 +559,7 @@ components:
             items:
               $ref: '#/components/schemas/User'
     SmsArray:
+    OneWayArray:
       description: 'List of sms object'
       required: true
       content:
@@ -459,7 +567,7 @@ components:
           schema:
             type: array
             items:
-              $ref: '#/components/schemas/BulkSms'
+              $ref: '#/components/schemas/OneWayRequest'
   securitySchemes:
     bearerAuth:
       type: http

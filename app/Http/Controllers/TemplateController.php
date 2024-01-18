@@ -6,7 +6,6 @@ use App\Models\Template;
 
 class TemplateController extends Controller
 {
-
     public function view()
     {
         $template = Template::select('name', 'description as title', 'template_id', 'id', 'type as className')->where('type','!=','helper')->whereHas('teams', function ($query) {
@@ -79,7 +78,7 @@ class TemplateController extends Controller
         }
         // return $arrayLevel;
         // return $array;
-        return $template;
+        //return $template;
         return view('template.view', ['data'=>json_encode($array)]);
     }
 
@@ -89,6 +88,5 @@ class TemplateController extends Controller
 
     public function edit(Template $template){
         return redirect()->to("/template/". $template->uuid);
-
     }
 }

@@ -43,7 +43,7 @@ class ApiBulkSmsController extends Controller
 
     public function status(Request $request)
     {
-        // Log::debug($request->all());
+        Log::debug($request->all());
         ProcessSmsStatus::dispatch($request->all());
         
         // BlastMessage::where("msg_id", $request->msgID)->where("msisdn", $request->msisdn)->first()->update([
