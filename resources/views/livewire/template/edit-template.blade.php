@@ -32,160 +32,167 @@
             </div>
         </div>
     @endif
-
-    {{-- Template Information --}}
-    <x-jet-form-section submit="updateTemplate">
-        <x-slot name="title">
-            {{ __('Template') }}
-        </x-slot>
-
-        <x-slot name="description">
-            {{ __('The template\'s name and information.') }}
-        </x-slot>
-
-        <x-slot name="form">
-            <div class="col-span-6 grid grid-cols-5">
-                <!-- Type Information -->
-                <div class="col-span-2">
-                    <x-jet-label class="capitalize" value="{{ $template->type }}" />
-
-                    <div class="flex items-center mt-1">
-                        <div class="p-3 pl-0 pt-0">
-                            <div class="border border-lightgrey-400 p-1 rounded-lg">
-                                <div class="text-gray-700 dark:text-slate-300 text-sm ">
-                                    @if($template->type == 'api')
-                                        All Respond will check via API form endpoint that given.
-                                    @elseif($template->type == 'welcome')
-                                        Send a welcome message in the first time.
-                                    @elseif($template->type == 'text')
-                                        Sent message base on the text/keyword send by customer.
-                                    @elseif($template->type == 'question')
-                                        Sent message helper/question for customer.
-                                    @elseif($template->type == 'error')
-                                        Sent error message to customer.
-                                    @elseif($template->type == 'helper')
-                                        Helper template for agent.
-                                    @else
-                                        Manual Template
-                                    @endif
+    
+    <div class="grid grid-cols-2">
+        <div>
+            {{-- Template Information --}}
+            <x-jet-form-section submit="updateTemplate">
+                <x-slot name="title" class="m-3">
+                    {{ __('Template') }}
+                </x-slot>
+        
+                <x-slot name="description">
+                    {{ __('The template\'s name and information.') }}
+                </x-slot>
+        
+                <x-slot name="form">
+                    <div class="col-span-6 grid grid-cols-5">
+                        <!-- Type Information -->
+                        <div class="col-span-2">
+                            <x-jet-label class="capitalize" value="{{ $template->type }}" />
+        
+                            <div class="flex items-center mt-1">
+                                <div class="p-3 pl-0 pt-0">
+                                    <div class="border border-lightgrey-400 p-1 rounded-lg">
+                                        <div class="text-gray-700 dark:text-slate-300 text-sm ">
+                                            @if($template->type == 'api')
+                                                All Respond will check via API form endpoint that given.
+                                            @elseif($template->type == 'welcome')
+                                                Send a welcome message in the first time.
+                                            @elseif($template->type == 'text')
+                                                Sent message base on the text/keyword send by customer.
+                                            @elseif($template->type == 'question')
+                                                Sent message helper/question for customer.
+                                            @elseif($template->type == 'error')
+                                                Sent error message to customer.
+                                            @elseif($template->type == 'helper')
+                                                Helper template for agent.
+                                            @else
+                                                Manual Template
+                                            @endif
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-span-1">
+                            <x-jet-label for="name" value="{{ __('Created By') }}" />
+                            <div class="flex items-center mt-1">
+                                <div class="p-3 pl-0 pt-0">
+                                    <div class="p-1 rounded-lg">
+                                        <div class="text-gray-700 dark:text-slate-300 text-sm capitalize">
+                                            {{$template->user_id && $template->createdBy ? $template->createdBy->name:''}}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-span-1">
+                            <x-jet-label for="name" value="{{ __('Created At') }}" />
+                            <div class="flex items-center mt-1">
+                                <div class="p-3 pl-0 pt-0">
+                                    <div class="p-1 rounded-lg">
+                                        <div class="text-gray-700 dark:text-slate-300 text-sm ">
+                                            {{$template->created_at->format('d F Y')}}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-span-1">
+                            <x-jet-label for="name" value="{{ __('Updated At') }}" />
+                            <div class="flex items-center mt-1">
+                                <div class="p-3 pl-0 pt-0">
+                                    <div class="p-1 rounded-lg">
+                                        <div class="text-gray-700 dark:text-slate-300 text-sm ">
+                                        {{$template->updated_at->format('d F Y')}}
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
-                <div class="col-span-1">
-                    <x-jet-label for="name" value="{{ __('Created By') }}" />
-                    <div class="flex items-center mt-1">
-                        <div class="p-3 pl-0 pt-0">
-                            <div class="p-1 rounded-lg">
-                                <div class="text-gray-700 dark:text-slate-300 text-sm capitalize">
-                                    {{$template->user_id && $template->createdBy ? $template->createdBy->name:''}}
-                                </div>
+        
+                    <!-- Template Name -->
+                    <div class="col-span-6 sm:col-span-6">
+                        <x-jet-label for="name" value="{{ __('Name') }}" />
+                        <x-jet-input id="name"
+                                    type="text"
+                                    class="mt-1 block w-full"
+                                    wire:model="name"
+                                    wire:model.defer="name"
+                                    wire:model.debunce.800ms="name"
+                                    :disabled="! Gate::check('update', $template)" />
+                        <x-jet-input-error for="name" class="mt-2" />
+                    </div>
+        
+                    <!-- Template Description -->
+                    <div class="col-span-6 sm:col-span-6">
+                        <x-jet-label for="description" value="{{ __('Description') }}" />
+        
+                        <x-textarea wire:model="description"
+                                    wire:model.defer="description"
+                                    value="description" class="mt-1 block w-full" :disabled="! Gate::check('update', $template)"></x-textarea>
+                        <x-jet-input-error for="name" class="mt-2" />
+                    </div>
+        
+                    <!-- is_enabled -->
+                    <div class="col-span-6 sm:col-span-6">
+        
+                        <div class="flex items-start">
+                            <div class="flex items-center h-5">
+                                <input id="is_enabled" name="is_enabled" wire:model="is_enabled"
+                                    wire:model.defer="is_enabled" type="checkbox" class="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300 rounded">
+                            </div>
+                            <div class="ml-3 text-sm">
+                                <label for="is_enabled" class="font-medium text-gray-700 dark:text-slate-300">is enable ?</label>
+                                <p class="text-gray-500 dark:text-slate-300">Enable template to send respond to your customer.</p>
                             </div>
                         </div>
                     </div>
-                </div>
-                <div class="col-span-1">
-                    <x-jet-label for="name" value="{{ __('Created At') }}" />
-                    <div class="flex items-center mt-1">
-                        <div class="p-3 pl-0 pt-0">
-                            <div class="p-1 rounded-lg">
-                                <div class="text-gray-700 dark:text-slate-300 text-sm ">
-                                    {{$template->created_at->format('d F Y')}}
-                                </div>
+        
+                    @if($template->type!='helper' && $template->type!='template')
+                    <!-- is_wait_for_chat -->
+                    <div class="col-span-6 sm:col-span-6">
+        
+                        <div class="flex items-start">
+                            <div class="flex items-center h-5">
+                                <input id="is_waiting" name="is_waiting" wire:model="is_waiting"
+                                    wire:model.defer="is_waiting" type="checkbox" class="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300 rounded">
+                            </div>
+                            <div class="ml-3 text-sm">
+                                <label for="is_waiting" class="font-medium text-gray-700 dark:text-slate-300">is waiting Agent Response ?</label>
+                                <p class="text-gray-500 dark:text-slate-300">Enable to notif agent to give response to the customer.</p>
                             </div>
                         </div>
                     </div>
-                </div>
-                <div class="col-span-1">
-                    <x-jet-label for="name" value="{{ __('Updated At') }}" />
-                    <div class="flex items-center mt-1">
-                        <div class="p-3 pl-0 pt-0">
-                            <div class="p-1 rounded-lg">
-                                <div class="text-gray-700 dark:text-slate-300 text-sm ">
-                                {{$template->updated_at->format('d F Y')}}
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Template Name -->
-            <div class="col-span-6 sm:col-span-6">
-                <x-jet-label for="name" value="{{ __('Name') }}" />
-                <x-jet-input id="name"
-                            type="text"
-                            class="mt-1 block w-full"
-                            wire:model="name"
-                            wire:model.defer="name"
-                            wire:model.debunce.800ms="name"
-                            :disabled="! Gate::check('update', $template)" />
-                <x-jet-input-error for="name" class="mt-2" />
-            </div>
-
-            <!-- Template Description -->
-            <div class="col-span-6 sm:col-span-6">
-                <x-jet-label for="description" value="{{ __('Description') }}" />
-
-                <x-textarea wire:model="description"
-                            wire:model.defer="description"
-                            value="description" class="mt-1 block w-full" :disabled="! Gate::check('update', $template)"></x-textarea>
-                <x-jet-input-error for="name" class="mt-2" />
-            </div>
-
-            <!-- is_enabled -->
-            <div class="col-span-6 sm:col-span-6">
-
-                <div class="flex items-start">
-                    <div class="flex items-center h-5">
-                        <input id="is_enabled" name="is_enabled" wire:model="is_enabled"
-                            wire:model.defer="is_enabled" type="checkbox" class="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300 rounded">
-                    </div>
-                    <div class="ml-3 text-sm">
-                        <label for="is_enabled" class="font-medium text-gray-700 dark:text-slate-300">is enable ?</label>
-                        <p class="text-gray-500 dark:text-slate-300">Enable template to send respond to your customer.</p>
-                    </div>
-                </div>
-            </div>
-
-            @if($template->type!='helper' && $template->type!='template')
-            <!-- is_wait_for_chat -->
-            <div class="col-span-6 sm:col-span-6">
-
-                <div class="flex items-start">
-                    <div class="flex items-center h-5">
-                        <input id="is_waiting" name="is_waiting" wire:model="is_waiting"
-                            wire:model.defer="is_waiting" type="checkbox" class="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300 rounded">
-                    </div>
-                    <div class="ml-3 text-sm">
-                        <label for="is_waiting" class="font-medium text-gray-700 dark:text-slate-300">is waiting Agent Response ?</label>
-                        <p class="text-gray-500 dark:text-slate-300">Enable to notif agent to give response to the customer.</p>
-                    </div>
-                </div>
-            </div>
-            @endif
-
-        </x-slot>
-
-        @if (Gate::check('update', $template))
-            <x-slot name="actions">
-                <x-jet-action-message class="mr-3" on="saved">
-                    {{ __('Template saved.') }}
-                </x-jet-action-message>
-
-                <x-jet-button>
-                    {{ __('Save') }}
-                </x-jet-button>
-            </x-slot>
-        @endif
-    </x-jet-form-section>
+                    @endif
+        
+                </x-slot>
+        
+                @if (Gate::check('update', $template))
+                    <x-slot name="actions">
+                        <x-jet-action-message class="mr-3" on="saved">
+                            {{ __('Template saved.') }}
+                        </x-jet-action-message>
+        
+                        <x-jet-button>
+                            {{ __('Save') }}
+                        </x-jet-button>
+                    </x-slot>
+                @endif
+            </x-jet-form-section>
+        </div>
+        <div>
+            @livewire('template.add-action', ['template' => $template])
+        </div>
+    </div>
 
     @if($template->type!='welcome' && $template->type!='helper' && $template->type!='template')
     @livewire('template.edit-trigger', ['template' => $template])
     @endif
 
-    @livewire('template.add-action', ['template' => $template])
+    
 
     @if($template->type=='api')
     @livewire('template.edit-api', ['template' => $template])

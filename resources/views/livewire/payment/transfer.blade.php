@@ -1,4 +1,17 @@
 <div>
+    <header class="max-w-7xl bg-white dark:bg-slate-900 border-b mx-auto">
+        <div class="mx-auto py-3 px-4 sm:px-6 lg:px-2 mx-auto">
+            <div class="font-semibold text-xl text-gray-800 dark:text-slate-300 leading-tight flex justify-between">
+                <div class="flex gap-3">
+                    <a href="{{route('payment.topup')}}" class="bg-gray-600 rounded-md py-1 px-4 hover:bg-gray-400">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6 text-white">
+                            <path fill-rule="evenodd" d="M9.53 2.47a.75.75 0 0 1 0 1.06L4.81 8.25H15a6.75 6.75 0 0 1 0 13.5h-3a.75.75 0 0 1 0-1.5h3a5.25 5.25 0 1 0 0-10.5H4.81l4.72 4.72a.75.75 0 1 1-1.06 1.06l-6-6a.75.75 0 0 1 0-1.06l6-6a.75.75 0 0 1 1.06 0Z" clip-rule="evenodd" />
+                        </svg>                       
+                    </a>
+                </div>
+            </div>
+        </div>
+    </header>
     <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
         <div class="overflow-hidden sm:rounded-lg"></div>
         <div class="py-3">
@@ -17,7 +30,7 @@
                                 <span>No Rekening</span><br>
                                 <span class="text-xl font-semibold"> 505 5564 644</span><br>
                                 <input id="rekening" class="text-xl font-semibold hidden" value="5055564644" />
-                                <span class="text-xs font-semibold">PT TELIXCEL CENTRIX INDONESIA <br>(KCP EPICENTRUM WALK)</span>
+                                <span class="text-xs font-semibold">PT FirmApps Prime Intelligence <br>(KCP EPICENTRUM WALK)</span>
                             </p>
                             <p class="copy mx-4 mt-6" data-for="#rekening">
                                 <button class="text-lg font-semibold text-green-600" @click="alert = true">Salin</button>
@@ -27,7 +40,7 @@
                         <div class="flex justify-between" x-data="{ input: 'Foo!' }">
                             <p class="mx-4 mt-1 text-gray-600 dark:text-slate-300">
                                 <span>Total Pembayaran</span><br>
-                                <span class="text-xl font-semibold">Rp {{number_format($order->total)}}</span>
+                                <span class="text-xl font-semibold">Rp {{number_format($order->items->sum('price'))}}</span>
                             </p>
                             <p class="mx-4 mt-1">
                                 <a wire:click="actionShowModal('detail')" href="#" x-clipboard="input" class="text-lg font-semibold text-green-600">Detail</a>
@@ -109,7 +122,7 @@
                                     </tr>
                                     <tr>
                                         <td class="p-2 text-sm">Account Name</td>
-                                        <td class="p-2 text-sm">PT TELIXCEL CENTRIX INDONESIA</td>
+                                        <td class="p-2 text-sm">PT FirmApps Prime Intelligence</td>
                                     </tr>
                                     <tr>
                                         <td class="p-2 text-sm">Account No</td>
@@ -122,7 +135,7 @@
                             Catatan
                             <li class="text-xs ">Simpan bukti pembayaran yang sewaktu-waktu diperlukan jika terjadi kendala transaksi</li>
                             <li class="text-xs ">Silakan kutip No Invoice saat pembayaran dilakukan</li>
-                            <li class="text-xs ">Pertanyaan terkait pembayaran dapat dikirimkan ke e-mail: <a class="text-blue-600 dark:text-blue-400" href="mailto:support@telixcel.com">support@telixcel.com</a></li>
+                            <li class="text-xs ">Pertanyaan terkait pembayaran dapat dikirimkan ke e-mail: <a class="text-blue-600 dark:text-blue-400" href="mailto:hireach@firmapps.ai">hireach@firmapps.ai</a></li>
                         </p>
                     </div>
                 </div>
@@ -156,7 +169,7 @@
                 <hr>
                 <div class="flex justify-between py-2">
                     <span class="font-bold text-xl">{{ __('Total Bayar') }}</span>
-                    <span class="font-bold text-xl">Rp{{number_format($order->total)}}</span>
+                    <span class="font-bold text-xl">Rp{{number_format($order->items->sum('price'))}}</span>
                 </div>
                 <hr>
                 <div class="flex justify-between pt-2">
@@ -164,7 +177,7 @@
                 </div>
                 <div class="flex justify-between pb-2">
                     <span>{{ __('Transfer Bank') }}</span>
-                    <span>Rp{{number_format($order->total)}}</span>
+                    <span>Rp{{number_format($order->items->sum('price'))}}</span>
                 </div>
                 <hr>
                 <div class="flex justify-between py-2">
@@ -209,7 +222,7 @@
                     <br>
                     <x-jet-label for="currency" value="{{ __('Detail Penerima') }}" />
                     <label class="block font-medium text-gray-700 dark:text-slate-300 text-xs" for="currency">
-                        contoh: Transfer ke Rekening PT TELIXCEL
+                        contoh: Transfer ke Rekening PT FirmApps
                     </label>
                 </div>
                 <div class="col-span-6 sm:col-span-4 px-3">

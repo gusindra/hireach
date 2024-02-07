@@ -7,7 +7,7 @@ use Illuminate\View\Component;
 
 class switchableStatus extends Component
 {
-    public $selection = ['Online', 'Praying', 'Meeting', 'Eating', 'Toileting', 'Maintenance', 'Offline'];
+    public $selection = ['Online', 'Away', 'Busy'];
     public $status;
 
     /**

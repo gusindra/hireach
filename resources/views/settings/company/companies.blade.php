@@ -1,10 +1,13 @@
 <x-app-layout>
     <x-slot name="header"></x-slot>
 
+    
     @include('settings.navigation', ['page'=>$page])
 
-    <div class="py-4">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-12">
+    <div class="grid grid-cols-12">
+        @includeWhen(auth()->user(), 'menu.admin-menu', [])
+
+        <div class="col-span-12 px-6 ml-24 mt-2">
             <div class="bg-white dark:bg-slate-600  overflow-hidden shadow-xl sm:rounded-lg">
                 <div class="container mx-auto">
                     @livewire('setting.company-add')

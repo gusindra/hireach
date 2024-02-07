@@ -15,6 +15,7 @@ class RequestsTable extends LivewireDatatable
 
     public function builder()
     {
+        //return Request::query()->with('agent', 'client')->orderBy('created_at', 'desc');
         if(auth()->user()->super && auth()->user()->super->first() && auth()->user()->super->first()->role == 'superadmin'){
             return Request::query()->with('agent', 'client')->orderBy('created_at', 'desc');
         }
@@ -24,7 +25,7 @@ class RequestsTable extends LivewireDatatable
     public function columns()
     {
         return [
-            Column::name('user_id')->label('User ID')->filterable(),
+            Column::name('user_id')->label('User')->filterable(),
             Column::name('created_at')->label('Creation Date')->filterable(),
     		NumberColumn::name('id')->label('ID')->sortBy('id'),
     		Column::callback(['agent.name', 'from'], function ($agent, $from) {

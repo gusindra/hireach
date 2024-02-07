@@ -40,6 +40,13 @@
                     @livewire('profile.delete-user-form')
                 </div>
             @endif
+
+            <x-jet-section-border />
+            @if(app('request')->input('v')==2)
+                Zonk
+            @else
+                @livewire('setting.dark-mode')
+            @endif
         </div>
     </div>
 </x-app-layout>

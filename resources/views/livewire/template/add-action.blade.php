@@ -1,6 +1,4 @@
 <div>
-    <x-jet-section-border />
-
     <!-- Manage List Action -->
     <div class="mt-10 sm:mt-0">
         <x-jet-action-section>

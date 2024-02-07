@@ -81,7 +81,7 @@ class TemplateController extends Controller
         //return $template;
         return view('template.view', ['data'=>json_encode($array)]);
     }
-
+    
     public function show($uuid){
         return view('template.show', ['uuid'=> $uuid]);
     }

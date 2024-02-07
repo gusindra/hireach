@@ -125,24 +125,19 @@
             });
         })(jQuery);
     </script>
-    <div>
-        @if (auth()->user()->currentTeam->id != 1 )
-        <div class="flex gap-3 px-2 pb-3">
-            <a class="inline-flex items-center bg-gray-800 border border-transparent rounded-md h-8 p-4 mt-4 font-semibold text-xs text-white uppercase hover:bg-gray-700 active:bg-gray-900 focus:outline-none focus:border-gray-900 focus:shadow-outline-gray disabled:opacity-25 transition" href="{{route('template')}}">All</a>
-            <a class="inline-flex items-center bg-gray-800 border border-transparent rounded-md h-8 p-4 mt-4 font-semibold text-xs text-white uppercase hover:bg-gray-700 active:bg-gray-900 focus:outline-none focus:border-gray-900 focus:shadow-outline-gray disabled:opacity-25 transition" href="{{route('template')}}?resource=1">1Way</a>
-            <a class="inline-flex items-center bg-gray-800 border border-transparent rounded-md h-8 p-4 mt-4 font-semibold text-xs text-white uppercase hover:bg-gray-700 active:bg-gray-900 focus:outline-none focus:border-gray-900 focus:shadow-outline-gray disabled:opacity-25 transition" href="{{route('template')}}?resource=2">2Way</a>
-            <a class="inline-flex items-center bg-gray-800 border border-transparent rounded-md h-8 p-4 mt-4 font-semibold text-xs text-white uppercase hover:bg-gray-700 active:bg-gray-900 focus:outline-none focus:border-gray-900 focus:shadow-outline-gray disabled:opacity-25 transition" href="{{route('view.template')}}">View Tree</a>
-        </div>
-        @endif
-        <hr class="py-2">
-        <div class="w-full h-screen mx-auto py-2 sm:px-6 lg:px-8">
-            <div id="edit-panel" class="view-state">
-                <button type="button" class="py-2 px-4 dark:bg-slate-600 hover:bg-gray-500 border border-gray-300" id="btn-report-path">Draw path</button>
-                <button type="button" class="py-2 px-4 dark:bg-slate-600 hover:bg-gray-500  border border-gray-300" id="btn-reset">Reset</button>
-                <a href="#" type="button" class="py-2 px-4 bg- dark:bg-slate-600 hover:bg-gray-500  border border-gray-300" id="btn-edit">Edit</a>
-                <input type="text" id="selected-node" class="border p-2 mb-2 border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 rounded-md shadow-sm dark:bg-slate-800 dark:text-slate-300 mt-1 block w-full dark:text-slate-500 w-full" placeholder="please select template" readonly="true">
+    <div class="grid grid-cols-12">
+        @includeWhen(auth()->user(), 'menu.user-content', [])
+
+        <div class="col-span-12 px-3 ml-24 mt-2">
+            <div class="w-full h-screen mx-auto py-2 sm:px-6 lg:px-8">
+                <div id="edit-panel" class="view-state">
+                    <button type="button" class="py-2 px-4 dark:bg-slate-600 hover:bg-gray-500 border border-gray-300" id="btn-report-path">Draw path</button>
+                    <button type="button" class="py-2 px-4 dark:bg-slate-600 hover:bg-gray-500  border border-gray-300" id="btn-reset">Reset</button>
+                    <a href="#" type="button" class="py-2 px-4 bg- dark:bg-slate-600 hover:bg-gray-500  border border-gray-300" id="btn-edit">Edit</a>
+                    <input type="text" id="selected-node" class="border p-2 mb-2 border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 rounded-md shadow-sm dark:bg-slate-800 dark:text-slate-300 mt-1 block w-full dark:text-slate-500 w-full" placeholder="please select template" readonly="true">
+                </div>
+                <div id="chart-container" style="text-align: left;zoom: 140%;"></div>
             </div>
-            <div id="chart-container" style="text-align: left;zoom: 140%;"></div>
         </div>
     </div>
 </x-app-layout>

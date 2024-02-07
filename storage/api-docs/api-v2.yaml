@@ -7,17 +7,20 @@ info:
   license:
     name: 'Apache 2.0'
     url: 'http://www.apache.org/licenses/LICENSE-2.0.html'
-  version: 1.1.0
+  version: 1.1.1
 servers:
   -
-    url: 'http://hireach.test/api'
-    description: 'HiReach API Mocking'
+    url: 'https://hireach.test/dapi'
+    description: 'HiReach API Sandbox'
+  -
+    url: 'https://hireach.test/api'
+    description: 'HiReach API Production'
 paths:
   /one-way:
     post:
       tags:
         - one way
-      summary: 'Send sms to list of Recipients mobile number with given input array'
+      summary: 'Sending text to many channel'
       operationId: postOneWayResource
       requestBody:
         $ref: '#/components/requestBodies/OneWayArray'
@@ -419,7 +422,7 @@ components:
           title: 'text'
           description: 'Message Content'
           type: string
-          default: 'Hi, [Name], your canvasdesign account has been updated with the following features in March. Find out more on our website!'
+          default: 'Hi, [Name], your canvas design account has been updated with the following features in March. Find out more on our website!'
         templateid:
           title: 'templateid'
           description: ''

@@ -35,20 +35,20 @@
             </button>
         </div>
         <div class="collapse navbar-collapse visible" id="ftco-nav">
-                <ul class="navbar-nav ml-auto">
-                    <li class="nav-item active"><a href="#section-home" class="nav-link">Home</a></li>
-                    <li class="nav-item"><a href="#section-features" class="nav-link">Features</a></li>
-                    <!-- <li class="nav-item"><a href="#section-pricing" class="nav-link">Pricing</a></li> -->
-                    <li class="nav-item"><a href="#section-contact" class="nav-link">Contact</a></li>
-                    <li class="nav-item"><a href="#section-about" class="nav-link">About</a></li>
-                    <li class="nav-item"><a href="#section-counter" class="nav-link">Services</a></li>
-                    @if(auth()->user())
-                    <li class="nav-item"><a href="{{url('/dashboard')}}" class="btn btn-sm btn-outline-white" style="margin-top: 23px;">Dashboard</a></li>
-                    @else
-                    <li class="nav-item"><a href="{{url('/login')}}" class="nav-link">Login</a></li>
-                    @endif
-                </ul>
-            </div>
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item active"><a href="#section-home" class="nav-link">Home</a></li>
+                <li class="nav-item"><a href="#section-features" class="nav-link">Features</a></li>
+                <!-- <li class="nav-item"><a href="#section-pricing" class="nav-link">Pricing</a></li> -->
+                <li class="nav-item"><a href="#section-contact" class="nav-link">Contact</a></li>
+                <li class="nav-item"><a href="#section-about" class="nav-link">About</a></li>
+                <li class="nav-item"><a href="#section-counter" class="nav-link">Services</a></li>
+                @if(auth()->user())
+                <li class="nav-item"><a href="{{url('/dashboard')}}" class="btn btn-sm btn-outline-white text-slate-100 hover:text-slate-900">Dashboard</a></li>
+                @else
+                <li class="nav-item"><a href="{{url('/login')}}" class="nav-link">Login</a></li>
+                @endif
+            </ul>
+        </div>
     </nav>
     <!-- END nav -->
     <video class="w-full fixed top-0 grayscale brightness-50" autoplay muted loop id="myVideo">
@@ -57,7 +57,6 @@
     <section class="ftco-cover ftco-slant" style="background-image: url(frontend/images/bg_81.jpg);" id="section-home">
         <div class="container">
             <div class="row align-items-center justify-content-center text-center ftco-vh-100">
-
                 <div class="col-md-12">
                     <h1 class="title-text-2" style="display: none;">REACH OUT TO YOUR CUSTOMERS GLOBALLY ON THEIR PREFERRED CONVERSATION CHANNEL.</h1>
                     <h1 class="title-text-1" style="display: none;">THE BEST TOOLS FOR INSTANT REACH TO BILLION WHATSAPP USERS.</h1>

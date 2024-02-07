@@ -7,7 +7,7 @@ use App\Models\TeamUser;
 
 class AgentStatus extends Component
 {
-    public $selection = ['Online', 'Praying', 'Meeting', 'Eating', 'Toileting', 'Maintenance', 'Offline'];
+    public $selection = ['Avaiable', 'Busy', 'Away', 'Offline'];
     public $status;
     public $team_id;
 
@@ -27,6 +27,7 @@ class AgentStatus extends Component
             }
         }
     }
+
     /**
      * The update function.
      *
@@ -34,7 +35,6 @@ class AgentStatus extends Component
      */
     public function updateStatus($status)
     {
-        // abort(404);
         $teamuser = TeamUser::where('team_id', $this->team_id)->where('user_id', auth()->user()->id)->first();
         if($status == 'Offline'){
             $status = null;

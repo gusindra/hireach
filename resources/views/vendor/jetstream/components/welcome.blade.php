@@ -1,4 +1,4 @@
-<div class="p-2 sm:px-20 bg-white dark:bg-slate-600 border-b border-gray-200">
+<div class="p-2 bg-white dark:bg-slate-600 border-b border-gray-200">
     <div>
         <!-- <x-jet-application-logo class="block h-12 w-auto" /> -->
     </div>

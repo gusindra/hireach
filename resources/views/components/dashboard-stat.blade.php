@@ -8,7 +8,7 @@
         <div class="ml-4 text-gray-600 dark:text-gray-300 leading-2 font-semibold text-3xl">
             <span>{{$client}}</span>
             <div class="mt-2 text-sm text-gray-500 dark:text-gray-300">
-                <a href="{{ route('client') }}">Client</a>
+                <a href="{{ route('client') }}">Contact</a>
             </div>
         </div>
     </div>

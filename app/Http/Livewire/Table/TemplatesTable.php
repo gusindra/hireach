@@ -19,7 +19,7 @@ class TemplatesTable extends LivewireDatatable
         if($this->resource!=''){
             $template = $template->where('resource', $this->resource);
         }
-        return $template;
+        return $template->where('user_id', auth()->user()->currentTeam->user_id);
         // ->with('teams')
         //     ->whereHas('teams', function ($query) {
         //         $query->where([
@@ -41,7 +41,13 @@ class TemplatesTable extends LivewireDatatable
     		Column::name('description')->label('Description'),
     		Column::callback(['type'], function ($type) {
                 return view('template.label', ['type' => $type]);
-            }),
+            })->label('Type'),
+            Column::callback(['resource'], function ($resource) {
+                if($resource==2){
+                    return '1Way';
+                }
+                return '2Way';
+            })->label('Resource'),
     		BooleanColumn::name('is_enabled')->label('Active')
     	];
     }

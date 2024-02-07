@@ -50,6 +50,7 @@
                     @livewire('teams.delete-team-form', ['team' => $team])
                 </div>
             @endif
+
         </div>
     </div>
 </x-app-layout>

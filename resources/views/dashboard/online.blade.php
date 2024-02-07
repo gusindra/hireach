@@ -1,6 +1,6 @@
-<div class="py-3">
+<div class="ml-20 p-3">
     <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-        <div class="bg-transparent dark:bg-slate-600 overflow-hidden shadow-xl sm:rounded-lg">
+        <div class="bg-transparent dark:bg-slate-600 overflow-hidden sm:rounded-lg">
             <div class="py-2 sm:px-2 bg-opacity-10 grid grid-cols-1 md:grid-cols-1 gap-3">
                 <table class="min-w-full divide-y divide-gray-200">
                     <thead>

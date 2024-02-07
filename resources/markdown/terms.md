@@ -1,6 +1,6 @@
 # Terms of Service
 
-TELIXCEL (“we”, “us”, “our”), owns and operates Telixcel. Telixcel provides you with a full-suite of retail management solutions to boost sales and working efficiency for both of your online and offline businesses (“Services”) that you may access through our website at https://telixcel.com  (“Website”).
+HiReach (“we”, “us”, “our”), owns and operates HiReach. HiReach provides you with a full-suite of retail management solutions to boost sales and working efficiency for both of your online and offline businesses (“Services”) that you may access through our website at https://hireach.firmapps.ai  (“Website”).
 
 This page sets out our Services and Website terms of use (“Terms”). The Terms on this page are important because they describe:
 
@@ -9,13 +9,13 @@ the terms and conditions that apply to any subscription you make on our Services
 
 PLEASE READ THESE TERMS CAREFULLY BEFORE USING OUR SERVICES OR WEBSITE.
 
-When we use “you” or “your” in these Terms, we refer to anyone who accesses or uses our Services and Website. By accessing or using our Services and Website as well as any features (including the Telixcel SaaS and Telixcel Chat) and content (including the Pricing and FAQ) made available through the Website, you acknowledge that you have read these Terms and indicate your agreement to be bound by these Terms and the documents referred to in them. In the event of any conflict or inconsistency between these Terms and Pricing or FAQ, these Terms shall prevail.
+When we use “you” or “your” in these Terms, we refer to anyone who accesses or uses our Services and Website. By accessing or using our Services and Website as well as any features (including the HiReach SaaS and HiReach Chat) and content (including the Pricing and FAQ) made available through the Website, you acknowledge that you have read these Terms and indicate your agreement to be bound by these Terms and the documents referred to in them. In the event of any conflict or inconsistency between these Terms and Pricing or FAQ, these Terms shall prevail.
 
 If you do not agree to any part of these Terms, you should stop using the Services and Website immediately.
 
 If you have any questions, comments, complaints or claims with respect to our Services and Website, you may contact us at:
 
-Email: telixcel@goldenunion.group
+Email: info@firmapps.ai
 
 Address: The H Tower 17th Floor unit JL HR Rasuna Said Kav 20 Kuningan Jakarta Selatan Indonesia
 
@@ -121,7 +121,7 @@ Registration
 2.1.4        Obtain or attempt to obtain unauthorised access, via whatever means, to any of our systems and those owned or operated by us;
 
 
-2.1.5        Disassemble, reverse enTelixcelr, decompile or modify any software or application contained in or available on our Website in whole or in part, or otherwise attempt to obtain or access the source code of our Website;
+2.1.5        Disassemble, reverse enHiReachr, decompile or modify any software or application contained in or available on our Website in whole or in part, or otherwise attempt to obtain or access the source code of our Website;
 
 
 2.1.6        Use manual or automated software or processes to extract, export or otherwise scrape any material displayed on our Website, including text, graphics, photographs, images, illustrations, audio, video, data, ratings, reviews and other information (“Content”). Such manual or automated software or processes include datamining, scraping, spidering, indexing, storing or rehosting the Content outside our Website;
@@ -296,7 +296,7 @@ howsoever arising under or in connection with these Terms, even if any of us and
 
 7.6        THE SERVICES AND WEBSITE AND ALL CONTENT, INFORMATION, MATERIALS AND PRODUCTS AVAILABLE FROM THE SERVICES AND WEBSITE ARE PROVIDED TO YOU STRICTLY ON AN "AS IS" AND “AS AVAILABLE” BASIS. ALL CONDITIONS, REPRESENTATIONS AND WARRANTIES, WHETHER EXPRESS, IMPLIED, STATUTORY OR OTHERWISE, INCLUDING, WITHOUT LIMITATION, ANY IMPLIED WARRANTY OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, OR NON-INFRINGEMENT OF THIRD PARTY RIGHTS IN RELATION TO THE WEBSITE OR THE CONTENT, INFORMATION, MATERIALS AND PRODUCTS AVAILABLE FROM THE WEBSITE ARE HEREBY DISCLAIMED TO THE MAXIMUM EXTENT PERMITTED BY APPLICABLE LAW BY US (INCLUDING OUR AFFILIATES, DIRECTORS, OFFICERS, EMPLOYEES, AGENTS, CONTRACTORS, SUCCESSORS AND ASSIGNEES). WITHOUT DEROGATING FROM THE AFORESAID, WE, OUR LICENSORS MAKE NO REPRESENTATION, WARRANTY, OR GUARANTY AS TO THE RELIABILITY, TIMELINESS, QUALITY, SUITABILITY, TRUTH, AVAILABILITY, ACCURACY OR COMPLETENESS OF THE WEBSITE OR CONTENT, INFORMATION, MATERIALS OR PRODUCTS AVAILABLE FROM THE SERVICES AND WEBSITE. WE (INCLUDING OUR AFFILIATES, DIRECTORS, OFFICERS, EMPLOYEES, AGENTS, CONTRACTORS, SUCCESSORS AND ASSIGNEES) DO NOT REPRESENT OR WARRANT THAT THE USE OF THE SERVICES AND WEBSITE WILL BE TIMELY, UNINTERRUPTED, OR ERROR-FREE OR OPERATE IN COMBINATION WITH ANY OTHER HARDWARE, SOFTWARE, SYSTEM OR DATA.
 
-7.7        Our Services, including but not limited to Telixcel SaaS and Telixcel Chat, made available on the Website are dependent on the Website Programming Interface (or API) service of the marketplace to which our Services are connected to and the marketplace API service may not provide real-time update to our Services. To the maximum extent permitted by applicable laws and regulations, we disclaim and make no representation or warranty in respect with, and in no event will we have any liability arising out of or in connection with the loss, liability, damage or expense of whatever nature caused by the availability of the marketplace API, including any penalties or actions that the marketplace may impose on you.
+7.7        Our Services, including but not limited to HiReach SaaS and HiReach Chat, made available on the Website are dependent on the Website Programming Interface (or API) service of the marketplace to which our Services are connected to and the marketplace API service may not provide real-time update to our Services. To the maximum extent permitted by applicable laws and regulations, we disclaim and make no representation or warranty in respect with, and in no event will we have any liability arising out of or in connection with the loss, liability, damage or expense of whatever nature caused by the availability of the marketplace API, including any penalties or actions that the marketplace may impose on you.
 
 7.8        You agree that we may change or interrupt some or all of the network services (which include, but not limited to the directory, messaging, file sharing, file server and/or file storage services), and delete any information you submit in using our network services in accordance with the provisions of these Terms, without notifying you, and without any liability to you whatsoever.
 
@@ -394,19 +394,19 @@ SYARAT PENGGUNAA
 
 KETENTUAN PENGGUNAAN
 
-TELIXCEL ("kami"), memiliki dan mengoperasikan Telixcel. Telixcel memberikan Anda rangkaian lengkap solusi manajemen ritel untuk meningkatkan penjualan dan efisiensi kerja untuk bisnis online dan offline Anda ("Layanan ") yang dapat Anda akses melalui situs web kami di https://telixcel.com/ ("Situs Web").
+HiReach ("kami"), memiliki dan mengoperasikan HiReach. HiReach memberikan Anda rangkaian lengkap solusi manajemen ritel untuk meningkatkan penjualan dan efisiensi kerja untuk bisnis online dan offline Anda ("Layanan ") yang dapat Anda akses melalui situs web kami di https://HiReach.com/ ("Situs Web").
 
 Halaman ini menetapkan Layanan dan syarat pengguna Situs Web kami ("Ketentuan"). Ketentuan dalam halaman ini penting karena menjelaskan: aturan yang harus diikuti saat menggunakan Layanan dan Situs Web; dan syarat dan ketentuan yang berlaku untuk setiap langganan yang Anda lakukan di Layanan dan Situs Web kami.
 
 HARAP BACA KETENTUAN INI DENGAN SEKSAMA SEBELUM MENGGUNAKAN LAYANAN ATAU SITUS WEB KAMI.
 
-Saat kami menggunakan "Anda" atau "milik Anda" dalam Ketentuan ini, kami merujuk pada siapa pun yang mengakses atau menggunakan Layanan dan Situs Web kami. Dengan mengakses atau menggunakan Layanan dan Situs Web kami serta fitur apa pun (termasuk Telixcel SaaS dan Telixcel Chat) dan konten (termasuk Harga dan FAQ) yang tersedia melalui Situs Web, Anda menyatakan bahwa Anda telah membaca Ketentuan ini dan menunjukkan persetujuan Anda untuk terikat oleh Ketentuan ini dan dokumen yang dirujuk di dalamnya. Jika terjadi konflik atau ketidaksesuaian antara Ketentuan dan Harga atau FAQ, Ketentuan ini yang akan berlaku.
+Saat kami menggunakan "Anda" atau "milik Anda" dalam Ketentuan ini, kami merujuk pada siapa pun yang mengakses atau menggunakan Layanan dan Situs Web kami. Dengan mengakses atau menggunakan Layanan dan Situs Web kami serta fitur apa pun (termasuk HiReach SaaS dan HiReach Chat) dan konten (termasuk Harga dan FAQ) yang tersedia melalui Situs Web, Anda menyatakan bahwa Anda telah membaca Ketentuan ini dan menunjukkan persetujuan Anda untuk terikat oleh Ketentuan ini dan dokumen yang dirujuk di dalamnya. Jika terjadi konflik atau ketidaksesuaian antara Ketentuan dan Harga atau FAQ, Ketentuan ini yang akan berlaku.
 
 Jika Anda tidak menyetujui bagian mana pun dari Ketentuan ini, Anda harus segera berhenti menggunakan Layanan dan Situs Web.
 
 Jika Anda memiliki pertanyaan, komentar, keluhan, atau klaim sehubungan dengan Layanan dan Situs Web kami, Anda dapat menghubungi kami di:
 
-Email: telixcel@goldenunion.group
+Email: HiReach@goldenunion.group
 
 Address: The H Tower 17th Floor unit JL HR Rasuna Said Kav 20 Kuningan Jakarta Selatan Indonesia
 
@@ -695,7 +695,7 @@ Yang timbul karena alasan apapun juga sehubungan dengan Ketentuan ini, bahkan ji
 
 7.6        LAYANAN DAN SITUS WEB DAN SEMUA KONTEN, INFORMASI, MATERI, DAN PRODUK YANG TERSEDIA DARI LAYANAN DAN SITUS WEB DISEDIAKAN KEPADA ANDA SECARA KETAT BERDASARKAN "SEBAGAIMANA ADANYA" DAN "SEBAGAIMANA TERSEDIA". SEMUA KETENTUAN, PERNYATAAN, DAN JAMINAN, BAIK TERSURAT, TERSIRAT, BERHARGA ATAU LAINNYA, TERMASUK, TANPA BATASAN, JAMINAN TERSIRAT ATAS DAPAT DIPERDAGANGKAN, KESESUAIAN UNTUK TUJUAN TERTENTU, ATAU BUKAN PELANGGARAN ATAS HAK PIHAK KETIGA TERHADAP INFORMASI, MATERI, DAN PRODUK YANG TERSEDIA DARI SITUS WEB INI DISANGKALKAN OLEH KAMI SEJAUH DIIZINKAN OLEH HUKUM YANG BERLAKU (TERMASUK AFILIASI KAMI, DIREKSI, PEJABAT, KARYAWAN, AGEN, KONTRAKTOR, PENERUS DAN PENERIMA PENGALIHAN). TANPA MENGURANGI HAL TERSEBUT, KAMI, PEMBERI LISENSI KAMI TIDAK MEMBERIKAN PERNYATAAN, JAMINAN ATAU GARANSI TERHADAP KEANDALAN, KETEPATAN WAKTU, KUALITAS, KESESUAIAN, KEBENARAN, KETERSEDIAAN, KEAKURATAN, ATAU KELENGKAPAN DARI SITUS WEB ATAU KONTEN, INFORMASI, MATERI ATAU PRODUK YANG TERSEDIA DARI LAYANAN DAN SITUS WEB.  KAMI (TERMASUK AFILIASI, DIREKSI, PEJABAT, KARYAWAN, AGEN, KONTRAKTOR, PENERUS DAN PENERIMA PENGALIHAN) TIDAK MENYATAKAN ATAU MENJAMIN BAHWA PENGGUNAAN LAYANAN DAN SITUS WEB AKAN SESUAI WAKTU, TIDAK TERGANGGU, ATAU TIDAK TERDAPAT EROR ATAU DAPAT BEROPERASI DENGAN PERANGKAT KERAS, PERANGKAT LUNAK, SISTEM ATAU DATA.
 
-7.7        Layanan kami, termasuk namun tidak terbatas pada Telixcel SaaS dan Telixcel Chat, yang tersedia di Situs web bergantung pada layanan Antarmuka Pemrograman Situs Web (Website Programming Interface atau API) dari platform tempat Layanan kami terhubung dan API dari platform tersebut mungkin tidak menyediakan pembaruan secara real-time kepada Layanan kami. Sejauh diizinkan oleh undang-undang dan peraturan yang berlaku, kami menyangkal dan tidak membuat pernyataan atau jaminan sehubungan dengan, dan dalam hal apapun kami tidak memiliki kewajiban apa pun yang timbul dari atau sehubungan dengan kehilangan, kewajiban, kerusakan, atau biaya dalam bentuk apa pun yang disebabkan oleh ketersediaan API dari platform tersebut, termasuk hukuman atau tindakan apa pun yang mungkin dikenakan platform kepada Anda.
+7.7        Layanan kami, termasuk namun tidak terbatas pada HiReach SaaS dan HiReach Chat, yang tersedia di Situs web bergantung pada layanan Antarmuka Pemrograman Situs Web (Website Programming Interface atau API) dari platform tempat Layanan kami terhubung dan API dari platform tersebut mungkin tidak menyediakan pembaruan secara real-time kepada Layanan kami. Sejauh diizinkan oleh undang-undang dan peraturan yang berlaku, kami menyangkal dan tidak membuat pernyataan atau jaminan sehubungan dengan, dan dalam hal apapun kami tidak memiliki kewajiban apa pun yang timbul dari atau sehubungan dengan kehilangan, kewajiban, kerusakan, atau biaya dalam bentuk apa pun yang disebabkan oleh ketersediaan API dari platform tersebut, termasuk hukuman atau tindakan apa pun yang mungkin dikenakan platform kepada Anda.
 
 7.8        Anda setuju bahwa kami dapat mengubah atau menyela beberapa atau semua layanan jaringan (yang termasuk, namun tidak terbatas pada direktori, pesan, berbagi file, server file dan/atau layanan penyimpanan file), dan menghapus informasi apa pun yang Anda kirimkan dalam menggunakan layanan jaringan kami sesuai dengan ketentuan Ketentuan ini, tanpa memberi tahu Anda, dan tanpa kewajiban apa pun kepada Anda.
 

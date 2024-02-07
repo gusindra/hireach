@@ -5,8 +5,10 @@
         </h2>
     </x-slot>
 
-    <div>
-        <div class="max-w-7xl mx-auto py-10 sm:px-6 lg:px-8">
+    <div class="grid grid-cols-12">
+        @includeWhen(auth()->user(), 'menu.user-content', [])
+
+        <div class="col-span-12 px-3 ml-24 mt-2">
             @livewire('template.edit-template', ['uuid'=>$uuid])
         </div>
     </div>

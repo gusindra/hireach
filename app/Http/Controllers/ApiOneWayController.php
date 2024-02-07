@@ -115,25 +115,30 @@ class ApiOneWayController extends Controller
                     'otp' => 0
                 ]);
             }
+
             $allphone = $request->to;
             $phones = explode(",", $request->to);
             $balance = (int)balance(auth()->user());
             if($balance>500 && count($phones)<$balance/1){
-                if(count($phones)>1){
-                    foreach($phones as $p){
-                        $data = array(
-                            'type' => $request->type,
-                            'to' => trim($p),
-                            'from' => $request->from,
-                            'text' => $request->text,
-                            'servid' => $request->servid,
-                            'title' => $request->title,
-                            'otp' => $request->otp,
-                        );
-                        ProcessSmsApi::dispatch($data, auth()->user());
-                    }
+                if($request->channel=='email'){
+
                 }else{
-                    ProcessSmsApi::dispatch($request->all(), auth()->user());
+                    if(count($phones)>1){
+                        foreach($phones as $p){
+                            $data = array(
+                                'type' => $request->type,
+                                'to' => trim($p),
+                                'from' => $request->from,
+                                'text' => $request->text,
+                                'servid' => $request->servid,
+                                'title' => $request->title,
+                                'otp' => $request->otp,
+                            );
+                            ProcessSmsApi::dispatch($data, auth()->user());
+                        }
+                    }else{
+                        ProcessSmsApi::dispatch($request->all(), auth()->user());
+                    }
                 }
             }else{
                 return response()->json([
@@ -141,6 +146,7 @@ class ApiOneWayController extends Controller
                     'code' => 405
                 ]);
             }
+
             //$this->sendSMS($request->all());
         }catch(\Exception $e){
             return response()->json([

@@ -14,15 +14,22 @@ class UsersTable extends LivewireDatatable
 
     public function builder()
     {
-        return User::query()->where('user_id', auth()->user()->currentTeam->user_id);
+        return User::query();
     }
 
     public function columns()
     {
         return [
-    		NumberColumn::name('uuid')->label('ID'),
+            Column::callback(['id'], function ($x) {
+                return view('datatables::link', [
+                    'href' => "/admin/user/" . $x,
+                    'slot' => $x
+                ]);
+                //return $x;
+            })->label('ID')->searchable(), 
     		Column::name('name')->label('Name'),
-    		Column::name('phone')->label('Phone Number'),
+    		Column::name('email')->label('Email'),
+    		Column::name('phone_no')->label('Phone Number'),
     		DateColumn::name('created_at')->label('Creation Date')
     	];
     }

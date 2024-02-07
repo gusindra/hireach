@@ -1,8 +1,8 @@
 <div>
     <form wire:submit.prevent="create">
         <div class="md:grid md:grid-cols-3 md:gap-6 mt-8 sm:mt-0">
-            <div class="mt-2 md:mt-0 md:col-span-2">
-                <div class="px-4 py-5 bg-white dark:bg-slate-600 sm:p-10 shadow sm:rounded-tl-md sm:rounded-tr-md">
+            <div class="md:col-span-2 py-5 shadow sm:rounded-tl-md sm:rounded-tr-md">
+                <div class="px-4 py-5 bg-white dark:bg-slate-600 sm:p-10">
 
                     <div class="col-span-6 sm:col-span-4 mb-8">
                         <div class="col-span-12 sm:col-span-1">
@@ -33,8 +33,6 @@
                         <a wire:click="onClickNominal(10000000)" href="#" class="border border-gray-400 rounded-lg px-3 py-1 focus:border-green-400 focus:text-green-400 w-20 text-center">10jt</a>
                     </div>
                 </div>
-
-
             </div>
 
             <div class="md:col-span-1 px-4 py-5 bg-white dark:bg-slate-600 sm:p-6 shadow sm:rounded-tl-md sm:rounded-tr-md">

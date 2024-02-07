@@ -1,7 +1,7 @@
 <nav x-data="{ open: false }"
-    class="bg-white dark:text-white border-b border-gray-100 dark:border-slate-50/[0.06] supports-backdrop-blur:bg-white/60 dark:bg-slate-800">
+    class="bg-white z-40 dark:text-white border-b border-gray-100 dark:border-slate-50/[0.06] supports-backdrop-blur:bg-white/60 dark:bg-slate-800 sticky top-0">
     <!-- Primary Navigation Menu -->
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="mx-auto">
         <div class="flex justify-between h-16">
             <div class="flex">
                 <!-- Logo -->
@@ -9,15 +9,19 @@
                     <a class="navbar-brand" href="/">
                         <img class=""
                             src="https://hireach.archeeshop.com/frontend/images/logo-trans.png"
-                            title="{{ env('APP_NAME')}}" style="width: 150px;" />
+                            title="{{ env('APP_NAME')}}" style="width: 130px;" />
                     </a>
                 </div>
-
+                {{-- End Logo --}}
                 <!-- Navigation Links -->
-                <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
-                    <x-jet-nav-link href="{{ route('dashboard') }}" :active="request()->routeIs('dashboard')">
+                <div class="hidden space-x-8 sm:-my-px sm:ml-1 sm:flex">
+                    <div class="z-30">
+                        @livewire('menu-selection', ['url' => url()->full()], key(Auth::user()->id))
+                    </div>
+
+                    {{-- <x-jet-nav-link href="{{ route('dashboard') }}" :active="request()->routeIs('dashboard')">
                         {{ __('Dashboard') }}
-                    </x-jet-nav-link>
+                    </x-jet-nav-link> --}}
 
                     @if(request()->routeIs('assistant') || request()->routeIs('project') ||
                     request()->routeIs('commercial') || request()->routeIs('order') ||
@@ -70,17 +74,53 @@
                         </x-jet-nav-link>
                         @endif
                     @endif
-                    <x-jet-nav-link href="{{ route('resources.index') }}" :active="request()->routeIs('resources')">
-                        {{ __('Resource') }}
+                    {{-- <x-jet-nav-link href="{{ route('resources.index') }}" :active="request()->routeIs('show.resource')">
+                        {{ __('Engagement') }}
                     </x-jet-nav-link>
-                    <x-jet-nav-link href="{{ route('template') }}" :active="request()->routeIs('contents')">
+                    <x-jet-nav-link href="{{ route('template') }}" :active="request()->routeIs('template')">
                         {{ __('Content') }}
                     </x-jet-nav-link>
+                    <x-jet-nav-link href="{{ route('payment.deposit') }}" :active="request()->routeIs('payment.deposit')">
+                        {{ __('Balance') }}
+                    </x-jet-nav-link>
+                    <x-jet-nav-link href="{{ route('resources.index') }}" :active="request()->routeIs('show.resource')">
+                        {{ __('Campaign') }}
+                    </x-jet-nav-link> --}}
 
                 </div>
+                {{-- End Navigation Links --}}
+                
             </div>
 
-            <div class="hidden sm:flex sm:items-center sm:ml-6 flex-auto justify-end space-x-1">
+            <div class="hidden sm:flex sm:items-center sm:ml-6 flex-auto justify-end space-x-1 mr-2">
+                
+                <!-- Global Search -->
+                @if(auth()->user()->currentTeam && auth()->user()->currentTeam->id != env('IN_HOUSE_TEAM_ID'))
+                    @livewire('search.all')
+                @endif
+                
+                <!-- Notification Dropdown -->
+                @livewire('notification-app', ['client_id' => Auth::user()->id], key(Auth::user()->id))
+
+                <x-jet-nav-link href="{{ route('message') }}" :active="request()->routeIs('message')" class="hover:bg-slate-300">
+                    <div class="inline-flex hover:bg-gray-300 hover:bg-slate-600 cursor-pointer items-center px-3 py-2 text-gray-600 dark:bg-slate-800 border border-gray-300 rounded-md font-normal text-xs dark:text-white 1g-widest hover:text-slate-700 active:bg-green-900 focus:outline-none focus:border-gray-900 focus:shadow-outline-gray disabled:opacity-25 transition">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M20.25 8.511c.884.284 1.5 1.128 1.5 2.097v4.286c0 1.136-.847 2.1-1.98 2.193-.34.027-.68.052-1.02.072v3.091l-3-3c-1.354 0-2.694-.055-4.02-.163a2.115 2.115 0 0 1-.825-.242m9.345-8.334a2.126 2.126 0 0 0-.476-.095 48.64 48.64 0 0 0-8.048 0c-1.131.094-1.976 1.057-1.976 2.192v4.286c0 .837.46 1.58 1.155 1.951m9.345-8.334V6.637c0-1.621-1.152-3.026-2.76-3.235A48.455 48.455 0 0 0 11.25 3c-2.115 0-4.198.137-6.24.402-1.608.209-2.76 1.614-2.76 3.235v6.226c0 1.621 1.152 3.026 2.76 3.235.577.075 1.157.14 1.74.194V21l4.155-4.155" />
+                        </svg> 
+                    </div>
+                </x-jet-nav-link>
+                <!-- Status Dropdown -->
+                <div class="ml-3 mt-3 relative">
+                    @livewire('agent-status')
+                </div>
+
+                <div class="flex items-center p-4 text-right">
+                    <!-- <a href="{{  strpos(Request::fullUrl(), '?') !== false ? Request::fullUrl().'&':Request::url().'?' }}v=1" class="inline-flex dark:hover:bg-slate-600 cursor-pointer items-center px-2 py-1 text-gray-600 dark:bg-slate-800 border border-transparent rounded-md font-normal text-xs dark:text-white 1g-widest hover:text-slate-700 active:bg-green-900 focus:outline-none focus:border-gray-900 focus:shadow-outline-gray disabled:opacity-25 transition">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M9 17.25v1.007a3 3 0 01-.879 2.122L7.5 21h9l-.621-.621A3 3 0 0115 18.257V17.25m6-12V15a2.25 2.25 0 01-2.25 2.25H5.25A2.25 2.25 0 013 15V5.25m18 0A2.25 2.25 0 0018.75 3H5.25A2.25 2.25 0 003 5.25m18 0V12a2.25 2.25 0 01-2.25 2.25H5.25A2.25 2.25 0 013 12V5.25" />
+                        </svg>
+                    </a> -->
+                </div>
 
                 <!-- Teams Dropdown -->
                 @if (Auth::user()->currentTeam && Laravel\Jetstream\Jetstream::hasTeamFeatures())
@@ -116,13 +156,11 @@
                                 </x-jet-dropdown-link>
                                 @endif
 
-                                <!-- @if (Auth::user()->hasTeamRole(Auth::user()->currentTeam, 'admin') || @Auth::user()->isSuper->role=='superadmin') -->
                                 @can('create', Laravel\Jetstream\Jetstream::newTeamModel())
                                 <x-jet-dropdown-link href="{{ route('teams.create') }}">
                                     {{ __('Create New Team') }}
                                 </x-jet-dropdown-link>
                                 @endcan
-                                <!-- @endif -->
 
                                 <div class="border-t border-gray-100"></div>
 
@@ -198,7 +236,6 @@
                             <!-- Authentication -->
                             <form method="POST" action="{{ route('logout') }}">
                                 @csrf
-
                                 <x-jet-dropdown-link href="{{ route('logout') }}" onclick="event.preventDefault();
                                                 this.closest('form').submit();">
                                     {{ __('Log Out') }}
@@ -208,32 +245,7 @@
                     </x-jet-dropdown>
                 </div>
 
-                <!-- Status Dropdown -->
-                <div class="ml-3 relative">
-                    @livewire('agent-status')
-                </div>
-
-                <!-- Notification Dropdown -->
-                @livewire('notification-app', ['client_id' => Auth::user()->id], key(Auth::user()->id))
-
-                @if(auth()->user()->currentTeam && auth()->user()->currentTeam->id == env('IN_HOUSE_TEAM_ID'))
-                <!-- Global Search -->
-                    @livewire('search.all')
-                @endif
-
-                <x-jet-nav-link href="{{ route('message') }}" :active="request()->routeIs('message')">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M20.25 8.511c.884.284 1.5 1.128 1.5 2.097v4.286c0 1.136-.847 2.1-1.98 2.193-.34.027-.68.052-1.02.072v3.091l-3-3c-1.354 0-2.694-.055-4.02-.163a2.115 2.115 0 0 1-.825-.242m9.345-8.334a2.126 2.126 0 0 0-.476-.095 48.64 48.64 0 0 0-8.048 0c-1.131.094-1.976 1.057-1.976 2.192v4.286c0 .837.46 1.58 1.155 1.951m9.345-8.334V6.637c0-1.621-1.152-3.026-2.76-3.235A48.455 48.455 0 0 0 11.25 3c-2.115 0-4.198.137-6.24.402-1.608.209-2.76 1.614-2.76 3.235v6.226c0 1.621 1.152 3.026 2.76 3.235.577.075 1.157.14 1.74.194V21l4.155-4.155" />
-                    </svg>
-                </x-jet-nav-link>
-
-                <div class="flex items-center p-4 text-right">
-                    <!-- <a href="{{  strpos(Request::fullUrl(), '?') !== false ? Request::fullUrl().'&':Request::url().'?' }}v=1" class="inline-flex dark:hover:bg-slate-600 cursor-pointer items-center px-2 py-1 text-gray-600 dark:bg-slate-800 border border-transparent rounded-md font-normal text-xs dark:text-white 1g-widest hover:text-slate-700 active:bg-green-900 focus:outline-none focus:border-gray-900 focus:shadow-outline-gray disabled:opacity-25 transition">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M9 17.25v1.007a3 3 0 01-.879 2.122L7.5 21h9l-.621-.621A3 3 0 0115 18.257V17.25m6-12V15a2.25 2.25 0 01-2.25 2.25H5.25A2.25 2.25 0 013 15V5.25m18 0A2.25 2.25 0 0018.75 3H5.25A2.25 2.25 0 003 5.25m18 0V12a2.25 2.25 0 01-2.25 2.25H5.25A2.25 2.25 0 013 12V5.25" />
-                        </svg>
-                    </a> -->
-                </div>
+                
             </div>
 
             <!-- Hamburger -->
@@ -324,8 +336,7 @@
                 <div class="flex items-center px-4">
                     @if (Laravel\Jetstream\Jetstream::managesProfilePhotos())
                     <div class="flex-shrink-0 mr-3">
-                        <img class="h-10 w-10 rounded-full object-cover" src="{{ Auth::user()->profile_photo_url }}"
-                            alt="{{ Auth::user()->name }}" />
+                        <img class="h-10 w-10 rounded-full object-cover" src="{{ Auth::user()->profile_photo_url }}" alt="{{ Auth::user()->name }}" />
                     </div>
                     @endif
 
@@ -350,9 +361,7 @@
                 <!-- Authentication -->
                 <form method="POST" action="{{ route('logout') }}">
                     @csrf
-
-                    <x-jet-responsive-nav-link href="{{ route('logout') }}" onclick="event.preventDefault();
-                                    this.closest('form').submit();">
+                    <x-jet-responsive-nav-link href="{{ route('logout') }}" onclick="event.preventDefault(); this.closest('form').submit();">
                         {{ __('Log Out') }}
                     </x-jet-responsive-nav-link>
                 </form>

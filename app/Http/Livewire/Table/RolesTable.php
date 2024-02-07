@@ -27,7 +27,7 @@ class RolesTable extends LivewireDatatable
             BooleanColumn::name('status')->label('Active'),
             NumberColumn::name('id')->label('Detail')->sortBy('id')->callback('id', function ($value) {
                 return view('datatables::link', [
-                    'href' => "/roles/" . $value . '?month='.date('m').'&year='.date('Y'),
+                    'href' => '/roles/' . $value . '?month='.date('m').'&year='.date('Y'),
                     'slot' => 'View'
                 ]);
             }),

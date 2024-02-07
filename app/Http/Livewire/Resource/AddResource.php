@@ -16,6 +16,7 @@ class AddResource extends Component
     public $is_waiting;
     public $uuid;
     public $channel;
+    public $provider;
     public $bound;
 
     public function mount($uuid)
@@ -54,6 +55,7 @@ class AddResource extends Component
      */
     public function updateTemplate()
     {
+        dd(1);
         $this->validate();
         Template::find($this->templateId)->update($this->modelData());
         $this->emit('saved');

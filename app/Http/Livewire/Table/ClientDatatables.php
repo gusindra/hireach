@@ -30,12 +30,24 @@ class ClientDatatables extends LivewireDatatable
     function columns()
     {
     	return [
+            Column::callback(['id'], function ($x) {
+                return view('datatables::link', [
+                    'href' => "/user/" . $x,
+                    'slot' => $x
+                ]);
+                //return $x;
+            })->label('ID')->searchable(),
     		Column::callback(['uuid'], function ($x) {
-                return $x;
-            })->label('Type')->label('ID')->searchable(),
+                return view('datatables::link', [
+                    'href' => "/contact/" . $x,
+                    'slot' => substr($x, 30)
+                ]);
+                //return $x;
+            })->label('UUID')->searchable(),
     		// Column::name('uuid')->label('ID')->sortBy('id')->searchable(),
     		Column::name('name')->label('Name')->searchable(),
     		Column::name('phone')->label('Phone Number')->searchable(),
+    		Column::name('email')->label('Email')->searchable(),
     		DateColumn::name('created_at')->label('Inputed Date')->format('d F Y')
     	];
     }

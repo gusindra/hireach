@@ -3,10 +3,10 @@
 PRIVACY POLICY
 
 
-This policy sets out the basis on which TELIXCEL (collectively "we", “us” and ”our”) collect personal data from you and how we process such data. 
+This policy sets out the basis on which HiReach (collectively "we", “us” and ”our”) collect personal data from you and how we process such data. 
 
 
-By visiting, accessing, or using our Telixcel platform, website, and services (“Services”) or using Telixcel or any other applications or software we provide from time to time (collectively our "Application"), you accept and consent to the practices set out below. Further, you acknowledge that every personal data that you have provided or will provide is yours to share and is true and accurate.
+By visiting, accessing, or using our HiReach platform, website, and services (“Services”) or using HiReach or any other applications or software we provide from time to time (collectively our "Application"), you accept and consent to the practices set out below. Further, you acknowledge that every personal data that you have provided or will provide is yours to share and is true and accurate.
 
 
  COLLECTION OF PERSONAL DATA
@@ -205,7 +205,7 @@ We may amend this policy from time to time by posting the updated policy on our 
 
 CONTACT US
 
-If you have any questions, comments or requests regarding personal data, please address them to: telixcel@goldenunion.group
+If you have any questions, comments or requests regarding personal data, please address them to: HiReach@goldenunion.group
 
 
 LANGUAGE
@@ -262,11 +262,11 @@ Last updated: 10 October 2021
 KEBIJAKAN PRIVASI
 
 
-Kebijakan ini menjelaskan dasar bagi TELIXCEL (secara kolektif "kita" , " kami " dan "milik kami " ) mengumpulkan data pribadi dari anda dan bagaimana kami memproses data tersebut.
+Kebijakan ini menjelaskan dasar bagi HiReach (secara kolektif "kita" , " kami " dan "milik kami " ) mengumpulkan data pribadi dari anda dan bagaimana kami memproses data tersebut.
 
  
 
-Dengan mengunjungi, mengakses, atau menggunakan  platform, situs web, dan layanan Telixcel (“Layanan ”) atau menggunakan Telixcel atau aplikasi atau perangkat lunak lain yang kami sediakan dari waktu ke waktu (secara kolektif " Aplikasi " kami), anda menerima dan menyetujui pada praktek yang ditetapkan di bawah ini. Lebih lanjut, anda mengakui bahwa setiap data pribadi yang anda berikan atau akan berikan adalah milik anda untuk dibagikan dan benar serta akurat.   
+Dengan mengunjungi, mengakses, atau menggunakan  platform, situs web, dan layanan HiReach (“Layanan ”) atau menggunakan HiReach atau aplikasi atau perangkat lunak lain yang kami sediakan dari waktu ke waktu (secara kolektif " Aplikasi " kami), anda menerima dan menyetujui pada praktek yang ditetapkan di bawah ini. Lebih lanjut, anda mengakui bahwa setiap data pribadi yang anda berikan atau akan berikan adalah milik anda untuk dibagikan dan benar serta akurat.   
 
 
  PENGUMPULAN DATA
@@ -481,7 +481,7 @@ Kami dapat mengubah kebijakan ini dari waktu ke waktu dengan memposting kebijaka
 
 HUBUNGI KAMI
 
-Jika anda memiliki pertanyaan, komentar, atau permintaan terkait data pribadi, harap tujukan ke: telixcel@goldenunion.group
+Jika anda memiliki pertanyaan, komentar, atau permintaan terkait data pribadi, harap tujukan ke: HiReach@goldenunion.group
 
 
 BAHASA

@@ -33,7 +33,7 @@ class TopupUser extends Component
         $data = [
             'date'              => date("Y-m-d H:i:s"),
             'name'              => 'Request Topup from '.Auth::user()->name,
-            'no'                => 'TCI'.date("YmdHis"),
+            'no'                => 'HAPP'.date("YmdHis"),
             'type'              => 'selling',
             'entity_party'      => '1',
             'total'             => 0,
@@ -68,6 +68,7 @@ class TopupUser extends Component
 
     public function create()
     {
+        //dd($this->nominal*(11/100));
         $this->validate();
         try {
             $order = Order::create($this->dataOrder());
@@ -88,7 +89,7 @@ class TopupUser extends Component
                     'qty'               => '1',
                     'unit'              => '1',
                     'name'              => 'Tax',
-                    'price'             => $this->nominal*(11/100),
+                    'price'             => ''.$this->nominal*(11/100),
                     'note'              => 'VAT/PPN @ 11%',
                     'user_id'           => 0,
                 ]);

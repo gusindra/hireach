@@ -11,7 +11,7 @@
 
     <!-- First User Member to create Team -->
     @if (Auth::user()->currentTeam && Laravel\Jetstream\Jetstream::hasTeamFeatures())
-    <!-- {{Auth::user()->currentTeam}} -->
+        {{-- {{Auth::user()->currentTeam}} --}}
     @endif
 
     @includeWhen(auth()->user()->super->first() && auth()->user()->super->first()->role == 'superadmin', 'dashboard.online', ['status' => 'complete'])
@@ -29,9 +29,11 @@
 
     @if ( Auth::user()->currentTeam && Auth::user()->currentTeam->user_id == Auth::user()->id )
         <!-- Team Dashboard -->
-        <div class="py-6">
-            <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-                <div class="bg-white dark:bg-slate-600 overflow-hidden shadow-xl sm:rounded-lg">
+        <div class="grid grid-cols-12">
+            @includeWhen(auth()->user(), 'menu.user-dashboard', [])
+            
+            <div class="col-span-12 px-6 ml-24 mt-2">
+                <div class="bg-white dark:bg-slate-600 overflow-hidden sm:rounded-lg">
                     <x-jet-welcome />
                 </div>
             </div>
@@ -39,5 +41,3 @@
     @endif
 
 </x-app-layout>
-
-x
