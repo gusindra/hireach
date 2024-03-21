@@ -38,25 +38,98 @@ class ApiWaController extends Controller
 
         // First check from
         // if not exsist add client
-        $client = $this->checkClient($data['message']['id'],$data['message']['name'],$data['message']['from']);
+        $client = $this->checkClient($data['message']['id'], $data['message']['name'], $data['message']['from']);
         // then add data to Request
         $client_uuid = $client->uuid;
         $client_id = $client->id;
         $user_id = $client->user_id;
 
         //if chat type text
-        $request = Chat::create([
-            'source_id' => $data['message']['id'],
-            'reply'     => $data['message']['text']['body'],
-            'from'      => $client_id,
-            'user_id'   => $user_id,
-            'type'      => $data['message']['type'],
-            'client_id' => $client_uuid,
-            'sent_at'   => date('Y-m-d H:i:s', $data['message']['timestamp']),
-        ]);
-
-        return $request;
-        return $data['message']['from'];
+        if($data['message']['type']=='text'){
+            $request = Chat::create([
+                'source_id' => $data['message']['id'],
+                'reply'     => $data['message']['text']['body'],
+                'from'      => $client_id,
+                'user_id'   => $user_id,
+                'type'      => $data['message']['type'],
+                'client_id' => $client_uuid,
+                'sent_at'   => date('Y-m-d H:i:s', $data['message']['timestamp']),
+            ]);
+        }elseif($data['message']['type']=='image'){
+            $request = Chat::create([
+                'source_id' => $data['message']['id'],
+                'reply'     => $data['message']['image']['link'],
+                'from'      => $client_id,
+                'user_id'   => $user_id,
+                'type'      => $data['message']['type'],
+                'client_id' => $client_uuid,
+                'sent_at'   => date('Y-m-d H:i:s', $data['message']['timestamp']),
+            ]);
+        }elseif($data['message']['type']=='video'){
+            $request = Chat::create([
+                'source_id' => $data['message']['id'],
+                'reply'     => $data['message']['video']['link'],
+                'from'      => $client_id,
+                'user_id'   => $user_id,
+                'type'      => $data['message']['type'],
+                'client_id' => $client_uuid,
+                'sent_at'   => date('Y-m-d H:i:s', $data['message']['timestamp']),
+            ]);
+        }elseif($data['message']['type']=='voice'){
+            $request = Chat::create([
+                'source_id' => $data['message']['id'],
+                'reply'     => $data['message']['voice']['link'],
+                'from'      => $client_id,
+                'user_id'   => $user_id,
+                'type'      => $data['message']['type'],
+                'client_id' => $client_uuid,
+                'sent_at'   => date('Y-m-d H:i:s', $data['message']['timestamp']),
+            ]);
+        }elseif($data['message']['type']=='audio'){
+            $request = Chat::create([
+                'source_id' => $data['message']['id'],
+                'reply'     => $data['message']['audio']['link'],
+                'from'      => $client_id,
+                'user_id'   => $user_id,
+                'type'      => $data['message']['type'],
+                'client_id' => $client_uuid,
+                'sent_at'   => date('Y-m-d H:i:s', $data['message']['timestamp']),
+            ]);
+        }elseif($data['message']['type']=='document'){
+            $request = Chat::create([
+                'source_id' => $data['message']['id'],
+                'reply'     => $data['message']['document']['link'],
+                'from'      => $client_id,
+                'user_id'   => $user_id,
+                'type'      => $data['message']['type'],
+                'client_id' => $client_uuid,
+                'sent_at'   => date('Y-m-d H:i:s', $data['message']['timestamp']),
+            ]);
+        }elseif($data['message']['type']=='location'){
+            $request = Chat::create([
+                'source_id' => $data['message']['id'],
+                'reply'     => $data['message']['location']['address'].', '.$data['message']['location']['name'],
+                'from'      => $client_id,
+                'user_id'   => $user_id,
+                'type'      => $data['message']['type'],
+                'client_id' => $client_uuid,
+                'sent_at'   => date('Y-m-d H:i:s', $data['message']['timestamp']),
+            ]);
+        }
+        if($request){
+            return response()->json([
+                'Msg' => "Success to retrive new message",
+                'Request' => $request,
+                'Status' => 200
+            ]);
+        }else{
+            return response()->json([
+                'Msg' => "Error to save new message",
+                'Status' => 400
+            ]);
+        }
+        //return $request;
+        //return $data['message']['from'];
     }
 
     /**
@@ -103,14 +176,14 @@ class ApiWaController extends Controller
      *
      * @return object
      */
-    public function checkClient($id, $name, $from, $team)
+    public function checkClient($id, $name, $from, $team=null)
     {
         $last_request = Chat::with('client')->where('source_id', $id)->first();
         // Client::where('source_id', $message['id'])->where('from', $message['from'])->first();
 
         if($last_request){
             $client = $last_request->client;
-        }else{
+        }elseif(!is_null($team)){
             $client = Client::where('phone', $from)->where('user_id', $team->user_id)->first();
             if($client){
                 return $client;
@@ -367,7 +440,8 @@ class ApiWaController extends Controller
         ]);
     }
 
-    public function storeRequest($data, $team){
+    public function storeRequest($data, $team)
+    {
         $chat = Chat::create([
             'source_id' => $data['source_id'],
             'reply'     => $data['reply'],
@@ -383,7 +457,8 @@ class ApiWaController extends Controller
         return $chat;
     }
 
-    private function updateStatusRequest($id, $status){
+    private function updateStatusRequest($id, $status)
+    {
         $chat = Chat::where('source_id',$id)->orderBy('id', 'desc')->first();
         if($chat){
             if($status == "READ"){

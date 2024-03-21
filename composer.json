@@ -23,6 +23,7 @@
         "milon/barcode": "9.0.0",
         "te7a-houdini/laravel-trix": "^2.0",
         "twilio/sdk": "^6.22",
+        "unicodeveloper/novu": "^1.1",
         "vinkla/hashids": "10.0.0"
     },
     "require-dev": {

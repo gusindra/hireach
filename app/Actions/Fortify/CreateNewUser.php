@@ -59,8 +59,11 @@ class CreateNewUser implements CreatesNewUsers
                 }
                 $newInvitation->delete();
             }
-
-            $team = Team::find($newInvitation->team_id);
+            if($newInvitation && $newInvitation->team_id){
+                $team = Team::find($newInvitation->team_id);
+            }else{
+                $team = Team::find(1);
+            }
             $team->users()->attach(
                 $newTeamMember, ['role' => $role]
             );

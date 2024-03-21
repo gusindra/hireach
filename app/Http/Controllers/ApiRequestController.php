@@ -9,10 +9,11 @@ use App\Models\ApiCredential;
 use App\Models\BlastMessage;
 use Illuminate\Support\Facades\Log;
 
-class ApiBulkSmsController extends Controller
+class ApiRequestController extends Controller
 {
     public function post(Request $request)
     {
+        return $request->url;
         //get the request & validate parameters
         $fields = $request->validate([
             'type' => 'required|numeric',
@@ -43,8 +44,8 @@ class ApiBulkSmsController extends Controller
 
     public function status(Request $request)
     {
-        //return $request->getContent();
-        //Log::debug($request->all());
+        return $request->url;
+        Log::debug($request->all());
         ProcessSmsStatus::dispatch($request->all());
         
         // BlastMessage::where("msg_id", $request->msgID)->where("msisdn", $request->msisdn)->first()->update([
@@ -53,7 +54,22 @@ class ApiBulkSmsController extends Controller
 
         return response()->json([
             'Msg' => "Process to update",
-            'Request' => json_decode($request->getContent(),true),
+            'Status' => 200
+        ]);
+    }
+    
+    public function logStatus(Request $request)
+    {
+        return $request->url;
+        Log::debug($request->all());
+        ProcessSmsStatus::dispatch($request->all());
+        
+        // BlastMessage::where("msg_id", $request->msgID)->where("msisdn", $request->msisdn)->first()->update([
+        //     'status' => $request->status
+        // ]);
+
+        return response()->json([
+            'Msg' => "Process to update",
             'Status' => 200
         ]);
     }

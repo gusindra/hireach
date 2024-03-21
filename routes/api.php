@@ -7,9 +7,7 @@ use App\Http\Controllers\TestApiController;
 use App\Http\Controllers\ApiTeamWaController;
 use App\Http\Controllers\ApiBulkSmsController;
 use App\Http\Controllers\ApiChatController;
-use App\Http\Controllers\ApiOneWayController;
 use App\Http\Controllers\ApiSmsController;
-use App\Http\Controllers\ApiTwoWayController;
 
 /*
 |--------------------------------------------------------------------------
@@ -53,10 +51,8 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::post('/sms/bulk',  [ApiSmsController::class, 'sendBulk']);
 
     //API for 1Way
-    Route::get('/one-way',  [ApiOneWayController::class, 'index']);
     Route::post('/one-way',  [ApiOneWayController::class, 'post']);
     //API for 2Way
-    Route::get('/two-way',  [ApiTwoWayController::class, 'index']);
     Route::post('/two-way',  [ApiTwoWayController::class, 'post']);
 });
 

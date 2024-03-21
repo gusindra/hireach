@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "bf2a9938d55b945e7da30aa1c02978e3",
+    "content-hash": "59de53e901d7475851b9d2ee6e4b52e5",
     "packages": [
         {
             "name": "asantibanez/livewire-charts",
@@ -7897,6 +7897,60 @@
             "time": "2023-02-22T19:59:53+00:00"
         },
         {
+            "name": "unicodeveloper/novu",
+            "version": "1.1.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/novuhq/novu-php.git",
+                "reference": "36eb7fd15404d1f936859a383c81b6e175b03159"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/novuhq/novu-php/zipball/36eb7fd15404d1f936859a383c81b6e175b03159",
+                "reference": "36eb7fd15404d1f936859a383c81b6e175b03159",
+                "shasum": ""
+            },
+            "require": {
+                "ext-json": "*",
+                "guzzlehttp/guzzle": "^6.5.7|^7.4.4",
+                "php": "^7.2|^8.0"
+            },
+            "require-dev": {
+                "friendsofphp/php-cs-fixer": "^3.2.1",
+                "pestphp/pest": "^1.20.0",
+                "phpstan/phpstan": "^1.1.1",
+                "symfony/var-dumper": "^5.3.10"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Novu\\SDK\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Prosper Otemuyiwa",
+                    "email": "prosperotemuyiwa@gmail.com"
+                }
+            ],
+            "description": "The Novu PHP SDK",
+            "keywords": [
+                "infrastructure",
+                "notifications",
+                "novu",
+                "php"
+            ],
+            "support": {
+                "issues": "https://github.com/novuhq/novu-php/issues",
+                "source": "https://github.com/novuhq/novu-php/tree/1.1.0"
+            },
+            "time": "2023-10-03T04:58:22+00:00"
+        },
+        {
             "name": "vinkla/hashids",
             "version": "10.0.0",
             "source": {
@@ -10675,5 +10729,5 @@
         "php": "^8.0.2"
     },
     "platform-dev": [],
-    "plugin-api-version": "2.6.0"
+    "plugin-api-version": "2.3.0"
 }
