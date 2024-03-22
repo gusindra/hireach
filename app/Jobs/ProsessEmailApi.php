@@ -54,7 +54,6 @@ class ProcessEmailApi implements ShouldQueue
     }
 
     private function MKProvider($request){
-        i
         $msg    = '';
         // if(array_key_exists('servid', $request)){
         //     $serve  = $request['servid'];

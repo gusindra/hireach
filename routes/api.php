@@ -7,7 +7,10 @@ use App\Http\Controllers\TestApiController;
 use App\Http\Controllers\ApiTeamWaController;
 use App\Http\Controllers\ApiBulkSmsController;
 use App\Http\Controllers\ApiChatController;
+use App\Http\Controllers\ApiOneWayController;
 use App\Http\Controllers\ApiSmsController;
+use App\Http\Controllers\ApiTwoWayController;
+use App\Http\Controllers\ApiRequestController;
 
 /*
 |--------------------------------------------------------------------------
@@ -51,8 +54,10 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::post('/sms/bulk',  [ApiSmsController::class, 'sendBulk']);
 
     //API for 1Way
+    Route::get('/one-way',  [ApiOneWayController::class, 'index']);
     Route::post('/one-way',  [ApiOneWayController::class, 'post']);
     //API for 2Way
+    Route::get('/two-way',  [ApiTwoWayController::class, 'index']);
     Route::post('/two-way',  [ApiTwoWayController::class, 'post']);
 });
 
@@ -66,5 +71,101 @@ Route::post('/post-team-auth',  [ApiTeamWaController::class, 'postTeamAuth'])->n
 Route::get('/test/{id}',  [ApiTeamWaController::class, 'getTeam']);
 Route::put('/team-auth/{id}',  [ApiTeamWaController::class, 'put']);
 
-Route::get('/receive-sms-status',  [ApiBulkSmsController::class, 'status']);
-Route::get('/log-sms-status',  [ApiBulkSmsController::class, 'logStatus']);
+
+//MO & DN URL
+//Route::get('/receive-request-status',  [ApiRequestController::class, 'status']);
+//Route::get('/log-request-status',  [ApiRequestController::class, 'logStatus']);
+Route::post('/delivery-notification ',  [ApiBulkSmsController::class, 'status']);
+//Route::get('/log-request-status1',  [ApiBulkSmsController::class, 'logStatus']);
+Route::post('/inbound-messages',  [ApiWaController::class, 'retriveNewMessage']);
+
+Route::get('/sample/message', function (Request $request) {
+    if($request->has('status')){
+        if($request->status=='accepted'){
+            return response()->json([
+                'message_status' => [
+                    'message_id' => '100000000050',
+                    'recipient' => '601265',
+                    'status' => 'ACCEPTED',
+                ]
+            ]);
+        }
+        if($request->status=='read'){
+            return response()->json([
+                'message_status' => [
+                    'message_id' => '100000000050',
+                    'recipient' => '601265',
+                    'status' => 'ACCEPTED',
+                ]
+            ]);
+        }
+        if($request->status=='delete'){
+            return response()->json([
+                'message_status' => [
+                    'message_id' => '100000000050',
+                    'recipient' => '601265',
+                    'status' => 'DELETE',
+                ]
+            ]);
+        }
+        if($request->status=='undelivered'){
+            return response()->json([
+                'message_status' => [
+                    'message_id' => '100000000050',
+                    'recipient' => '601265',
+                    'status' => 'UNDELIVERED',
+                ]
+            ]);
+        }
+        if($request->status=='accepted'){
+            return response()->json([
+                'message_status' => [
+                    'message_id' => '100000000050',
+                    'recipient' => '601265',
+                    'status' => 'DELIVERED',
+                ]
+            ]);
+        }
+    }
+    return response()->json([
+                'Msg' => "Failed",
+                'Status' => 400
+            ]);
+});
+
+Route::get('/sent/sample', function(Request $request){
+    if($request->channel){
+        if(false){
+            $curl = curl_init();
+            curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
+            curl_setopt($curl, CURLOPT_POST, 1);
+            curl_setopt($curl, CURLOPT_HTTPHEADER, array(
+              "Content-Type: application/json"
+            ));
+            curl_setopt($curl, CURLOPT_URL,
+              "https://api.smtp2go.com/v3/email/send"
+            );
+            curl_setopt($curl, CURLOPT_POSTFIELDS, json_encode(array(
+              "api_key" => "api-DC84566695C24F1E81D5B0EAAA0B1F50",
+              "sender" => "norply@hireach.archeeshop.com",
+              "to" => array(
+                0 => "saritune@gmail.com"
+              ),
+              "subject" => "testing api email hi",
+              "html_body" => "<h1>hello this is testing number 2 from sandbox hireach</h1>",
+              "text_body" => "hello this is testing number 2 from sandbox hireach"
+            )));
+            $result = curl_exec($curl);
+            echo $result;
+        }else{
+            Mail::raw('Text to e-mail', function($message)
+            {
+                $message->from('saritune@gmail.com', 'Laravel');
+                $message->to('gusin44@yahoo.com');
+            });
+        }
+        return 'success sending '.$request->channel;
+    }else{
+        return 'comming soon we add '.$request->channel;
+    }
+});

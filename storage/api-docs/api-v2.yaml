@@ -7,20 +7,20 @@ info:
   license:
     name: 'Apache 2.0'
     url: 'http://www.apache.org/licenses/LICENSE-2.0.html'
-  version: 1.1.1
+  version: 1.1.0
 servers:
   -
-    url: 'https://hireach.test/dapi'
-    description: 'HiReach API Sandbox'
+    url: 'https://hireach.archeeshop.com/api'
+    description: 'HiReach API Staging'
   -
-    url: 'https://hireach.test/api'
+    url: 'https://hireach.firmapps.com/api'
     description: 'HiReach API Production'
 paths:
   /one-way:
     post:
       tags:
-        - one way
-      summary: 'Sending text to many channel'
+        - One Way
+      summary: 'Send sms to list of Recipients mobile number with given input array'
       operationId: postOneWayResource
       requestBody:
         $ref: '#/components/requestBodies/OneWayArray'
@@ -35,7 +35,7 @@ paths:
         - bearerAuth: []
     get:
       tags:
-        - one way
+        - One Way
       summary: 'Get all one way resource'
       operationId: getOneWayResource
       parameters:
@@ -86,180 +86,7 @@ paths:
   /two-way:
     post:
       tags:
-        - two way
-      summary: 'Send sms to list of Recipients mobile number with given input array'
-      operationId: sendBulkSms
-      requestBody:
-        $ref: '#/components/requestBodies/SmsArray'
-      responses:
-        '200':
-          description: 'successful operation'
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ApiResponse'
-      security:
-        - bearerAuth: []
-  /chat:
-    post:
-      tags:
-        - chat
-      summary: 'Send a message with form data'
-      operationId: sendChat
-      requestBody:
-        content:
-          application/x-www-form-urlencoded:
-            schema:
-              properties:
-                team:
-                  description: 'Slug Name Team'
-                  required: true
-                  type: string
-                phone:
-                  description: 'From no phone'
-                  required: true
-                  type: string
-                  format: msisdn
-                text:
-                  description: 'Reply of the chat'
-                  required: true
-                  type: string
-              type: object
-      responses:
-        '200':
-          description: 'successful operation'
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ApiResponse'
-        '422':
-          description: 'Invalid input'
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/InvalidInputChat'
-      security:
-        - bearerAuth: []
-  '/chat/{phone_number}':
-    get:
-      tags:
-        - chat
-      summary: 'Returns chat message by number'
-      description: 'Returns a chat conversation message per phone number'
-      operationId: getChat
-      parameters:
-        -
-          name: phone_number
-          in: path
-          required: true
-          schema:
-            type: string
-            format: msisdn
-      responses:
-        '200':
-          description: 'successful operation'
-          content:
-            application/xml:
-              schema:
-                $ref: '#/components/schemas/Chat'
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Chat'
-        '400':
-          description: 'Invalid phone number provided'
-        '404':
-          description: 'User not found'
-      security:
-        - bearerAuth: []
-  /sms:
-    get:
-      tags:
-        - sms
-      summary: 'Return all sms record'
-      operationId: getSms
-      parameters:
-        - name: start_date
-          in: query
-          type: string
-          format: date
-          description: >
-            The start date for the report. Must be used together with `end_date`.
-          example: '2022-01-20'
-        - name: end_date
-          in: query
-          type: string
-          format: date
-          description: >
-            The end date for the report. Must be used together with `start_date`.
-          example: '2022-01-20'
-      responses:
-        '200':
-          description: 'successful operation'
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/SingleSms'
-        '400':
-          description: 'Invalid supplied'
-        '404':
-          description: 'Record not found'
-      security:
-        - bearerAuth: []
-    post:
-      tags:
-        - sms
-      summary: 'Send sms to Recipient mobile number'
-      operationId: sendSms
-      requestBody:
-        description: 'Send sms object'
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/SendSms'
-      responses:
-        '200':
-          description: 'successful operation'
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ApiResponse'
-      security:
-        - bearerAuth: []
-  '/sms/{phone_number}':
-    get:
-      tags:
-        - sms
-      summary: 'Return all sms record'
-      operationId: getSmsByPhone
-      parameters:
-        -
-          name: phone_number
-          in: path
-          required: true
-          schema:
-            type: string
-            format: msisdn
-      responses:
-        '200':
-          description: 'successful operation'
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/SingleSms'
-            application/xml:
-              schema:
-                $ref: '#/components/schemas/SingleSms'
-        '400':
-          description: 'Invalid supplied'
-        '404':
-          description: 'Record not found'
-      security:
-        - bearerAuth: []
-  /sms/bulk:
-    post:
-      tags:
-        - sms
+        - Two Way
       summary: 'Send sms to list of Recipients mobile number with given input array'
       operationId: sendBulkSms
       requestBody:
@@ -332,7 +159,7 @@ components:
           type: string
         to:
           title: 'To'
-          description: 'The recipient’s mobile number must have the country code (without the “+” sign).'
+          description: 'Sending request to (email or phone or id). Mobile number must have the country code (without the “+” sign)'
           type: string
         status:
           title: 'Status'
@@ -410,9 +237,10 @@ components:
           default: 'email'
         type:
           title: 'type'
-          description: 'Type for content. Default is 0 for text.'
+          description: 'Type for content. 0 : text.'
           type: integer
           format: int64
+          default: 0
         title:
           title: 'title'
           description: 'Broadcast Title'
@@ -422,17 +250,18 @@ components:
           title: 'text'
           description: 'Message Content'
           type: string
-          default: 'Hi, [Name], your canvas design account has been updated with the following features in March. Find out more on our website!'
+          example: 'Hi, [Name], your account has been updated with the following features in March. Find out more on our website!'
         templateid:
           title: 'templateid'
-          description: ''
+          description: 'Your template id in HiReach'
           type: integer
           default: 1
         to:
           title: 'to'
-          description: 'The recipient`s mobile number must have the country code (without the “+” sign). Ex: 6281223344556'
+          description: 'The recipient`s mobile number must have the country code (without the “+” sign).'
           type: string
           format: msisdn
+          example: '6281223344556'
         from:
           title: 'from'
           description: 'Sender Name if using SenderID for channel sms_otp_sid or sms_notp_sid.'
@@ -578,14 +407,8 @@ components:
       bearerFormat: JWT
 tags:
   -
-    name: chat
-    description: 'API for Chat'
+    name: One Way
+    description: '1 Way Channel Sending Blast (SMS, Email, WA, WABA)'
   -
-    name: sms
-    description: 'API for SMS'
-  -
-    name: one way
-    description: 'API for 1 Way Channel Sending'
-  -
-    name: two way
-    description: 'API for 2 Way Channel Sending'
+    name: Two Way
+    description: '2 Way Channel Sending Confersation (WA, WABA)'

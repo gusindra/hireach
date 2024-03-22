@@ -9,6 +9,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use App\Jobs\ProcessSmsApi;
+use App\Jobs\ProcessEmailApi;
+use App\Jobs\ProcessChatApi;
 use App\Models\ApiCredential;
 use App\Models\Client;
 use Illuminate\Support\Str;
@@ -116,27 +118,38 @@ class ApiOneWayController extends Controller
                 ]);
             }
 
-            $allphone = $request->to;
-            $phones = explode(",", $request->to);
+            $retriver = explode(",", $request->to);
+            $allretriver = $request->to;
             $balance = (int)balance(auth()->user());
-            if($balance>500 && count($phones)<$balance/1){
-                if($request->channel=='email'){
-
-                }else{
-                    if(count($phones)>1){
-                        foreach($phones as $p){
-                            $data = array(
-                                'type' => $request->type,
-                                'to' => trim($p),
-                                'from' => $request->from,
-                                'text' => $request->text,
-                                'servid' => $request->servid,
-                                'title' => $request->title,
-                                'otp' => $request->otp,
-                            );
+            if($balance>500 && count($retriver)<$balance/1){
+                //THIS WILL QUEUE SMS JOB
+                //COUNT PHONE NUMBER REQUESTED
+                $phones = $retriver;
+                if(count($phones)>1){
+                    //GROUP RETRIVER
+                    foreach($phones as $p){
+                        $data = array(
+                            'type' => $request->type,
+                            'to' => trim($p),
+                            'from' => $request->from,
+                            'text' => $request->text,
+                            'servid' => $request->servid,
+                            'title' => $request->title,
+                            'otp' => $request->otp,
+                        );
+                        if($request->channel=='email'){
+                            //THIS WILL QUEUE EMAIL JOB
+                            ProcessEmailApi::dispatch($data, auth()->user());
+                        }elseif(strpos($request->channel, 'sms') !== false){
                             ProcessSmsApi::dispatch($data, auth()->user());
                         }
-                    }else{
+                    }
+                }else{
+                    //SINGLE RETRIVER
+                    if($request->channel=='email'){
+                        //THIS WILL QUEUE EMAIL JOB
+                        ProcessEmailApi::dispatch($request->all(), auth()->user());
+                    }elseif(strpos($request->channel, 'sms') !== false){
                         ProcessSmsApi::dispatch($request->all(), auth()->user());
                     }
                 }
