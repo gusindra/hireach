@@ -1,464 +1,441 @@
-{
-    "openapi": "3.0.0",
-    "info": {
-        "title": "HiReach Chat API",
-        "description": "This is a sample server HiReach server.  You can find out more about HiReach at [http://hireach.firmapps.ai](http://hireach.firmapps.ai).",
-        "version": "1.0.0",
-        "termsOfService": "http://hireach.firmapps.ai/terms",
-        "contact": {
-            "email": "hireach@firmapps.com"
-        },
-        "license": {
-            "name": "Apache 2.0",
-            "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
-        }
-    },
-    "servers": {
-        "url":"hireach.com/api",
-        "description":"hireach api"
-    },
-    "basePath": "/api",
-    "tags": [
-        {
-            "name": "chat",
-            "description": "Operations get chat messages user",
-            "externalDocs": {
-                "description": "Get message request and send message"
-            }
-        },
-        {
-            "name": "sms",
-            "description": "Operations to SMS",
-            "externalDocs": {
-                "description": "Get SMS request and send blast SMS"
-            }
-        }
-    ],
-    "components":{
-        "schemes": {
-            "Chat":{
-                "title": "Chat.",
-                "description": "Chat messages.",
-                "properties":{
-                    "id":{
-                        "title": "ID",
-                        "description": "ID",
-                        "type": "integer",
-                        "format": "int64",
-                        "name":{
-                            "title": "Reply ID",
-                            "description": "Reply ID",
-                            "type": "string"
-                        }
-                    },
-                    "reply":{
-                        "title": "Reply",
-                        "description": "Reply msg",
-                        "type": "string",
-                        "name":{
-                            "title": "Reply name",
-                            "description": "Reply name",
-                            "type": "string"
-                        }
-                    }
-                },
-                "type": "object",
-                "xml":{
-                    "name": "Chat"
-                }
-            },
-            "Sms":{
-                "title": "SMS.",
-                "description": "SMS data.",
-                "properties":{
-                    "id":{
-                        "title": "ID",
-                        "description": "ID",
-                        "type": "integer",
-                        "format": "int64",
-                        "name":{
-                            "title": "Category name",
-                            "description": "Category name",
-                            "type": "string"
-                        }
-                    }
-                },
-                "type": "object",
-                "xml":{
-                    "name": "SMS"
-                }
-            }
-        },
-        "securitySchemes": {
-            "bearerAuth":{
-                "type": "http",
-                "scheme": "bearer",
-                "bearerFormat": "JWT"
-            },
-            "api_key": {
-                "type": "apiKey",
-                "name": "api_key",
-                "in": "header"
-            }
-        }
-    },
-    "paths": {
-        "/chat/{phone_number}": {
-            "get": {
-                "tags": [
-                    "chat"
-                ],
-                "summary": "Find chat conversation by phone number",
-                "description": "Returns data conversation user",
-                "operationId": "getChatByNumber",
-                "requestBody":{
-                    "$ref": "#/components/requestBodies/Pet"
-                },
-                "produces": [
-                    "application/json",
-                    "application/xml"
-                ],
-                "parameters": [
-                    {
-                        "name": "phone_number",
-                        "in": "path",
-                        "description": "Phone number of costumer that needs to see",
-                        "required": true,
-                        "type": "integer",
-                        "format": "string"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "successful operation",
-                        "schema": {
-                            "$ref": "#/definitions/Chat"
-                        }
-                    },
-                    "400": {
-                        "description": "Invalid phone number supplied"
-                    },
-                    "404": {
-                        "description": "User not found"
-                    }
-                },
-                "security": [
-                    {
-                        "bearerAuth": []
-                    }
-                ]
-            },
-            "post": {
-                "tags": [
-                    "chat"
-                ],
-                "summary": "Send new message",
-                "description": "",
-                "operationId": "createMessageWithForm",
-                "consumes": [
-                    "application/x-www-form-urlencoded"
-                ],
-                "produces": [
-                    "application/json",
-                    "application/xml"
-                ],
-                "parameters": [
-                    {
-                        "name": "phone_number",
-                        "in": "path",
-                        "description": "ID of pet that needs to be updated",
-                        "required": true,
-                        "type": "string"
-                    },
-                    {
-                        "name": "reply",
-                        "in": "formData",
-                        "description": "Updated name of the pet",
-                        "required": false,
-                        "type": "string"
-                    }
-                ],
-                "responses": {
-                    "405": {
-                        "description": "Invalid input"
-                    }
-                },
-                "security": [
-                    {
-                        "chat_auth": [
-                            "write:chat",
-                            "read:chat"
-                        ]
-                    }
-                ]
-            }
-        },
-        "/sms":{
-            "get": {
-                "tags": [
-                    "sms"
-                ],
-                "summary": "Logs user into the system",
-                "description": "",
-                "operationId": "loginUser",
-                "produces": [
-                    "application/json",
-                    "application/xml"
-                ],
-                "parameters": [
-                    {
-                        "name": "username",
-                        "in": "query",
-                        "description": "The user name for login",
-                        "required": true,
-                        "type": "string"
-                    },
-                    {
-                        "name": "password",
-                        "in": "query",
-                        "description": "The password for login in clear text",
-                        "required": true,
-                        "type": "string"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "successful operation",
-                        "headers": {
-                            "X-Expires-After": {
-                                "type": "string",
-                                "format": "date-time",
-                                "description": "date in UTC when token expires"
-                            },
-                            "X-Rate-Limit": {
-                                "type": "integer",
-                                "format": "int32",
-                                "description": "calls per hour allowed by the user"
-                            }
-                        },
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    "400": {
-                        "description": "Invalid username/password supplied"
-                    }
-                }
-            }
-        },
-        "/sms/bulk": {
-            "post": {
-                "tags": [
-                    "sms"
-                ],
-                "summary": "Send message with given input phone number array",
-                "description": "",
-                "operationId": "sendMessageWithArrayInput",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json",
-                    "application/xml"
-                ],
-                "parameters": [
-                    {
-                        "in": "body",
-                        "name": "body",
-                        "description": "List of phone number",
-                        "required": true,
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/Sms"
-                            }
-                        }
-                    }
-                ],
-                "responses": {
-                    "default": {
-                        "description": "successful operation"
-                    }
-                }
-            }
-        }
-    },
-    "definitions": {
-        "ApiResponse": {
-            "type": "object",
-            "properties": {
-                "code": {
-                    "type": "integer",
-                    "format": "int32"
-                },
-                "type": {
-                    "type": "string"
-                },
-                "message": {
-                    "type": "string"
-                }
-            }
-        },
-        "Category": {
-            "type": "object",
-            "properties": {
-                "id": {
-                    "type": "integer",
-                    "format": "int64"
-                },
-                "name": {
-                    "type": "string"
-                }
-            },
-            "xml": {
-                "name": "Category"
-            }
-        },
-        "Pet": {
-            "type": "object",
-            "required": [
-                "name",
-                "photoUrls"
-            ],
-            "properties": {
-                "id": {
-                    "type": "integer",
-                    "format": "int64"
-                },
-                "category": {
-                    "$ref": "#/definitions/Category"
-                },
-                "name": {
-                    "type": "string",
-                    "example": "doggie"
-                },
-                "photoUrls": {
-                    "type": "array",
-                    "xml": {
-                        "wrapped": true
-                    },
-                    "items": {
-                        "type": "string",
-                        "xml": {
-                            "name": "photoUrl"
-                        }
-                    }
-                },
-                "tags": {
-                    "type": "array",
-                    "xml": {
-                        "wrapped": true
-                    },
-                    "items": {
-                        "xml": {
-                            "name": "tag"
-                        },
-                        "$ref": "#/definitions/Tag"
-                    }
-                },
-                "status": {
-                    "type": "string",
-                    "description": "pet status in the store",
-                    "enum": [
-                        "available",
-                        "pending",
-                        "sold"
-                    ]
-                }
-            },
-            "xml": {
-                "name": "Pet"
-            }
-        },
-        "Tag": {
-            "type": "object",
-            "properties": {
-                "id": {
-                    "type": "integer",
-                    "format": "int64"
-                },
-                "name": {
-                    "type": "string"
-                }
-            },
-            "xml": {
-                "name": "Tag"
-            }
-        },
-        "Chat": {
-            "type": "object",
-            "properties": {
-                "id": {
-                    "type": "integer",
-                    "format": "int64"
-                },
-                "petId": {
-                    "type": "integer",
-                    "format": "int64"
-                },
-                "quantity": {
-                    "type": "integer",
-                    "format": "int32"
-                },
-                "shipDate": {
-                    "type": "string",
-                    "format": "date-time"
-                },
-                "status": {
-                    "type": "string",
-                    "description": "Order Status",
-                    "enum": [
-                        "placed",
-                        "approved",
-                        "delivered"
-                    ]
-                },
-                "complete": {
-                    "type": "boolean"
-                }
-            },
-            "xml": {
-                "name": "Chat"
-            }
-        },
-        "User": {
-            "type": "object",
-            "properties": {
-                "id": {
-                    "type": "integer",
-                    "format": "int64"
-                },
-                "username": {
-                    "type": "string"
-                },
-                "firstName": {
-                    "type": "string"
-                },
-                "lastName": {
-                    "type": "string"
-                },
-                "email": {
-                    "type": "string"
-                },
-                "password": {
-                    "type": "string"
-                },
-                "phone": {
-                    "type": "string"
-                },
-                "userStatus": {
-                    "type": "integer",
-                    "format": "int32",
-                    "description": "User Status"
-                }
-            },
-            "xml": {
-                "name": "User"
-            }
-        }
-    },
-    "externalDocs": {
-        "description": "Find out more about Telixcel",
-        "url": "http://telixcel.com"
-    }
-}
+openapi: 3.0.0
+info:
+  title: 'HiReach API'
+  description: "This is a documentation HiReach API server."
+  contact:
+    email: support@hireach.com
+  license:
+    name: 'Apache 2.0'
+    url: 'http://www.apache.org/licenses/LICENSE-2.0.html'
+  version: 1.1.0
+servers:
+  -
+    url: 'https://hireach.archeeshop.com/api'
+    description: 'HiReach API Staging'
+  -
+    url: 'https://hireach.firmapps.com/api'
+    description: 'HiReach API Production'
+paths:
+  /one-way:
+    post:
+      tags:
+        - One Way
+      summary: 'Send notification to Recipients with one object request'
+      operationId: postOneWayResource
+      requestBody:
+        $ref: '#/components/requestBodies/OneWay'
+      responses:
+        '200':
+          description: 'successful operation'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+      security:
+        - bearerAuth: []
+    get:
+      tags:
+        - One Way
+      summary: 'Get all one way resource'
+      operationId: getOneWayResource
+      parameters:
+        -
+          name: provider
+          in: query
+          required: true
+          schema:
+            type: string
+            enum: [provider-1, provider-2]
+        -
+          name: page
+          in: query
+          required: true
+          default: 0
+          schema:
+            type: integer
+        -
+          name: pageSize
+          in: query
+          required: true
+          default: 10
+          schema:
+            type: integer
+        -
+          name: order
+          in: query
+          required: false
+          schema:
+            type: string
+            enum: [id, newest, oldnest]
+      responses:
+        '200':
+          description: 'successful operation'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SingleSms'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/SingleSms'
+        '400':
+          description: 'Invalid supplied'
+        '404':
+          description: 'Record not found'
+      security:
+        - bearerAuth: []
+  /one-way/group:
+    post:
+      tags:
+        - One Way Group
+      summary: 'Send notification to list of Recipients mobile number with given input array'
+      operationId: postOneWayResource
+      requestBody:
+        $ref: '#/components/requestBodies/OneWayArray'
+      responses:
+        '200':
+          description: 'successful operation'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+      security:
+        - bearerAuth: []
+  /two-way:
+    post:
+      tags:
+        - Two Way
+      summary: 'Send sms to list of Recipients mobile number with given input array'
+      operationId: sendBulkSms
+      requestBody:
+        $ref: '#/components/requestBodies/SmsArray'
+      responses:
+        '200':
+          description: 'successful operation'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+      security:
+        - bearerAuth: []
+
+components:
+  schemas:
+    ApiResponse:
+      title: 'Api response'
+      description: 'Api response'
+      properties:
+        message:
+          title: Message
+          description: Message
+          type: string
+          example: "Successful"
+        code:
+          title: Code
+          description: Code
+          type: integer
+          format: int32
+          example: 200
+        response:
+          title: Response
+          description: Response
+          type: array
+          items:
+            type: string
+      type: object
+    SingleSms:
+      title: 'Single SMS Response'
+      description: 'Single SMS model'
+      required:
+        - type
+        - to
+        - from
+        - text
+        - servid
+      properties:
+        id:
+          title: ID
+          description: ID
+          type: integer
+          format: int64
+        type:
+          title: 'Type'
+          description: 'Character type for text'
+          type: integer
+          format: int64
+        title:
+          title: 'Title'
+          description: 'Broadcast Title'
+          type: string
+        servid:
+          title: 'ServId'
+          description: 'ServID'
+          type: string
+        text:
+          title: 'Text'
+          description: 'Message Content'
+          type: string
+        to:
+          title: 'To'
+          description: 'Sending request to (email or phone or id). Mobile number must have the country code (without the “+” sign)'
+          type: string
+        status:
+          title: 'Status'
+          description: 'Broadcast status'
+          type: string
+        date:
+          title: 'Date'
+          description: 'Broadcast date'
+          type: string
+          format: date-time
+        otp:
+          title: 'OTP'
+          description: 'SMS Type OTP or NON OTP'
+          type: boolean
+      type: object
+      xml:
+        name: SingleSms
+    BulkSms:
+      title: 'Bulk SMS model'
+      description: 'Bulk SMS model'
+      required:
+        - type
+        - to
+        - from
+        - text
+        - servid
+      properties:
+        type:
+          title: 'Type'
+          description: 'Character type for text'
+          type: integer
+          format: int64
+        title:
+          title: 'Title'
+          description: 'Broadcast Title'
+          type: string
+        servid:
+          title: 'ServId'
+          description: 'ServID'
+          type: string
+        text:
+          title: 'Text'
+          description: 'Message Content'
+          type: string
+        from:
+          title: 'From'
+          description: 'Sender Name'
+          type: string
+        to:
+          title: 'To'
+          description: 'The recipient`s mobile number must have the country code (without the “+” sign).'
+          type: string
+          format: msisdn
+        otp:
+          title: 'OTP'
+          description: 'SMS Type OTP or NON OTP'
+          type: boolean
+      type: object
+      xml:
+        name: BulkSms
+    OneWayRequest:
+      title: 'One Way Model'
+      description: 'One Way Model'
+      required:
+        - channel
+        - type
+        - to
+        - text
+        - title
+      properties:
+        channel:
+          title: 'channel'
+          description: 'Channel resource to send content: email, wa, sms_otp_sid, sms_notp_sid, sms, talkbot'
+          type: string
+          default: 'email'
+        type:
+          title: 'type'
+          description: 'Type for content. 0 : text.'
+          type: integer
+          format: int64
+          default: 0
+        title:
+          title: 'title'
+          description: 'Broadcast Title'
+          type: string
+          default: 'New Product Launch'
+        text:
+          title: 'text'
+          description: 'Message Content'
+          type: string
+          example: 'Hi, [Name], your account has been updated with the following features in March. Find out more on our website!'
+        templateid:
+          title: 'templateid'
+          description: 'Your template id in HiReach'
+          type: integer
+          default: 1
+        to:
+          title: 'to'
+          description: 'The recipient`s mobile number must have the country code (without the “+” sign).'
+          type: string
+          format: msisdn
+          example: '6281223344556'
+        from:
+          title: 'from'
+          description: 'Sender Name if using SenderID for channel sms_otp_sid or sms_notp_sid.'
+          type: string
+        provider:
+          title: 'provider'
+          description: 'Provider is base price to sending Notification: provider1, provider2'
+          type: string
+          default: 'provider2'
+        otp:
+          title: 'otp'
+          description: 'SMS Type OTP or NON OTP: 0, 1'
+          type: boolean
+          default: 0
+      type: object
+      xml:
+        name: BulkSms
+    SendSms:
+      title: 'Send SMS model'
+      description: 'Send SMS model'
+      required:
+        - type
+        - to
+        - from
+        - text
+        - servid
+      properties:
+        type:
+          title: 'Type'
+          description: 'Character type for text: 0 - ASCII 5 - Unicode'
+          type: integer
+          format: int64
+          example: 0
+        servid:
+          title: 'ServId'
+          description: 'ServID'
+          type: string
+        to:
+          title: 'To'
+          description: 'The recipient’s mobile number must have the country code (without the “+” sign).'
+          type: string
+          format: msisdn
+          example: "6281339668556"
+        from:
+          title: 'from'
+          description: 'Sender’s name, Sender’s ID or Sender’s number'
+          type: string
+        title:
+          title: 'Title'
+          description: 'Broadcast Title'
+          type: string
+          example: "First Broadcast"
+        text:
+          title: 'Text'
+          description: 'Message Content'
+          type: string
+          example: "Hello World!"
+        otp:
+          title: 'OTP'
+          description: 'Is SMS Type OTP'
+          type: boolean
+          example: "true / false / 1 / 0"
+      type: object
+      xml:
+        name: SingleSms
+    Chat:
+      title: 'Chat model'
+      description: 'Chat model'
+      required:
+        - text
+        - phone
+      properties:
+        phone:
+          title: 'Phone'
+          description: 'Phone User from'
+          type: string
+        reply:
+          title: 'Reply'
+          description: 'User Message Reply'
+          type: string
+        date:
+          title: 'Date'
+          description: 'Broadcast date'
+          type: string
+          format: date-time
+      type: object
+      xml:
+        name: Chat
+    InvalidInputChat:
+      title: 'Invalid Chat'
+      description: 'Chat model'
+      required:
+        - text
+        - phone
+      properties:
+        message:
+          title: 'Phone'
+          description: 'Phone User from'
+          type: string
+        errors:
+          title: 'Errors'
+          description: 'Errors'
+          type: array
+          items:
+            type: string
+      type: object
+      xml:
+        name: InvalidInputChat
+  requestBodies:
+    Pet:
+      description: 'Pet object that needs to be added to the store'
+      required: true
+      content:
+        application/xml:
+          schema:
+            $ref: '#/components/schemas/Pet'
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Pet'
+    UserArray:
+      description: 'List of user object'
+      required: true
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              $ref: '#/components/schemas/User'
+    SmsArray:
+    OneWay:
+      description: 'List of one way request'
+      required: true
+      content:
+        application/json:
+          schema: 
+            $ref: '#/components/schemas/OneWayRequest'
+    OneWayArray:
+      description: 'List of one way request'
+      required: true
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              $ref: '#/components/schemas/OneWayRequest'
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+tags:
+  -
+    name: One Way
+    description: '1 Way Channel Sending (SMS, Email, WA, WABA)'
+  -
+    name: One Way Group
+    description: '1 Way Channel Sending Blast/Group (SMS, Email, WA, WABA)'
+  -
+    name: Two Way
+    description: '2 Way Channel Sending Confersation (WA, WABA)'

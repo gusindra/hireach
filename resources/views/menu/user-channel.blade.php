@@ -2,7 +2,7 @@
     <div class="overflow-y-auto py-2 px-2 h-full bg-white dark:bg-slate-800 border-r border-gray-200 dark:bg-gray-800 dark:border-gray-700">
         <ul class="space-y-2">
             <li>
-                <a href="{{route('channel.show', ['message'])}}" type="button" class="{{url()->full()==route('payment.topup')?'bg-slate-100':''}} items-center p-2 w-full text-base font-normal text-gray-600 rounded-lg transition duration-75 group hover:bg-gray-100 dark:text-white dark:hover:bg-slate-700" aria-controls="dropdown-pages" data-collapse-toggle="dropdown-pages">
+                <a href="{{route('channel.show', ['message'])}}" type="button" class="{{url()->full()==route('payment.topup')?'bg-slate-100':''}} items-center p-2 w-full text-base font-normal text-gray-600 rounded-lg transition duration-75 group hover:bg-gray-100 dark:text-white dark:hover:bg-slate-700 dark:bg-slate-600" aria-controls="dropdown-pages" data-collapse-toggle="dropdown-pages">
                     <center>
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 12.76c0 1.6 1.123 2.994 2.707 3.227 1.068.157 2.148.279 3.238.364.466.037.893.281 1.153.671L12 21l2.652-3.978c.26-.39.687-.634 1.153-.67 1.09-.086 2.17-.208 3.238-.365 1.584-.233 2.707-1.626 2.707-3.228V6.741c0-1.602-1.123-2.995-2.707-3.228A48.394 48.394 0 0 0 12 3c-2.392 0-4.744.175-7.043.513C3.373 3.746 2.25 5.14 2.25 6.741v6.018Z" />
@@ -12,7 +12,7 @@
                 </a>
             </li>
             <li>
-                <a href="{{route('channel.show', ['voice'])}}" type="button" class="{{url()->full()==route('payment.deposit')?'bg-slate-100':''}} items-center p-2 w-full text-base font-normal text-gray-600 rounded-lg transition duration-75 group hover:bg-gray-100 dark:text-white dark:hover:bg-slate-700" aria-controls="dropdown-pages" data-collapse-toggle="dropdown-pages">
+                <a href="{{route('channel.show', ['voice'])}}" type="button" class="{{url()->full()==route('payment.deposit')?'bg-slate-100':''}} items-center p-2 w-full text-base font-normal text-gray-600 rounded-lg transition duration-75 group hover:bg-gray-100 dark:text-white dark:hover:bg-slate-700 dark:bg-slate-600" aria-controls="dropdown-pages" data-collapse-toggle="dropdown-pages">
                     <center>
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M19.114 5.636a9 9 0 0 1 0 12.728M16.463 8.288a5.25 5.25 0 0 1 0 7.424M6.75 8.25l4.72-4.72a.75.75 0 0 1 1.28.53v15.88a.75.75 0 0 1-1.28.53l-4.72-4.72H4.51c-.88 0-1.704-.507-1.938-1.354A9.009 9.009 0 0 1 2.25 12c0-.83.112-1.633.322-2.396C2.806 8.756 3.63 8.25 4.51 8.25H6.75Z" />
@@ -22,7 +22,7 @@
                 </a>
             </li>
             <li>
-                <a href="{{route('channel.show', ['social'])}}" type="button" class="{{url()->full()==route('payment.deposit')?'bg-slate-100':''}} items-center p-2 w-full text-base font-normal text-gray-600 rounded-lg transition duration-75 group hover:bg-gray-100 dark:text-white dark:hover:bg-slate-700" aria-controls="dropdown-pages" data-collapse-toggle="dropdown-pages">
+                <a href="{{route('channel.show', ['social'])}}" type="button" class="{{url()->full()==route('payment.deposit')?'bg-slate-100':''}} items-center p-2 w-full text-base font-normal text-gray-600 rounded-lg transition duration-75 group hover:bg-gray-100 dark:text-white dark:hover:bg-slate-700 dark:bg-slate-600" aria-controls="dropdown-pages" data-collapse-toggle="dropdown-pages">
                     <center>
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 12a4.5 4.5 0 1 1-9 0 4.5 4.5 0 0 1 9 0Zm0 0c0 1.657 1.007 3 2.25 3S21 13.657 21 12a9 9 0 1 0-2.636 6.364M16.5 12V8.25" />

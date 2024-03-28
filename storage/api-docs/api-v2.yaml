@@ -20,10 +20,10 @@ paths:
     post:
       tags:
         - One Way
-      summary: 'Send sms to list of Recipients mobile number with given input array'
+      summary: 'Send notification to Recipients with one object request'
       operationId: postOneWayResource
       requestBody:
-        $ref: '#/components/requestBodies/OneWayArray'
+        $ref: '#/components/requestBodies/OneWay'
       responses:
         '200':
           description: 'successful operation'
@@ -45,7 +45,6 @@ paths:
           required: true
           schema:
             type: string
-            enum: [provider-1, provider-2]
         -
           name: page
           in: query
@@ -81,6 +80,23 @@ paths:
           description: 'Invalid supplied'
         '404':
           description: 'Record not found'
+      security:
+        - bearerAuth: []
+  /one-way/group:
+    post:
+      tags:
+        - One Way
+      summary: 'Send notification to list of Recipients mobile number with given input array'
+      operationId: postGroupOneWayResource
+      requestBody:
+        $ref: '#/components/requestBodies/OneWayArray'
+      responses:
+        '200':
+          description: 'successful operation'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
       security:
         - bearerAuth: []
   /two-way:
@@ -232,50 +248,63 @@ components:
       properties:
         channel:
           title: 'channel'
-          description: 'Channel resource to send content: email, wa, sms_otp_sid, sms_notp_sid, sms, talkbot'
+          description: 'Channel resource to send content.'
           type: string
+          required: 'Yes'
           default: 'email'
+          option: 'email, wa, sms_otp_sid, sms_notp_sid, sms, talkbot'
         type:
           title: 'type'
-          description: 'Type for content. 0 : text.'
+          description: 'Type for content.'
           type: integer
+          required: 'Yes'
           format: int64
           default: 0
+          option: '0 : text, 1: object'
         title:
           title: 'title'
           description: 'Broadcast Title'
           type: string
-          default: 'New Product Launch'
+          required: 'Yes'
+          example: 'New Product Launch'
         text:
           title: 'text'
           description: 'Message Content'
           type: string
-          example: 'Hi, [Name], your account has been updated with the following features in March. Find out more on our website!'
+          required: 'Yes'
+          example: 'Hi, {client_name}, your account has been updated with the following features in March. Find out more on our website!'
         templateid:
           title: 'templateid'
           description: 'Your template id in HiReach'
           type: integer
+          required: 'No'
           default: 1
         to:
           title: 'to'
-          description: 'The recipient`s mobile number must have the country code (without the “+” sign).'
+          description: 'The recipient`s contact, if mobile number must have the country code (without the “+” sign).'
           type: string
-          format: msisdn
-          example: '6281223344556'
+          required: 'Yes'
+          format: msisdn,email
+          sample: '6281223344556 / jhon@example.com'
         from:
           title: 'from'
-          description: 'Sender Name if using SenderID for channel sms_otp_sid or sms_notp_sid.'
+          description: 'Sender Name. Required for using channel email, sms_otp_sid, sms_notp_sid.'
           type: string
+          format: string,username,email
+          required: 'for channel email, sms_otp_sid, sms_notp_sid'
+          sample: 'HIREACH / noreply@hireach.archeeshop.com'
         provider:
           title: 'provider'
-          description: 'Provider is base price to sending Notification: provider1, provider2'
-          type: string
-          default: 'provider2'
+          description: 'Provider is to sending Notification given by HiReach. Default will set by system.'
+          required: 'Yes'
+          type: string 
         otp:
           title: 'otp'
-          description: 'SMS Type OTP or NON OTP: 0, 1'
+          description: 'SMS Type OTP for verification, authentication and security or NON OTP for normal notification text.'
           type: boolean
+          required: 'No'
           default: 0
+          option: '0:OTP, 1:NON OTP'
       type: object
       xml:
         name: BulkSms
@@ -391,8 +420,15 @@ components:
             items:
               $ref: '#/components/schemas/User'
     SmsArray:
+    OneWay:
+      description: 'List of one way request'
+      required: true
+      content:
+        application/json:
+          schema: 
+            $ref: '#/components/schemas/OneWayRequest'
     OneWayArray:
-      description: 'List of sms object'
+      description: 'List of one way request'
       required: true
       content:
         application/json:
@@ -408,7 +444,7 @@ components:
 tags:
   -
     name: One Way
-    description: '1 Way Channel Sending Blast (SMS, Email, WA, WABA)'
+    description: '1 Way Channel Sending (SMS, Email, WA, WABA)'
   -
     name: Two Way
     description: '2 Way Channel Sending Confersation (WA, WABA)'

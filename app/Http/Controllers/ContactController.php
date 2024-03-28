@@ -5,8 +5,10 @@ namespace App\Http\Controllers;
 use App\Models\Audience;
 use App\Models\Client;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Auth as FacadesAuth;
 use Vinkla\Hashids\Facades\Hashids;
+use Illuminate\Support\Str;
 
 class ContactController extends Controller
 {
@@ -71,5 +73,51 @@ class ContactController extends Controller
             return view('user.user-balance', ['user'=>$user, 'team'=>$request->has('team')?$request->team:0]);
         // }
         // return redirect('user');
+    }
+
+    public function import(Request $request)
+    {
+        $file = $request->file('file');
+        $fileContents = file($file->getPathname());
+
+        foreach ($fileContents as $key => $line) {
+            if($key>0){
+                $data = str_getcsv($line);  
+                $perData = explode(',', $data[0]);
+                //return $perData[1];
+                $exsist = Client::where('user_id', auth()->user()->id)->where('phone', $perData[1])->count();     
+                if($exsist==0){
+                    Client::create([
+                        'uuid'      => Str::uuid(),
+                        'name' => $perData[0],
+                        'phone' => $perData[1],
+                        'user_id' => auth()->user()->id,
+                        'created_at' => date('Y-m-d H:i:s')
+                        // Add more fields as needed
+                    ]);
+                }     
+            }
+        }
+
+        return redirect()->back()->with('success', 'CSV file imported successfully.');
+    }
+
+    public function export(Request $request)
+    {
+        $table = Client::where('user_id', auth()->user()->id)->whereDate('created_at', '=', $request->date)->get();
+        $filename = "tweets.csv";
+        $handle = fopen($filename, 'w+');
+        fputcsv($handle, array('name', 'phone', 'created_at'));
+    
+        foreach($table as $row) {
+            fputcsv($handle, array($row['name'], $row['phone'], $row['created_at']));
+        }
+    
+        fclose($handle);
+    
+        $headers = array(
+            'Content-Type' => 'text/csv',
+        );
+        return Response::download($filename, 'client.csv', $headers);
     }
 }

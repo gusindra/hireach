@@ -1,7 +1,7 @@
 <nav x-data="{ open: false }"
     class="bg-white dark:text-white border-b border-gray-100 dark:border-slate-50/[0.06] supports-backdrop-blur:bg-white/60 dark:bg-slate-800">
     <!-- Primary Navigation Menu -->
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex justify-between h-16">
             <div class="flex">
                 <!-- Logo -->

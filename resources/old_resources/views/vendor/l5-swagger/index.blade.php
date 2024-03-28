@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <title>HiReach API {{config('l5-swagger.documentations.'.$documentation.'.api.title')}}</title>
-    <link rel="stylesheet" type="text/css" href="{{ l5_swagger_asset($documentation, 'swagger-ui.css') }}">
-    <link rel="icon" type="image/png" href="{{ url('/frontend/images/favicon.png') }}" sizes="32x32"/>
-    <link rel="icon" type="image/png" href="{{ url('/frontend/images/favicon.png') }}" sizes="16x16"/>
+    {{-- <link rel="stylesheet" type="text/css" href="{{ l5_swagger_asset($documentation, 'swagger-ui.css') }}"> --}}
+    <link rel="stylesheet" type="text/css" href="{{ url('css/swagger-ui.css') }}">
+    <link rel="icon" type="image/png" href="{{ url('/frontend/images/favicon.png') }}">
     <style>
     html
     {
@@ -57,7 +57,7 @@
                 SwaggerUIBundle.plugins.DownloadUrl
             ],
 
-            layout: "StandaloneLayout",
+            layout: "BaseLayout",
             docExpansion : "{!! config('l5-swagger.defaults.ui.display.doc_expansion', 'none') !!}",
             deepLinking: true,
             filter: {!! config('l5-swagger.defaults.ui.display.filter') ? 'true' : 'false' !!},

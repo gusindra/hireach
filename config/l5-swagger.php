@@ -23,7 +23,7 @@ return [
                 /*
                  * File name of the generated json documentation file
                 */
-                'docs_json' => 'api-v1.yaml',
+                'docs_json' => 'api-v2.yaml',
 
                 /*
                  * File name of the generated YAML documentation file

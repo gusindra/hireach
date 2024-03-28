@@ -54,6 +54,9 @@ class SendMessageViaApi implements ShouldQueue
         }elseif($this->service->client == 'macrokiosk'){
             Log::debug("ready sent to WA from ".$this->service->client);
             $this->makrokioskApi();
+        }elseif($this->service->client == 'enjoymov'){
+            Log::debug("ready sent to WA from ".$this->service->client);
+            $this->enjoymoveApi();
         }
     }
 
@@ -240,5 +243,41 @@ class SendMessageViaApi implements ShouldQueue
         }
 
         Log::debug($chat->id.' : '.@$response['MessageID'].' URL : '.$status_url);
+    }
+
+    private function enjoymoveApi(){
+        
+
+        $url = 'https://enjoymov.co/prod-api/kstbCore/sms/send';
+        $md5_key = env('EM_MD5_KEY'); //'AFD4274C39AB55D8C8D08FA6E145D535';
+        $merchantId = env('EM_MERCHANT_ID'); //'KSTB904790';
+        $callbackUrl = 'http://hireach.archeeshop.com/receive-sms-status';
+        $phone = '81339668556';
+        $content = 'test enjoymov wa api';
+        $msgChannel = 'WA';
+        $countryCode = '62';
+        
+        $code = str_split($this->request->to, 2);
+        $countryCode = $code[0];
+        $phone = substr($this->request->to, 2);
+
+        $sb = $md5_key . $merchantId . $phone . $content;
+        $sign = md5($sb);
+        //return $sign;
+        $response = Http::get($url, [
+            'merchantId' => $merchantId,
+            'sign' => $sign,
+            'type' => $this->request->type,
+            'phone' => $phone,
+            'content' => $this->request->text,
+            "callbackUrl" => $callbackUrl,
+            'countryCode' => $countryCode,
+            'msgChannel' => $msgChannel,
+            "msgId" => $msg->id
+        ]);
+        
+        if($response){
+            $msg = $this->saveResult('progress');
+        }
     }
 }

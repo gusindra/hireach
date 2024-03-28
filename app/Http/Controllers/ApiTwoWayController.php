@@ -8,11 +8,12 @@ use App\Models\BlastMessage;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
-use App\Jobs\ProcessSmsApi;
+use App\Jobs\ProcessChatApi;
 use App\Models\ApiCredential;
 use App\Models\Client;
 use App\Models\Request as ModelsRequest;
 use Illuminate\Support\Str;
+use Vinkla\Hashids\Facades\Hashids;
 
 class ApiTwoWayController extends Controller
 {
@@ -21,10 +22,27 @@ class ApiTwoWayController extends Controller
      *
      * @return void
      */
-    public function index()
+    public function index(Request $request)
     {
-        $data = ModelsRequest::where('user_id', '=', auth()->user()->id)->get();
-
+        //$data = ModelsRequest::where('user_id', '=', auth()->user()->id)->get();
+        $skip = $request->page*$request->pageSize;
+        $customer = Client::where('phone', $request->phone)->first(); //->where('user_id', auth()->user()->id)
+        if($customer){
+            //$data = ModelsRequest::paginate($request->page);
+            $data = ModelsRequest::where('client_id', $customer->uuid)->skip($skip)->take($request->pageSize)->where('user_id', '=', auth()->user()->id)->get();
+            if(count($data)>=1){
+                return response()->json([
+                    'code' => 200,
+                    'message' => "Successful",
+                    'page'  => $request->page,
+                    'response' => TwoWayResource::collection($data),
+                ]);
+            }
+        }
+        return response()->json([
+            'code' => 404,
+            'message' => "Can not found client from Phone Number"
+        ]);
         return response()->json([
             'code' => 200,
             'message' => "Successful",
@@ -42,7 +60,7 @@ class ApiTwoWayController extends Controller
     {
         $customer = Client::where('phone', $phone)->where('user_id', auth()->user()->id)->first();
         if($customer){
-            $data = BlastMessage::where('user_id', '=', auth()->user()->id)->where('client_id', $customer->uuid)->get();
+            $data = ModelsRequest::where('user_id', '=', auth()->user()->id)->where('client_id', $customer->uuid)->get();
 
             return response()->json([
                 'code' => 200,
@@ -64,44 +82,32 @@ class ApiTwoWayController extends Controller
      */
     public function post(Request $request)
     {
+        //return $request;
         //get the request & validate parameters
         $fields = $request->validate([
             'type' => 'required|numeric',
             'to' => 'required|string',
             'from' => 'required|alpha_num',
             'text' => 'required|string',
-            'servid' => 'required|string',
             'title' => 'required|string',
             'detail' => 'string',
             'otp' => 'boolean'
         ]);
-        // return response()->json([
-        //     'message' => "Successful",
+        //return response()->json([
+        //    'message' => "Successful",
         //     'code' => 200
-        // ]);
-
+        //]);
+        //return $request;
         try{
             //$userCredention = ApiCredential::where("user_id", auth()->user()->id)->where("client", "api_sms_mk")->where("is_enabled", 1)->first();
-            Log::channel('apilog')->info($request, [
-                'auth' => auth()->user()->name,
-            ]);
+            //Log::channel('apilog')->info($request, [
+            //    'auth' => auth()->user()->name,
+            //]);
             // ProcessSmsApi::dispatch($request->all(), auth()->user());
             //auto check otp / non otp type base on text
             $checkString = $request->text;
             $otpWord = ['Angka Rahasia', 'Authorisation', 'Authorise', 'Authorization', 'Authorized', 'Code', 'Harap masukkan', 'Kata Sandi', 'Kode',' Kode aktivasi', 'konfirmasi', 'otentikasi', 'Otorisasi', 'Rahasia', 'Sandi', 'trx', 'unik', 'Venfikasi', 'KodeOTP', 'NewOtp', 'One-Time Password', 'Otorisasi', 'OTP', 'Pass', 'Passcode', 'PassKey', 'Password', 'PIN', 'verifikasi', 'insert current code', 'Security', 'This code is valid', 'Token', 'Passcode', 'Valid OTP', 'verification','Verification', 'login code', 'registration code', 'secunty code'];
-            if($request->otp){
-                $request->merge([
-                    'otp' => 1
-                ]);
-            }elseif(Str::contains($checkString, $otpWord)){
-                $request->merge([
-                    'otp' => 1
-                ]);
-            }else{
-                $request->merge([
-                    'otp' => 0
-                ]);
-            }
+            
             $allphone = $request->to;
             $phones = explode(",", $request->to);
             $balance = (int)balance(auth()->user());
@@ -112,15 +118,23 @@ class ApiTwoWayController extends Controller
                             'type' => $request->type,
                             'to' => trim($p),
                             'from' => $request->from,
-                            'text' => $request->text,
-                            'servid' => $request->servid,
+                            'text' => $request->text, 
                             'title' => $request->title,
-                            'otp' => $request->otp,
                         );
-                        ProcessSmsApi::dispatch($data, auth()->user());
+                        $this->saveResult(null, $data);
+                        //ProcessChatApi::dispatch($data, auth()->user());
+                        //return $data;
                     }
                 }else{
-                    ProcessSmsApi::dispatch($request->all(), auth()->user());
+                    $data = array(
+                        'type' => $request->type,
+                        'to' => $request->to,
+                        'from' => $request->from,
+                        'text' => $request->text, 
+                        'title' => $request->title,
+                    );
+                    $this->saveResult(null, $data);
+                    //ProcessChatApi::dispatch($request->all(), auth()->user());
                 }
             }else{
                 return response()->json([
@@ -305,42 +319,29 @@ class ApiTwoWayController extends Controller
 
     private function saveResult($msg, $request){
         $user_id = auth()->user()->id;
-        $modelData = [
-            'msg_id'    => 0,
+        //ModelsRequest::create($modelData);
+        $client = $this->chechClient("400", $request);
+        $chat = ModelsRequest::create([
+            'source_id' => 'api_'.Hashids::encode($client->id),
+            'reply'     => $request['text'],
+            'from'      => $client->id,
             'user_id'   => $user_id,
-            'client_id' => $this->chechClient("400", null, $request),
-            'type'      => $request['type'],
-            'status'    => $msg,
-            'code'      => "400",
-            'message_content'  => $request['text'],
-            'price'     => 0,
-            'balance'   => 0,
-            'msisdn'    => 0,
-        ];
-        BlastMessage::create($modelData);
+            'type'      => 'text',
+            'client_id' => $client->uuid,
+            'sent_at'   => date('Y-m-d H:i:s'),
+            'team_id'   => auth()->user()->team->id
+        ]);
     }
 
-    private function chechClient($status, $msisdn=null, $request=null){
-        $user_id = auth()->user()->id;
-        if($status=="200"){
-            $client = Client::where('phone', $msisdn)->where('user_id', $user_id)->firstOr(function () use ($msisdn, $user_id) {
-                return Client::create([
-                    'phone' => $msisdn,
-                    'user_id' => $user_id,
-                    'uuid' => Str::uuid()
-                ]);
-            });
-        }else{
-            $phones = explode (",", $request['to']);
-            $client = Client::where('phone', $phones[0])->where('user_id', $user_id)->firstOr(function () use ($phones, $user_id) {
-                return Client::create([
-                    'phone' => $phones[0],
-                    'user_id' => $user_id,
-                    'uuid' => Str::uuid()
-                ]);
-            });
-        }
-
-        return $client->uuid;
+    private function chechClient($status, $request=null){
+        $user_id = auth()->user()->id; 
+        $client = Client::where('phone', $request['to'])->where('user_id', $user_id)->firstOr(function () use ($request, $user_id) {
+            return Client::create([
+                'phone' => $request['to'],
+                'user_id' => $user_id,
+                'uuid' => Str::uuid()
+            ]);
+        }); 
+        return $client;
     }
 }

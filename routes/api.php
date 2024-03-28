@@ -56,6 +56,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     //API for 1Way
     Route::get('/one-way',  [ApiOneWayController::class, 'index']);
     Route::post('/one-way',  [ApiOneWayController::class, 'post']);
+    Route::post('/one-way/group',  [ApiOneWayController::class, 'postGroup']);
     //API for 2Way
     Route::get('/two-way',  [ApiTwoWayController::class, 'index']);
     Route::post('/two-way',  [ApiTwoWayController::class, 'post']);

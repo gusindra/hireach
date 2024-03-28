@@ -36,19 +36,19 @@ class TemplatesTable extends LivewireDatatable
                     'href' => "/template/" . $value,
                     'slot' => substr($value, 30)
                 ]);
-            }),
-    		Column::name('name')->label('Name'),
-    		Column::name('description')->label('Description'),
+            })->unsortable(),
+    		Column::name('name')->label('Name')->unsortable(),
+    		Column::name('description')->label('Description')->unsortable(),
     		Column::callback(['type'], function ($type) {
                 return view('template.label', ['type' => $type]);
-            })->label('Type'),
+            })->label('Type')->unsortable(),
             Column::callback(['resource'], function ($resource) {
                 if($resource==2){
                     return '1Way';
                 }
                 return '2Way';
-            })->label('Resource'),
-    		BooleanColumn::name('is_enabled')->label('Active')
+            })->label('Resource')->unsortable(),
+    		BooleanColumn::name('is_enabled')->label('Active')->unsortable()
     	];
     }
 }

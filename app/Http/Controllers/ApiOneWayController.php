@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use App\Jobs\ProcessSmsApi;
 use App\Jobs\ProcessEmailApi;
-use App\Jobs\ProcessChatApi;
+use App\Jobs\ProcessWaApi;
 use App\Models\ApiCredential;
 use App\Models\Client;
 use Illuminate\Support\Str;
@@ -24,9 +24,10 @@ class ApiOneWayController extends Controller
      */
     public function index(Request $request)
     {
+        //return $request;
         //$data = BlastMessage::where('user_id', '=', auth()->user()->id)->get();
         $skip = $request->page*$request->pageSize;
-        $data = BlastMessage::skip($skip)->take($request->pageSize);
+        $data = BlastMessage::skip($skip)->where('user_id', '=', auth()->user()->id)->take($request->pageSize);
         if($request->order=='id'){
             $data = $data->orderBy('id', 'asc')->get();
         }elseif($request->order=='oldnest'){
@@ -54,6 +55,7 @@ class ApiOneWayController extends Controller
      */
     public function show($phone)
     {
+        return $request;
         $customer = Client::where('phone', $phone)->where('user_id', auth()->user()->id)->first();
         if($customer){
             $data = BlastMessage::where('user_id', '=', auth()->user()->id)->where('client_id', $customer->uuid)->get();
@@ -79,27 +81,32 @@ class ApiOneWayController extends Controller
     public function post(Request $request)
     {
         //get the request & validate parameters
-        $fields = $request->validate([
+        $validateArr = [
             'channel'   => 'required',
             'type'      => 'required|numeric',
             'title'     => 'required|string',
             'to'        => 'required|string',
             'provider'  => 'required|string',
-            'from'      => 'alpha_num|required_if:channel,sms_otp_sid|required_if:channel,sms_notp_sid',
             'text'      => 'required|string',
             'detail'    => 'string',
             'otp'       => 'boolean'
-        ]);
+        ];
+        if(strpos( $request->channel, 'sms' ) !== false){
+            $validateArr['from'] = 'alpha_num|required_if:channel,sms_otp_sid|required_if:channel,sms_notp_sid';
+        }else{
+            $validateArr['from'] = 'required';
+        }
+        $fields = $request->validate($validateArr); 
         // return response()->json([
         //     'message' => "Successful",
         //     'code' => 200
         // ]);
-
+        //return $request->provider;
         try{
             //$userCredention = ApiCredential::where("user_id", auth()->user()->id)->where("client", "api_sms_mk")->where("is_enabled", 1)->first();
-            Log::channel('apilog')->info($request, [
-                'auth' => auth()->user()->name,
-            ]);
+            //Log::channel('apilog')->info($request, [
+            //    'auth' => auth()->user()->name,
+            //]);
             // ProcessSmsApi::dispatch($request->all(), auth()->user());
             //auto check otp / non otp type base on text
             $checkString = $request->text;
@@ -136,21 +143,31 @@ class ApiOneWayController extends Controller
                             'servid' => $request->servid,
                             'title' => $request->title,
                             'otp' => $request->otp,
+                            'provider' => $request->provider,
                         );
                         if($request->channel=='email'){
                             //THIS WILL QUEUE EMAIL JOB
-                            ProcessEmailApi::dispatch($data, auth()->user());
+                            //return $data;
+                            $reqArr = json_encode($request->all());
+                            ProcessEmailApi::dispatch($data, auth()->user(), $reqArr);
                         }elseif(strpos($request->channel, 'sms') !== false){
                             ProcessSmsApi::dispatch($data, auth()->user());
+                        }elseif($request->channel=='wa'){
+                            ProcessWaApi::dispatch($data, auth()->user());
+                        }elseif($request->channel=='wa'){
+                            //ProcessChatApi::dispatch($request->all(), auth()->user());
                         }
                     }
                 }else{
                     //SINGLE RETRIVER
                     if($request->channel=='email'){
+                        $reqArr = json_encode($request->all());
                         //THIS WILL QUEUE EMAIL JOB
-                        ProcessEmailApi::dispatch($request->all(), auth()->user());
+                        ProcessEmailApi::dispatch($request->all(), auth()->user(), $reqArr);
                     }elseif(strpos($request->channel, 'sms') !== false){
                         ProcessSmsApi::dispatch($request->all(), auth()->user());
+                    }elseif($request->channel=='wa'){
+                        ProcessWaApi::dispatch($request->all(), auth()->user());
                     }
                 }
             }else{
@@ -169,7 +186,7 @@ class ApiOneWayController extends Controller
         }
         // show result on progress
         return response()->json([
-            'message' => "Successful, prepare sending to ".count($phones)." msisdn",
+            'message' => "Successful, prepare sending notification to ".count($phones)." contact",
             'code' => 200,
         ]);
     }

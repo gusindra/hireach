@@ -53,19 +53,33 @@ class ProcessSmsStatus implements ShouldQueue
         //        'status' => $this->request['status']
         //    ]);
         //}else{
-        //    Log::debug($this->request);
+            Log::debug($this->request);
         //}
-
-        if($this->request['status']==""){
-            $status = "ACCEPTED";
-        }else{
-            $status = $this->request['status'];
+        if(array_key_exists("message_status", $this->request)){
+            if($this->request['message_status']){
+                if($this->request['status']==""){
+                    $status = "ACCEPTED";
+                }else{
+                    $status = $this->request['status'];
+                }
+            }
         }
+        if(array_key_exists("status", $this->request)){
+            if($this->request['status']==""){
+                $status = "ACCEPTED";
+            }else{
+                $status = $this->request['status'];
+            }
+        } 
+        
         if(array_key_exists('msgID',$this->request)){
             $msgid = $this->request['msgID'];
-        }else{
+        }elseif((array_key_exists('msgID',$this->request))){
             $msgid = $this->request['msgid'];
+        }elseif((array_key_exists('message_id',$this->request))){
+            $msgid = $this->request['message_id'];
         }
+        
         $sms = BlastMessage::where("msg_id", $msgid)->where("msisdn", $this->request['msisdn'])->where("status", "!=", $status)->first();
         if($sms){
             $sms->update([

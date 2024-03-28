@@ -269,7 +269,7 @@ class ProcessSmsApi implements ShouldQueue
             $sb = $md5_key . $merchantId . $phone . $content;
             $sign = md5($sb);
             //return $sign;
-            $response = Http::get($url, [
+            Http::withOptions([ 'verify' => false, ])->post($url, [
                 'merchantId' => $merchantId,
                 'sign' => $sign,
                 'type' => $request->type,

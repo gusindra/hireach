@@ -147,6 +147,8 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
     })->name('message');
 
     Route::get('/client', [CustomerController::class, 'index'])->name('client');
+    Route::get('/export/client', [ContactController::class, 'export'])->name('contact.export');
+    Route::post('/import/client', [ContactController::class, 'import'])->name('contact.import');
 
     Route::get('/template', function () {
         return view('template.index');
