@@ -20,7 +20,37 @@
 </head>
 
 <body class="bg-black" data-spy="scroll" data-target="#ftco-navbar" data-offset="200">
-
+    
+    @if(app('request')->input('page')=='landingpage') 
+    <!-- END nav -->
+    <video class="w-full fixed top-0 grayscale brightness-50" autoplay muted loop id="myVideo">
+        <source src="frontend/images/preview2.mp4" type="video/mp4">
+    </video>
+    
+    <section class="ftco-cover1 ftco-slant1" id="section-home">
+        <div class="container">
+            <div class="row align-items-center justify-content-center items-center text-center ftc1o-vh-100 mt-48">
+                <div class="col-md-12"><div class="text-3xl text-white uppercase">Welcome to</div></div>
+                <div class="col-md-12 flex justify-center items-bottom text-center mx-auto mb-20">
+                    <img class="logo-white w-64 h-auto" src="https://hireach.archeeshop.com/frontend/images/logo-trans.png" title="HiReach" style="filter: brightness(1000%);">
+                </div>
+                <div class="col-md-12">
+                    <div class="visible" id="ftco-nav">
+                        <ul class="navbar-nav1 ml-auto lg:flex  justify-center gap-10">
+                            <li class="nav-item text-white"><a href="{{url('/')}}" class="nav-link text-lg hover:bg-white hover:text-black rounded-sm border-4 border-white hover:font-bold px-8">Website</a></li>  
+                            <li class="nav-item text-white"><a href="{{url('/api/documentation')}}" class="nav-link text-lg hover:bg-white hover:text-black rounded-sm border-4 border-white hover:font-bold px-8">API Documentation</a></li>
+                            @if(auth()->user())
+                            <li class="nav-item text-white"><a href="{{url('/dashboard')}}" class="nav-link text-lg hover:bg-white hover:text-black rounded-sm border-4 border-white hover:font-bold px-8">Dashboard</a></li>
+                            @else
+                            <li class="nav-item text-white"><a href="{{url('/login')}}" class="nav-link text-lg hover:bg-white hover:text-black rounded-sm border-4 border-white hover:font-bold px-8">Login</a></li> 
+                            @endif
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    @else
     <nav class="navbar navbar-expand-lg navbar-dark ftco_navbar bg-dark ftco-navbar-light" id="ftco-navbar">
         <div class="container1 flex">
             <a class="navbar-brand" href="/">
@@ -54,6 +84,7 @@
     <video class="w-full fixed top-0 grayscale brightness-50" autoplay muted loop id="myVideo">
         <source src="frontend/images/preview2.mp4" type="video/mp4">
     </video>
+    
     <section class="ftco-cover ftco-slant" style="background-image: url(frontend/images/bg_81.jpg);" id="section-home">
         <div class="container">
             <div class="row align-items-center justify-content-center text-center ftco-vh-100">
@@ -421,7 +452,7 @@
           </div>
         </div>
       </div>
-    </section> -->
+    </section> 
 
     <section class="ftco-section bg-white ftco-slant" id="section-contact">
         <div class="container">
@@ -459,7 +490,7 @@
                 </div>
             </div>
         </div>
-    </section>
+    </section> -->
 
     <section class="ftco-section bg-light ftco-slant ftco-slant-white" id="section-about">
         <div class="container">
@@ -535,28 +566,27 @@
                 </div>
             </div>
             <!-- END row -->
-            <!-- <div class="row">
-          <div class="col-md ftco-animate">
-            <div class="ftco-counter text-center">
-              <span class="ftco-number" data-number="34146">0</span>
-              <span class="ftco-label">Lines of Codes</span>
-            </div>
-          </div>
-          <div class="col-md ftco-animate">
-            <div class="ftco-counter text-center">
-              <span class="ftco-number" data-number="1239">0</span>
-              <span class="ftco-label">Pizza Consume</span>
-            </div>
-          </div>
-          <div class="col-md ftco-animate">
-            <div class="ftco-counter text-center">
-              <span class="ftco-number" data-number="124">0</span>
-              <span class="ftco-label">Number of Clients</span>
-            </div>
-          </div>
+            <div class="row">
+              <div class="col-md ftco-animate">
+                <div class="ftco-counter text-center">
+                  <span class="ftco-number text-white" data-number="34146">0</span>
+                  <span class="ftco-label">Notification Sent</span>
+                </div>
+              </div>
+              <div class="col-md ftco-animate">
+                <div class="ftco-counter text-center">
+                  <span class="ftco-number text-white" data-number="1239">0</span>
+                  <span class="ftco-label">Number of Chat</span>
+                </div>
+              </div>
+              <div class="col-md ftco-animate">
+                <div class="ftco-counter text-center">
+                  <span class="ftco-number text-white" data-number="124">0</span>
+                  <span class="ftco-label">Number of Clients</span>
+                </div>
+              </div>
+            </div> 
         </div>
-      </div> -->
-
     </section>
 
 
@@ -564,7 +594,7 @@
     <footer class="ftco-footer ftco-bg-dark bg-black">
         <div class="container">
             <div class="row mb-5">
-                <div class="col-md-8">
+                <div class="col-md-8 hidden">
                     <div class="row">
                         <div class="col-md text-center">
                             <div class="ftco-footer-widget mb-4">
@@ -610,36 +640,19 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-md-4">
-                    <div class="ftco-footer-widget mb-4 text-center mt-4">
-                        <!-- <h2 class="ftco-heading-2 ">Follow us</h2>
-
-                        <ul class="ftco-footer-social1 list-unstyled float-md-right1 float-lft" style=" display: flex;align-items: center;justify-content: center;">
-                            <li class="px-2"><a href="#">
-                                    <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="32" height="32" viewBox="0 0 32 32" style=" fill:#ffffff;">
-                                        <path d="M 28 8.558594 C 27.117188 8.949219 26.167969 9.214844 25.171875 9.332031 C 26.1875 8.722656 26.96875 7.757813 27.335938 6.609375 C 26.386719 7.171875 25.332031 7.582031 24.210938 7.804688 C 23.3125 6.847656 22.03125 6.246094 20.617188 6.246094 C 17.898438 6.246094 15.691406 8.453125 15.691406 11.171875 C 15.691406 11.558594 15.734375 11.933594 15.820313 12.292969 C 11.726563 12.089844 8.097656 10.128906 5.671875 7.148438 C 5.246094 7.875 5.003906 8.722656 5.003906 9.625 C 5.003906 11.332031 5.871094 12.839844 7.195313 13.722656 C 6.386719 13.695313 5.628906 13.476563 4.964844 13.105469 C 4.964844 13.128906 4.964844 13.148438 4.964844 13.167969 C 4.964844 15.554688 6.660156 17.546875 8.914063 17.996094 C 8.5 18.109375 8.066406 18.171875 7.617188 18.171875 C 7.300781 18.171875 6.988281 18.140625 6.691406 18.082031 C 7.316406 20.039063 9.136719 21.460938 11.289063 21.503906 C 9.605469 22.824219 7.480469 23.609375 5.175781 23.609375 C 4.777344 23.609375 4.386719 23.585938 4 23.539063 C 6.179688 24.9375 8.765625 25.753906 11.546875 25.753906 C 20.605469 25.753906 25.558594 18.25 25.558594 11.742188 C 25.558594 11.53125 25.550781 11.316406 25.542969 11.105469 C 26.503906 10.410156 27.339844 9.542969 28 8.558594 Z"></path>
-                                    </svg>
-                                </a></li>
-                            <li class="px-2"><a href="#">
-                                    <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="32" height="32" viewBox="0 0 32 32" style=" fill:#ffffff;">
-                                        <path d="M 7 5 C 5.90625 5 5 5.90625 5 7 L 5 25 C 5 26.09375 5.90625 27 7 27 L 25 27 C 26.09375 27 27 26.09375 27 25 L 27 7 C 27 5.90625 26.09375 5 25 5 Z M 7 7 L 25 7 L 25 25 L 19.8125 25 L 19.8125 18.25 L 22.40625 18.25 L 22.78125 15.25 L 19.8125 15.25 L 19.8125 13.3125 C 19.8125 12.4375 20.027344 11.84375 21.28125 11.84375 L 22.90625 11.84375 L 22.90625 9.125 C 22.628906 9.089844 21.667969 9.03125 20.5625 9.03125 C 18.257813 9.03125 16.6875 10.417969 16.6875 13 L 16.6875 15.25 L 14.0625 15.25 L 14.0625 18.25 L 16.6875 18.25 L 16.6875 25 L 7 25 Z"></path>
-                                    </svg>
-                                </a></li>
-                            <li class="px-2"><a href="#">
-                                    <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="32" height="32" viewBox="0 0 32 32" style=" fill:#ffffff;">
-                                        <path d="M 11.46875 5 C 7.917969 5 5 7.914063 5 11.46875 L 5 20.53125 C 5 24.082031 7.914063 27 11.46875 27 L 20.53125 27 C 24.082031 27 27 24.085938 27 20.53125 L 27 11.46875 C 27 7.917969 24.085938 5 20.53125 5 Z M 11.46875 7 L 20.53125 7 C 23.003906 7 25 8.996094 25 11.46875 L 25 20.53125 C 25 23.003906 23.003906 25 20.53125 25 L 11.46875 25 C 8.996094 25 7 23.003906 7 20.53125 L 7 11.46875 C 7 8.996094 8.996094 7 11.46875 7 Z M 21.90625 9.1875 C 21.402344 9.1875 21 9.589844 21 10.09375 C 21 10.597656 21.402344 11 21.90625 11 C 22.410156 11 22.8125 10.597656 22.8125 10.09375 C 22.8125 9.589844 22.410156 9.1875 21.90625 9.1875 Z M 16 10 C 12.699219 10 10 12.699219 10 16 C 10 19.300781 12.699219 22 16 22 C 19.300781 22 22 19.300781 22 16 C 22 12.699219 19.300781 10 16 10 Z M 16 12 C 18.222656 12 20 13.777344 20 16 C 20 18.222656 18.222656 20 16 20 C 13.777344 20 12 18.222656 12 16 C 12 13.777344 13.777344 12 16 12 Z"></path>
-                                    </svg>
-                                </a></li>
-                        </ul> -->
-                        <h1 class="ftco-heading-21 text-white navbar-brand"><img src="https://hireach.archeeshop.com/frontend/images/logo-trans.png" title="{{ env('APP_NAME')}}" style="width: 200px;-webkit-filter: brightness(1000%); /* Safari 6.0 - 9.0 */
-  filter: brightness(1000%);" /></h2>
-                            <p class=" text-white">&copy; {{ env('APP_NAME')}} {{date('Y')}}. All Rights Reserved.</p>
+                <div class="col-md-12">
+                    <div class="ftco-footer-widget mb-4 text-center mt-4"> 
+                        <h1 class="ftco-heading-21 text-white navbar-brand">
+                            <img src="https://hireach.archeeshop.com/frontend/images/logo-trans.png" title="{{ env('APP_NAME')}}" style="width: 200px;-webkit-filter: brightness(1000%); /* Safari 6.0 - 9.0 */
+  filter: brightness(1000%);" />
+                        </h1>
+                        <p class=" text-white">&copy; {{ env('APP_NAME')}} {{date('Y')}}. All Rights Reserved.</p>
                     </div>
                 </div>
             </div>
         </div>
     </footer>
-
+    @endif
     <!-- loader -->
     <div id="ftco-loader" class="show fullscreen"><svg class="circular" width="48px" height="48px">
             <circle class="path-bg" cx="24" cy="24" r="22" fill="none" stroke-width="4" stroke="#eeeeee" />

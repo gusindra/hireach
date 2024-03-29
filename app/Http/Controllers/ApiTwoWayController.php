@@ -82,7 +82,6 @@ class ApiTwoWayController extends Controller
      */
     public function post(Request $request)
     {
-        //return $request;
         //get the request & validate parameters
         $fields = $request->validate([
             'type' => 'required|numeric',
@@ -104,6 +103,23 @@ class ApiTwoWayController extends Controller
             //    'auth' => auth()->user()->name,
             //]);
             // ProcessSmsApi::dispatch($request->all(), auth()->user());
+            $credential = '';
+            if($request->channel=='wa'){
+                foreach(auth()->user()->credential as $cre){
+                    if($cre->client=='api_wa_mk'){
+                        $credential = $cre;
+                    }
+                }
+            }
+            //return $credential;
+            
+            if($credential==''){
+                return response()->json([
+                    'message' => 'Invalid Credential',
+                    'code' => 400
+                ]);
+            }
+                
             //auto check otp / non otp type base on text
             $checkString = $request->text;
             $otpWord = ['Angka Rahasia', 'Authorisation', 'Authorise', 'Authorization', 'Authorized', 'Code', 'Harap masukkan', 'Kata Sandi', 'Kode',' Kode aktivasi', 'konfirmasi', 'otentikasi', 'Otorisasi', 'Rahasia', 'Sandi', 'trx', 'unik', 'Venfikasi', 'KodeOTP', 'NewOtp', 'One-Time Password', 'Otorisasi', 'OTP', 'Pass', 'Passcode', 'PassKey', 'Password', 'PIN', 'verifikasi', 'insert current code', 'Security', 'This code is valid', 'Token', 'Passcode', 'Valid OTP', 'verification','Verification', 'login code', 'registration code', 'secunty code'];
@@ -112,30 +128,15 @@ class ApiTwoWayController extends Controller
             $phones = explode(",", $request->to);
             $balance = (int)balance(auth()->user());
             if($balance>500 && count($phones)<$balance/1){
-                if(count($phones)>1){
-                    foreach($phones as $p){
-                        $data = array(
-                            'type' => $request->type,
-                            'to' => trim($p),
-                            'from' => $request->from,
-                            'text' => $request->text, 
-                            'title' => $request->title,
-                        );
-                        $this->saveResult(null, $data);
-                        //ProcessChatApi::dispatch($data, auth()->user());
-                        //return $data;
-                    }
-                }else{
-                    $data = array(
-                        'type' => $request->type,
-                        'to' => $request->to,
-                        'from' => $request->from,
-                        'text' => $request->text, 
-                        'title' => $request->title,
-                    );
-                    $this->saveResult(null, $data);
-                    //ProcessChatApi::dispatch($request->all(), auth()->user());
-                }
+                $data = array(
+                    'type' => $request->type,
+                    'to' => $request->to,
+                    'from' => $request->from,
+                    'text' => $request->text, 
+                    'title' => $request->title,
+                );
+                $chat = $this->saveResult(null, $data);
+                ProcessChatApi::dispatch($request->all(), $credential, $chat);
             }else{
                 return response()->json([
                     'message' => "Insufficient Balance",
@@ -331,6 +332,7 @@ class ApiTwoWayController extends Controller
             'sent_at'   => date('Y-m-d H:i:s'),
             'team_id'   => auth()->user()->team->id
         ]);
+        return $chat;
     }
 
     private function chechClient($status, $request=null){

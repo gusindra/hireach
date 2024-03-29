@@ -237,5 +237,14 @@ class User extends Authenticatable
     public function company(){
     	return $this->hasOne('App\Models\Company', 'user_id');
     }
+    
+    /**
+     * Many API Credential
+     *
+     * @return void
+     */
+    public function credential(){
+    	return $this->hasMany('App\Models\ApiCredential', 'user_id');
+    }
 
 }

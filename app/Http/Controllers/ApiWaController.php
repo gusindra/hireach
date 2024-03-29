@@ -33,9 +33,15 @@ class ApiWaController extends Controller
      */
     public function retriveNewMessage(Request $request)
     {
+        //$request->senderid to know the owner of the message
+        // to get user id client
+        $client = Client::where('phone', $data['message']['from'])->where('user_id', 36)->first();
+        if($request->has('client')){
+            $client = Client::where('phone', $data['message']['from'])->where('user_id', $request->client)->first();
+        }
         // $bodyContent = $request->getContent();
         $data= json_decode($request->getContent(), true);
-
+        Log::debug($data);
         // First check from
         // if not exsist add client
         $client = $this->checkClient($data['message']['id'], $data['message']['name'], $data['message']['from']);
@@ -179,7 +185,6 @@ class ApiWaController extends Controller
     public function checkClient($id, $name, $from, $team=null)
     {
         $last_request = Chat::with('client')->where('source_id', $id)->first();
-        // Client::where('source_id', $message['id'])->where('from', $message['from'])->first();
 
         if($last_request){
             $client = $last_request->client;
@@ -197,6 +202,8 @@ class ApiWaController extends Controller
                 'user_id'   => $team->user_id
             ]);
             $client->teams()->attach($team);
+        }else{
+            $client = Client::where('from', $message['from'])->first();
         }
 
         return $client;

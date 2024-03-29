@@ -147,8 +147,6 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
     })->name('message');
 
     Route::get('/client', [CustomerController::class, 'index'])->name('client');
-    Route::get('/export/client', [ContactController::class, 'export'])->name('contact.export');
-    Route::post('/import/client', [ContactController::class, 'import'])->name('contact.import');
 
     Route::get('/template', function () {
         return view('template.index');
@@ -205,7 +203,7 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
     Route::get('/import/sms-status', [AdminSmsController::class, 'formImportStatus'])->name('admin.form.import.status');
     Route::post('/import/sms-status', [AdminSmsController::class, 'importStatus'])->name('admin.post.import.status');
 
-    Route::get('/profile', [App\Http\Controllers\ProfileController::class, 'index'])->name('profile');
+    Route::get('/profile-user', [App\Http\Controllers\ProfileController::class, 'index'])->name('profile');
 
 });
 
@@ -809,21 +807,21 @@ Route::get('/joymove', function(HttpRequest $request){
     echo $code[0];
     echo "<br>";
     echo substr($phone, 2);
-    return 1;
+    
     $sb = $md5_key . $merchantId . $phone . $content;
     $sign = md5($sb);
     //return $sign;
-    $response = Http::get($url, [
+    $response = Http::withOptions([ 'verify' => false, ])->post($url, [
         'merchantId' => $merchantId,
         'sign' => $sign,
         'type' => $request['type'],
         'phone' => $request['to'],
         'countryCode' => $request['countryCode'],
         'content' => $request['text'],
-        'msgChannel' => $request['msgChannel'],
+        'msgChannel' => 'SM',
         "callbackUrl" => $callbackUrl,
-        "msgId" => 'intenalID001'
+        "msgId" => 'intenalID009'
     ]);
-
+    return $response;
     return $request->all();
 });
