@@ -25,23 +25,91 @@ class ContactController extends Controller
         });
     }
 
-    public function index(Request $request)
-    {
-        // if($request->has('v')){
-        //     return view('main-side.user');
-        // }
-        //return view('user.company-table');
-        return view('resource.contact');
-    }
+        public function index(Request $request)
+        {
+            // if($request->has('v')){
+            //     return view('main-side.user');
+            // }
+            //return view('user.company-table');
+            $client = Client::latest()->paginate(15);
+
+            return view('contact.index',['client'=>$client]);
+        }
 
     public function show(Request $request, $client)
-    { 
+    {
         $client = Client::where('uuid', $client)->first();
-        
-        return view('user.contact-profile', ['user'=>$client]);
+
+        // return view('user.contact-profile', ['user'=>$client]);
+        return view(contact.edit, ['user'=>$client]);
         // return redirect('user');
     }
 
+    public function create(){
+
+        return view('contact.create');
+    }
+
+    public function store(Request $request)
+    {
+        $request->validate([
+            'title' => 'required|string',
+            'name' => 'required|string|max:255',
+            'email' => 'required|email',
+            'phone' => 'required|string|max:20',
+        ]);
+
+        $uuid = Str::uuid()->toString();
+
+        $data = [
+            'uuid' => $uuid,
+            'title' => $request->title,
+            'name' => $request->name,
+            'email' => $request->email,
+            'phone' => $request->phone,
+            'user_id' => auth()->user()->id,
+        ];
+
+        Client::create($data);
+
+        return redirect()->route('contacts.index')->with('success', 'Contact added successfully!');
+    }
+
+    public function edit($uuid)
+    {
+        $client = Client::where('uuid', $uuid)->firstOrFail();
+
+        return view('contact.edit', ['client' => $client]);
+    }
+
+    public function update(Request $request, $uuid)
+{
+    $request->validate([
+        'title' => 'required|string',
+        'name' => 'required|string|max:255',
+        'email' => 'required|email',
+        'phone' => 'required|string|max:20',
+    ]);
+
+    $client = Client::where('uuid', $uuid)->firstOrFail();
+
+    $client->title = $request->title;
+    $client->name = $request->name;
+    $client->email = $request->email;
+    $client->phone = $request->phone;
+    $client->save();
+    return redirect()->route('contacts.index')->with('success', 'Contact updated successfully!');
+}
+
+
+public function destroy($uuid)
+{
+    $client = Client::where('uuid', $uuid)->firstOrFail();
+
+    $client->delete();
+
+    return redirect()->route('contacts.index')->with('success', 'Contact deleted successfully!');
+}
     public function audience(Request $request)
     {
         // if($request->has('v')){
@@ -52,9 +120,9 @@ class ContactController extends Controller
     }
 
     public function audienceShow(Request $request, $audience)
-    { 
+    {
         $data = Audience::find($audience);
-        
+
         return view('resource.show-audience', ['user'=>$data]);
         // return redirect('user');
     }
@@ -75,6 +143,10 @@ class ContactController extends Controller
         // return redirect('user');
     }
 
+public function showFormImport(){
+    return view('contact.import');
+}
+
     public function import(Request $request)
     {
         $file = $request->file('file');
@@ -82,20 +154,22 @@ class ContactController extends Controller
 
         foreach ($fileContents as $key => $line) {
             if($key>0){
-                $data = str_getcsv($line);  
-                $perData = explode(',', $data[0]);
-                //return $perData[1];
-                $exsist = Client::where('user_id', auth()->user()->id)->where('phone', $perData[1])->count();     
+                $data = str_getcsv($line);
+
+                // dd($data);
+                // $perData = explode(',', $data[0]);
+                // return $perData[1];
+                $exsist = Client::where('user_id', auth()->user()->id)->where('phone', $data[1])->count();
                 if($exsist==0){
                     Client::create([
                         'uuid'      => Str::uuid(),
-                        'name' => $perData[0],
-                        'phone' => $perData[1],
+                        'name' => $data[0],
+                        'phone' => $data[1],
                         'user_id' => auth()->user()->id,
                         'created_at' => date('Y-m-d H:i:s')
                         // Add more fields as needed
                     ]);
-                }     
+                }
             }
         }
 
@@ -104,17 +178,18 @@ class ContactController extends Controller
 
     public function export(Request $request)
     {
-        $table = Client::where('user_id', auth()->user()->id)->whereDate('created_at', '=', $request->date)->get();
+
+        $table = Client::where('user_id', auth()->user()->id)->get();
         $filename = "tweets.csv";
         $handle = fopen($filename, 'w+');
         fputcsv($handle, array('name', 'phone', 'created_at'));
-    
+
         foreach($table as $row) {
             fputcsv($handle, array($row['name'], $row['phone'], $row['created_at']));
         }
-    
+
         fclose($handle);
-    
+
         $headers = array(
             'Content-Type' => 'text/csv',
         );
