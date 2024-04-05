@@ -167,8 +167,8 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
     Route::get('/notif-center/{notification}', [NotificationController::class, 'show'])->name('notification.read');
     Route::get('/notif-center/read/all', [NotificationController::class, 'readAll'])->name('notification.read.all');
 
-    // Route::get('/contact', [ContactController::class, 'index'])->name('contact.index');
-    // Route::get('/contact/{client}', [ContactController::class, 'show'])->name('contact.show');
+    Route::get('/contact1', [ContactController::class, 'index'])->name('contact.index');
+    Route::get('/contact/{client}', [ContactController::class, 'show'])->name('contact.show');
     Route::get('/audience', [ContactController::class, 'audience'])->name('audience.index');
     Route::get('/audience/{audience}', [ContactController::class, 'audienceShow'])->name('audience.show');
 
@@ -213,10 +213,10 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
     Route::get('/contact/create', [ContactController::class, 'create'])->name('contacts.create');
     Route::post('/contact', [ContactController::class, 'store'])->name('contacts.store');
 
-    Route::get('/contact/exports', [ContactController::class, 'export'])->name('contacts.export');
+    Route::get('/contact/exports', [ContactController::class, 'export'])->name('contact.export');
     Route::get('/contact/import', [ContactController::class, 'showFormImport'])->name('contacts.showFormImport');
 
-    Route::post('/contact/import', [ContactController::class, 'import'])->name('contacts.import');
+    Route::post('/contact/import', [ContactController::class, 'import'])->name('contact.import');
 
     Route::get('/contact/{uuid}', [ContactController::class, 'edit'])->name('contacts.edit');
     Route::put('/contact/{uuid}', [ContactController::class, 'update'])->name('contacts.update');

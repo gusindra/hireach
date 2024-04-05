@@ -32,8 +32,12 @@ class ContactController extends Controller
             // }
             //return view('user.company-table');
             $client = Client::latest()->paginate(15);
+            if($request->has('v')){
 
-            return view('contact.index',['client'=>$client]);
+                return view('contact.index',['client'=>$client]);
+            }
+
+            return view('resource.contact');
         }
 
     public function show(Request $request, $client)
@@ -41,7 +45,12 @@ class ContactController extends Controller
         $client = Client::where('uuid', $client)->first();
 
         // return view('user.contact-profile', ['user'=>$client]);
-        return view(contact.edit, ['user'=>$client]);
+
+         if($request->has('v')){
+            return view(contact.edit, ['user'=>$client]);
+            }
+
+         return view('user.contact-profile', ['user'=>$client]);
         // return redirect('user');
     }
 
