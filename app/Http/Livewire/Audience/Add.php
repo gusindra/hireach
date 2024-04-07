@@ -20,9 +20,9 @@ class Add extends Component
     public $showClients = false;
     public $is_modal = true;
 
-    public function mount($model=null)
+    public function mount($model = null)
     {
-        if($model!=null){
+        if ($model != null) {
             $this->showClients = true;
         }
     }
@@ -30,8 +30,15 @@ class Add extends Component
     public function rules()
     {
         return [
-            'input.name'        => 'required',
+            'input.name'        => 'required|unique:audience,name',
             'input.description' => 'required',
+        ];
+    }
+
+    public function messages()
+    {
+        return [
+            'input.name.unique' => 'The Audience Name has already been taken.',
         ];
     }
 
@@ -79,7 +86,7 @@ class Add extends Component
 
     public function render()
     {
-        if($this->is_modal==false){
+        if ($this->is_modal == false) {
             return view('livewire.audience.form-add');
         }
         return view('livewire.audience.add');
