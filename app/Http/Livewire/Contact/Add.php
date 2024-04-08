@@ -34,22 +34,19 @@ class Add extends Component
             'input.name'        => 'required',
             'input.email'       => 'required',
             'input.phone'       => 'required',
-            'input.province'    => 'required',
-            'input.city'        => 'required',
         ];
     }
 
     public function create()
     {
-        //dd(1);
+        // dd(1);
         $this->validate();
         $customer =  Client::create([
             'title'     => $this->input['title'],
             'name'      => $this->input['name'],
             'phone'     => $this->input['phone'],
             'email'     => $this->input['email'],
-            'province'  => $this->input['province'],
-            'city'      => $this->input['city'],
+
             'user_id'   => auth()->user()->id,
             'uuid'      => Str::uuid()
         ]);

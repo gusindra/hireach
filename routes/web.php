@@ -74,7 +74,7 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
     /** ------------------------------------------
      * Admin Routes
      * --------------------------------------------
-     */ 
+     */
 
     Route::prefix('admin')->middleware('admin')->group(function () {
         Route::get('/', [DashboardController::class, 'show'])->name('admin');
@@ -95,12 +95,12 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
         Route::get('/user/{user}/profile', [UserController::class, 'profile'])->name('user.show.profile');
         Route::get('/user-billing', [UserBillingController::class, 'index'])->name('user.billing.index');
         Route::get('/user-billing/generate', [UserBillingController::class, 'generate'])->name('user.billing.generate');
-    
+
         Route::post('/user-billing/invoice', [UserBillingController::class, 'invoice'])->name('user.billing.create.invoice');
         Route::get('/invoice/{billing}', [UserBillingController::class, 'showInvoice'])->name('user.billing.invoice.show');
         Route::put('/invoice/{billing}', [UserBillingController::class, 'updateInvoice'])->name('user.billing.update.invoice');
-        
-        
+
+
         Route::get('/roles', [RoleController::class, 'index'])->name('role.index');
         Route::get('/roles/{role}', [RoleController::class, 'show'])->name('role.show');
 
@@ -167,7 +167,7 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
     Route::get('/notif-center/{notification}', [NotificationController::class, 'show'])->name('notification.read');
     Route::get('/notif-center/read/all', [NotificationController::class, 'readAll'])->name('notification.read.all');
 
-    Route::get('/contact', [ContactController::class, 'index'])->name('contact.index');
+    Route::get('/contact1', [ContactController::class, 'index'])->name('contact.index');
     Route::get('/contact/{client}', [ContactController::class, 'show'])->name('contact.show');
     Route::get('/audience', [ContactController::class, 'audience'])->name('audience.index');
     Route::get('/audience/{audience}', [ContactController::class, 'audienceShow'])->name('audience.show');
@@ -185,7 +185,7 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
     Route::get('/project', [ProjectController::class, 'index'])->name('project');
     Route::get('/project/{project}', [ProjectController::class, 'show'])->name('project.show');
 
-    
+
 
     Route::get('report', [ReportController::class, 'index'])->name('report.index');
     Route::get('report/{key}', [ReportController::class, 'show'])->name('report.show');
@@ -204,6 +204,24 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
     Route::post('/import/sms-status', [AdminSmsController::class, 'importStatus'])->name('admin.post.import.status');
 
     Route::get('/profile-user', [App\Http\Controllers\ProfileController::class, 'index'])->name('profile');
+
+      /** ------------------------------------------
+     * Ardana Routes
+     * --------------------------------------------
+     */
+    Route::get('/contact', [ContactController::class, 'index'])->name('contacts.index');
+    Route::get('/contact/create', [ContactController::class, 'create'])->name('contacts.create');
+    Route::post('/contact', [ContactController::class, 'store'])->name('contacts.store');
+
+    Route::get('/contact/exports', [ContactController::class, 'export'])->name('contact.export');
+    Route::get('/contact/import', [ContactController::class, 'showFormImport'])->name('contacts.showFormImport');
+
+    Route::post('/contact/import', [ContactController::class, 'import'])->name('contact.import');
+
+    Route::get('/contact/{uuid}', [ContactController::class, 'edit'])->name('contacts.edit');
+    Route::put('/contact/{uuid}', [ContactController::class, 'update'])->name('contacts.update');
+    Route::delete('/contact/{uuid}', [ContactController::class, 'destroy'])->name('contacts.destroy');
+
 
 });
 
@@ -803,11 +821,11 @@ Route::get('/joymove', function(HttpRequest $request){
     $content = 'test enjoymov api wa';
 
     $code = str_split($phone, 2);
-    
+
     echo $code[0];
     echo "<br>";
     echo substr($phone, 2);
-    
+
     $sb = $md5_key . $merchantId . $phone . $content;
     $sign = md5($sb);
     //return $sign;

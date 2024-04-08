@@ -1,7 +1,7 @@
 <div>
     <div class="flex items-center text-right">
         <x-jet-button wire:click="actionShowModal">
-            {{__('Add Contact')}}
+            {{ __('Add Contact') }}
         </x-jet-button>
     </div>
 
@@ -15,12 +15,9 @@
             <div class="col-span-6 sm:col-span-3 grid grid-cols-3 gap-2 space-y-2 p-2">
                 <div class="col-span-12 sm:col-span-1 mt-2">
                     <x-jet-label for="title" value="{{ __('Title') }}" />
-                    <select
-                        name="title"
-                        id="title"
+                    <select name="title" id="title"
                         class="border-gray-300 dark:bg-slate-800 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 rounded-md shadow-sm mt-1 block w-full"
-                        wire:model.debunce.800ms="input.title"
-                        >
+                        wire:model.debunce.800ms="input.title">
                         <option selected>-- Select --</option>
                         <option value="Mr.">Mr.</option>
                         <option value="Mrs.">Mrs.</option>
@@ -34,49 +31,22 @@
                 </div>
                 <div class="col-span-12 sm:col-span-2">
                     <x-jet-label for="input.name" value="{{ __('Name') }}" />
-                    <x-jet-input id="client_name"
-                        type="text"
-                        class="mt-1 block w-full"
-                        wire:model="input.name"
-                        wire:model.defer="input.name"
-                        wire:model.debunce.800ms="input.name" />
+                    <x-jet-input id="client_name" type="text" class="mt-1 block w-full" wire:model="input.name"
+                        wire:model.defer="input.name" wire:model.debunce.800ms="input.name" />
                     <x-jet-input-error for="input.name" class="mt-2" />
                 </div>
             </div>
             <div class="col-span-6 sm:col-span-4 p-2">
                 <x-jet-label for="input.email" value="{{ __('Email') }}" />
-                <x-jet-input autocomplete="off" id="input.email" type="text" class="mt-1 block w-full" wire:model.debunce.800ms="input.email" autofocus />
+                <x-jet-input autocomplete="off" id="input.email" type="text" class="mt-1 block w-full"
+                    wire:model.debunce.800ms="input.email" autofocus />
                 <x-jet-input-error for="input.email" class="mt-2" />
             </div>
             <div class="col-span-6 sm:col-span-4 p-2">
                 <x-jet-label for="input.phone" value="{{ __('Phone') }}" />
-                <x-jet-input autocomplete="off" id="input.phone" type="text" class="mt-1 block w-full" wire:model.debunce.800ms="input.phone" autofocus />
+                <x-jet-input autocomplete="off" id="input.phone" type="text" class="mt-1 block w-full"
+                    wire:model.debunce.800ms="input.phone" autofocus />
                 <x-jet-input-error for="input.phone" class="mt-2" />
-            </div>
-            <div class="p-3">
-                <hr class="mb-4">
-                <div class="col-span-6 sm:col-span-3 grid grid-cols-2 gap-2">
-                    <div class="col-span-12 sm:col-span-1">
-                        <x-jet-label for="input.province" value="{{ __('Province') }}" />
-                        <x-jet-input id="province"
-                            type="text"
-                            class="mt-1 block w-full"
-                            wire:model="input.province"
-                            wire:model.defer="input.province"
-                            wire:model.debunce.800ms="input.province" />
-                        <x-jet-input-error for="input.province" class="mt-2" />
-                    </div>
-                    <div class="col-span-12 sm:col-span-1">
-                        <x-jet-label for="input.city" value="{{ __('City') }}" />
-                        <x-jet-input id="city"
-                            type="text"
-                            class="mt-1 block w-full"
-                            wire:model="input.city"
-                            wire:model.defer="input.city"
-                            wire:model.debunce.800ms="input.city" />
-                        <x-jet-input-error for="input.city" class="mt-2" />
-                    </div>
-                </div>
             </div>
         </x-slot>
 
@@ -91,4 +61,3 @@
         </x-slot>
     </x-jet-dialog-modal>
 </div>
-
