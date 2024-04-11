@@ -46,7 +46,7 @@ class AddContact extends Component
     public function rules()
     {
         return [
-            'contactId'   => 'required|unique:audience_clients,client_id',
+            'contactId'   => 'required',
             'audienceId' => 'required',
         ];
     }
@@ -65,10 +65,15 @@ class AddContact extends Component
     {
         // dd($this->modelData());
         $this->validate();
-        $action = AudienceClient::create($this->modelData());
+        $action = AudienceClient::firstOrCreate($this->modelData(), $this->modelData());
         $this->modalActionVisible = false;
         $this->resetForm();
-        $this->emit('added');
+        if ($action->wasRecentlyCreated) {
+            $this->emit('added');
+        } else {
+            $this->emit('exist');
+        }
+
         $this->emit('addArrayData', $action->id);
         $this->actionId = null;
     }

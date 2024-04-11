@@ -149,7 +149,7 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
     Route::get('/client', [CustomerController::class, 'index'])->name('client');
 
     Route::get('/template', function () {
-        return view('template.index');
+        return view('template.inde');
     })->name('template');
 
     Route::get('/template/create', function () {
@@ -171,7 +171,8 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
     Route::get('/contact/{client}', [ContactController::class, 'show'])->name('contact.show');
     Route::get('/audience', [ContactController::class, 'audience'])->name('audience.index');
     Route::get('/audience/{audience}', [ContactController::class, 'audienceShow'])->name('audience.show');
-    Route::delete('audiences/{id}', [Delete::class, 'delete'])->name('audience.delete');
+    // Route::delete('audiences/{id}', [Delete::class, 'delete'])->name('audience.delete');
+
     Route::get('/channel', [ChannelController::class, 'index'])->name('channel');
     Route::get('/channel/{channel}', [ChannelController::class, 'show'])->name('channel.show');
     //Route::get('/channel/{channel}/{resource}', [ChannelController::class, 'view'])->name('channel.view');

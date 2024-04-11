@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Template extends Model
 {
@@ -14,6 +15,8 @@ class Template extends Model
      *
      * @var array
      */
+
+    use SoftDeletes;
     protected $fillable = [
         'uuid',
         'type',
@@ -37,8 +40,9 @@ class Template extends Model
      *
      * @return void
      */
-    public function actions(){
-    	return $this->hasMany('App\Models\Action', 'template_id')->orderBy('order', 'asc');
+    public function actions()
+    {
+        return $this->hasMany('App\Models\Action', 'template_id')->orderBy('order', 'asc');
     }
 
     /**
@@ -46,8 +50,9 @@ class Template extends Model
      *
      * @return void
      */
-    public function endpoint(){
-    	return $this->hasOne('App\Models\Endpoint', 'template_id');
+    public function endpoint()
+    {
+        return $this->hasOne('App\Models\Endpoint', 'template_id');
     }
 
     /**
@@ -55,8 +60,9 @@ class Template extends Model
      *
      * @return void
      */
-    public function anwsers(){
-    	return $this->hasMany('App\Models\Template', 'template_id');
+    public function anwsers()
+    {
+        return $this->hasMany('App\Models\Template', 'template_id');
     }
 
     /**
@@ -65,11 +71,13 @@ class Template extends Model
      *
      * @return void
      */
-    public function question(){
-    	return $this->belongsTo('App\Models\Template', 'template_id', 'id');
+    public function question()
+    {
+        return $this->belongsTo('App\Models\Template', 'template_id', 'id');
     }
-    public function children(){
-    	return $this->belongsTo('App\Models\Template', 'template_id', 'id')->select('template_');
+    public function children()
+    {
+        return $this->belongsTo('App\Models\Template', 'template_id', 'id')->select('template_');
     }
 
     /**
@@ -77,8 +85,9 @@ class Template extends Model
      *
      * @return void
      */
-    public function error(){
-    	return $this->hasOne('App\Models\Template', 'id','error_template_id');
+    public function error()
+    {
+        return $this->hasOne('App\Models\Template', 'id', 'error_template_id');
     }
 
     /**
@@ -87,12 +96,14 @@ class Template extends Model
      *
      * @return void
      */
-    public function errorfor(){
-    	return $this->belongsTo('App\Models\Template', 'error_template_id', 'id');
+    public function errorfor()
+    {
+        return $this->belongsTo('App\Models\Template', 'error_template_id', 'id');
     }
 
-    public function questionError(){
-    	return $this->hasMany('App\Models\Template', 'error_template_id');
+    public function questionError()
+    {
+        return $this->hasMany('App\Models\Template', 'error_template_id');
     }
 
     /**
@@ -109,8 +120,9 @@ class Template extends Model
      *
      * @return void
      */
-    public function createdBy(){
-    	return $this->belongsTo('App\Models\User', 'user_id');
+    public function createdBy()
+    {
+        return $this->belongsTo('App\Models\User', 'user_id');
     }
 
     /**
