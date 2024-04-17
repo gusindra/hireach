@@ -38,6 +38,41 @@
         </div>
     @endif
 
+
+    <div class="bg-indigo-600 mb-4">
+        <div class="w-full mx-auto p-3 px-3">
+            <div class="flex items-center justify-between flex-wrap">
+                <div class="w-0 flex-1 flex items-center">
+                    <span class="flex p-2 rounded-lg bg-indigo-800">
+                        <!-- Heroicon name: outline/speakerphone -->
+                        <svg class="h-6 w-6 text-white" xmlns="http://www.w3.org/2000/svg" fill="none"
+                            viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                    </span>
+                    <p class="ml-3 font-medium text-white truncate">
+                        <span class="md:hidden">
+                            Respond Question
+                        </span>
+                        <span class="hidden md:inline">
+                            This template is
+                            {{ $template->resource == 2 ? '2 Way' : '1 Way' }}
+                        </span>
+                    </p>
+                </div>
+                <div class="order-3 mt-2 flex-shrink-0 w-full sm:order-2 sm:mt-0 sm:w-auto">
+
+                </div>
+                <div class="order-2 flex-shrink-0 sm:order-3 sm:ml-3">
+                    <button type="button"
+                        class="-mr-1 flex p-2 rounded-md hover:bg-indigo-500 focus:outline-none focus:ring-2 focus:ring-white sm:-mr-2">
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div class="">
         <div>
             {{-- Template Information --}}
@@ -145,7 +180,8 @@
                                     class="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300 rounded">
                             </div>
                             <div class="ml-3 text-sm">
-                                <label for="is_enabled" class="font-medium text-gray-700 dark:text-slate-300">is enable
+                                <label for="is_enabled" class="font-medium text-gray-700 dark:text-slate-300">is
+                                    enable
                                     ?</label>
                                 <p class="text-gray-500 dark:text-slate-300">Enable template to send respond to your
                                     customer.</p>
