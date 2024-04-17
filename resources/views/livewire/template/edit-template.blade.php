@@ -38,7 +38,7 @@
         </div>
     @endif
 
-    <div class="grid grid-cols-2">
+    <div class="">
         <div>
             {{-- Template Information --}}
             <x-jet-form-section submit="updateTemplate">
@@ -188,6 +188,7 @@
                 @endif
             </x-jet-form-section>
         </div>
+        <x-jet-section-border />
         <div>
             @livewire('template.add-action', ['template' => $template])
         </div>
@@ -196,8 +197,6 @@
     @if ($template->type != 'welcome' && $template->type != 'helper' && $template->type != 'template')
         @livewire('template.edit-trigger', ['template' => $template])
     @endif
-
-
 
     @if ($template->type == 'api')
         @livewire('template.edit-api', ['template' => $template])
