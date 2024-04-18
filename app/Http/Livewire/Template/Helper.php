@@ -40,7 +40,7 @@ class Helper extends Component
             'uuid'          => Str::uuid(),
             'type'          => $this->type,
             'name'          => $this->name,
-            'resource'      => $this->way == 2 ? $this->type : 'template',
+            'resource'      => $this->way,
             'description'   => $this->description,
             'user_id'       => Auth::user()->id,
         ];
