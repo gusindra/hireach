@@ -16,6 +16,14 @@ class TemplatesTable extends LivewireDatatable
     public function builder()
     {
         $template = Template::query();
+
+        $type = request()->get('type');
+        if ($type === 'helper') {
+            $template->where('type', 'helper');
+        } else {
+            $template->where('type', '!=', 'helper');
+        }
+
         if ($this->resource != '') {
             $template = $template->where('resource', $this->resource);
         }

@@ -149,7 +149,7 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
     Route::get('/client', [CustomerController::class, 'index'])->name('client');
 
     Route::get('/template', function () {
-        return view('template.inde');
+        return view('template.index');
     })->name('template');
 
     Route::get('/template/create', function () {
