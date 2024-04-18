@@ -15,6 +15,7 @@ class Helper extends Component
     public $type = 'helper';
     public $name;
     public $description;
+    protected $preserveQueryString = ['type'];
 
     public function rules()
     {

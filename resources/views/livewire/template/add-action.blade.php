@@ -19,9 +19,9 @@
                     <x-jet-action-message class="mr-3" on="saved">
                         {{ __('Action saved.') }}
                     </x-jet-action-message>
-                    <x-jet-button wire:click="actionShowModal">
+                    <x-add-button wire:click="actionShowModal">
                         {{ __('Add Action') }}
-                    </x-jet-button>
+                    </x-add-button>
                 </div>
 
                 <div class="space-y-6">
@@ -180,13 +180,6 @@
                         <input class="border-gray-300 dark:bg-slate-800 focus:border-indigo-300 w-full my-1 text-sm"
                             type="text" placeholder="{{ __('Link Attachment') }}" x-ref="link_attachment"
                             wire:model.defer="link_attachment">
-                    </div>
-                </div>
-            @elseif($content == 'html')
-                <div>
-                    <div class="col-span-6 sm:col-span-4 p-3">
-                        <x-jet-label for="photo" value="{{ __('HTML Code') }}" />
-                        @livewire('trix', ['value' => ''])
                     </div>
                 </div>
             @endif

@@ -152,6 +152,10 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
         return view('template.index');
     })->name('template');
 
+    Route::get('/template/helper/index', function () {
+        return view('livewire.template.table-helper');
+    })->name('template.helper');
+
     Route::get('/template/create', function () {
         return view('template.form-template');
     })->name('create.template');
