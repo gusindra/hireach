@@ -236,6 +236,10 @@
         @livewire('template.edit-trigger', ['template' => $template])
     @endif
 
+    <x-jet-section-border />
+    <div>
+        @livewire('template.add-action', ['template' => $template])
+    </div>
 
     @if ($template->type == 'question')
         @livewire('template.edit-answer', ['template' => $template])
@@ -250,9 +254,6 @@
         @livewire('template.add-error', ['template' => $template])
     @endif
 
-    <div>
-        @livewire('template.add-action', ['template' => $template])
-    </div>
     <br>
 
     <x-jet-form-section submit="delete">

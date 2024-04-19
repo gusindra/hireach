@@ -23,13 +23,13 @@
                         {{ __('Respond saved.') }}
                     </x-jet-action-message>
                     @if($selectionTemplate)
-                    <x-jet-button wire:click="selectionShowModal">
-                        {{__('Add Template Error')}}
-                    </x-jet-button>
+                    <x-add-button wire:click="createShowModal">
+                        {{ __('Add Template Error') }}
+                    </x-add-button>
                     @else
-                    <x-jet-button wire:click="createShowModal">
-                        {{__('Add Template Error')}}
-                    </x-jet-button>
+                    <x-add-button wire:click="createShowModal">
+                        {{ __('Add Template Error') }}
+                    </x-add-button>
                     @endif
                 </div>
                 @endif

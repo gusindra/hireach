@@ -50,7 +50,6 @@ class TwoWay extends Component
     {
         $this->type = null;
         $this->name = null;
-        $this->way = null;
         $this->description = null;
     }
 
