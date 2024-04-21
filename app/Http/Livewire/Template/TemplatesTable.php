@@ -20,18 +20,18 @@ class TemplatesTable extends LivewireDatatable
     public function columns()
     {
         return [
-    		NumberColumn::name('uuid')->label('ID')->sortBy('id')->callback('uuid', function ($value) {
+            NumberColumn::name('uuid')->label('ID')->sortBy('id')->callback('uuid', function ($value) {
                 return view('datatables::link', [
                     'href' => "/template/" . $value,
                     'slot' => substr($value, 30)
                 ]);
             }),
-    		Column::name('name')->label('Name'),
-    		Column::name('description')->label('Description'),
-    		Column::callback(['type'], function ($type) {
+            Column::name('name')->label('Name'),
+            Column::name('description')->label('Description'),
+            Column::callback(['type'], function ($type) {
                 return view('template.label', ['type' => $type]);
             }),
-    		BooleanColumn::name('is_enabled')->label('Active')
-    	];
+            BooleanColumn::name('is_enabled')->label('Active')
+        ];
     }
 }

@@ -57,10 +57,10 @@ class ProcessSmsStatus implements ShouldQueue
         //}
         if(array_key_exists("message_status", $this->request)){
             if($this->request['message_status']){
-                if($this->request['status']==""){
+                if($this->request['message_status']==""){
                     $status = "ACCEPTED";
                 }else{
-                    $status = $this->request['status'];
+                    $status = $this->request['message_status'];
                 }
             }
         }

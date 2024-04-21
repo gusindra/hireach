@@ -32,14 +32,7 @@ class AddContact extends Component
         $this->array_data = Client::where('user_id', auth()->user()->currentTeam->user_id)->get();
     }
 
-    public function rules()
-    {
-        return [
-            'client_id' => 'required',
-            'audience_id' => 'required',
-        ];
-        
-    }
+
 
     public function modelData()
     {
@@ -50,17 +43,49 @@ class AddContact extends Component
         return $data;
     }
 
+    public function rules()
+    {
+        return [
+            'contactId'   => 'required',
+            'audienceId' => 'required',
+        ];
+    }
+
+    public function messages()
+    {
+        return [
+            'contactId.required'   => 'The client field is required.',
+            'audienceId.required' => 'The audience field is required.',
+            'contactId.unique'   => 'The Clients  has already been taken.',
+        ];
+    }
+
+
     public function create()
     {
-        //dd($this->modelData());
-        //$this->validate();
-        $action = AudienceClient::create($this->modelData());
+        // dd($this->modelData());
+        $this->validate();
+        $action = AudienceClient::firstOrCreate($this->modelData(), $this->modelData());
         $this->modalActionVisible = false;
         $this->resetForm();
-        $this->emit('added');
+        if ($action->wasRecentlyCreated) {
+            $this->emit('added');
+        } else {
+            $this->emit('exist');
+        }
+
         $this->emit('addArrayData', $action->id);
         $this->actionId = null;
     }
+
+
+    public function dehydrate()
+    {
+        if (!$this->modalActionVisible) {
+            $this->resetForm();
+        }
+    }
+
 
     /**
      * The delete function.
@@ -69,7 +94,8 @@ class AddContact extends Component
      */
     public function delete()
     {
-        AudienceClient::destroy($this->actionId);
+        $audienceClient = AudienceClient::findOrFail($this->actionId);
+        $audienceClient->delete();
         $this->confirmingActionRemoval = false;
 
         $this->dispatchBrowserEvent('event-notification', [
@@ -77,6 +103,7 @@ class AddContact extends Component
             'eventMessage' => 'The page (' . $this->actionId . ') has been deleted!',
         ]);
     }
+
 
     public function resetForm()
     {
@@ -91,7 +118,7 @@ class AddContact extends Component
         $this->actionId = null;
     }
 
-     /**
+    /**
      * The read function.
      *
      * @return void
@@ -118,8 +145,8 @@ class AddContact extends Component
      */
     public function loadModel()
     {
-        $data = AudienceClient::find($this->actionId); 
-        $this->contactId    = $data->contact_id;  
+        $data = AudienceClient::find($this->actionId);
+        $this->contactId    = $data->contact_id;
     }
 
     public function deleteShowModal($id)

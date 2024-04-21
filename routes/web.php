@@ -74,7 +74,7 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
     /** ------------------------------------------
      * Admin Routes
      * --------------------------------------------
-     */ 
+     */
 
     Route::prefix('admin')->middleware('admin')->group(function () {
         Route::get('/', [DashboardController::class, 'show'])->name('admin');
@@ -95,17 +95,17 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
         Route::get('/user/{user}/profile', [UserController::class, 'profile'])->name('user.show.profile');
         Route::get('/user-billing', [UserBillingController::class, 'index'])->name('user.billing.index');
         Route::get('/user-billing/generate', [UserBillingController::class, 'generate'])->name('user.billing.generate');
-    
+
         Route::post('/user-billing/invoice', [UserBillingController::class, 'invoice'])->name('user.billing.create.invoice');
         Route::get('/invoice/{billing}', [UserBillingController::class, 'showInvoice'])->name('user.billing.invoice.show');
         Route::put('/invoice/{billing}', [UserBillingController::class, 'updateInvoice'])->name('user.billing.update.invoice');
-        
-        
+
+
         Route::get('/roles', [RoleController::class, 'index'])->name('role.index');
         Route::get('/roles/{role}', [RoleController::class, 'show'])->name('role.show');
 
         Route::get('/permission', function () {
-            return view('permission.index', ['page'=>'permission']);
+            return view('permission.index', ['page' => 'permission']);
         })->name('permission.index');
         Route::get('/flow/{model}', [FlowController::class, 'show'])->name('flow.show');
 
@@ -147,12 +147,14 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
     })->name('message');
 
     Route::get('/client', [CustomerController::class, 'index'])->name('client');
-    Route::get('/export/client', [ContactController::class, 'export'])->name('contact.export');
-    Route::post('/import/client', [ContactController::class, 'import'])->name('contact.import');
 
     Route::get('/template', function () {
         return view('template.index');
     })->name('template');
+
+    Route::get('/template/helper/index', function () {
+        return view('livewire.template.table-helper');
+    })->name('template.helper');
 
     Route::get('/template/create', function () {
         return view('template.form-template');
@@ -169,10 +171,11 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
     Route::get('/notif-center/{notification}', [NotificationController::class, 'show'])->name('notification.read');
     Route::get('/notif-center/read/all', [NotificationController::class, 'readAll'])->name('notification.read.all');
 
-    Route::get('/contact', [ContactController::class, 'index'])->name('contact.index');
+    Route::get('/contact1', [ContactController::class, 'index'])->name('contact.index');
     Route::get('/contact/{client}', [ContactController::class, 'show'])->name('contact.show');
     Route::get('/audience', [ContactController::class, 'audience'])->name('audience.index');
     Route::get('/audience/{audience}', [ContactController::class, 'audienceShow'])->name('audience.show');
+    // Route::delete('audiences/{id}', [Delete::class, 'delete'])->name('audience.delete');
 
     Route::get('/channel', [ChannelController::class, 'index'])->name('channel');
     Route::get('/channel/{channel}', [ChannelController::class, 'show'])->name('channel.show');
@@ -187,7 +190,7 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
     Route::get('/project', [ProjectController::class, 'index'])->name('project');
     Route::get('/project/{project}', [ProjectController::class, 'show'])->name('project.show');
 
-    
+
 
     Route::get('report', [ReportController::class, 'index'])->name('report.index');
     Route::get('report/{key}', [ReportController::class, 'show'])->name('report.show');
@@ -205,8 +208,24 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
     Route::get('/import/sms-status', [AdminSmsController::class, 'formImportStatus'])->name('admin.form.import.status');
     Route::post('/import/sms-status', [AdminSmsController::class, 'importStatus'])->name('admin.post.import.status');
 
-    Route::get('/profile', [App\Http\Controllers\ProfileController::class, 'index'])->name('profile');
+    Route::get('/profile-user', [App\Http\Controllers\ProfileController::class, 'index'])->name('profile');
 
+    /** ------------------------------------------
+     * Ardana Routes
+     * --------------------------------------------
+     */
+    Route::get('/contact', [ContactController::class, 'index'])->name('contacts.index');
+    Route::get('/contact/create', [ContactController::class, 'create'])->name('contacts.create');
+    Route::post('/contact', [ContactController::class, 'store'])->name('contacts.store');
+
+    Route::get('/contact/exports', [ContactController::class, 'export'])->name('contact.export');
+    Route::get('/contact/import', [ContactController::class, 'showFormImport'])->name('contacts.showFormImport');
+
+    Route::post('/contact/import', [ContactController::class, 'import'])->name('contact.import');
+
+    Route::get('/contact/{uuid}', [ContactController::class, 'edit'])->name('contacts.edit');
+    Route::put('/contact/{uuid}', [ContactController::class, 'update'])->name('contacts.update');
+    Route::delete('/contact/{uuid}', [ContactController::class, 'destroy'])->name('contacts.destroy');
 });
 
 Route::get('/role-invitations/{invitation}', [RoleInvitationController::class, 'accept'])->middleware(['signed'])->name('role-invitations.accept');
@@ -221,7 +240,7 @@ Route::get('/endpoint', [ApiWaController::class, 'checkEndpoint'])->name('endpoi
 Route::get('/test', [WebhookController::class, 'index']);
 
 Route::get('/chat/{slug}', function ($slug) {
-    return view('chat.show', ['slug'=> $slug]);
+    return view('chat.show', ['slug' => $slug]);
 });
 
 Route::get('/chating/{slug}', [ChatController::class, 'show'])->name('chat.slug');
@@ -230,22 +249,22 @@ Route::get('/upload', [UploadController::class, 'index']);
 Route::get('/logout', [AuthController::class, 'destroy'])->name('logout');
 Route::post('/logout', [AuthController::class, 'destroy'])->name('logout');
 
-Route::get('cache/{id}', function ($id){
-    if($id=="clear"){
+Route::get('cache/{id}', function ($id) {
+    if ($id == "clear") {
         \Artisan::call('cache:clear');
     }
-    if($id=="view-clear"){
+    if ($id == "view-clear") {
         \Artisan::call('view:clear');
     }
     dd("Job is done");
 });
 
 Route::get('queue/{id}', function ($id) {
-    if($id=="work"){
+    if ($id == "work") {
         \Artisan::call('queue:work --tries=3 --stop-when-empty --timeout=60');
-    }elseif($id=="restart"){
+    } elseif ($id == "restart") {
         \Artisan::call('queue:restart');
-    }elseif($id=='json'){
+    } elseif ($id == 'json') {
         // $path = storage_path() . "/csvjson.json";
         // $path = public_path() . "/csvjson.json";
         // $content = json_decode(file_get_contents($path), true);
@@ -299,14 +318,14 @@ Route::get('queue/{id}', function ($id) {
     dd("Job is done");
 });
 
-Route::get('/restart-service', function(){
+Route::get('/restart-service', function () {
     $curl = curl_init();
-    curl_setopt($curl, CURLOPT_SSL_VERIFYHOST,0);
-    curl_setopt($curl, CURLOPT_SSL_VERIFYPEER,0);
-    curl_setopt($curl, CURLOPT_RETURNTRANSFER,1);
+    curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, 0);
+    curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, 0);
+    curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
 
     $header[0] = "Authorization: whm $user:$token";
-    curl_setopt($curl,CURLOPT_HTTPHEADER,$header);
+    curl_setopt($curl, CURLOPT_HTTPHEADER, $header);
     curl_setopt($curl, CURLOPT_URL, $query);
 
     $result = curl_exec($curl);
@@ -317,7 +336,7 @@ Route::get('/restart-service', function(){
     } else {
         $json = json_decode($result);
         echo "[+] Current cPanel users on the system:\n";
-            echo "\t" . $result . "\n";
+        echo "\t" . $result . "\n";
     }
 
     curl_close($curl);
@@ -325,13 +344,13 @@ Route::get('/restart-service', function(){
 });
 
 // TESTING
-Route::get('/testing', function(){
+Route::get('/testing', function () {
     // return 1;
     $lastError = SaldoUser::find(63);
     $errors = SaldoUser::where('balance', '<', 0)->where('user_id', '=', 1)->orderBy('id', 'asc')->get();
 
-    foreach($errors as $er){
-        $lastError = SaldoUser::find($er->id-1);
+    foreach ($errors as $er) {
+        $lastError = SaldoUser::find($er->id - 1);
         SaldoUser::find($er->id)->update([
             "balance" => $lastError->balance - $er->amount
         ]);
@@ -416,7 +435,7 @@ Route::get('/testing', function(){
 
 });
 
-Route::get('/tester', function(HttpRequest $request){
+Route::get('/tester', function (HttpRequest $request) {
     // return auth()->user()->super->first()->role;
     // $sms = BlastMessage::find(435);
     // if($quote = App\Models\Quotation::where('client_id', 1)->whereIn('status', ['reviewed'])->orderBy('id', 'desc')->first()){
@@ -465,7 +484,7 @@ Route::get('/tester', function(HttpRequest $request){
         "type" => "BUNDLE"
     );
 
-    if($request->format == 'add_product'){
+    if ($request->format == 'add_product') {
         $POSTFIELDS = array(
             'id' => null,
             'brand' => "",
@@ -556,7 +575,7 @@ Route::get('/tester', function(HttpRequest $request){
         //     "status": "PENDING_REVIEW"
         // }';
         $POSTFIELDS = json_encode($POSTFIELDS);
-    }elseif($request->format == 'show_variation'){
+    } elseif ($request->format == 'show_variation') {
         $url = '/openapi/product/variation/v1/list-price';
         $POSTFIELDS = array(
             'masterVariationIds' => array("MV62C51CC789701100017EA5A6"),
@@ -564,30 +583,30 @@ Route::get('/tester', function(HttpRequest $request){
             'size' => 5
         );
         $POSTFIELDS = json_encode($POSTFIELDS);
-    }elseif($request->format == 'list_product'){
+    } elseif ($request->format == 'list_product') {
         $url = '/openapi/product/master/v1/list';
         $POSTFIELDS = array(
             'page' => 0,
             'size' => 5
         );
         $POSTFIELDS = json_encode($POSTFIELDS);
-    }elseif($request->format == 'list_shop'){
+    } elseif ($request->format == 'list_shop') {
         $url = '/openapi/shop/v1/list';
         $POSTFIELDS = array(
             'page' => 0,
             'size' => 100
         );
         $POSTFIELDS = json_encode($POSTFIELDS);
-    }elseif($request->format == 'list_categories'){
+    } elseif ($request->format == 'list_categories') {
         $url = '/openapi/shop/v1/categories/list';
         $POSTFIELDS = json_encode($POSTFIELDS);
-    }else{
-        if($request->has('post')){
-            foreach(explode(",", $request->post) as $key => $posts){
+    } else {
+        if ($request->has('post')) {
+            foreach (explode(",", $request->post) as $key => $posts) {
                 $post = explode(":", $posts);
-                if(is_numeric($post[1])){
-                    $POSTFIELDS[$post[0]] = (int)$post[1] ;
-                }else{
+                if (is_numeric($post[1])) {
+                    $POSTFIELDS[$post[0]] = (int)$post[1];
+                } else {
                     $POSTFIELDS[$post[0]] = $post[1];
                 }
                 $POSTFIELDS[$post[0]] = is_numeric($post[1]) ? (int)$post[1] : $post[1];
@@ -596,9 +615,9 @@ Route::get('/tester', function(HttpRequest $request){
         $POSTFIELDS = json_encode($POSTFIELDS);
     }
 
-    $sign_ginee = Http::get('http://jarvis1.pythonanywhere.com/welcome/default/signature_genie?url='.$url.'&key='.$secretkey);
+    $sign_ginee = Http::get('http://jarvis1.pythonanywhere.com/welcome/default/signature_genie?url=' . $url . '&key=' . $secretkey);
     $signature = $sign_ginee['signature'];
-    $signature = $accesskey.':'.$sign_ginee['signature'];
+    $signature = $accesskey . ':' . $sign_ginee['signature'];
 
     $ginee_url = 'https://genie-sandbox.advai.net';
     $method = $request->has('method') ? $request->method : 'GET';
@@ -621,14 +640,14 @@ Route::get('/tester', function(HttpRequest $request){
 
     $headers = array(
         'X-Advai-Country: ID',
-        'Authorization: '.$signature,
+        'Authorization: ' . $signature,
         'Content-Type: application/json'
     );
 
     $curl = curl_init();
 
     curl_setopt_array($curl, array(
-        CURLOPT_URL => $ginee_url.$url,
+        CURLOPT_URL => $ginee_url . $url,
         CURLOPT_RETURNTRANSFER => true,
         CURLOPT_ENCODING => '',
         CURLOPT_MAXREDIRS => 10,
@@ -636,7 +655,7 @@ Route::get('/tester', function(HttpRequest $request){
         CURLOPT_FOLLOWLOCATION => true,
         CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
         CURLOPT_CUSTOMREQUEST => $method,
-        CURLOPT_POSTFIELDS =>$POSTFIELDS,
+        CURLOPT_POSTFIELDS => $POSTFIELDS,
         CURLOPT_HTTPHEADER => $headers,
     ));
 
@@ -644,15 +663,15 @@ Route::get('/tester', function(HttpRequest $request){
 
     curl_close($curl);
     //MAKE CURL
-    echo 'curl -X '.$method.' \<br>';
-    foreach($headers as $k => $head){
-        echo '-H '.$head.' \<br>';
+    echo 'curl -X ' . $method . ' \<br>';
+    foreach ($headers as $k => $head) {
+        echo '-H ' . $head . ' \<br>';
     }
-    echo '-d '.$POSTFIELDS.' \<br>';
-    echo '"'.$ginee_url.$url.'" <br>';
+    echo '-d ' . $POSTFIELDS . ' \<br>';
+    echo '"' . $ginee_url . $url . '" <br>';
     //END CURL
     echo '<br><br>';
-    echo $signature.'<br>';
+    echo $signature . '<br>';
     // echo $url.'<br><br>';
     echo $response;
 
@@ -688,7 +707,7 @@ Route::get('/tester', function(HttpRequest $request){
     // curl_close($ch);
 });
 
-Route::get('test1', function(HttpRequest $request){
+Route::get('test1', function (HttpRequest $request) {
     // $request_host = 'https://api.ginee.com';
     $request_host = 'https://genie-sandbox.advai.net';
     $http_method = 'POST';
@@ -696,16 +715,16 @@ Route::get('test1', function(HttpRequest $request){
     $access_key = 'd20254aee13cc156';
     $secret_key = 'b3436f168a4402b7';
 
-    if($request->format=='ListMasterProduct'){
+    if ($request->format == 'ListMasterProduct') {
         $request_uri = '/openapi/product/master/v1/list';
         $param_json = '{"page":0,"size":2,"productName":"Test 0125001"}';
-    }elseif($request->format=='ListInventorySku'){
+    } elseif ($request->format == 'ListInventorySku') {
         $request_uri = '/openapi/inventory/v1/sku/list';
         $param_json = '{"page":0,"size":20}';
-    }elseif($request->format=='GetInventorySku'){
+    } elseif ($request->format == 'GetInventorySku') {
         $request_uri = '/openapi/inventory/v1/sku/get';
         $param_json = '{"inventoryId":"IN605AA65352FAFF0001A6A2F7"}';
-    }else{
+    } else {
         $request_uri = '/openapi/shop/v1/list';
         $param_json = '{"page":0,"size":2}';
     }
@@ -733,7 +752,7 @@ Route::get('test1', function(HttpRequest $request){
     return file_get_contents($request_host . $request_uri, false, $context, 0);
 });
 
-Route::get('/email', function (){
+Route::get('/email', function () {
     // $request = SaldoUser::create([
     //     'currency'      => 'idr',
     //     'amount'        => 100,
@@ -796,7 +815,7 @@ Route::get('/get-from-ginee', [SynProductController::class, 'index']);
 // testing response json format\
 Route::get('/json', [ApiBulkSmsController::class, 'ginee']);
 
-Route::get('/joymove', function(HttpRequest $request){
+Route::get('/joymove', function (HttpRequest $request) {
     $url = 'https://enjoymov.co/prod-api/kstbCore/sms/send';
     $md5_key = 'AFD4274C39AB55D8C8D08FA6E145D535';
     $merchantId = 'KSTB904790';
@@ -805,25 +824,25 @@ Route::get('/joymove', function(HttpRequest $request){
     $content = 'test enjoymov api wa';
 
     $code = str_split($phone, 2);
-    
+
     echo $code[0];
     echo "<br>";
     echo substr($phone, 2);
-    return 1;
+
     $sb = $md5_key . $merchantId . $phone . $content;
     $sign = md5($sb);
     //return $sign;
-    $response = Http::get($url, [
+    $response = Http::withOptions(['verify' => false,])->post($url, [
         'merchantId' => $merchantId,
         'sign' => $sign,
         'type' => $request['type'],
         'phone' => $request['to'],
         'countryCode' => $request['countryCode'],
         'content' => $request['text'],
-        'msgChannel' => $request['msgChannel'],
+        'msgChannel' => 'SM',
         "callbackUrl" => $callbackUrl,
-        "msgId" => 'intenalID001'
+        "msgId" => 'intenalID009'
     ]);
-
+    return $response;
     return $request->all();
 });

@@ -28,7 +28,7 @@ class ProcessSmsApi implements ShouldQueue
      */
     public function __construct($request, $user)
     {
-        $request = $request;
+        $this->request = $request;
         $this->user = $user;
     }
 
@@ -59,10 +59,10 @@ class ProcessSmsApi implements ShouldQueue
             $serve  = env('MK_OTP_SERVICE');
         }
         $msg    = '';
-        // if(array_key_exists('servid', $request)){
-        //     $serve  = $request['servid'];
-        // }
-        if($serve==$request['servid']){
+        if(array_key_exists('servid', $request)){
+            $serve  = $request['servid'];
+        }
+        try{
             $url = 'http://www.etracker.cc/bulksms/mesapi.aspx';
             //$url = 'http://telixcel.com/api/send/smsbulk';
             //$url = 'http://telixnet.test/api/send/smsbulk';
@@ -244,9 +244,14 @@ class ProcessSmsApi implements ShouldQueue
             if($msg!=''){
                 $this->saveResult($msg);
             }
-        }else{
+        }catch(\Exception $e){
+            Log::debug($e->getMessage());
             $this->saveResult('Reject invalid servid');
+            Log::debug('Reject invalid servid');
         }
+        //}else{
+        //    $this->saveResult('Reject invalid servid');
+        //}
     }
 
     private function EMProvider($request){
@@ -260,26 +265,27 @@ class ProcessSmsApi implements ShouldQueue
             $content = 'test enjoymov api';
             $msgChannel = 'SM'; //WA
             $countryCode = '62';
-
             
-            $code = str_split($request->to, 2);
+            $code = str_split($request['to'], 2);
             $countryCode = $code[0];
-            $phone = substr($request->to, 2);
+            $phone = substr($request['to'], 2);
     
             $sb = $md5_key . $merchantId . $phone . $content;
             $sign = md5($sb);
             //return $sign;
-            Http::withOptions([ 'verify' => false, ])->post($url, [
+            $response = Http::withOptions([ 'verify' => false, ])->get($url, [
                 'merchantId' => $merchantId,
                 'sign' => $sign,
-                'type' => $request->type,
+                'type' => $request['type'],
                 'phone' => $phone,
-                'content' => $request->text,
+                'content' => $request['text'],
                 "callbackUrl" => $callbackUrl,
                 'countryCode' => $countryCode,
-                'msgChannel' => $request['msgChannel'],
+                'msgChannel' => $msgChannel,
                 "msgId" => $msg->id
             ]);
+            
+            Log::debug($response);
         }
     }
 

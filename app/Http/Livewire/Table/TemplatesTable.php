@@ -16,7 +16,15 @@ class TemplatesTable extends LivewireDatatable
     public function builder()
     {
         $template = Template::query();
-        if($this->resource!=''){
+
+        $type = request()->get('type');
+        if ($type === 'helper') {
+            $template->where('type', 'helper');
+        } else {
+            $template->where('type', '!=', 'helper');
+        }
+
+        if ($this->resource != '') {
             $template = $template->where('resource', $this->resource);
         }
         return $template->where('user_id', auth()->user()->currentTeam->user_id);
@@ -31,24 +39,24 @@ class TemplatesTable extends LivewireDatatable
     public function columns()
     {
         return [
-    		NumberColumn::name('uuid')->label('ID')->sortBy('id')->callback('uuid', function ($value) {
+            NumberColumn::name('uuid')->label('ID')->sortBy('id')->callback('uuid', function ($value) {
                 return view('datatables::link', [
                     'href' => "/template/" . $value,
                     'slot' => substr($value, 30)
                 ]);
             })->unsortable(),
-    		Column::name('name')->label('Name')->unsortable(),
-    		Column::name('description')->label('Description')->unsortable(),
-    		Column::callback(['type'], function ($type) {
+            Column::name('name')->label('Name')->unsortable(),
+            Column::name('description')->label('Description')->unsortable(),
+            Column::callback(['type'], function ($type) {
                 return view('template.label', ['type' => $type]);
             })->label('Type')->unsortable(),
             Column::callback(['resource'], function ($resource) {
-                if($resource==2){
+                if ($resource == 1) {
                     return '1Way';
                 }
                 return '2Way';
             })->label('Resource')->unsortable(),
-    		BooleanColumn::name('is_enabled')->label('Active')->unsortable()
-    	];
+            BooleanColumn::name('is_enabled')->label('Active')->unsortable()
+        ];
     }
 }

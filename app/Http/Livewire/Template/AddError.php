@@ -10,7 +10,7 @@ use Illuminate\Support\Str;
 class AddError extends Component
 {
     public $errorTemplate;
-    public $errorUuid;
+    public string $errorUuid;
     public $errorName;
     public $errorId;
     public $errorEnabled;
@@ -30,11 +30,11 @@ class AddError extends Component
     {
         $this->template = Template::with('error')->find($template->id);
         $this->templateId = $this->template->id;
-        if($this->template->is_repeat_if_error){
+        if ($this->template->is_repeat_if_error) {
             $this->sameTemplate = true;
         }
         $this->templateId = $this->template->id;
-        if($this->template->error_template_id){
+        if ($this->template->error_template_id) {
             $this->errorTemplate = true;
             $this->errorUuid = $this->template->error->uuid;
             $this->errorName = $this->template->error->name;
@@ -61,9 +61,12 @@ class AddError extends Component
     {
         $this->validate();
         $addError = Template::create($this->modelData());
-        $this->modalCreateVisible = false;
         $this->resetForm();
+        $this->modalCreateVisible = false;
+        $this->errorTemplate = true;
+
         $this->emit('added');
+
 
         $parent = Template::find($this->templateId);
         $parent->error_template_id = $addError->id;
@@ -122,7 +125,9 @@ class AddError extends Component
 
     public function resetForm()
     {
-        $this->message = null;
+        $this->type = '';
+        $this->name = '';
+        $this->description = '';
     }
 
     public function modelData()
@@ -166,7 +171,7 @@ class AddError extends Component
         $this->resetForm();
     }
 
-     /**
+    /**
      * The read function.
      *
      * @return void
@@ -190,9 +195,9 @@ class AddError extends Component
     public function setDefaultError()
     {
         $data = Template::find($this->templateId);
-        if($this->sameTemplate){
+        if ($this->sameTemplate) {
             $data->is_repeat_if_error = 1;
-        }else{
+        } else {
             $data->is_repeat_if_error = NULL;
         }
         $data->save();

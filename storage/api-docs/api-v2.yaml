@@ -20,7 +20,7 @@ paths:
     post:
       tags:
         - One Way
-      summary: 'Send notification to Recipients with one object request'
+      summary: 'Send notification to recipients with one object request'
       operationId: postOneWayResource
       requestBody:
         $ref: '#/components/requestBodies/OneWay'
@@ -38,13 +38,7 @@ paths:
         - One Way
       summary: 'Get all one way resource'
       operationId: getOneWayResource
-      parameters:
-        -
-          name: provider
-          in: query
-          required: true
-          schema:
-            type: string
+      parameters: 
         -
           name: page
           in: query
@@ -86,7 +80,7 @@ paths:
     post:
       tags:
         - One Way
-      summary: 'Send notification to list of Recipients mobile number with given input array'
+      summary: 'Send notification to list of recipients mobile number with given input array'
       operationId: postGroupOneWayResource
       requestBody:
         $ref: '#/components/requestBodies/OneWayArray'
@@ -103,10 +97,10 @@ paths:
     post:
       tags:
         - Two Way
-      summary: 'Send sms to list of Recipients mobile number with given input array'
-      operationId: sendBulkSms
+      summary: 'Send sms to list of recipients mobile number with given input array'
+      operationId: TwoWayPost
       requestBody:
-        $ref: '#/components/requestBodies/SmsArray'
+        $ref: '#/components/requestBodies/TwoWay'
       responses:
         '200':
           description: 'successful operation'
@@ -116,7 +110,55 @@ paths:
                 $ref: '#/components/schemas/ApiResponse'
       security:
         - bearerAuth: []
-
+    get:
+      tags:
+        - Two Way
+      summary: 'Get all two way resource'
+      operationId: getTwoWayResource
+      parameters: 
+        -
+          name: phone
+          in: query
+          required: true
+          schema:
+            type: string
+        -
+          name: page
+          in: query
+          required: true
+          default: 0
+          schema:
+            type: integer
+        -
+          name: pageSize
+          in: query
+          required: true
+          default: 10
+          schema:
+            type: integer
+        -
+          name: order
+          in: query
+          required: false
+          schema:
+            type: string
+            enum: [id, newest, oldnest]
+      responses:
+        '200':
+          description: 'successful operation'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SingleSms'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/SingleSms'
+        '400':
+          description: 'Invalid supplied'
+        '404':
+          description: 'Record not found'
+      security:
+        - bearerAuth: []
 components:
   schemas:
     ApiResponse:
@@ -175,7 +217,7 @@ components:
           type: string
         to:
           title: 'To'
-          description: 'Sending request to (email or phone or id). Mobile number must have the country code (without the “+” sign)'
+          description: 'Sending request to (email or phone or id). Phone number must have the country code (without the “+” sign)'
           type: string
         status:
           title: 'Status'
@@ -307,7 +349,72 @@ components:
           option: '0:OTP, 1:NON OTP'
       type: object
       xml:
-        name: BulkSms
+        name: BlastNotification
+    TwoWayRequest:
+      title: 'Two Way Model'
+      description: 'Two Way Model'
+      required:
+        - channel
+        - type
+        - to
+        - text
+        - title
+      properties:
+        channel:
+          title: 'channel'
+          description: 'Channel resource to send content.'
+          type: string
+          required: 'Yes'
+          default: 'web'
+          option: 'web, wa, sms, talkbot'
+        type:
+          title: 'type'
+          description: 'Type for content.'
+          type: integer
+          required: 'Yes'
+          format: int64
+          default: 0
+          option: '0 : text, 1: object'
+        title:
+          title: 'title'
+          description: 'Broadcast Title'
+          type: string
+          required: 'Yes'
+          example: 'New Product Launch'
+        text:
+          title: 'text'
+          description: 'Message Content'
+          type: string
+          required: 'Yes'
+          example: 'Hi, {client_name}, your account has been updated with the following features in March. Find out more on our website!'
+        templateid:
+          title: 'templateid'
+          description: 'Your template id in HiReach'
+          type: integer
+          required: 'No'
+          default: 1
+        to:
+          title: 'to'
+          description: 'The recipient`s contact, if mobile number must have the country code (without the “+” sign).'
+          type: string
+          required: 'Yes'
+          format: msisdn,email
+          sample: '6281223344556 / jhon@example.com'
+        from:
+          title: 'from'
+          description: 'Sender Name. Required for using channel email, sms_otp_sid, sms_notp_sid.'
+          type: string
+          format: string,username,email
+          required: 'for channel email, sms_otp_sid, sms_notp_sid'
+          sample: 'HIREACH / noreply@hireach.archeeshop.com'
+        provider:
+          title: 'provider'
+          description: 'Provider is to sending Notification given by HiReach. Default will set by system.'
+          required: 'No'
+          type: string 
+      type: object
+      xml:
+        name: TwoWayNotification
     SendSms:
       title: 'Send SMS model'
       description: 'Send SMS model'
@@ -427,6 +534,13 @@ components:
         application/json:
           schema: 
             $ref: '#/components/schemas/OneWayRequest'
+    TwoWay:
+      description: 'List of two way request'
+      required: true
+      content:
+        application/json:
+          schema: 
+            $ref: '#/components/schemas/TwoWayRequest'
     OneWayArray:
       description: 'List of one way request'
       required: true
