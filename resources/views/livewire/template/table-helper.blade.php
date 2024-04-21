@@ -14,10 +14,13 @@
             @if (request()->get('resource') == 2)
                 @livewire('template.two-way')
             @endif
+            @if (request()->get('type') == 'helper')
+                @livewire('template.helper')
+            @endif
             <div class="mx-auto">
                 <div class="py-3">
                     <div class="z-10">
-                        <livewire:table.templates-table searchable="name, description"
+                        <livewire:table.table-helper searchable="name, description"
                             resource="{{ request()->get('resource') }}" />
                     </div>
                 </div>

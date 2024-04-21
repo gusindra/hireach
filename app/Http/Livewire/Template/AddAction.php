@@ -30,11 +30,11 @@ class AddAction extends Component
 
     public function rules()
     {
-        if($this->link_attachment==''){
+        if ($this->link_attachment == '') {
             return [
                 'message' => 'required',
             ];
-        }else{
+        } else {
             return [
                 'link_attachment' => 'required',
             ];
@@ -44,36 +44,30 @@ class AddAction extends Component
     public function modelData()
     {
         $template = Template::find($this->templateId);
-        if($template->question && $template->question->type == 'api'){
-            $data = [
-                'message'       => $this->message,
-                'order'         => $this->orderAction(),
-                'is_multidata'  => $this->is_multidata,
-                'array_data'    => $this->array_data,
-                'template_id'   => $this->templateId
-            ];
-        }else{
-            if($this->link_attachment=='')
-            {
-                $data = [
-                    'message'       => $this->message,
-                    'order'         => $this->orderAction(),
-                    'template_id'   => $this->templateId
-                ];
-            }else{
-                $ext = attachmentExt($this->link_attachment);
-                if($ext){
-                    $data = [
-                        'message'       => $this->link_attachment,
-                        'order'         => $this->orderAction(),
-                        'template_id'   => $this->templateId,
-                        'type'          => $ext
-                    ];
-                }
+        $data = [
+            'message'       => $this->message,
+            'order'         => $this->orderAction(),
+            'template_id'   => $this->templateId,
+            'type'          => $this->content
+        ];
+
+        if ($template && $template->question && $template->question->type == 'api') {
+            $data['is_multidata'] = $this->is_multidata;
+            $data['array_data'] = $this->array_data;
+        }
+
+        if ($this->link_attachment != '') {
+            $data['message'] = $this->link_attachment;
+            $ext = attachmentExt($this->link_attachment);
+            if ($ext) {
+                $data['type'] = $ext;
             }
         }
+
         return $data;
     }
+
+
 
     public function create()
     {
@@ -96,23 +90,23 @@ class AddAction extends Component
     {
         $this->validate();
 
-        if($this->link_attachment==''){
+        if ($this->link_attachment == '') {
             $data = [
                 'message'       => $this->message,
                 'is_multidata'  => $this->is_multidata,
                 'array_data'    => $this->array_data,
                 'type'          => 'text'
             ];
-        }else{
+        } else {
             $ext = attachmentExt($this->link_attachment);
-            if($ext){
+            if ($ext) {
                 $data = [
                     'message'       => $this->link_attachment,
                     'is_multidata'  => $this->is_multidata,
                     'array_data'    => $this->array_data,
                     'type'          => $ext
                 ];
-            }else{
+            } else {
                 dd('format false');
             }
         }
@@ -159,7 +153,7 @@ class AddAction extends Component
         $this->actionId = null;
     }
 
-     /**
+    /**
      * The read function.
      *
      * @return void
@@ -187,10 +181,11 @@ class AddAction extends Component
     public function loadModel()
     {
         $data = Action::find($this->actionId);
+
         $this->type             = false;
-        if($data->type=='text'){
+        if ($data->type == 'text') {
             $this->message          = $data->message;
-        }else{
+        } else {
             $this->type             = true;
             $this->link_attachment  = $data->message;
             $this->message          = '';

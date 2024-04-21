@@ -30,7 +30,6 @@
                     <option value="text">Message</option>
                     <option value="question">Question</option>
                     <option value="api">Integration</option>
-                    <option value="helper">Helper</option>
                 </select>
                 <x-jet-input-error for="type" class="mt-2" />
             </div>

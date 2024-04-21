@@ -8,7 +8,7 @@ use Mediconesystems\LivewireDatatables\Column;
 use Mediconesystems\LivewireDatatables\NumberColumn;
 use Mediconesystems\LivewireDatatables\BooleanColumn;
 
-class TemplatesTable extends LivewireDatatable
+class TableHelper extends LivewireDatatable
 {
     public $model = Template::class;
     public $resource = '';
@@ -17,16 +17,9 @@ class TemplatesTable extends LivewireDatatable
     {
         $template = Template::query();
 
-        $type = request()->get('type');
-        if ($type === 'helper') {
-            $template->where('type', 'helper');
-        } else {
-            $template->where('type', '!=', 'helper');
-        }
 
-        if ($this->resource != '') {
-            $template = $template->where('resource', $this->resource);
-        }
+        $template->where('type', 'helper')->orderBy('created_at', 'desc');
+
         return $template->where('user_id', auth()->user()->currentTeam->user_id);
         // ->with('teams')
         //     ->whereHas('teams', function ($query) {
@@ -50,12 +43,6 @@ class TemplatesTable extends LivewireDatatable
             Column::callback(['type'], function ($type) {
                 return view('template.label', ['type' => $type]);
             })->label('Type')->unsortable(),
-            Column::callback(['resource'], function ($resource) {
-                if ($resource == 1) {
-                    return '1Way';
-                }
-                return '2Way';
-            })->label('Resource')->unsortable(),
             BooleanColumn::name('is_enabled')->label('Active')->unsortable()
         ];
     }

@@ -8,13 +8,14 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 
 
-class TwoWay extends Component
+class Helper extends Component
 {
     public $modalActionVisible = false;
     public $way = 2;
-    public $type;
+    public $type = 'helper';
     public $name;
     public $description;
+    protected $preserveQueryString = ['type'];
 
     public function rules()
     {
@@ -38,7 +39,7 @@ class TwoWay extends Component
     {
         return [
             'uuid'          => Str::uuid(),
-            'type'          => $this->way == 2 ? $this->type : 'template',
+            'type'          => $this->type,
             'name'          => $this->name,
             'resource'      => $this->way,
             'description'   => $this->description,
@@ -50,6 +51,7 @@ class TwoWay extends Component
     {
         $this->type = null;
         $this->name = null;
+        $this->way = null;
         $this->description = null;
     }
 
@@ -58,13 +60,13 @@ class TwoWay extends Component
      *
      * @return void
      */
-    public function actionShowModalTwoWay()
+    public function actionShowModalHelper()
     {
         $this->modalActionVisible = true;
     }
 
     public function render()
     {
-        return view('livewire.template.two-way');
+        return view('livewire.template.helper');
     }
 }

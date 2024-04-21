@@ -225,19 +225,21 @@
             </x-jet-form-section>
         </div>
         <x-jet-section-border />
-        <div>
-            @livewire('template.add-action', ['template' => $template])
-        </div>
+
     </div>
+    @if ($template->type == 'api')
+        @livewire('template.edit-api', ['template' => $template])
+        @livewire('template.add-respond-api', ['template' => $template])
+    @endif
 
     @if ($template->type != 'welcome' && $template->type != 'helper' && $template->type != 'template')
         @livewire('template.edit-trigger', ['template' => $template])
     @endif
 
-    @if ($template->type == 'api')
-        @livewire('template.edit-api', ['template' => $template])
-        @livewire('template.add-respond-api', ['template' => $template])
-    @endif
+    <x-jet-section-border />
+    <div>
+        @livewire('template.add-action', ['template' => $template])
+    </div>
 
     @if ($template->type == 'question')
         @livewire('template.edit-answer', ['template' => $template])
@@ -251,6 +253,7 @@
             $template->type != 'template')
         @livewire('template.add-error', ['template' => $template])
     @endif
+
     <br>
 
     <x-jet-form-section submit="delete">
