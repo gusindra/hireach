@@ -1,4 +1,6 @@
 <div>
+    <x-jet-section-border />
+
     <x-jet-form-section submit="saveUser({{ $user->id }})">
         <x-slot name="title">
             {{ __('Audience Information') }}

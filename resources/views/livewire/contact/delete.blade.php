@@ -5,9 +5,9 @@
         </x-slot>
 
         <x-slot name="content">
-            @if ($audience)
+            @if ($contact)
                 <p class="text-gray-600">
-                    {{ __('Do you really want to delete the audience named :name?', ['name' => $audience->name]) }}</p>
+                Do you really want to delete the audience named <strong>{{ __(' `:name` ', ['name' => $contact->name]) }}</strong> ?</p>
             @endif
         </x-slot>
 

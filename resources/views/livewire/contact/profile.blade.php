@@ -178,8 +178,8 @@
         <x-slot name="form">
             <div class="col-span-12">
                 <div class="text-sm text-gray-600 dark:text-slate-300">
-                    Once your account is deleted, all of its resources and data will be permanently deleted.
-                    Before deleting your account, please download any data or information that you wish to
+                    Once your data contact is deleted, all of its resources and data will be permanently deleted.
+                    Before deleting your data contact, please download any data or information that you wish to
                     retain.
                 </div>
 
