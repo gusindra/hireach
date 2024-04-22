@@ -171,7 +171,7 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
     Route::get('/notif-center/{notification}', [NotificationController::class, 'show'])->name('notification.read');
     Route::get('/notif-center/read/all', [NotificationController::class, 'readAll'])->name('notification.read.all');
 
-    Route::get('/contact1', [ContactController::class, 'index'])->name('contact.index');
+
     Route::get('/contact/{client}', [ContactController::class, 'show'])->name('contact.show');
     Route::get('/audience', [ContactController::class, 'audience'])->name('audience.index');
     Route::get('/audience/{audience}', [ContactController::class, 'audienceShow'])->name('audience.show');
@@ -214,7 +214,7 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
      * Ardana Routes
      * --------------------------------------------
      */
-    Route::get('/contact', [ContactController::class, 'index'])->name('contacts.index');
+    Route::get('/contact', [ContactController::class, 'index'])->name('contact.index');
     Route::get('/contact/create', [ContactController::class, 'create'])->name('contacts.create');
     Route::post('/contact', [ContactController::class, 'store'])->name('contacts.store');
 

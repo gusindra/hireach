@@ -20,8 +20,19 @@ class Audience extends Model
         'user_id'
     ];
 
-	protected $table = 'audience';
+    protected $table = 'audience';
 
     protected $guarded = [];
 
+    protected $appends = ['total_clients'];
+
+    public function audienceClients()
+    {
+        return $this->hasMany(AudienceClient::class, 'audience_id');
+    }
+
+    public function getTotalClientsAttribute()
+    {
+        return $this->audienceClients->count();
+    }
 }
