@@ -17,28 +17,28 @@ class ContactController extends Controller
     {
         $this->middleware(function ($request, $next) {
             // Your auth here
-            $this->user_info=auth()->user();
-            if($this->user_info ){
+            $this->user_info = auth()->user();
+            if ($this->user_info) {
                 return $next($request);
             }
             abort(404);
         });
     }
 
-        public function index(Request $request)
-        {
-            // if($request->has('v')){
-            //     return view('main-side.user');
-            // }
-            //return view('user.company-table');
-            $client = Client::latest()->paginate(15);
-            if($request->has('v')){
+    public function index(Request $request)
+    {
+        // if($request->has('v')){
+        //     return view('main-side.user');
+        // }
+        //return view('user.company-table');
+        $client = Client::latest()->paginate(15);
+        if ($request->has('v')) {
 
-                return view('contact.index',['client'=>$client]);
-            }
-
-            return view('resource.contact');
+            return view('contact.index', ['client' => $client]);
         }
+
+        return view('resource.contact');
+    }
 
     public function show(Request $request, $client)
     {
@@ -46,15 +46,16 @@ class ContactController extends Controller
 
         // return view('user.contact-profile', ['user'=>$client]);
 
-         if($request->has('v')){
-            return view(contact.edit, ['user'=>$client]);
-            }
+        if ($request->has('v')) {
+            return view(contact . edit, ['user' => $client]);
+        }
 
-         return view('user.contact-profile', ['user'=>$client]);
+        return view('user.contact-profile', ['user' => $client]);
         // return redirect('user');
     }
 
-    public function create(){
+    public function create()
+    {
 
         return view('contact.create');
     }
@@ -92,33 +93,33 @@ class ContactController extends Controller
     }
 
     public function update(Request $request, $uuid)
-{
-    $request->validate([
-        'title' => 'required|string',
-        'name' => 'required|string|max:255',
-        'email' => 'required|email',
-        'phone' => 'required|string|max:20',
-    ]);
+    {
+        $request->validate([
+            'title' => 'required|string',
+            'name' => 'required|string|max:255',
+            'email' => 'required|email',
+            'phone' => 'required|string|max:20',
+        ]);
 
-    $client = Client::where('uuid', $uuid)->firstOrFail();
+        $client = Client::where('uuid', $uuid)->firstOrFail();
 
-    $client->title = $request->title;
-    $client->name = $request->name;
-    $client->email = $request->email;
-    $client->phone = $request->phone;
-    $client->save();
-    return redirect()->route('contacts.index')->with('success', 'Contact updated successfully!');
-}
+        $client->title = $request->title;
+        $client->name = $request->name;
+        $client->email = $request->email;
+        $client->phone = $request->phone;
+        $client->save();
+        return redirect()->route('contacts.index')->with('success', 'Contact updated successfully!');
+    }
 
 
-public function destroy($uuid)
-{
-    $client = Client::where('uuid', $uuid)->firstOrFail();
+    public function destroy($uuid)
+    {
+        $client = Client::where('uuid', $uuid)->firstOrFail();
 
-    $client->delete();
+        $client->delete();
 
-    return redirect()->route('contacts.index')->with('success', 'Contact deleted successfully!');
-}
+        return redirect()->route('contacts.index')->with('success', 'Contact deleted successfully!');
+    }
     public function audience(Request $request)
     {
         // if($request->has('v')){
@@ -132,13 +133,13 @@ public function destroy($uuid)
     {
         $data = Audience::find($audience);
 
-        return view('resource.show-audience', ['user'=>$data]);
+        return view('resource.show-audience', ['user' => $data]);
         // return redirect('user');
     }
 
     public function profile(Client $client)
     {
-        return view('user.user-profile', ['user'=>$client]);
+        return view('user.user-profile', ['user' => $client]);
         // if($client->name != 'Admin'){
         // }
         // return redirect('user');
@@ -147,14 +148,15 @@ public function destroy($uuid)
     public function balance(Client $client, Request $request)
     {
         // if($user->name != 'Admin'){
-            return view('user.user-balance', ['user'=>$user, 'team'=>$request->has('team')?$request->team:0]);
+        return view('user.user-balance', ['user' => $user, 'team' => $request->has('team') ? $request->team : 0]);
         // }
         // return redirect('user');
     }
 
-public function showFormImport(){
-    return view('contact.import');
-}
+    public function showFormImport()
+    {
+        return view('contact.import');
+    }
 
     public function import(Request $request)
     {
@@ -162,14 +164,14 @@ public function showFormImport(){
         $fileContents = file($file->getPathname());
 
         foreach ($fileContents as $key => $line) {
-            if($key>0){
+            if ($key > 0) {
                 $data = str_getcsv($line);
 
                 // dd($data);
                 // $perData = explode(',', $data[0]);
                 // return $perData[1];
                 $exsist = Client::where('user_id', auth()->user()->id)->where('phone', $data[1])->count();
-                if($exsist==0){
+                if ($exsist == 0) {
                     Client::create([
                         'uuid'      => Str::uuid(),
                         'name' => $data[0],
@@ -193,7 +195,7 @@ public function showFormImport(){
         $handle = fopen($filename, 'w+');
         fputcsv($handle, array('name', 'phone', 'created_at'));
 
-        foreach($table as $row) {
+        foreach ($table as $row) {
             fputcsv($handle, array($row['name'], $row['phone'], $row['created_at']));
         }
 
