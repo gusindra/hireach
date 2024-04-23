@@ -4,6 +4,7 @@ namespace App\Http\Livewire\Table;
 
 use Livewire\Component;
 use App\Models\Audience;
+use App\Models\AudienceClient;
 use Illuminate\Support\Str;
 use Mediconesystems\LivewireDatatables\Column;
 use Mediconesystems\LivewireDatatables\NumberColumn;
@@ -18,7 +19,10 @@ class AudienceTable extends LivewireDatatable
 
     public function builder()
     {
-        return Audience::query()->where('user_id', auth()->user()->currentTeam->user_id);
+
+
+        return Audience::query()->with('audienceClients')->where('user_id', auth()->user()->currentTeam->user_id);
+
         // return Client::query()->with('teams')
         //     ->whereHas('teams', function ($query) {
         //         $query->where([
@@ -29,21 +33,24 @@ class AudienceTable extends LivewireDatatable
 
     function columns()
     {
-    	return [
-    		Column::callback(['id'], function ($x) {
-                // return view('datatables::link', [
-                //     'href' => "/audience/" . $x
-                // ]);
-                return $x;
-            })->label('ID')->searchable(),
-    		Column::name('name')->label('Name')->searchable(),
-    		DateColumn::name('created_at')->label('Inputed Date')->format('d F Y'),
-            NumberColumn::name('id')->label('Detail')->sortBy('id')->callback('id', function ($value) {
+        return [
+            Column::name('name')->callback('id', function ($value) {
+                $audience = Audience::findOrFail($value);
                 return view('datatables::link', [
                     'href' => "/audience/" . $value,
-                    'slot' => 'View Audience'
+                    'slot' => $audience->name
                 ]);
-            }),
-    	];
+            })->label('Name')->searchable(),
+
+            Column::name('description')->label('Descriptions')->searchable(),
+
+            NumberColumn::name('user_id')->callback('audienceClients.audience_id', function ($value) {
+                return $value;
+            })->label('Total Audience Client'),
+
+            DateColumn::name('created_at')->label('Inputed Date')->format('d F Y'),
+
+
+        ];
     }
 }
