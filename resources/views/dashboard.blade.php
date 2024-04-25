@@ -6,7 +6,7 @@
     </x-slot>
 
     @if(Auth::user()->role)
-        
+
     @endif
 
     <!-- First User Member to create Team -->
@@ -31,7 +31,7 @@
         <!-- Team Dashboard -->
         <div class="grid grid-cols-12">
             @includeWhen(auth()->user(), 'menu.user-dashboard', [])
-            
+
             <div class="col-span-12 px-6 ml-24 mt-2">
                 <div class="bg-white dark:bg-slate-600 overflow-hidden sm:rounded-lg">
                     <x-jet-welcome />

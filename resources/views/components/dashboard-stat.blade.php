@@ -8,7 +8,7 @@
         <div class="ml-4 text-gray-600 dark:text-gray-300 leading-2 font-semibold text-3xl">
             <span>{{$client}}</span>
             <div class="mt-2 text-sm text-gray-500 dark:text-gray-300">
-                <a href="{{ route('client') }}">Contact</a>
+                <a href="{{ route('contact.index') }}">Contact</a>
             </div>
         </div>
     </div>
@@ -16,7 +16,7 @@
 
 <div class="p-6">
     <div class="flex items-center">
-        <a href="{{ route('message') }}">
+        <a href="{{ route('dashboard.outbound') }}">
             <svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" class="w-16 text-gray-400">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
             </svg>
@@ -24,7 +24,7 @@
         <div class="ml-4 text-gray-600 dark:text-gray-300 leading-7 font-semibold text-3xl">
             <span>{{$outbound}}</span>
             <div class="mt-2 text-sm text-gray-500 dark:text-gray-300">
-                <a href="{{ route('message') }}">Out Bound</a>
+                <a href="{{ route('dashboard.outbound') }}">Out Bound</a>
             </div>
         </div>
     </div>
@@ -35,7 +35,7 @@
 
 <div class="p-6">
     <div class="flex items-center">
-        <a href="{{ route('message') }}">
+        <a href="{{ route('dashboard.inbound') }}">
             <svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" class="w-16 text-gray-400">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
             </svg>
@@ -43,7 +43,7 @@
         <div class="ml-4 text-gray-600 dark:text-gray-300 leading-7 font-semibold text-3xl">
             <span>{{$inbound}}</span>
             <div class="mt-2 text-sm text-gray-500 dark:text-gray-300">
-                <a href="{{ route('message') }}"> In Bound</a>
+                <a href="{{ route('dashboard.inbound') }}"> In Bound</a>
             </div>
         </div>
     </div>

@@ -84,23 +84,20 @@
                                             </svg>
                                         </a>
 
-                                        <div
-                                            class="ml-4 text-gray-600 dark:text-gray-300 leading-7 font-semibold text-3xl">
-
-                                            <div class="mt-2 text-sm text-gray-500 dark:text-gray-300">
-                                                <a href="">Clients</a>
+                                        <div class="ml-4 text-gray-600 dark:text-gray-300 leading-7 font-semibold text-3xl">
+                                            <!-- <span>{{ $blastMessageClientCount }}</span> -->
+                                            <div class="text-gray-600 dark:text-gray-300 leading-7 font-semibold text-3xl">
+                                                <div class="mt-2 text-sm text-gray-500 dark:text-gray-300">
+                                                    <a href="">Total Clients</a>
+                                                </div>
                                             </div>
-                                        </div>
-                                        <div
-                                            class="ml-4 text-gray-600 dark:text-gray-300 leading-7 font-semibold text-3xl">
-                                            <span>{{ $blastMessageClientCount }}</span>
                                             <div class="mt-2 text-sm text-gray-500 dark:text-gray-300">
-                                                <a href="">Blast Message</a>
+                                                <h5 href="">Blast Message: {{ $blastMessageClientCount }}</h5>
                                             </div>
 
-                                            <span>{{ $requestsClients }}</span>
+                                            <span></span>
                                             <div class="mt-2 text-sm text-gray-500 dark:text-gray-300">
-                                                <a href="">Clients Request</a>
+                                                <h5 href="">Clients Request : {{ $requestsClients }}</h5>
                                             </div>
                                         </div>
 

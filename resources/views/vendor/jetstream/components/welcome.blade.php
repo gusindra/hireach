@@ -9,5 +9,5 @@
 </div>
 
 <div class="p-6 sm:px-20 bg-gray-200 bg-opacity-25 grid grid-cols-1 md:grid-cols-4">
-    <x-dashboard-stat :api="Auth::user()->currentTeam->callApi->count()" :client="Auth::user()->currentTeam->client->count()" :inbound="Auth::user()->currentTeam->requestIn->count()" :outbound="Auth::user()->currentTeam->requestOut->count()"></x-dashboard-stat>
+    <x-dashboard-stat :api="Auth::user()->currentTeam->callApi->count()" :client="Auth::user()->clients->count()" :inbound="Auth::user()->currentTeam->requestIn->count()" :outbound="Auth::user()->currentTeam->requestOut->count()"></x-dashboard-stat>
 </div>
