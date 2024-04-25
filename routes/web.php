@@ -226,6 +226,9 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
     Route::get('/contact/{uuid}', [ContactController::class, 'edit'])->name('contacts.edit');
     Route::put('/contact/{uuid}', [ContactController::class, 'update'])->name('contacts.update');
     Route::delete('/contact/{uuid}', [ContactController::class, 'destroy'])->name('contacts.destroy');
+
+    Route::get('/dashboard/inbound', [DashboardController::class, 'getInBound'])->name('dashboard.inbound');
+    Route::get('/dashboard/outbound', [DashboardController::class, 'getOutBound'])->name('dashboard.outbound');
 });
 
 Route::get('/role-invitations/{invitation}', [RoleInvitationController::class, 'accept'])->middleware(['signed'])->name('role-invitations.accept');
