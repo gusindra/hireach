@@ -1,5 +1,7 @@
 <x-app-layout>
+
     <div class="max-w-full mx-auto sm:px-6 lg:px-8">
+
         <!-- This example requires Tailwind CSS v2.0+ -->
         <!-- <div class="bg-indigo-600 mb-4">
             <div class="w-full mx-auto p-3 px-3">
@@ -20,7 +22,7 @@
                         </p>
                     </div>
                     <div class="order-3 mt-2 flex-shrink-0 w-full sm:order-2 sm:mt-0 sm:w-auto">
-                        <a target="blank" href="{{route('chat.slug', auth()->user()->currentTeam->id)}}" class="flex items-center justify-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-indigo-600 bg-white hover:bg-indigo-50">
+                        <a target="blank" href="{{ route('chat.slug', auth()->user()->currentTeam->id) }}" class="flex items-center justify-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-indigo-600 bg-white hover:bg-indigo-50">
                             Test Chat
                         </a>
                     </div>
@@ -32,6 +34,7 @@
         </div> -->
     </div>
     <div class="">
+        @includeWhen(auth()->user(), 'menu.user-engagement', [])
         @livewire('chat-component')
     </div>
 </x-app-layout>
