@@ -44,16 +44,21 @@ class AddResource extends Component
     {
         $this->resource = $uuid;
         $this->template = Template::with('question')->where('uuid', $uuid)->first();
+        $this->channel = $this->channel ? $this->channel : '';
         $this->name = $this->template ? $this->template->name : '';
         $this->description = $this->template ? $this->template->description : '';
         $this->is_enabled = $this->template ? $this->template->is_enabled : '';
         $this->is_waiting = $this->template ? $this->template->is_wait_for_chat : '';
         $this->templateId = $this->template ? $this->template->id : '';
+        $this->from = 'ardana@gmail.com';
+        $this->selectTo = 'manual';
+        
     }
 
     public function rules()
     {
         return [
+            'channel' => 'required',
             'name' => 'required',
             'description' => 'required',
             'from' => 'required',
@@ -89,7 +94,6 @@ class AddResource extends Component
 
     public function sendResource()
     {
-        $this->validate();
         if ($this->selectTo === 'manual') {
             $to = $this->to;
         } elseif ($this->selectTo === 'from_contact') {
@@ -97,13 +101,14 @@ class AddResource extends Component
         } elseif ($this->selectTo == 'from_audience') {
             $selectedAudienceId = $this->selectedAudience;
             $clientIds = AudienceClient::where('audience_id', $selectedAudienceId)->pluck('client_id');
-
+            
             if ($this->channel == 'email') {
                 $to = Client::whereIn('uuid', $clientIds)->pluck('email')->implode(',');
             } elseif ($this->channel == 'wa' || $this->channel == 'sm' || $this->channel == 'pl' || $this->channel == 'waba' || $this->channel == 'wc') {
                 $to = Client::whereIn('uuid', $clientIds)->pluck('phone')->implode(',');
             }
         }
+        $this->validate();
 
 
         $channel = $this->channel;
@@ -130,6 +135,14 @@ class AddResource extends Component
         dd($data);
     }
 
+    public function updatedSelectTo()
+    {
+        $this->reset('to');
+    }
+    public function updatedSelectedContact()
+    {
+        $this->to = $this->selectedContact;
+    }
 
     public function updatedSelectedAudience($audienceId)
     {

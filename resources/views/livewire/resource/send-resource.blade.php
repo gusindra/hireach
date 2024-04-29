@@ -188,15 +188,16 @@
 
                 {{-- Provider --}}
                 <div class="col-span-6 sm:col-span-4">
-                    <x-jet-label for="provider" value="{{ __('Template') }}" />
-                    <select name="provider" id="provider"
+                    <x-jet-label for="templateId" value="{{ __('Template') }}" />
+                    <select name="templateId" id="templateId"
                         class="border-gray-300 dark:bg-slate-800 dark:text-slate-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 rounded-md shadow-sm mt-1 block w-full"
-                        wire:model.debunce.800ms="provider">
+                        wire:model.debunce.800ms="templateId">
+                        <option value=""></option>
                         <option value="1">Provider MK</option>
                         <option value="2">Provider EM</option>
                     </select>
 
-                    <x-jet-input-error for="provider" class="mt-2" />
+                    <x-jet-input-error for="templateId" class="mt-2" />
                 </div>
             </div>
 
@@ -235,10 +236,10 @@
                         <option value="from_audience">From audience</option>
                     </select>
                 </div>
-
+                
                 @if ($selectTo == 'manual')
                     <x-textarea wire:model="to" class="mt-1 block w-full"></x-textarea>
-                    <x-jet-input-error for="to" class="mt-2" />
+                    
                 @endif
                 @if ($selectTo == 'from_contact')
 
@@ -254,9 +255,7 @@
                                 @endforeach
                             </select>
                         </div>
-                    @endif
-
-                    @if ($channel == 'wa' || $channel == 'sm' || $channel == 'pl' || $channel == 'waba' || $channel == 'wc')
+                    @elseif($channel == 'wa' || $channel == 'sm' || $channel == 'pl' || $channel == 'waba' || $channel == 'wc')
                         <div class="mb-4">
                             <label for="contact" class="block text-gray-700">Pilih Kontak:</label>
                             <select wire:model="selectedContact" id="contact"
@@ -268,6 +267,8 @@
                                 @endforeach
                             </select>
                         </div>
+                    @else
+                    silahkan pilih 1
                     @endif
                 @endif
 
@@ -298,9 +299,7 @@
                         @endif
 
 
-                    @endif
-
-                    @if ($channel == 'wa' || $channel == 'sm' || $channel == 'pl' || $channel == 'waba' || $channel == 'wc')
+                    @elseif ($channel == 'wa' || $channel == 'sm' || $channel == 'pl' || $channel == 'waba' || $channel == 'wc')
                         <div class="mb-4">
                             <label for="audience" class="block text-gray-700">Select Audience:</label>
                             <select wire:model="selectedAudience" id="audience"
@@ -323,10 +322,13 @@
                                 </div>
                             </div>
                         @endif
+                    @else
+                    silahkan pilih 2
                     @endif
 
                 @endif
-
+                
+                <x-jet-input-error for="to" class="mt-2" />
 
 
 
