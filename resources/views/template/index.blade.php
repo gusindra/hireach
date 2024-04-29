@@ -33,7 +33,6 @@
                                     View</a>
                             </li>
                         </ul>
-
                     </header>
                 @endunless
                 <div class="py-3">

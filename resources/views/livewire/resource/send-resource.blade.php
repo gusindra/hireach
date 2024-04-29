@@ -115,7 +115,7 @@
                             <option value="email">Email(No-reply)</option>
                             <option value="wa">WA Broadcasting/Notification</option>
                             <option value="sm">SMS</option>
-                            <option value="pl">Phone Line</option>
+                            <option disabled value="pl">Phone Line</option>
                         @elseif($resource == 2)
                             <option value="waba">WABA</option>
                             <option value="wc">Webchat</option>
@@ -186,19 +186,26 @@
                     <x-jet-input-error for="text" class="mt-2" />
                 </div>
 
-                {{-- Provider --}}
+                {{-- Template --}}
                 <div class="col-span-6 sm:col-span-4">
                     <x-jet-label for="templateId" value="{{ __('Template') }}" />
                     <select name="templateId" id="templateId"
                         class="border-gray-300 dark:bg-slate-800 dark:text-slate-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 rounded-md shadow-sm mt-1 block w-full"
                         wire:model.debunce.800ms="templateId">
                         <option value=""></option>
-                        <option value="1">Provider MK</option>
-                        <option value="2">Provider EM</option>
+                        @foreach ($templates->groupBy('type') as $type => $group)
+                            <optgroup label="{{ $type }}">
+                                @foreach ($group as $template)
+                                    <option value="{{ $template->id }}">{{ $template->name }}</option>
+                                @endforeach
+                            </optgroup>
+                        @endforeach
                     </select>
 
                     <x-jet-input-error for="templateId" class="mt-2" />
                 </div>
+
+
             </div>
 
         </x-slot>
@@ -236,10 +243,9 @@
                         <option value="from_audience">From audience</option>
                     </select>
                 </div>
-                
+
                 @if ($selectTo == 'manual')
                     <x-textarea wire:model="to" class="mt-1 block w-full"></x-textarea>
-                    
                 @endif
                 @if ($selectTo == 'from_contact')
 
@@ -268,7 +274,8 @@
                             </select>
                         </div>
                     @else
-                    silahkan pilih 1
+                        <p class="text-red-500 p-4">Please select Channel first !</p>
+
                     @endif
                 @endif
 
@@ -297,8 +304,6 @@
                                 </div>
                             </div>
                         @endif
-
-
                     @elseif ($channel == 'wa' || $channel == 'sm' || $channel == 'pl' || $channel == 'waba' || $channel == 'wc')
                         <div class="mb-4">
                             <label for="audience" class="block text-gray-700">Select Audience:</label>
@@ -323,11 +328,12 @@
                             </div>
                         @endif
                     @else
-                    silahkan pilih 2
+                        <p class="text-red-500 p-4">Please select Channel first !</p>
+
                     @endif
 
                 @endif
-                
+
                 <x-jet-input-error for="to" class="mt-2" />
 
 

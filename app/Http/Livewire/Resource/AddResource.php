@@ -51,21 +51,19 @@ class AddResource extends Component
         $this->is_waiting = $this->template ? $this->template->is_wait_for_chat : '';
         $this->templateId = $this->template ? $this->template->id : '';
         $this->from = 'ardana@gmail.com';
+        $this->templateId =  '';
         $this->selectTo = 'manual';
-        
+        $this->otp;
     }
 
     public function rules()
     {
         return [
             'channel' => 'required',
-            'name' => 'required',
-            'description' => 'required',
             'from' => 'required',
             'to' => 'required',
             'title' => 'required',
             'text' => 'required',
-            'provider' => 'required'
         ];
     }
 
@@ -92,8 +90,15 @@ class AddResource extends Component
         $this->emit('saved');
     }
 
+    public function updatedTemplateId($value)
+    {
+        $template = Template::find($value);
+        $this->type = $template->type;
+    }
+
     public function sendResource()
     {
+        $this->validate();
         if ($this->selectTo === 'manual') {
             $to = $this->to;
         } elseif ($this->selectTo === 'from_contact') {
@@ -101,14 +106,14 @@ class AddResource extends Component
         } elseif ($this->selectTo == 'from_audience') {
             $selectedAudienceId = $this->selectedAudience;
             $clientIds = AudienceClient::where('audience_id', $selectedAudienceId)->pluck('client_id');
-            
+
             if ($this->channel == 'email') {
                 $to = Client::whereIn('uuid', $clientIds)->pluck('email')->implode(',');
             } elseif ($this->channel == 'wa' || $this->channel == 'sm' || $this->channel == 'pl' || $this->channel == 'waba' || $this->channel == 'wc') {
                 $to = Client::whereIn('uuid', $clientIds)->pluck('phone')->implode(',');
             }
         }
-        $this->validate();
+
 
 
         $channel = $this->channel;
@@ -175,10 +180,11 @@ class AddResource extends Component
 
         $contacts = Client::orderBy('created_at', 'desc')->get();
         $audience = Audience::orderBy('created_at', 'desc')->get();
+        $templates = Template::orderBy('created_at', 'desc')->get();
 
 
 
-        return view('livewire.resource.send-resource', compact('contacts', 'audience'))
+        return view('livewire.resource.send-resource', compact('contacts', 'audience', 'templates'))
             ->layout('resource.show');
     }
 }
