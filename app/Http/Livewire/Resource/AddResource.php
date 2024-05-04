@@ -22,6 +22,7 @@ class AddResource extends Component
     public $title;
     public $text;
     public $from;
+    public $fromList = [];
     public $type;
     public $otp;
     public $email;
@@ -121,10 +122,8 @@ class AddResource extends Component
 
             if ($this->channel == 'email') {
                 $to = Client::whereIn('uuid', $clientIds)->pluck('email')->implode(',');
-                $from = $this->from = 'noreply@hireach.archeeshop.com';
             } elseif ($this->channel == 'wa' || $this->channel == 'sm' || $this->channel == 'pl' || $this->channel == 'waba' || $this->channel == 'wc') {
                 $to = Client::whereIn('uuid', $clientIds)->pluck('phone')->implode(',');
-                $from = $this->from = '0812345555';
             }
         }
 
@@ -181,13 +180,19 @@ class AddResource extends Component
 
     public function updatedChannel()
     {
+        $this->reset('fromList');
         $this->reset('to');
         $this->reset('selectTo');
         $this->reset('selectedAudience');
         if ($this->channel == 'email') {
+            $this->fromList[0] = 'noreply@hireach.archeeshop.com';
+            $this->fromList[1] = auth()->user()->email;
             $this->from = 'noreply@hireach.archeeshop.com';
         } elseif ($this->channel == 'wa' || $this->channel == 'sm' || $this->channel == 'pl' || $this->channel == 'waba' || $this->channel == 'wc') {
-            $this->from = '0812345555';
+            $this->fromList[0] = 'Auto';
+            if(auth()->user()->phone_no)
+                $this->fromList[1] = auth()->user()->phone_no;
+            $this->from = 'Auto';
         }
     }
 
@@ -199,7 +204,6 @@ class AddResource extends Component
         $audience = Audience::orderBy('created_at', 'desc')->where('user_id', auth()->user()->currentTeam->user_id)->get();
         $templates = Template::orderBy('created_at', 'desc')->where('user_id', auth()->user()->currentTeam->user_id)->where('resource', $this->resource)->get();
 
-        return view('livewire.resource.send-resource', compact('contacts', 'audience', 'templates'))
-            ->layout('resource.show');
+        return view('livewire.resource.send-resource', compact('contacts', 'audience', 'templates'));
     }
 }
