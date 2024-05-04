@@ -92,7 +92,7 @@
             <div class="col-span-2 p-3 bg-gray-100 border-1 rounded-lg space-y-3">
                 @if ($resource == 2)
                     <!-- Template Name -->
-                    <div class="col-span-6 sm:col-span-4">
+                    {{-- <div class="col-span-6 sm:col-span-4">
                         <x-jet-label for="bound" value="{{ __('Bound') }}" />
                         <select name="bound" id="bound"
                             class="border-gray-300 dark:bg-slate-800 dark:text-slate-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 rounded-md shadow-sm mt-1 block w-full"
@@ -102,7 +102,7 @@
                             <option value="in">In</option>
                         </select>
                         <x-jet-input-error for="bound" class="mt-2" />
-                    </div>
+                    </div> --}}
                 @endif
                 <!-- Template Name -->
                 <div class="col-span-6 sm:col-span-4">
