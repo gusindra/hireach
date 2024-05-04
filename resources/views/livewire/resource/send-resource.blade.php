@@ -97,8 +97,8 @@
                         <select name="bound" id="bound"
                             class="border-gray-300 dark:bg-slate-800 dark:text-slate-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 rounded-md shadow-sm mt-1 block w-full"
                             wire:model.debunce.800ms="bound">
-                            <option selected>-- Select bound --</option>
-                            <option value="out">Out</option>
+                            <option >-- Select bound --</option>
+                            <option selected value="out">Out</option>
                             <option value="in">In</option>
                         </select>
                         <x-jet-input-error for="bound" class="mt-2" />
@@ -123,10 +123,10 @@
                             <option value="wa">WA Private No.</option>
                             {{-- <option value="ig">Instagram</option> --}}
                             @if ($bound == 'out')
-                                <option value="plt">Phone Line Talkbot</option>
-                                <option value="plh">Phone Line Human Agent</option>
+                                <option disabled value="plt">Phone Line Talkbot</option>
+                                <option disabled value="plh">Phone Line Human Agent</option>
                             @else
-                                <option value="pl">Phone Line</option>
+                                <option disabled value="pl">Phone Line</option>
                             @endif
                         @endif
                     </select>
@@ -178,21 +178,13 @@
                 </div>
 
                 <!-- Template Description -->
-                <div class="col-span-6 sm:col-span-6">
-                    <x-jet-label for="text" value="{{ __('Message') }}" />
-
-                    <x-textarea wire:model="text" wire:model.defer="text" value="text"
-                        class="mt-1 block w-full"></x-textarea>
-                    <x-jet-input-error for="text" class="mt-2" />
-                </div>
-
                 {{-- Template --}}
                 <div class="col-span-6 sm:col-span-4">
                     <x-jet-label for="templateId" value="{{ __('Template') }}" />
                     <select name="templateId" id="templateId"
                         class="border-gray-300 dark:bg-slate-800 dark:text-slate-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 rounded-md shadow-sm mt-1 block w-full"
                         wire:model.debunce.800ms="templateId">
-                        <option value=""></option>
+                        <option value="0">No Template</option>
                         @foreach ($templates->groupBy('type') as $type => $group)
                             <optgroup label="{{ $type }}">
                                 @foreach ($group as $template)
@@ -203,6 +195,19 @@
                     </select>
 
                     <x-jet-input-error for="templateId" class="mt-2" />
+                </div>
+
+                <div class="col-span-6 sm:col-span-6">
+                    @if ($templateId == '0')
+                    <x-jet-label for="text" value="{{ __('Message') }}" />
+
+                    <x-textarea wire:model="text" wire:model.defer="text" value="text"
+                        class="mt-1 block w-full"></x-textarea>
+                    <x-jet-input-error for="text" class="mt-2" />
+                    @else
+                    <x-jet-label for="text" value="{{ __('Message') }}" />
+                    <div>{!!$text!!}</div>
+                    @endif
                 </div>
 
 
@@ -231,6 +236,14 @@
                     wire:model.defer="from" wire:model.debunce.800ms="from" :disabled="!Gate::check('update', $template)" />
                 <x-jet-input-error for="from" class="mt-2" />
             </div>
+            <div class="mb-4">
+                    <select wire:model="from" id="from_selection"
+                        class="form-select block w-full mt-1 rounded-md shadow-sm border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
+                        <option value="manual" selected>Manual</option>
+                        <option value="from_contact">From contact</option>
+                        <option value="from_audience">From audience</option>
+                    </select>
+                </div>
             <div class="col-span-6 sm:col-span-6">
                 <x-jet-label for="description" value="{{ __('To') }}" />
 
@@ -274,7 +287,7 @@
                             </select>
                         </div>
                     @else
-                        <p class="text-red-500 p-4">Please select Channel first !</p>
+                        <p class="text-red-600 text-sm">Please select Channel first to choose contact !</p>
 
                     @endif
                 @endif
@@ -328,13 +341,13 @@
                             </div>
                         @endif
                     @else
-                        <p class="text-red-500 p-4">Please select Channel first !</p>
+                        <p class="text-red-600 text-sm">Please select Channel first to choose Audience !</p>
 
                     @endif
 
                 @endif
 
-                <x-jet-input-error for="to" class="mt-2" />
+                <x-jet-input-error for="to" class="mt-2 mb-2" />
 
 
 
