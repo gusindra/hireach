@@ -11,6 +11,7 @@ use App\Models\Request as Message;
 use App\Models\SaldoUser;
 use App\Models\TeamUser;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
 
  /**
  * Get the previous request
@@ -374,4 +375,14 @@ function addLog($data, $before){
             'user_id'    => auth()->user()->id
         ]);
     }
+}
+
+function checkContentOtp($content){ 
+    $checkString = $content;
+    $otpWord = ['Angka Rahasia', 'Authorisation', 'Authorise', 'Authorization', 'Authorized', 'Code', 'Harap masukkan', 'Kata Sandi', 'Kode',' Kode aktivasi', 'konfirmasi', 'otentikasi', 'Otorisasi', 'Rahasia', 'Sandi', 'trx', 'unik', 'Venfikasi', 'KodeOTP', 'NewOtp', 'One-Time Password', 'Otorisasi', 'OTP', 'Pass', 'Passcode', 'PassKey', 'Password', 'PIN', 'verifikasi', 'insert current code', 'Security', 'This code is valid', 'Token', 'Passcode', 'Valid OTP', 'verification','Verification', 'login code', 'registration code', 'secunty code'];
+    if(Str::contains($checkString, $otpWord)){
+        return 1;
+    }else{
+        return 0;
+    } 
 }

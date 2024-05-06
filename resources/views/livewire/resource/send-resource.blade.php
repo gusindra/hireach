@@ -88,126 +88,250 @@
                     </div>
                 </div>
             </div>
-
-            <div class="col-span-12 lg:col-span-2 p-3 bg-gray-100 border-1 rounded-lg space-y-3">
-                @if ($resource == 2)
+            <div class="col-span-6 grid grid-cols-6 gap-3">
+                <div class="col-span-2 lg:col-span-2 p-3 bg-gray-100 border-1 rounded-lg space-y-3">
+                    @if ($resource == 2)
+                        <!-- Template Name -->
+                        {{-- <div class="col-span-6 sm:col-span-4">
+                            <x-jet-label for="bound" value="{{ __('Bound') }}" />
+                            <select name="bound" id="bound"
+                                class="border-gray-300 dark:bg-slate-800 dark:text-slate-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 rounded-md shadow-sm mt-1 block w-full"
+                                wire:model.debunce.800ms="bound">
+                                <option >-- Select bound --</option>
+                                <option selected value="out">Out</option>
+                                <option value="in">In</option>
+                            </select>
+                            <x-jet-input-error for="bound" class="mt-2" />
+                        </div> --}}
+                    @endif
                     <!-- Template Name -->
-                    {{-- <div class="col-span-6 sm:col-span-4">
-                        <x-jet-label for="bound" value="{{ __('Bound') }}" />
-                        <select name="bound" id="bound"
+                    <div class="col-span-6 sm:col-span-4">
+                        <x-jet-label for="channel" value="{{ __('Channel') }}" />
+                        <select name="channel" id="channel"
                             class="border-gray-300 dark:bg-slate-800 dark:text-slate-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 rounded-md shadow-sm mt-1 block w-full"
-                            wire:model.debunce.800ms="bound">
-                            <option >-- Select bound --</option>
-                            <option selected value="out">Out</option>
-                            <option value="in">In</option>
-                        </select>
-                        <x-jet-input-error for="bound" class="mt-2" />
-                    </div> --}}
-                @endif
-                <!-- Template Name -->
-                <div class="col-span-6 sm:col-span-4">
-                    <x-jet-label for="channel" value="{{ __('Channel') }}" />
-                    <select name="channel" id="channel"
-                        class="border-gray-300 dark:bg-slate-800 dark:text-slate-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 rounded-md shadow-sm mt-1 block w-full"
-                        wire:model.debunce.800ms="channel">
-                        <option selected>-- Select Channel --</option>
-                        @if ($resource == 1)
-                            <option value="email">Email(No-reply)</option>
-                            <option value="wa">WA Broadcasting/Notification</option>
-                            <option value="sm">SMS</option>
-                            <option disabled value="pl">Phone Line</option>
-                        @elseif($resource == 2)
-                            <option value="waba">WABA</option>
-                            <option value="wc">Webchat</option>
-                            {{-- <option value="em">Email</option> --}}
-                            <option value="wa">WA Private No.</option>
-                            {{-- <option value="ig">Instagram</option> --}}
-                            @if ($bound == 'out')
-                                <option disabled value="plt">Phone Line Talkbot</option>
-                                <option disabled value="plh">Phone Line Human Agent</option>
-                            @else
+                            wire:model.debunce.800ms="channel">
+                            <option selected>-- Select Channel --</option>
+                            @if ($resource == 1)
+                                <option value="email">Email(No-reply)</option>
+                                <option value="wa">WA Broadcasting/Notification</option>
+                                <option value="sm">SMS</option>
                                 <option disabled value="pl">Phone Line</option>
+                            @elseif($resource == 2)
+                                <option value="waba">WABA</option>
+                                <option value="wc">Webchat</option>
+                                {{-- <option value="em">Email</option> --}}
+                                <option value="wa">WA Private No.</option>
+                                {{-- <option value="ig">Instagram</option> --}}
+                                @if ($bound == 'out')
+                                    <option disabled value="plt">Phone Line Talkbot</option>
+                                    <option disabled value="plh">Phone Line Human Agent</option>
+                                @else
+                                    <option disabled value="pl">Phone Line</option>
+                                @endif
+                            @endif
+                        </select>
+                        <x-jet-input-error for="channel" class="mt-2" />
+                    </div>
+    
+    
+                    @if (in_array($channel, ['wa', 'sm']))
+                        {{-- Provider --}}
+                        <div class="col-span-6 sm:col-span-4">
+                            <x-jet-label for="provider" value="{{ __('Provider') }}" />
+                            <select name="provider" id="provider"
+                                class="border-gray-300 dark:bg-slate-800 dark:text-slate-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 rounded-md shadow-sm mt-1 block w-full"
+                                wire:model.debunce.800ms="provider">
+                                <option value="1">Provider MK</option>
+                                <option value="2">Provider EM</option>
+                            </select>
+                            <p class="text-gray-500 dark:text-slate-300 text-xs text-right m-2">Sending price is on
+                                Provider
+                            </p>
+                            <x-jet-input-error for="provider" class="mt-2" />
+                        </div>
+                    @endif
+    
+                    <!-- is_enabled -->
+                    <div class="col-span-6 sm:col-span-6">
+    
+                        <div class="flex items-start">
+                            <div class="flex items-center h-5">
+                                <input id="is_enabled" name="is_enabled" wire:model="is_enabled"
+                                    wire:model.defer="is_enabled" type="checkbox"
+                                    class="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300 rounded">
+                            </div>
+                            <div class="ml-3 text-sm">
+                                <label for="is_enabled" class="font-medium text-gray-700 dark:text-slate-300">Sending OTP
+                                    (One Time Password) ?</label>
+                                <p class="text-gray-500 dark:text-slate-300">Tick if you send OTP Message</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+    
+                <div class="col-span-4 lg:col-span-4 p-3 bg-gray-100 border-1 rounded-lg space-y-3">
+                    <!-- Template Name -->
+                    <div class="col-span-6 sm:col-span-6">
+                        <x-jet-label for="title" value="{{ __('Title') }}" />
+                        <x-jet-input id="title" type="text" class="mt-1 block w-full" wire:model="title"
+                            wire:model.defer="title" wire:model.debunce.800ms="title" />
+                        <x-jet-input-error for="title" class="mt-2" />
+                    </div>
+    
+                    <!-- Template Description -->
+                    {{-- Template --}}
+                    <div class="col-span-6 sm:col-span-4">
+                        <x-jet-label for="templateId" value="{{ __('Template') }}" />
+                        <select name="templateId" id="templateId"
+                            class="border-gray-300 dark:bg-slate-800 dark:text-slate-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 rounded-md shadow-sm mt-1 block w-full"
+                            wire:model.debunce.800ms="templateId">
+                            <option value="0">No Template</option>
+                            @foreach ($templates->groupBy('type') as $type => $group)
+                                <optgroup label="{{ $type }}">
+                                    @foreach ($group as $template)
+                                        <option value="{{ $template->id }}">{{ $template->name }}</option>
+                                    @endforeach
+                                </optgroup>
+                            @endforeach
+                        </select>
+    
+                        <x-jet-input-error for="templateId" class="mt-2" />
+                    </div>
+    
+                    <div class="col-span-6 sm:col-span-6">
+                        @if ($templateId == '0')
+                        <x-jet-label for="text" value="{{ __('Message') }}" />
+    
+                        <x-textarea wire:model="text" wire:model.defer="text" value="text"
+                            class="mt-1 block w-full"></x-textarea>
+                        <x-jet-input-error for="text" class="mt-2" />
+                        @else
+                        <x-jet-label for="text" value="{{ __('Message') }}" />
+                        <div>{!!$text!!}</div>
+                        @endif
+                    </div>
+                </div>
+    
+                <div class="col-span-6 lg:col-span-6 space-y-3">
+                    
+                    <div class="col-span-6 lg:col-span-6 p-3 bg-gray-100 border-1 rounded-lg space-y-3">
+                        <x-jet-label for="from" value="{{ __('From') }}" />
+                        {{-- <x-jet-input id="from" type="text" class="mt-1 block w-full" wire:model="from"
+                            wire:model.defer="from" wire:model.debunce.800ms="from" :disabled="!Gate::check('update', $template)" /> --}}
+                        <div class="mb-4">
+                            <select wire:model="from" id="from"
+                                class="form-select block w-full mt-1 rounded-md shadow-sm border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
+                                @foreach ($fromList as $froml)
+                                    <option value="{{ $froml }}">{{ $froml }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <x-jet-input-error for="from" class="mt-2" /> 
+                    </div>
+
+                    <div class="ol-span-6 lg:col-span-6 p-3 bg-gray-100 border-1 rounded-lg space-y-3">
+                        <x-jet-label for="description" value="{{ __('To') }}" />
+        
+                        <div class="mb-4">
+                            <select wire:model="selectTo" id="selectTo"
+                                class="form-select block w-full mt-1 rounded-md shadow-sm border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
+                                <option value="">Please select the recipient</option>
+                                <option value="manual" selected>Manual</option>
+                                <option value="from_contact">From contact</option>
+                                <option value="from_audience">From audience</option>
+                            </select>
+                        </div>
+        
+                        @if ($selectTo == 'manual')
+                            <x-textarea wire:model="to" class="mt-1 block w-full"></x-textarea>
+                        @endif
+                        @if ($selectTo == 'from_contact')
+        
+                            @if ($channel == 'email')
+                                <div class="mb-4">
+                                    <label for="contact" class="block text-gray-700">Pilih Kontak:</label>
+                                    <select wire:model="selectedContact" id="contact"
+                                        class="form-multiselect block w-full mt-1 rounded-md shadow-sm border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
+                                        <option value="">Select Contact</option>
+                                        @foreach ($contacts as $contact)
+                                            <option value="{{ $contact->email }}">{{ $contact->name }} -
+                                                {{ $contact->email }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            @elseif($channel == 'wa' || $channel == 'sm' || $channel == 'pl' || $channel == 'waba' || $channel == 'wc')
+                                <div class="mb-4">
+                                    <label for="contact" class="block text-gray-700">Pilih Kontak:</label>
+                                    <select wire:model="selectedContact" id="contact"
+                                        class="form-multiselect block w-full mt-1 rounded-md shadow-sm border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
+                                        <option value="">Select Contact</option>
+                                        @foreach ($contacts as $contact)
+                                            <option value="{{ $contact->phone }}">{{ $contact->name }} -
+                                                {{ $contact->phone }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            @else
+                                <p class="text-red-600 text-sm">Please select Channel first to choose contact !</p>
                             @endif
                         @endif
-                    </select>
-                    <x-jet-input-error for="channel" class="mt-2" />
-                </div>
-
-
-                @if (in_array($channel, ['wa', 'sm']))
-                    {{-- Provider --}}
-                    <div class="col-span-6 sm:col-span-4">
-                        <x-jet-label for="provider" value="{{ __('Provider') }}" />
-                        <select name="provider" id="provider"
-                            class="border-gray-300 dark:bg-slate-800 dark:text-slate-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 rounded-md shadow-sm mt-1 block w-full"
-                            wire:model.debunce.800ms="provider">
-                            <option value="1">Provider MK</option>
-                            <option value="2">Provider EM</option>
-                        </select>
-                        <p class="text-gray-500 dark:text-slate-300 text-xs text-right m-2">Sending price is on
-                            Provider
-                        </p>
-                        <x-jet-input-error for="provider" class="mt-2" />
+        
+                        @if ($selectTo == 'from_audience')
+        
+                            @if ($channel == 'email')
+                                <div class="mb-4">
+                                    <label for="audience" class="block text-gray-700">Select Audience:</label>
+                                    <select wire:model="selectedAudience" id="audience"
+                                        class="form-multiselect block w-full mt-1 rounded-md shadow-sm border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
+                                        <option value="">Select Audience</option>
+                                        @foreach ($audience as $item)
+                                            <option value="{{ $item->id }}">{{ $item->name }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+        
+                                @if ($to)
+                                    <div class="mt-4">
+                                        <label class="block text-gray-700">Audience Clients</label>
+                                        <div class="overflow-x-auto">
+                                            <div class="border border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 rounded-md shadow-sm dark:bg-slate-800 dark:text-slate-300 mt-1 block w-full p-3"
+                                                wire:model="to">
+                                                {{ $to }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                @endif
+                            @elseif ($channel == 'wa' || $channel == 'sm' || $channel == 'pl' || $channel == 'waba' || $channel == 'wc')
+                                <div class="mb-4">
+                                    <label for="audience" class="block text-gray-700">Select Audience:</label>
+                                    <select wire:model="selectedAudience" id="audience"
+                                        class="form-multiselect block w-full mt-1 rounded-md shadow-sm border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
+                                        <option value="">Select Audience</option>
+                                        @foreach ($audience as $item)
+                                            <option value="{{ $item->id }}">{{ $item->name }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+        
+                                @if ($to)
+                                    <div class="mt-4">
+                                        <label class="block text-gray-700">Audience Clients</label>
+                                        <div class="overflow-x-auto">
+                                            <div class="border border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 rounded-md shadow-sm dark:bg-slate-800 dark:text-slate-300 mt-1 block w-full p-3"
+                                                wire:model="to">
+                                                {{ $to }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                @endif
+                            @else
+                                <p class="text-red-600 text-sm">Please select Channel first to choose Audience !</p>
+        
+                            @endif
+        
+                        @endif
                     </div>
-                @endif
-
-                <!-- is_enabled -->
-                <div class="col-span-6 sm:col-span-6">
-
-                    <div class="flex items-start">
-                        <div class="flex items-center h-5">
-                            <input id="is_enabled" name="is_enabled" wire:model="is_enabled"
-                                wire:model.defer="is_enabled" type="checkbox"
-                                class="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300 rounded">
-                        </div>
-                        <div class="ml-3 text-sm">
-                            <label for="is_enabled" class="font-medium text-gray-700 dark:text-slate-300">Sending OTP
-                                (One Time Password) ?</label>
-                            <p class="text-gray-500 dark:text-slate-300">Tick if you send OTP Message</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-span-12 lg:col-span-4 p-3 bg-gray-100 border-1 rounded-lg space-y-3">
-                <!-- Template Name -->
-                <div class="col-span-6 sm:col-span-6">
-                    <x-jet-label for="title" value="{{ __('Title') }}" />
-                    <x-jet-input id="title" type="text" class="mt-1 block w-full" wire:model="title"
-                        wire:model.defer="title" wire:model.debunce.800ms="title" />
-                    <x-jet-input-error for="title" class="mt-2" />
-                </div>
-
-                <!-- Template Description -->
-                {{-- Template --}}
-                <div class="col-span-6 sm:col-span-4">
-                    <x-jet-label for="templateId" value="{{ __('Template') }}" />
-                    <select name="templateId" id="templateId"
-                        class="border-gray-300 dark:bg-slate-800 dark:text-slate-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 rounded-md shadow-sm mt-1 block w-full"
-                        wire:model.debunce.800ms="templateId">
-                        <option value="0">No Template</option>
-                        @foreach ($templates->groupBy('type') as $type => $group)
-                            <optgroup label="{{ $type }}">
-                                @foreach ($group as $template)
-                                    <option value="{{ $template->id }}">{{ $template->name }}</option>
-                                @endforeach
-                            </optgroup>
-                        @endforeach
-                    </select>
-
-                    <x-jet-input-error for="templateId" class="mt-2" />
-                </div>
-
-                <div class="col-span-6 sm:col-span-6">
-                    @if ($templateId == '0')
-                    <x-jet-label for="text" value="{{ __('Message') }}" />
-
-                    <x-textarea wire:model="text" wire:model.defer="text" value="text"
-                        class="mt-1 block w-full"></x-textarea>
-                    <x-jet-input-error for="text" class="mt-2" />
-                    @else
-                    <x-jet-label for="text" value="{{ __('Message') }}" />
-                    <div>{!!$text!!}</div>
-                    @endif
+                    <x-jet-input-error for="to" class="mt-2 mb-2" />
                 </div>
             </div>
 
@@ -228,123 +352,6 @@
 
         <x-slot name="form">
             <!-- Template Name -->
-            <div class="col-span-6 sm:col-span-6">
-                <x-jet-label for="from" value="{{ __('From') }}" />
-                {{-- <x-jet-input id="from" type="text" class="mt-1 block w-full" wire:model="from"
-                    wire:model.defer="from" wire:model.debunce.800ms="from" :disabled="!Gate::check('update', $template)" /> --}}
-                <div class="mb-4">
-                    <select wire:model="from" id="from"
-                        class="form-select block w-full mt-1 rounded-md shadow-sm border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
-                        @foreach ($fromList as $froml)
-                            <option value="{{ $froml }}">{{ $froml }}</option>
-                        @endforeach
-                    </select>
-                </div>
-                <x-jet-input-error for="from" class="mt-2" /> 
-            </div>
-            <div class="col-span-6 sm:col-span-6">
-                <x-jet-label for="description" value="{{ __('To') }}" />
-
-                <div class="mb-4">
-                    <select wire:model="selectTo" id="selectTo"
-                        class="form-select block w-full mt-1 rounded-md shadow-sm border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
-                        <option value="">Please select the recipient</option>
-                        <option value="manual" selected>Manual</option>
-                        <option value="from_contact">From contact</option>
-                        <option value="from_audience">From audience</option>
-                    </select>
-                </div>
-
-                @if ($selectTo == 'manual')
-                    <x-textarea wire:model="to" class="mt-1 block w-full"></x-textarea>
-                @endif
-                @if ($selectTo == 'from_contact')
-
-                    @if ($channel == 'email')
-                        <div class="mb-4">
-                            <label for="contact" class="block text-gray-700">Pilih Kontak:</label>
-                            <select wire:model="selectedContact" id="contact"
-                                class="form-multiselect block w-full mt-1 rounded-md shadow-sm border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
-                                <option value="">Select Contact</option>
-                                @foreach ($contacts as $contact)
-                                    <option value="{{ $contact->email }}">{{ $contact->name }} -
-                                        {{ $contact->email }}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                    @elseif($channel == 'wa' || $channel == 'sm' || $channel == 'pl' || $channel == 'waba' || $channel == 'wc')
-                        <div class="mb-4">
-                            <label for="contact" class="block text-gray-700">Pilih Kontak:</label>
-                            <select wire:model="selectedContact" id="contact"
-                                class="form-multiselect block w-full mt-1 rounded-md shadow-sm border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
-                                <option value="">Select Contact</option>
-                                @foreach ($contacts as $contact)
-                                    <option value="{{ $contact->phone }}">{{ $contact->name }} -
-                                        {{ $contact->phone }}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                    @else
-                        <p class="text-red-600 text-sm">Please select Channel first to choose contact !</p>
-                    @endif
-                @endif
-
-                @if ($selectTo == 'from_audience')
-
-                    @if ($channel == 'email')
-                        <div class="mb-4">
-                            <label for="audience" class="block text-gray-700">Select Audience:</label>
-                            <select wire:model="selectedAudience" id="audience"
-                                class="form-multiselect block w-full mt-1 rounded-md shadow-sm border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
-                                <option value="">Select Audience</option>
-                                @foreach ($audience as $item)
-                                    <option value="{{ $item->id }}">{{ $item->name }}</option>
-                                @endforeach
-                            </select>
-                        </div>
-
-                        @if ($to)
-                            <div class="mt-4">
-                                <label class="block text-gray-700">Audience Clients</label>
-                                <div class="overflow-x-auto">
-                                    <div class="border border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 rounded-md shadow-sm dark:bg-slate-800 dark:text-slate-300 mt-1 block w-full p-3"
-                                        wire:model="to">
-                                        {{ $to }}
-                                    </div>
-                                </div>
-                            </div>
-                        @endif
-                    @elseif ($channel == 'wa' || $channel == 'sm' || $channel == 'pl' || $channel == 'waba' || $channel == 'wc')
-                        <div class="mb-4">
-                            <label for="audience" class="block text-gray-700">Select Audience:</label>
-                            <select wire:model="selectedAudience" id="audience"
-                                class="form-multiselect block w-full mt-1 rounded-md shadow-sm border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
-                                <option value="">Select Audience</option>
-                                @foreach ($audience as $item)
-                                    <option value="{{ $item->id }}">{{ $item->name }}</option>
-                                @endforeach
-                            </select>
-                        </div>
-
-                        @if ($to)
-                            <div class="mt-4">
-                                <label class="block text-gray-700">Audience Clients</label>
-                                <div class="overflow-x-auto">
-                                    <div class="border border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 rounded-md shadow-sm dark:bg-slate-800 dark:text-slate-300 mt-1 block w-full p-3"
-                                        wire:model="to">
-                                        {{ $to }}
-                                    </div>
-                                </div>
-                            </div>
-                        @endif
-                    @else
-                        <p class="text-red-600 text-sm">Please select Channel first to choose Audience !</p>
-
-                    @endif
-
-                @endif
-
-                <x-jet-input-error for="to" class="mt-2 mb-2" />
         </x-slot>
 
         <x-slot name="actions">

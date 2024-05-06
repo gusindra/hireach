@@ -2,6 +2,9 @@
 
 namespace App\Http\Livewire\Resource;
 
+use App\Jobs\ProcessEmailApi;
+use App\Jobs\ProcessSmsApi;
+use App\Jobs\ProcessWaApi;
 use App\Models\Audience;
 use App\Models\AudienceClient;
 use App\Models\Client;
@@ -126,7 +129,8 @@ class AddResource extends Component
                 $to = Client::whereIn('uuid', $clientIds)->pluck('phone')->implode(',');
             }
         }
-
+        
+        $credential = null;
         $channel = $this->channel;
         $type = $this->type;
         $title = $this->title;
@@ -136,19 +140,94 @@ class AddResource extends Component
         $provider = $this->provider;
         $otp = $this->is_enabled;
 
-        $data = [
-            'channel' => $channel,
-            'type' => $type,
-            'title' => $title,
-            'text' => $text,
-            'templateid' => $templateid,
-            'to' => $to,
-            'from' => $from,
-            'provider' => $provider,
-            'otp' => $otp,
-        ];
+        //SET PROVIDER BASE ON THE SETTING OR AUTO SELECT DEFAULT PROVIDER
+        $provider = $this->provider = auth()->user()->provider;
+        $provider = $this->provider = 'provider1';
+        if ($this->channel == 'wa' || $this->channel == 'sm' || $this->channel == 'pl' || $this->channel == 'waba' || $this->channel == 'wc') {
+            $provider = $this->provider = 'provider2';
+        }
+        $contact = explode(',', $to);
+        //SENDING RESOURCE
+        if($templateid){
+            //set text using template
+            $template = Template::find($templateid);
+            foreach($template->actions as $key => $action){
+                // send request using template prt action
+                $data[$key] = [
+                    'channel' => $channel,
+                    'type' => $type,
+                    'title' => $title,
+                    'text' => $action->message,
+                    'templateid' => $templateid,
+                    'to' => $to,
+                    'from' => $from,
+                    'provider' => $provider,
+                    'otp' => checkContentOtp($action->message)
+                ];
+            }
+        }else{
+            $data = [
+                'channel' => $channel,
+                'type' => $type,
+                'title' => $title,
+                'text' => $text,
+                'templateid' => $templateid,
+                'to' => $to,
+                'from' => $from,
+                'provider' => $provider,
+                'otp' => checkContentOtp($text)
+            ];
+        }
+        //dd($data);
 
-        dd($data);
+        if($this->channel=='wa'){
+            foreach(auth()->user()->credential as $cre){
+                if($cre->client=='api_wa_mk'){
+                    $credential = $cre;
+                }
+            }
+        }
+        
+        //ONEWAY BLAST
+        if(count($contact)>1){
+            //GROUP RETRIVER
+            foreach($contact as $p){
+                $data['to'] = $p;
+                if($template){
+                    foreach($data as $da){
+                        $da['to'] = $p;
+                        $this->callJobResource($da, $credential);
+                    }
+                }else{
+                    $data['to'] = $p;
+                    $this->callJobResource($data, $credential);
+                }
+            }
+        }else{
+            //SINGLE RETRIVER
+            $this->callJobResource($data, $credential);
+        }
+    }
+
+    public function callJobResource($data, $credential=null){
+        if($this->channel=='email'){
+            //THIS WILL QUEUE EMAIL JOB
+            $reqArr = json_encode($data);
+            ProcessEmailApi::dispatch($data, auth()->user(), $reqArr);
+        }elseif(strpos($this->channel, 'sms') !== false){
+            ProcessSmsApi::dispatch($data, auth()->user());
+        }elseif($this->channel=='wa'){
+            if($credential){
+                ProcessWaApi::dispatch($data, $credential);
+            }else{
+                return response()->json([
+                    'message' => "Invalid credential",
+                    'code' => 401
+                ]);
+            }
+        }elseif($this->channel=='wa'){
+            //ProcessChatApi::dispatch($request->all(), auth()->user());
+        }
     }
 
     public function updatedSelectTo()
@@ -196,10 +275,8 @@ class AddResource extends Component
         }
     }
 
-
     public function render()
     {
-
         $contacts = Client::orderBy('created_at', 'desc')->where('user_id', auth()->user()->currentTeam->user_id)->get();
         $audience = Audience::orderBy('created_at', 'desc')->where('user_id', auth()->user()->currentTeam->user_id)->get();
         $templates = Template::orderBy('created_at', 'desc')->where('user_id', auth()->user()->currentTeam->user_id)->where('resource', $this->resource)->get();
