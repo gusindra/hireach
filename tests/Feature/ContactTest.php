@@ -84,4 +84,31 @@ class ContactTest extends TestCase
             'phone' => '987654321',
         ]);
     }
+
+
+    public function test_validation_create_contact()
+    {
+           $user = User::find(2);
+
+        Livewire::actingAs($user)
+            ->test('contact.add')
+            ->set('input.title', '')
+            ->call('create')
+            ->assertHasErrors(['input.title'=>['required']]);
+
+            Livewire::actingAs($user)
+            ->test('contact.add')
+            ->set('input.name', '')
+            ->call('create')
+            ->assertHasErrors(['input.name'=>['required']]);
+
+
+            Livewire::actingAs($user)
+            ->test('contact.add')
+            ->set('input.email', 'ererer')
+            ->call('create')
+            ->assertHasErrors(['input.email'=>['email']]);
+    }
+
+
 }

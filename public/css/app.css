@@ -957,9 +957,12 @@ video {
 	margin-top: 0.25rem;
 	margin-bottom: 0.25rem;
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 }.-my-2 {
 	margin-top: -0.5rem;
 	margin-bottom: -0.5rem;
+=======
+>>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
 }.my-4 {
@@ -975,6 +978,12 @@ video {
 	margin-left: 0.5rem;
 	margin-right: 0.5rem;
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
+=======
+}.-my-2 {
+	margin-top: -0.5rem;
+	margin-bottom: -0.5rem;
+>>>>>>> Stashed changes
 =======
 }.-my-2 {
 	margin-top: -0.5rem;
@@ -1612,9 +1621,12 @@ video {
 	border-bottom-right-radius: 0.75rem;
 	border-bottom-left-radius: 0.75rem;
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 }.rounded-r-none {
 	border-top-right-radius: 0px;
 	border-bottom-right-radius: 0px;
+=======
+>>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
 }.rounded-r-lg {
@@ -1627,6 +1639,12 @@ video {
 	border-bottom-right-radius: 1rem;
 	border-bottom-left-radius: 1rem;
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
+=======
+}.rounded-r-none {
+	border-top-right-radius: 0px;
+	border-bottom-right-radius: 0px;
+>>>>>>> Stashed changes
 =======
 }.rounded-r-none {
 	border-top-right-radius: 0px;

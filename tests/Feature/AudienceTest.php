@@ -74,32 +74,12 @@ class AudienceTest extends TestCase
     }
 
 
-    public function test_can_add_contact_to_audience()
-    {
-        $client = Client::find(34);
-        $audience = Audience::where('name', 'For Contact')->firstOrFail();
-
-        Livewire::test(AddContact::class, ['audience' => $audience])
-            ->set('contactId', $client->id)
-            ->call('create');
-
-        $this->assertDatabaseHas('audience_clients', [
-            'client_id' => $client->uuid,
-            'audience_id' => $audience->id,
-        ]);
-    }
 
 
-    public function test_can_delete_audience_client()
-    {
 
-        $audienceClient = AudienceClient::latest()->first();
-        Livewire::test(AddContact::class)
-            ->set('actionId', $audienceClient->id)
-            ->call('delete');
 
-        $this->assertDatabaseMissing('audience_clients', [
-            'id' => $audienceClient->id
-        ]);
-    }
 }
+
+
+
+

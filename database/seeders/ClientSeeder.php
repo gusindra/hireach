@@ -17,6 +17,7 @@ class ClientSeeder extends Seeder
     public function run()
     {
         Client::create([
+            'id'=>1,
             'uuid' => Str::uuid(),
             'sender' => 'Example Sender',
             'name' => 'Example Client',
