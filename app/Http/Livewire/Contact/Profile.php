@@ -31,7 +31,7 @@ class Profile extends Component
 
     public function saveUser($id)
     {
-        // dd($id);
+        //dd($this->inputuser);
         $user = Client::findOrFail($id);
         if($this->user->isClient && $user->email != $this->inputuser['email']){
             $this->user->isClient->update([
@@ -40,9 +40,10 @@ class Profile extends Component
         }
         $user->update([
             'name'      => $this->inputuser['name'],
-            'phone_no'  => $this->inputuser['phone'],
+            'phone'     => $this->inputuser['phone'],
             'email'     => $this->inputuser['email'],
-            'nick'      => $this->inputuser['nick']
+            'nick'      => $this->inputuser['nick'],
+            'title'     => $this->inputuser['title'],
         ]);
         $this->emit('user_saved');
     }
