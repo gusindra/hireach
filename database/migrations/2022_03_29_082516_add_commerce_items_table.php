@@ -18,16 +18,17 @@ return new class extends Migration
             $table->string('sku');
             $table->string('name');
             $table->string('spec');
-            $table->string('source_id')->nullable();
-            $table->string('type', 100)->nullable()->comment('sku, without_sku, one_time, monthly, anually');
-            $table->string('unit', 50)->nullable();
-            $table->text('description');
-            $table->float('general_discount');
-            $table->float('fs_price');
-            $table->float('unit_price');
-            $table->foreignId('user_id');
+            $table->string('source_id', 255)->nullable();
+            $table->string('source', 255)->nullable();
+            $table->string('type', 100)->nullable()->comment('sku, without_sku, one_time, monthly, annually');
+            $table->string('unit', 100)->nullable();
+            $table->text('description')->nullable();
+            $table->double('general_discount', 8, 2)->nullable();
+            $table->double('fs_price', 8, 2)->nullable();
+            $table->double('unit_price', 8, 2);
             $table->string('way_import', 20)->nullable()->comment('fob, ddp');
             $table->string('status', 100)->default('active')->comment('active, disabled');
+            $table->bigInteger('user_id')->default(0);
             $table->timestamps();
         });
     }

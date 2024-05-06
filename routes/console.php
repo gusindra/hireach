@@ -28,23 +28,23 @@ Artisan::command('reset-login', function () {
     $teamUser = TeamUser::where('status', '!=', NULL)->where('updated_at', '<', Carbon::now()->subHours(2))->update([
         'status' => NULL
     ]);
-    if(!$teamUser){
+    if (!$teamUser) {
         Log::debug("reset fail");
         $this->comment('reset fail');
-    }else{
+    } else {
         Log::debug("reset done");
         $this->comment('reset done');
     }
 })->purpose('Reset user status who is not logout');
 
-Artisan::command('test', function(){
-    $reflection = Order::find(36);
-    $lastInvoice = Carbon::parse($reflection->lastInvoice->period)->format('m-Y');
-    if($lastInvoice != date('m-Y')){
-        $this->comment($lastInvoice." : ".date('m-Y'));
-    }else{
-        $this->comment('Same');
-    }
-})->purpose('test');
+// Artisan::command('test', function(){
+//     $reflection = Order::find(36);
+//     $lastInvoice = Carbon::parse($reflection->lastInvoice->period)->format('m-Y');
+//     if($lastInvoice != date('m-Y')){
+//         $this->comment($lastInvoice." : ".date('m-Y'));
+//     }else{
+//         $this->comment('Same');
+//     }
+// })->purpose('test');
 
 // Artisan::command('assistance:project', ProjectAssistance::class)->purpose('Display an expired project');

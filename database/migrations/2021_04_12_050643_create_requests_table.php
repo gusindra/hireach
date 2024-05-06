@@ -26,6 +26,9 @@ class CreateRequestsTable extends Migration
             $table->foreignId('team_id');
             $table->foreignId('user_id')->comment("owner");;
             $table->string('type');
+            $table->tinyInteger('is_inbound')->default(0);
+            $table->tinyInteger('is_closed')->default(0);
+            $table->string('status')->default('PENDING');
             $table->smallInteger('is_read')->default(0);
             $table->timestamp('sent_at')->nullable();
             $table->timestamps();

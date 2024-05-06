@@ -15,12 +15,16 @@ class CreateBillingsTable extends Migration
     {
         Schema::create('billings', function (Blueprint $table) {
             $table->id();
-            $table->string('uuid')->unique();
-            $table->string('code');
-            $table->string('description');
-            $table->string('amount');
-            $table->string('status');
-            $table->foreignId('user_id');
+            $table->unsignedBigInteger('order_id')->nullable();
+            $table->string('uuid', 255)->unique();
+            $table->string('code', 255);
+            $table->date('period')->nullable();
+            $table->text('description')->nullable();
+            $table->string('amount', 255);
+            $table->string('currency', 50)->default('idr');
+            $table->string('note', 255)->nullable();
+            $table->string('status', 50);
+            $table->unsignedBigInteger('user_id');
             $table->timestamps();
         });
     }

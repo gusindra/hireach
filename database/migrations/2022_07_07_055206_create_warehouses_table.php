@@ -20,6 +20,7 @@ return new class extends Migration
             $table->string('address', 100);
             $table->string('status', 50);
             $table->string('type', 50);
+            $table->bigInteger('user_id')->default(0);
             $table->timestamps();
         });
     }

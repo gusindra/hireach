@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('model', 100);
             $table->string('after_status', 100);
             $table->string('description', 100);
+            $table->string('result_status', 100)->comment('status result after task done');
             $table->foreignId('role_id', 100);
             $table->foreignId('user_id', 100)->nullable()->comment('spesific executor');;
             $table->foreignId('team_id');

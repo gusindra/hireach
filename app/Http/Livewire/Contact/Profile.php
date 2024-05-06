@@ -33,23 +33,22 @@ class Profile extends Component
     {
         // dd($id);
         $user = Client::findOrFail($id);
-        if($this->user->isClient && $user->email != $this->inputuser['email']){
+        if ($this->user->isClient && $user->email != $this->inputuser['email']) {
             $this->user->isClient->update([
                 'email' => $this->inputuser['email']
             ]);
         }
         $user->update([
             'name'      => $this->inputuser['name'],
-            'phone_no'  => $this->inputuser['phone'],
+            'phone'  => $this->inputuser['phone'],
             'email'     => $this->inputuser['email'],
-            'nick'      => $this->inputuser['nick']
         ]);
         $this->emit('user_saved');
     }
 
     public function saveClient()
     {
-        if($this->user->isClient){
+        if ($this->user->isClient) {
             $this->user->isClient->update([
                 'title'     => $this->inputclient['title'],
                 'name'      => $this->inputclient['name'],
@@ -57,7 +56,7 @@ class Profile extends Component
                 'address'   => $this->inputclient['address'],
                 'note'      => $this->inputclient['notes'],
             ]);
-            if(!$this->user->userBilling){
+            if (!$this->user->userBilling) {
                 $billing = BillingUser::create([
                     'tax_id'        => $this->inputclient['tax_id'],
                     'name'          => $this->inputclient['name'],
@@ -67,7 +66,7 @@ class Profile extends Component
                     'city'          => $this->inputclient['city'],
                     'user_id'       => $this->user->id
                 ]);
-            }else{
+            } else {
                 $this->user->userBilling->update([
                     'tax_id'        => $this->inputclient['tax_id'],
                     'name'          => $this->inputclient['name'],
@@ -77,7 +76,7 @@ class Profile extends Component
                     'city'          => $this->inputclient['city'],
                 ]);
             }
-        }else{
+        } else {
             $customer =  Client::create([
                 'title'     => $this->inputclient['title'],
                 'name'      => $this->inputclient['name'],
@@ -90,7 +89,7 @@ class Profile extends Component
             ]);
             $team = Team::find(0);
             $customer->teams()->attach($team);
-            if($customer){
+            if ($customer) {
                 $billing = BillingUser::create([
                     'tax_id'        => $this->inputclient['tax_id'],
                     'name'          => $this->inputclient['name'],

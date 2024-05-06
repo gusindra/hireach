@@ -15,11 +15,12 @@ class CreateActionsTable extends Migration
     {
         Schema::create('actions', function (Blueprint $table) {
             $table->id();
-            $table->smallInteger('order');
+            $table->unsignedBigInteger('order');
             $table->text('message');
-            $table->foreignId('template_id');
-            $table->smallInteger('is_multidata')->default(0);
-            $table->string('array_data')->nullable();
+            $table->unsignedBigInteger('template_id');
+            $table->unsignedBigInteger('is_multidata')->nullable();
+            $table->string('array_data', 255)->nullable();
+            $table->string('type', 100)->default('text')->comment('text, image, audio, video, document');
             $table->timestamps();
         });
     }
@@ -29,6 +30,7 @@ class CreateActionsTable extends Migration
      *
      * @return void
      */
+
     public function down()
     {
         Schema::dropIfExists('actions');

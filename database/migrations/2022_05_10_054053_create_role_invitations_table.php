@@ -17,6 +17,7 @@ return new class extends Migration
             $table->id();
             $table->string('email', 100);
             $table->foreignId('role_id');
+            $table->foreignId('team_id');
             $table->timestamps();
         });
     }

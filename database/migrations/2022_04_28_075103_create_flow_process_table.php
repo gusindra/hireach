@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('model', 100)->nullable()->comment('base on ext: project or manual');
             $table->string('model_id', 50)->nullable()->comment('address to id');
             $table->foreignId('user_id');
+            $table->unsignedInteger('role_id')->comment('address to role id');
             $table->string('status', 50)->nullable();
             $table->string('comment', 200)->nullable()->comment('remark');
             $table->string('task', 200)->nullable()->comment('task flow');
