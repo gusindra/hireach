@@ -47,7 +47,7 @@ class ContactController extends Controller
         // return view('user.contact-profile', ['user'=>$client]);
 
         if ($request->has('v')) {
-            return view(contact . edit, ['user' => $client]);
+            return view('contact.edit', ['user' => $client]);
         }
 
         return view('user.contact-profile', ['user' => $client]);
@@ -56,7 +56,6 @@ class ContactController extends Controller
 
     public function create()
     {
-
         return view('contact.create');
     }
 

@@ -40,8 +40,10 @@ class Profile extends Component
         }
         $user->update([
             'name'      => $this->inputuser['name'],
-            'phone'  => $this->inputuser['phone'],
+            'phone'     => $this->inputuser['phone'],
             'email'     => $this->inputuser['email'],
+            'nick'      => $this->inputuser['nick'],
+            'title'     => $this->inputuser['title'],
         ]);
         $this->emit('user_saved');
     }
