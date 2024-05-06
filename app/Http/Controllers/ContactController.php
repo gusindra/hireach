@@ -46,11 +46,11 @@ class ContactController extends Controller
 
         // return view('user.contact-profile', ['user'=>$client]);
 
-        if ($request->has('v')) {
-            return view(contact . edit, ['user' => $client]);
-        }
-
-        return view('user.contact-profile', ['user' => $client]);
+        // if ($request->has('v')) {
+        // }
+        
+        return view('contact.edit', ['user' => $client]);
+        // return view('user.contact-profile', ['user' => $client]);
         // return redirect('user');
     }
 
@@ -148,7 +148,7 @@ class ContactController extends Controller
     public function balance(Client $client, Request $request)
     {
         // if($user->name != 'Admin'){
-        return view('user.user-balance', ['user' => $user, 'team' => $request->has('team') ? $request->team : 0]);
+        return view('user.user-balance', ['user' => $client, 'team' => $request->has('team') ? $request->team : 0]);
         // }
         // return redirect('user');
     }
