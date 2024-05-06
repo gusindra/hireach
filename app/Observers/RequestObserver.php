@@ -26,7 +26,7 @@ class RequestObserver
         if($request->team_id>0){
             $team = Team::find($request->team_id);
         }
-        if($team){
+        if(false && $team){
             //Log::debug($request->reply);
             $request->teams()->attach($team);
 

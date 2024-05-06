@@ -8,7 +8,7 @@
     <div class="grid grid-cols-12">
         @includeWhen(auth()->user(), 'menu.user-engagement', [])
 
-        <div class="col-span-12 px-3 ml-24 mt-2"> 
+        <div class="col-span-12 px-3 lg:ml-24 mt-2"> 
             @livewire('resource.add-resource', ['uuid'=>request ()->get('resource')])
         </div>
     </div>

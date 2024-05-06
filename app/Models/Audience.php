@@ -28,7 +28,7 @@ class Audience extends Model
 
     public function audienceClients()
     {
-        return $this->hasMany(AudienceClient::class, 'audience_id');
+        return $this->hasMany(AudienceClient::class);
     }
 
     public function getTotalClientsAttribute()
