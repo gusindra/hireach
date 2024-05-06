@@ -31,6 +31,9 @@
         <!--<link rel="manifest" href="/manifest.json">-->
         <meta name="msapplication-TileColor" content="#ffffff">
         <meta name="msapplication-TileImage" content="/ms-icon-144x144.png">
+        <style>
+            #livewire-error {width: 100% !important;height: 100% !important;}
+        </style>
         @trixassets
         @livewireStyles
 
@@ -65,7 +68,9 @@
             <!-- Page Content -->
             <main>
                 <div id="chat-event" class="mb-0 w-full flex md:flex-col bg-gradient-to-br from-indigo-100 to-indigo-200 rounded-bl-2xl rounded-t-xl"></div>
-                {{ $slot }}
+                <div class="mt-16">
+                    {{ $slot }}
+                </div>
             </main>
         </div>
 

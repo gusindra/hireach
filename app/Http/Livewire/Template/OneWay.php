@@ -68,7 +68,7 @@ class OneWay extends Component
     {
         return [
             'uuid'          => Str::uuid(),
-            'type'          => $this->way == 2 ? $this->type : 'template',
+            'type'          => $this->way == 2 ? $this->type : 'text',
             'name'          => $this->name,
             'resource'      => $this->way,
             'description'   => $this->description,
