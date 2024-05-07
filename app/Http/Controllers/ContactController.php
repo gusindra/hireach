@@ -48,15 +48,14 @@ class ContactController extends Controller
 
         // if ($request->has('v')) {
         // }
-        
+
         return view('contact.edit', ['user' => $client]);
-        // return view('user.contact-profile', ['user' => $client]);
+        //return view('user.contact-profile', ['user' => $client]);
         // return redirect('user');
     }
 
     public function create()
     {
-
         return view('contact.create');
     }
 

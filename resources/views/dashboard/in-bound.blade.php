@@ -162,7 +162,7 @@
 
 
                     <div>
-                        <livewire:table.inbound-table :filterMonth="$filterMonth" searchable="name, description" exportable />
+                        <livewire:table.in-bound-table :filterMonth="$filterMonth" searchable="name, description" exportable />
 
                     </div>
                 </div>

@@ -32,7 +32,7 @@ class Add extends Component
         return [
             'input.title'       => 'required',
             'input.name'        => 'required',
-            'input.email'       => 'required',
+            'input.email'       => 'email' ,
             'input.phone'       => 'required',
         ];
     }

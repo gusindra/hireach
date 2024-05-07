@@ -19,6 +19,7 @@ return new class extends Migration
             $table->foreignId('model_id');
             $table->json('before')->nullable();
             $table->string('remark', 200)->nullable();
+            $table->string('user_id', 200)->nullable();
             $table->timestamps();
         });
     }

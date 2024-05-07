@@ -29,7 +29,6 @@ class AddContact extends Component
         $this->audience = $audience;
         $this->audienceId = $this->audience->id;
         $this->type = false;
-        $this->array_data = Client::where('user_id', auth()->user()->currentTeam->user_id)->get();
     }
 
 
@@ -113,6 +112,7 @@ class AddContact extends Component
 
     public function actionShowModal()
     {
+        $this->array_data = Client::where('user_id', auth()->user()->currentTeam->user_id)->get();
         $this->modalActionVisible = true;
         $this->resetForm();
         $this->actionId = null;
