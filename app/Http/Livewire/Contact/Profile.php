@@ -31,7 +31,7 @@ class Profile extends Component
 
     public function saveUser($id)
     {
-        // dd($id);
+        //dd($this->inputuser);
         $user = Client::findOrFail($id);
         if ($this->user->isClient && $user->email != $this->inputuser['email']) {
             $this->user->isClient->update([

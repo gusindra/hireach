@@ -27,7 +27,7 @@
                     <x-jet-label for="title" value="{{ __('Title') }}" />
                     <select name="title" id="title"
                         class="border-gray-300 dark:bg-slate-800 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 rounded-md shadow-sm mt-1 block w-full"
-                        wire:model.debunce.800ms="inputclient.title">
+                        wire:model.debunce.800ms="inputuser.title">
                         <option {{ $user->title == 'Mr.' ? 'selected' : '' }} value="Mr.">Mr.</option>
                         <option {{ $user->title == 'Mrs.' ? 'selected' : '' }} value="Mrs.">Mrs.</option>
                         <option {{ $user->title == 'Miss' ? 'selected' : '' }} value="Miss">Miss</option>
