@@ -11,6 +11,7 @@ use App\Http\Controllers\ApiOneWayController;
 use App\Http\Controllers\ApiSmsController;
 use App\Http\Controllers\ApiTwoWayController;
 use App\Http\Controllers\ApiRequestController;
+use App\Http\Controllers\ApiViGuardController;
 
 /*
 |--------------------------------------------------------------------------
@@ -169,3 +170,5 @@ Route::get('/sent/sample', function(Request $request){
         return 'comming soon we add '.$request->channel;
     }
 });
+
+Route::post('/saveAlarm', [ApiViGuardController::class, 'post']);
