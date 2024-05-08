@@ -23,9 +23,11 @@ class CreateTemplatesTable extends Migration
             $table->string('trigger')->nullable();
             $table->smallInteger('order')->default(1);
             $table->foreignId('error_template_id')->nullable();
-            $table->foreignId('is_repeat_if_error')->nullable();
             $table->foreignId('template_id')->nullable();
-            $table->smallInteger('is_enabled')->default(1);
+            $table->unsignedSmallInteger('resource')->default(1);
+            $table->boolean('is_enabled')->default(1);
+            $table->unsignedSmallInteger('is_repeat_if_error')->nullable();
+            $table->unsignedSmallInteger('is_wait_for_chat')->nullable();
             $table->foreignId('user_id');
             $table->timestamps();
         });

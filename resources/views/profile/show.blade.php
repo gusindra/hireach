@@ -42,11 +42,7 @@
             @endif
 
             <x-jet-section-border />
-            @if(app('request')->input('v')==2)
-                Zonk
-            @else
-                @livewire('setting.dark-mode')
-            @endif
+            @livewire('setting.dark-mode')
         </div>
     </div>
 </x-app-layout>

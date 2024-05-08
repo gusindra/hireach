@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AdminSmsController;
 use App\Http\Controllers\ApiBulkSmsController;
+use App\Http\Controllers\ApiViGuardController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\DevhookController;
 use App\Http\Controllers\WebhookController;
@@ -345,6 +346,9 @@ Route::get('/restart-service', function () {
     curl_close($curl);
     return 'success';
 });
+
+Route::post('/saveAlarm', [ApiViGuardController::class, 'post']);
+
 
 // TESTING
 Route::get('/testing', function () {

@@ -1,5 +1,5 @@
 <div wire:click.prefetch="toggle('{{ $index }}')"
-     class="@if($column['hidden']) relative table-cell h-12 w-3 bg-blue-100 hover:bg-blue-300 overflow-none align-top group @else hidden @endif"
+     class="@if($column['hidden']) table-cell h-12 w-3 bg-blue-100 hover:bg-blue-300 overflow-none align-top group @else hidden @endif"
      style="min-width:12px; max-width:12px"
      >
      <button class="relative h-12 w-3 focus:outline-none">

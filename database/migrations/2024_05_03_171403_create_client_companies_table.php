@@ -13,15 +13,15 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('warehouses', function (Blueprint $table) {
+        Schema::create('client_companies', function (Blueprint $table) {
             $table->id();
-            $table->string('name', 100);
-            $table->string('code', 100);
-            $table->string('address', 100);
-            $table->string('status', 50);
-            $table->string('type', 50);
-            $table->bigInteger('user_id')->default(0);
+            $table->unsignedBigInteger('company_id');
+            $table->unsignedBigInteger('company_client_id');
             $table->timestamps();
+
+
+            $table->foreign('company_id')->references('id')->on('companies')->onDelete('cascade');
+            $table->foreign('company_client_id')->references('id')->on('clients')->onDelete('cascade');
         });
     }
 
@@ -32,6 +32,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('warehouses');
+        Schema::dropIfExists('client_companies');
     }
 };

@@ -20,7 +20,7 @@ class Profile extends Component
     public function mount($user)
     {
         //dd($user);
-        $this->user = Audience::find($user->id);
+        // $this->user = Audience::find($user->id);
 
         $this->inputuser['name'] = $this->user->name ?? '';
         $this->inputuser['description'] = $this->user->description ?? '';
@@ -32,11 +32,6 @@ class Profile extends Component
         // dd($id);
         $user = Audience::find($id);
         // dd($user);
-        if ($this->user->isClient && $user->email != $this->inputuser['email']) {
-            $this->user->isClient->update([
-                'email' => $this->inputuser['email']
-            ]);
-        }
         $user->update([
             'name'      => $this->inputuser['name'],
             'description'  => $this->inputuser['description'],
