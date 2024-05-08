@@ -81,7 +81,7 @@
 
     <x-jet-section-border />
 
-    <x-jet-form-section submit="saveClient">
+    <x-jet-form-section submit="saveUser({{ $user->id }})">
         <x-slot name="title">
             {{ __('Update Client') }}
         </x-slot>
@@ -95,63 +95,58 @@
             <!-- Nick -->
             <div class="col-span-6 sm:col-span-3">
                 <div class="col-span-12 sm:col-span-1">
-                    <x-jet-label for="inputuser.nick" value="{{ __('Sender') }}" />
-                    <x-jet-input id="nick" type="text" class="mt-1 block w-full" wire:model="inputuser.nick"
-                        wire:model.defer="inputuser.nick" wire:model.debunce.800ms="inputuser.nick" />
-                    <x-jet-input-error for="inputuser.nick" class="mt-2" />
+                    <x-jet-label for="inputuser.sender" value="{{ __('Sender') }}" />
+                    <x-jet-input id="sender" type="text" class="mt-1 block w-full" wire:model="inputuser.sender"
+                        wire:model.defer="inputuser.sender" wire:model.debunce.800ms="inputuser.sender" />
+                    <x-jet-input-error for="inputuser.sender" class="mt-2" />
+                </div>
+            </div>
+            <!-- Identity -->
+            <div class="col-span-6 sm:col-span-3">
+                <div class="col-span-12 sm:col-span-1">
+                    <x-jet-label for="inputuser.identity" value="{{ __('Identity') }}" />
+                    <x-jet-input id="identity" type="text" class="mt-1 block w-full" wire:model="inputuser.identity"
+                        wire:model.defer="inputuser.identity" wire:model.debunce.800ms="inputuser.identity" />
+                    <x-jet-input-error for="inputuser.identity" class="mt-2" />
                 </div>
             </div>
             <!-- Nick -->
             <div class="col-span-6 sm:col-span-3">
                 <div class="col-span-12 sm:col-span-1">
-                    <x-jet-label for="inputuser.nick" value="{{ __('Identity') }}" />
-                    <x-jet-input id="nick" type="text" class="mt-1 block w-full" wire:model="inputuser.nick"
-                        wire:model.defer="inputuser.nick" wire:model.debunce.800ms="inputuser.nick" />
-                    <x-jet-input-error for="inputuser.nick" class="mt-2" />
+                    <x-jet-label for="inputuser.note" value="{{ __('Note') }}" />
+                    <x-jet-input id="note" type="text" class="mt-1 block w-full" wire:model="inputuser.note"
+                        wire:model.defer="inputuser.note" wire:model.debunce.800ms="inputuser.note" />
+                    <x-jet-input-error for="inputuser.note" class="mt-2" />
                 </div>
             </div>
             <!-- Nick -->
             <div class="col-span-6 sm:col-span-3">
                 <div class="col-span-12 sm:col-span-1">
-                    <x-jet-label for="inputuser.nick" value="{{ __('Note') }}" />
-                    <x-jet-input id="nick" type="text" class="mt-1 block w-full" wire:model="inputuser.nick"
-                        wire:model.defer="inputuser.nick" wire:model.debunce.800ms="inputuser.nick" />
-                    <x-jet-input-error for="inputuser.nick" class="mt-2" />
+                    <x-jet-label for="inputuser.tag" value="{{ __('Tag') }}" />
+                    <x-jet-input id="tag" type="text" class="mt-1 block w-full" wire:model="inputuser.tag"
+                        wire:model.defer="inputuser.tag" wire:model.debunce.800ms="inputuser.tag" />
+                    <x-jet-input-error for="inputuser.tag" class="mt-2" />
                 </div>
             </div>
             <!-- Nick -->
             <div class="col-span-6 sm:col-span-3">
                 <div class="col-span-12 sm:col-span-1">
-                    <x-jet-label for="inputuser.nick" value="{{ __('Tag') }}" />
-                    <x-jet-input id="nick" type="text" class="mt-1 block w-full" wire:model="inputuser.nick"
-                        wire:model.defer="inputuser.nick" wire:model.debunce.800ms="inputuser.nick" />
-                    <x-jet-input-error for="inputuser.nick" class="mt-2" />
-                </div>
-            </div>
-            <!-- Nick -->
-            <div class="col-span-6 sm:col-span-3">
-                <div class="col-span-12 sm:col-span-1">
-                    <x-jet-label for="inputuser.nick" value="{{ __('Source') }}" />
-                    <x-jet-input id="nick" type="text" class="mt-1 block w-full" wire:model="inputuser.nick"
-                        wire:model.defer="inputuser.nick" wire:model.debunce.800ms="inputuser.nick" />
-                    <x-jet-input-error for="inputuser.nick" class="mt-2" />
+                    <x-jet-label for="inputuser.source" value="{{ __('Source') }}" />
+                    <x-jet-input id="source" type="text" class="mt-1 block w-full" wire:model="inputuser.source"
+                        wire:model.defer="inputuser.source" wire:model.debunce.800ms="inputuser.source" />
+                    <x-jet-input-error for="inputuser.source" class="mt-2" />
                 </div>
             </div>
             <div class="col-span-6 sm:col-span-3">
                 <div class="col-span-12 sm:col-span-1">
-                    <x-jet-label for="inputclient.address" value="{{ __('Address') }}" />
+                    <x-jet-label for="inputuser.address" value="{{ __('Address') }}" />
                     <x-jet-input id="address" type="text" class="mt-1 block w-full"
-                        wire:model="inputclient.address" wire:model.defer="inputclient.address"
+                        wire:model="inputuser.address" wire:model.defer="inputuser.address"
                         wire:model.debunce.800ms="inputclient.address" />
                     <x-jet-input-error for="inputclient.address" class="mt-2" />
                 </div>
             </div>
-            <div class="col-span-12 sm:col-span-3">
-                <x-jet-label for="inputclient.notes" value="{{ __('Notes') }}" />
-                <x-jet-input id="notes" type="text" class="mt-1 block w-full" wire:model="inputclient.notes"
-                    wire:model.defer="inputclient.notes" wire:model.debunce.800ms="inputclient.notes" />
-                <x-jet-input-error for="inputclient.notes" class="mt-2" />
-            </div>
+
         </x-slot>
         <x-slot name="actions">
             <x-jet-action-message class="mr-3" on="client_saved">
