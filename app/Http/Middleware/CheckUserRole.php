@@ -4,7 +4,7 @@ namespace App\Http\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;
-use Auth;
+use Illuminate\Support\Facades\Auth;
 use App\Models\RoleUser;
 
 class CheckUserRole
@@ -13,24 +13,22 @@ class CheckUserRole
      * Handle an incoming request.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \Closure(\Illuminate\Http\Request): (\Illuminate\Http\Response|\Illuminate\Http\RedirectResponse)  $next
-     * @return \Illuminate\Http\Response|\Illuminate\Http\RedirectResponse
+     * @param  \Closure  $next
+     * @return mixed
      */
-  public function handle(Request $request, Closure $next)
+    public function handle(Request $request, Closure $next)
     {
         $user = Auth::user();
 
-        if ($user && $this->userIsAdmin($user->id)) {
-            return redirect('/admin');
+        if ($user) {
+            $isAdmin = RoleUser::where('user_id', $user->id)->where('role_id', 1)->exists();
+            if ($isAdmin) {
+                return redirect('/admin');
+            } else {
+                return redirect('/dashboard');
+            }
         }
-            return redirect('/dashboard');
-   
 
-
-    }
-
-    private function userIsAdmin($userId)
-    {
-        return RoleUser::where('user_id', $userId)->where('role_id', 3)->exists();
+        return $next($request);
     }
 }
