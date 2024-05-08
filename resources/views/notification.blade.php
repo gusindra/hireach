@@ -6,14 +6,14 @@
     </x-slot>
 
     <div class="grid grid-cols-12">
-        @includeWhen(auth()->user(), 'menu.admin-menu', [])
+        @includeWhen(auth()->user(), 'menu.admin-menu-setting', [])
 
         <div class="col-span-12 px-6 ml-24 mt-2">
             <div class="bg-white dark:bg-slate-600 overflow-hidden shadow-xl sm:rounded-lg">
                 <div class="container mx-auto">
                     <a href="{{route('notification.read.all')}}" class="p-2 text-xs">Read All Notification</a>
                     @livewire('setting.notification.add')
-                    
+
                     <div>
                         <livewire:table.notification-table searchable="id" exportable />
                     </div>

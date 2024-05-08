@@ -1,14 +1,21 @@
 <x-app-layout>
     <x-slot name="header"></x-slot>
+    <div class="hidden">
+        @include('settings.navigation')
+    </div>
 
-    @include('settings.navigation')
+    <div class="grid grid-cols-12">
 
-    <div class="py-4">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-12">
+        @includeWhen(auth()->user()->super->first() && auth()->user()->super->first()->role == 'superadmin', 'menu.admin-menu-setting', [])
+
+        <div class="col-span-12 px-3 ml-24 mt-2">
             <div class="bg-white dark:bg-slate-600 overflow-hidden shadow-xl sm:rounded-lg">
-
                 <div class="container mx-auto">
-                    @livewire('role.roles')
+                    <div class="flex justify-between">
+                        <div class="p-4">
+                            @livewire('role.roles')
+                        </div>
+                    </div>
                     <!-- <div class="flex items-center justify-end px-4 py-3 text-right sm:px-6 right-5 mr-0">
                         <x-jet-button>
                             {{__('Add New Role')}}

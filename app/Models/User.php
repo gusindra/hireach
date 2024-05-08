@@ -167,12 +167,15 @@ class User extends Authenticatable
     }
 
     /**
-     * User Has many Role
+     * User get active Role
      *
      * @return void
      */
     public function activeRoles(){
-    	return $this->hasOne('App\Models\RoleUser','user_id')->where('active', 1);
+    	return $this->hasOne('App\Models\RoleUser','user_id');
+    }
+    public function activeRole(){
+    	return $this->hasOne('App\Models\RoleUser','user_id')->orderBy('active', 'desc');;
     }
 
     /**
@@ -237,7 +240,7 @@ class User extends Authenticatable
     public function company(){
     	return $this->hasOne('App\Models\Company', 'user_id');
     }
-    
+
     /**
      * Many API Credential
      *
