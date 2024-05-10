@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Role;
-use Auth;
+use Illuminate\Support\Facades\Auth;
 
 class RoleController extends Controller
 {
@@ -12,8 +12,8 @@ class RoleController extends Controller
     {
         $this->middleware(function ($request, $next) {
             // Your auth here
-            $this->user_info=Auth::user()->super->first();
-            if($this->user_info && $this->user_info->role=='superadmin'){
+            $this->user_info = Auth::user()->super->first();
+            if ($this->user_info && $this->user_info->role == 'superadmin') {
                 return $next($request);
             }
             abort(404);
@@ -22,11 +22,11 @@ class RoleController extends Controller
 
     public function index()
     {
-        return view('role.role-table', ['page'=>'role']);
+        return view('role.role-table', ['page' => 'role']);
     }
 
     public function show(Role $role)
     {
-        return view('role.role-detail', ['role'=>$role]);
+        return view('role.role-detail', ['role' => $role]);
     }
 }
