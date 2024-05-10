@@ -14,14 +14,25 @@
                     <a href="{{ route('notification.read.all') }}" class="p-2 text-xs">Read All Notification</a>
                     @livewire('setting.notification.add')
                     <div class="flex flex-col mb-4 mt-5">
-                        <form method="GET" action="{{ route('notification') }}">
+                        <form wire:submit.prevent="applyFilter" method="GET" action="{{ route('notification') }}">
+
                             <div class="flex items-center">
                                 <input type="date" id="filterDate" name="filterDate" wire:model="filterDate"
                                     value="{{ app('request')->input('filterDate') ?? now()->format('Y-m-d') }}"
                                     class="w-48 px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-blue-500">
 
-                                <button type="submit" class="ml-2 px-4 py-2 bg-blue-500 text-white rounded-md">Apply
-                                    Filter</button>
+                                <select name="statusFilter" id="statusFilter" wire:model="statusFilter"
+                                    class="block appearance-none w-48 bg-white border border-gray-300 hover:border-gray-500 px-4 py-2 pr-8 rounded shadow leading-tight focus:outline-none focus:border-blue-500">
+                                    <option value="">All</option>
+                                    <option value="unread">Unread</option>
+                                    <option value="read">Read</option>
+                                    <option value="deleted">Deleted</option>
+                                </select>
+
+
+                                <button wire:click="applyFilter" type="submit"
+                                    class="ml-2 px-4 py-2 bg-blue-500 text-white rounded-md">Apply Filter</button>
+
 
                                 @if ($filterDate)
                                     <a href="{{ route('notification') }}"
@@ -31,13 +42,6 @@
                         </form>
                     </div>
                     <div class="relative inline-block">
-                        <select wire:model="statusFilter"
-                            class="block appearance-none w-full bg-white border border-gray-300 hover:border-gray-500 px-4 py-2 pr-8 rounded shadow leading-tight focus:outline-none focus:border-blue-500">
-                            <option value="">All</option>
-                            <option value="unread">Unread</option>
-                            <option value="read">Read</option>
-                            <option value="deleted">Deleted</option>
-                        </select>
 
                     </div>
 

@@ -4,6 +4,7 @@ namespace App\Http\Livewire\Table;
 
 use App\Models\Notification;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Redirect;
 use Mediconesystems\LivewireDatatables\Http\Livewire\LivewireDatatable;
 use Mediconesystems\LivewireDatatables\Column;
 use Mediconesystems\LivewireDatatables\NumberColumn;
@@ -15,12 +16,6 @@ class NotificationTable extends LivewireDatatable
     public $filterDate;
     public $statusFilter;
 
-    public function __construct($statusFilter = null)
-    {
-
-        $this->filterDate = Carbon::now()->format('d-m-y');
-        $this->statusFilter = $statusFilter;
-    }
 
     public function builder()
     {
@@ -42,10 +37,8 @@ class NotificationTable extends LivewireDatatable
 
         return $query->orderBy('created_at', 'DESC');
     }
-    public function updatedStatusFilter()
-    {
-        dd(1);
-    }
+
+
 
 
 
