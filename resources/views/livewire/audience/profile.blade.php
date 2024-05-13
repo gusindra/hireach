@@ -104,18 +104,17 @@
                             </div>
                         </div>
 
+                        {{-- Delete Audience --}}
                         <div class="px-6 py-4 bg-gray-100 text-right">
-                            <button type="button"
-                                class="inline-flex items-center px-4 py-2 bg-white border border-gray-300 rounded-md font-semibold text-xs text-gray-700 uppercase tracking-widest shadow-sm hover:text-gray-500 focus:outline-none focus:border-blue-300 focus:shadow-outline-blue active:text-gray-800 active:bg-gray-50 disabled:opacity-25 transition"
-                                wire:click="$toggle('confirmingUserDeletion')" wire:loading.attr="disabled">
-                                Cancel
-                            </button>
+                            <div>
+                                <x-jet-danger-button
+                                    wire:click="$emitTo('audience.delete', 'confirmDelete', {{ $user->id }})">
+                                    {{ __('Delete Audience') }}
+                                </x-jet-danger-button>
+                            </div>
 
-                            <button type="button"
-                                class="inline-flex items-center justify-center px-4 py-2 bg-red-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-red-500 focus:outline-none focus:border-red-700 focus:shadow-outline-red active:bg-red-600 disabled:opacity-25 transition ml-2"
-                                wire:click="deleteUser" wire:loading.attr="disabled">
-                                Delete Audience
-                            </button>
+                            <livewire:audience.delete :audience="$user" :key="$user->id" />
+
                         </div>
                     </div>
                 </div>
