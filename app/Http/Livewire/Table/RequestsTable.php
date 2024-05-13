@@ -28,16 +28,16 @@ class RequestsTable extends LivewireDatatable
             Column::name('user_id')->label('User')->filterable(),
             Column::name('created_at')->label('Creation Date')->filterable(),
     		NumberColumn::name('id')->label('ID')->sortBy('id'),
-    		Column::callback(['agent.name', 'from'], function ($agent, $from) {
+    		Column::callback(['from'], function ($from) {
                 if($from == 'bot'){
                     return 'BOT';
                 }
                 if($from == 'api'){
                     return 'API';
                 }
-                return $agent;
+                return $from;
             })->label('Agent'),
-    		Column::name('client.name')->label('Client'),
+    		Column::name('client_id')->label('Client'),
     		Column::name('reply')->label('Message'),
     		Column::callback(['type'], function ($y) {
                 return view('label.type', ['type' => $y]);

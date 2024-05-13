@@ -86,11 +86,11 @@
                         style="display: none;">
                         <div class="px-6 py-4">
                             <div class="text-lg">
-                                Delete Account
+                                Delete Audience
                             </div>
 
                             <div class="mt-4">
-                                Are you sure you want to delete your account? Once your account is deleted, all
+                                Are you sure you want to delete this Audience? Once data is deleted, all
                                 of its resources and data will be permanently deleted. Please enter your
                                 password to confirm you would like to permanently delete your account.
 
@@ -114,7 +114,7 @@
                             <button type="button"
                                 class="inline-flex items-center justify-center px-4 py-2 bg-red-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-red-500 focus:outline-none focus:border-red-700 focus:shadow-outline-red active:bg-red-600 disabled:opacity-25 transition ml-2"
                                 wire:click="deleteUser" wire:loading.attr="disabled">
-                                Delete Account
+                                Delete Audience
                             </button>
                         </div>
                     </div>
