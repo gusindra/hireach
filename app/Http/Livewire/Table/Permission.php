@@ -19,23 +19,30 @@ class Permission extends LivewireDatatable
         return ModelsPermission::query();
     }
 
+    public function deletePermission($id)
+    {
+        ModelsPermission::findOrFail($id)->delete();
+    }
+
     public function columns()
     {
         return [
-    		Column::name('name')->label('Name'),
-    		Column::callback('model', function ($value) {
-                    return view('datatables::link', [
-                        'href' => "/flow/" . Str::lower($value),
-                        'slot' => $value
-                    ]);
-                })->label('Model'),
+            Column::name('name')->label('Name'),
+            // Column::callback('model', function ($value) {
+            //     return view('datatables::link', [
+            //         'href' => "/flow/" . Str::lower($value),
+            //         'slot' => $value
+            //     ]);
+            // })->label('Model'),
             // NumberColumn::name('id')->label('Detail')->sortBy('id')->callback('id', function ($value) {
             //     return view('datatables::link', [
             //         'href' => "/roles/" . $value . '?month='.date('m').'&year='.date('Y'),
             //         'slot' => 'View'
             //     ]);
             // }),
-
-    	];
+            Column::callback(['id'], function ($id) {
+                return view('livewire.permission.delete', ['id' => $id]);
+            })->label('Actions'),
+        ];
     }
 }

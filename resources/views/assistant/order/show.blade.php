@@ -17,7 +17,7 @@
                                 <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
                             </svg>
                         </span>
-                        <x-jet-nav-link href="{{ route('order') }}">
+                        <x-jet-nav-link href="{{ route('admin.order') }}">
                             {{ __('Order ') }}
                         </x-jet-nav-link>
                         <span class="inline-flex items-center px-1 pt-1 text-xs font-medium leading-5 text-gray-900 ">
@@ -72,20 +72,25 @@
             @endif
         </div>
     </header>
-    <div>
-        <div class="max-w-7xl mx-auto py-4 sm:px-6 lg:px-8 mb-6">
-            @if($order->status=='paid')
-            <div class="bg-green-100 border sm:rounde border-green-500 text-green-700 px-4 py-3 mb-4" role="alert">
-                <p class="font-bold capitalize">{{$order->status}}</p>
-            </div>
-            @endif
+    <div class="grid grid-cols-12">
+        @includeWhen(auth()->user()->super->first() && auth()->user()->super->first()->role == 'superadmin', 'menu.admin-menu-order', [])
+        <div class="col-span-12 px-3 ml-24 mt-2">
+            <div class="bg-white dark:bg-slate-600 overflow-hidden shadow-xl sm:rounded-lg">
+                <div class="container mx-auto">
+                    @if($order->status=='paid')
+                    <div class="bg-green-100 border sm:rounde border-green-500 text-green-700 px-4 py-3 mb-4" role="alert">
+                        <p class="font-bold capitalize">{{$order->status}}</p>
+                    </div>
+                    @endif
 
-            <div class="md:grid md:grid-cols-5 md:gap-6">
-                <div class="md:col-span-12 lg:col-span-4">
-                    @livewire('order.edit', ['uuid'=>$order->id])
-                </div>
-                <div class="justify-between lg:visible md:invisible">
-                    @livewire('commercial.progress', ['model'=>'order','id'=>$order->id])
+                    <div class="md:grid md:grid-cols-5 md:gap-6">
+                        <div class="md:col-span-12 lg:col-span-4">
+                            @livewire('order.edit', ['uuid'=>$order->id])
+                        </div>
+                        <div class="justify-between lg:visible md:invisible">
+                            @livewire('commercial.progress', ['model'=>'order','id'=>$order->id])
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

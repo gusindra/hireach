@@ -21,11 +21,20 @@ class Profile extends Component
         //dd($user);
         $this->user = Client::find($user->id);
 
-        $this->inputuser['name'] = $this->user->name ?? '';
-        $this->inputuser['nick'] = $this->user->nick ?? '';
-        $this->inputuser['email'] = $this->user->email ?? '';
-        $this->inputuser['phone'] = $this->user->phone ?? '';
-        $this->inputuser['title'] = $this->user->title ?? '';
+        $this->inputuser = [
+        'name'      => $this->user->name ?? '',
+        'nick'      => $this->user->nick ?? '',
+        'email'     => $this->user->email ?? '',
+        'phone'     => $this->user->phone ?? '',
+         'source'     => $this->user->source ?? '',
+        'title'     => $this->user->title ?? '',
+        'sender'    => $this->user->sender ?? '',
+        'identity'  => $this->user->identity ?? '',
+        'user_id'   => $this->user->user_id ?? '',
+        'note'      => $this->user->note ?? '',
+        'tag'       => $this->user->tag ?? '',
+        'address'   => $this->user->address ?? '',
+    ];
         //dd($this->inputuser);
     }
 
@@ -39,13 +48,24 @@ class Profile extends Component
             ]);
         }
         $user->update([
-            'name'      => $this->inputuser['name'],
-            'phone'     => $this->inputuser['phone'],
-            'email'     => $this->inputuser['email'],
-            'nick'      => $this->inputuser['nick'],
-            'title'     => $this->inputuser['title'],
+          'sender'    => $this->inputuser['sender'],
+        'name'      => $this->inputuser['name'],
+        'phone'     => $this->inputuser['phone'],
+        'identity'  => $this->inputuser['identity'],
+        'user_id'   => $this->inputuser['user_id'],
+        'note'      => $this->inputuser['note'],
+        'tag'       => $this->inputuser['tag'],
+        'source'       => $this->inputuser['source'],
+        'email'     => $this->inputuser['email'],
+        'address'   => $this->inputuser['address'],
+        'title'     => $this->inputuser['title'],
+
         ]);
+
+
         $this->emit('user_saved');
+        
+
     }
 
     public function saveClient()

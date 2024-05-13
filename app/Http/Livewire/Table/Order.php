@@ -41,7 +41,7 @@ class Order extends LivewireDatatable
             })->label('Status')->filterable(['DRAFT', 'UNPAID', 'PAID', 'CANCEL']),
             NumberColumn::name('id')->label('Detail')->sortBy('id')->callback('id', function ($value) {
                 return view('datatables::link', [
-                    'href' => "/order/" . $value,
+                    'href' => "/admin/order/" . $value,
                     'slot' => 'View'
                 ]);
             }),

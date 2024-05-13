@@ -82,7 +82,7 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
 
         Route::resource('reportings', 'Backend\ReportingController');
         Route::resource('logs', 'Backend\LogController');
-        Route::resource('settings', 'Backend\SettingController', ['only' => ['index', 'update']]);
+        //Route::resource('settings', 'Backend\SettingController', ['only' => ['index', 'update']]);
         Route::resource('users', 'Backend\UserController');
 
         Route::resource('change-password', 'Backend\ChangePasswordController');
@@ -90,7 +90,7 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
         Route::get('settings/rebuild-cache', 'Backend\SettingController@rebuildCache')->name('settings.rebuild-cache');
         Route::get('logout', 'Backend\AuthController@logout');
 
-        Route::get('/user', [UserController::class, 'index'])->name('user.index');
+        Route::get('/user', [UserController::class, 'index'])->name('admin.user');
         Route::get('/user/{user}', [UserController::class, 'show'])->name('user.show');
         Route::get('/user/{user}/balance', [UserController::class, 'balance'])->name('user.show.balance');
         Route::get('/user/{user}/profile', [UserController::class, 'profile'])->name('user.show.profile');
@@ -110,14 +110,14 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
         })->name('permission.index');
         Route::get('/flow/{model}', [FlowController::class, 'show'])->name('flow.show');
 
-        Route::get('/settings', [SettingController::class, 'index'])->name('settings');
+        Route::get('/settings', [SettingController::class, 'index'])->name('admin.settings');
         Route::get('/settings/{page}', [SettingController::class, 'show'])->name('settings.show');
 
-        Route::get('/order', [OrderController::class, 'index'])->name('order');
+        Route::get('/order', [OrderController::class, 'index'])->name('admin.order');
         Route::get('/order/{order}', [OrderController::class, 'show'])->name('show.order');
-        Route::get('/invoice', [InvoiceController::class, 'index'])->name('invoice');
+        Route::get('/invoice', [InvoiceController::class, 'index'])->name('admin.invoice');
         Route::get('/invoice-order/{invoice}', [InvoiceController::class, 'show'])->name('show.invoice');
-        Route::get('/commission', [CommissionController::class, 'index'])->name('commission');
+        Route::get('/commission', [CommissionController::class, 'index'])->name('admin.commission');
         Route::get('/commission/{commission}', [CommissionController::class, 'show'])->name('show.commission');
 
         Route::get('/commercial', [CommercialController::class, 'index'])->name('commercial');
@@ -169,6 +169,7 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
     Route::get('/billing', [BillingController::class, 'index'])->name('billing');
 
     Route::get('/notif-center', [NotificationController::class, 'index'])->name('notification');
+
     Route::get('/notif-center/{notification}', [NotificationController::class, 'show'])->name('notification.read');
     Route::get('/notif-center/read/all', [NotificationController::class, 'readAll'])->name('notification.read.all');
 

@@ -1,11 +1,15 @@
 <x-app-layout>
-    <x-slot name="header"></x-slot>
+    <x-slot name="header">
+        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+            {{ __('User') }}
+        </h2>
+    </x-slot>
 
     <div class="grid grid-cols-12">
-        
-        @includeWhen(auth()->user()->super->first() && auth()->user()->super->first()->role == 'superadmin', 'menu.admin-menu', [])
 
-        <div class="col-span-12 px-3 ml-24 mt-2"> 
+        @includeWhen(auth()->user()->super->first() && auth()->user()->super->first()->role == 'superadmin', 'menu.admin-menu-user', [])
+
+        <div class="col-span-12 px-3 ml-24 mt-2">
             <div class="bg-white dark:bg-slate-600 overflow-hidden shadow-xl sm:rounded-lg">
                 <div class="container mx-auto">
                     <div class="flex justify-between">

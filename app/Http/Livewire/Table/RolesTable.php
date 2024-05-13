@@ -21,17 +21,17 @@ class RolesTable extends LivewireDatatable
     public function columns()
     {
         return [
-    		Column::name('name')->label('Name'),
-    		Column::name('description')->label('Description'),
-    		Column::name('type')->label('Type'),
+            Column::name('name')->label('Name'),
+            Column::name('description')->label('Description'),
+            Column::name('type')->label('Type'),
             BooleanColumn::name('status')->label('Active'),
             NumberColumn::name('id')->label('Detail')->sortBy('id')->callback('id', function ($value) {
                 return view('datatables::link', [
-                    'href' => '/roles/' . $value . '?month='.date('m').'&year='.date('Y'),
+                    'href' => 'roles/' . $value,
                     'slot' => 'View'
                 ]);
             }),
 
-    	];
+        ];
     }
 }

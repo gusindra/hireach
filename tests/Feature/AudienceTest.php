@@ -73,8 +73,42 @@ class AudienceTest extends TestCase
         $this->assertDatabaseMissing('audience', ['id' => $audience->id]);
     }
 
+    public function test_can_create_contact_for_audience()
+    {
+       
+        $user = User::find(2);
+
+        $audience = Audience::find(1);       
+        $client = Client::find(1);
+
+        Livewire::actingAs($user)
+        ->test(AddContact::class, ['audience' => $audience])
+        ->call('actionShowModal')
+            ->set('contactId', $client->uuid)
+            ->set('audienceId',$audience->id)
+            ->call('create');
+
+  
+        $this->assertDatabaseHas('audience_clients', [
+            'client_id' => $client->uuid,
+            'audience_id' => $audience->id,
+        ]);
+    }
 
 
+    public function test_can_delete_contact_at_audience()
+    {
+
+        $user = User::find(2);
+        $audienceClient = AudienceClient::first();
+        $audience = Audience::find(1);   
+        Livewire::actingAs($user)
+        ->test(AddContact::class, ['audience' => $audience])
+            ->call('deleteShowModal', $audienceClient->id)
+            ->call('delete');
+
+        $this->assertDatabaseMissing('audience_clients', ['id' => $audienceClient->id]);
+    }
 
 
 
