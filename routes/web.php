@@ -169,6 +169,7 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
     Route::get('/billing', [BillingController::class, 'index'])->name('billing');
 
     Route::get('/notif-center', [NotificationController::class, 'index'])->name('notification');
+
     Route::get('/notif-center/{notification}', [NotificationController::class, 'show'])->name('notification.read');
     Route::get('/notif-center/read/all', [NotificationController::class, 'readAll'])->name('notification.read.all');
 
