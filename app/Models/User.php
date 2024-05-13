@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Fortify\TwoFactorAuthenticatable;
@@ -19,6 +20,9 @@ class User extends Authenticatable
     use HasTeams;
     use Notifiable;
     use TwoFactorAuthenticatable;
+    use SoftDeletes;
+
+    protected $dates = ['deleted_at'];
 
     /**
      * The attributes that are mass assignable.
@@ -64,37 +68,41 @@ class User extends Authenticatable
      *
      * @var array
      */
-    public function clients($m=null, $y=null){
-        if($m && $y){
+    public function clients($m = null, $y = null)
+    {
+        if ($m && $y) {
             return $this->hasMany('App\Models\Client', 'user_id')->whereMonth('created_at', '<=', $m)->whereYear('created_at', '<=', $y);
         }
-    	return $this->hasMany('App\Models\Client', 'user_id');
+        return $this->hasMany('App\Models\Client', 'user_id');
     }
-    public function inbounds($m=null, $y=null){
-        if($m && $y){
+    public function inbounds($m = null, $y = null)
+    {
+        if ($m && $y) {
             return $this->hasMany('App\Models\Request', 'user_id')->whereNotNull('sent_at')->whereMonth('created_at', $m)->whereYear('created_at', $y);
         }
-    	return $this->hasMany('App\Models\Request', 'user_id')->whereNotNull('sent_at');
+        return $this->hasMany('App\Models\Request', 'user_id')->whereNotNull('sent_at');
     }
-    public function outbounds($m=null, $y=null){
-        if($m && $y){
+    public function outbounds($m = null, $y = null)
+    {
+        if ($m && $y) {
             return $this->hasMany('App\Models\Request', 'user_id')->whereNull('sent_at')->whereMonth('created_at', $m)->whereYear('created_at', $y);
         }
-    	return $this->hasMany('App\Models\Request', 'user_id')->whereNull('sent_at');
+        return $this->hasMany('App\Models\Request', 'user_id')->whereNull('sent_at');
     }
-    public function sentsms($m=null, $y=null, $status=null){
-        if($status=='total'){
+    public function sentsms($m = null, $y = null, $status = null)
+    {
+        if ($status == 'total') {
             $result = $this->hasMany('App\Models\BlastMessage', 'user_id');
-        }elseif($status=='UNDELIVERED'){
+        } elseif ($status == 'UNDELIVERED') {
             $result = $this->hasMany('App\Models\BlastMessage', 'user_id')->whereIn('status', ['UNDELIVERED', 'PROCESSED']);
-        }else{
-    	    $result = $this->hasMany('App\Models\BlastMessage', 'user_id')->whereIn('status', ['DELIVERED', 'ACCEPTED']);
+        } else {
+            $result = $this->hasMany('App\Models\BlastMessage', 'user_id')->whereIn('status', ['DELIVERED', 'ACCEPTED']);
         }
 
-        if($m && $y){
+        if ($m && $y) {
             $result = $result->whereMonth('created_at', $m)->whereYear('created_at', $y);
         }
-    	return $result;
+        return $result;
     }
 
     /**
@@ -102,8 +110,9 @@ class User extends Authenticatable
      *
      * @return void
      */
-    public function chatsession(){
-    	return $this->hasOne('App\Models\HandlingSession', 'agent_id');
+    public function chatsession()
+    {
+        return $this->hasOne('App\Models\HandlingSession', 'agent_id');
     }
 
     /**
@@ -111,8 +120,9 @@ class User extends Authenticatable
      *
      * @return void
      */
-    public function super(){
-    	return $this->hasMany('App\Models\TeamUser','user_id')->where('team_id', env('IN_HOUSE_TEAM_ID'));
+    public function super()
+    {
+        return $this->hasMany('App\Models\TeamUser', 'user_id')->where('team_id', env('IN_HOUSE_TEAM_ID'));
     }
 
     /**
@@ -120,8 +130,9 @@ class User extends Authenticatable
      *
      * @return void
      */
-    public function isSuper(){
-    	return $this->hasOne('App\Models\TeamUser','user_id')->where('team_id', env('IN_HOUSE_TEAM_ID'));
+    public function isSuper()
+    {
+        return $this->hasOne('App\Models\TeamUser', 'user_id')->where('team_id', env('IN_HOUSE_TEAM_ID'));
     }
 
     /**
@@ -129,8 +140,9 @@ class User extends Authenticatable
      *
      * @return void
      */
-    public function teams(){
-    	return $this->hasMany('App\Models\Team', 'user_id');
+    public function teams()
+    {
+        return $this->hasMany('App\Models\Team', 'user_id');
     }
 
     /**
@@ -138,11 +150,13 @@ class User extends Authenticatable
      *
      * @return void
      */
-    public function listTeams(){
-    	return $this->hasMany('App\Models\TeamUser', 'user_id');
+    public function listTeams()
+    {
+        return $this->hasMany('App\Models\TeamUser', 'user_id');
     }
-    public function team(){
-    	return $this->belongsTo('App\Models\TeamUser', 'current_team_id', 'team_id')->where('user_id', $this->id);
+    public function team()
+    {
+        return $this->belongsTo('App\Models\TeamUser', 'current_team_id', 'team_id')->where('user_id', $this->id);
     }
 
     /**
@@ -150,8 +164,9 @@ class User extends Authenticatable
      *
      * @return void
      */
-    public function billings(){
-    	return $this->hasMany('App\Models\Billing', 'user_id');
+    public function billings()
+    {
+        return $this->hasMany('App\Models\Billing', 'user_id');
     }
 
     /**
@@ -159,11 +174,13 @@ class User extends Authenticatable
      *
      * @return void
      */
-    public function role(){
-    	return $this->hasMany('App\Models\RoleUser','user_id');
+    public function role()
+    {
+        return $this->hasMany('App\Models\RoleUser', 'user_id');
     }
-    public function listRole(){
-    	return $this->hasMany('App\Models\RoleUser','user_id');
+    public function listRole()
+    {
+        return $this->hasMany('App\Models\RoleUser', 'user_id');
     }
 
     /**
@@ -171,11 +188,13 @@ class User extends Authenticatable
      *
      * @return void
      */
-    public function activeRoles(){
-    	return $this->hasOne('App\Models\RoleUser','user_id');
+    public function activeRoles()
+    {
+        return $this->hasOne('App\Models\RoleUser', 'user_id');
     }
-    public function activeRole(){
-    	return $this->hasOne('App\Models\RoleUser','user_id')->orderBy('active', 'desc');;
+    public function activeRole()
+    {
+        return $this->hasOne('App\Models\RoleUser', 'user_id')->orderBy('active', 'desc');;
     }
 
     /**
@@ -183,11 +202,12 @@ class User extends Authenticatable
      *
      * @return void
      */
-    public function balance($team_id=0){
-        if($team_id>0){
-    	    return $this->hasMany('App\Models\SaldoUser','user_id')->where('team_id', $team_id)->orderBy('id', 'desc');
+    public function balance($team_id = 0)
+    {
+        if ($team_id > 0) {
+            return $this->hasMany('App\Models\SaldoUser', 'user_id')->where('team_id', $team_id)->orderBy('id', 'desc');
         }
-    	return $this->hasMany('App\Models\SaldoUser','user_id')->orderBy('id', 'desc');
+        return $this->hasMany('App\Models\SaldoUser', 'user_id')->orderBy('id', 'desc');
     }
 
     /**
@@ -195,8 +215,9 @@ class User extends Authenticatable
      *
      * @return void
      */
-    public function isClient(){
-    	return $this->hasOne('App\Models\Client','email','email')->where('user_id', 0);
+    public function isClient()
+    {
+        return $this->hasOne('App\Models\Client', 'email', 'email')->where('user_id', 0);
     }
 
     /**
@@ -204,8 +225,9 @@ class User extends Authenticatable
      *
      * @return void
      */
-    public function userBilling(){
-    	return $this->hasOne('App\Models\BillingUser', 'user_id');
+    public function userBilling()
+    {
+        return $this->hasOne('App\Models\BillingUser', 'user_id');
     }
 
     /**
@@ -213,8 +235,9 @@ class User extends Authenticatable
      *
      * @return void
      */
-    public function photo(){
-    	return $this->hasOne('App\Models\Attachment', 'model_id')->where('model', 'user');
+    public function photo()
+    {
+        return $this->hasOne('App\Models\Attachment', 'model_id')->where('model', 'user');
     }
 
     /**
@@ -222,14 +245,15 @@ class User extends Authenticatable
      *
      * @return void
      */
-    public function getProfilePhotoUrlAttribute(){
-        if($this->photo)
-            return 'https://telixcel.s3.ap-southeast-1.amazonaws.com/'.$this->photo->file;
+    public function getProfilePhotoUrlAttribute()
+    {
+        if ($this->photo)
+            return 'https://telixcel.s3.ap-southeast-1.amazonaws.com/' . $this->photo->file;
         $name = trim(collect(explode(' ', $this->name))->map(function ($segment) {
             return mb_substr($segment, 0, 1);
         })->join(' '));
 
-        return 'https://ui-avatars.com/api/?name='.urlencode($name).'&color=7F9CF5&background=EBF4FF';
+        return 'https://ui-avatars.com/api/?name=' . urlencode($name) . '&color=7F9CF5&background=EBF4FF';
     }
 
     /**
@@ -237,8 +261,9 @@ class User extends Authenticatable
      *
      * @return void
      */
-    public function company(){
-    	return $this->hasOne('App\Models\Company', 'user_id');
+    public function company()
+    {
+        return $this->hasOne('App\Models\Company', 'user_id');
     }
 
     /**
@@ -246,10 +271,8 @@ class User extends Authenticatable
      *
      * @return void
      */
-    public function credential(){
-    	return $this->hasMany('App\Models\ApiCredential', 'user_id');
+    public function credential()
+    {
+        return $this->hasMany('App\Models\ApiCredential', 'user_id');
     }
-
-    
-
 }
