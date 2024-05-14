@@ -348,7 +348,7 @@ Route::get('/restart-service', function () {
     return 'success';
 });
 
-Route::post('/saveAlarm', [ApiViGuardController::class, 'post']);
+Route::get('/saveAlarm', [ApiViGuardController::class, 'index']);
 
 
 // TESTING

@@ -2,18 +2,22 @@
     <header class="bg-white dark:bg-slate-900 dark:border-slate-600 border-b shadow">
         <div class="max-w-7xl mx-auto py-3 px-4 sm:px-6 lg:px-8">
             <big class="font-semibold text-xl text-gray-800 dark:text-slate-300 leading-tight">
-                {{ __('User Name') }} : <span class="capitalize">{{$user->name}}</span>
+                {{ __('User Name') }} : <span class="capitalize">{{ $user->name }}</span>
                 -
-                <a class="hover:text-gray-400 dark:text-slate-300" href="{{route('user.show.balance', $user->id)}}">{{ __('Balance') }} : <span class="capitalize">Rp {{number_format(balance($user))}}</span></a>
+                <a class="hover:text-gray-400 dark:text-slate-300"
+                    href="{{ route('user.show.balance', $user->id) }}">{{ __('Balance') }} : <span class="capitalize">Rp
+                        {{ number_format(balance($user)) }}</span></a>
             </big>
             <br>
-            @if(balance($user)!=0)
-            <small>
-                {{ __('Estimation') }} :
-                @foreach(estimationSaldo() as $product)
-                    <span class="capitalize">{{$product->name}} ({{number_format(balance($user)/$product->unit_price)}} SMS)</span>
-                @endforeach
-            </small>
+            @if (balance($user) != 0)
+                <small>
+                    {{ __('Estimation') }} :
+                    @foreach (estimationSaldo() as $product)
+                        <span class="capitalize">{{ $product->name }}
+                            ({{ number_format(balance($user) / $product->unit_price) }} SMS)
+                        </span>
+                    @endforeach
+                </small>
             @endif
         </div>
         <div class="max-w-7xl mx-auto py-3 px-4 sm:px-6 lg:px-8 justify-between flex">
@@ -24,9 +28,12 @@
                     <x-jet-dropdown align="right" width="60">
                         <x-slot name="trigger">
                             <span class="inline-flex rounded-md mb-2">
-                                <button type="button" class="inline-flex items-center px-3 py-2 border text-xs leading-4 font-medium rounded-md text-gray-500  bg-gray-200 hover:bg-gray-300 hover:text-gray-700 focus:outline-none focus:bg-gray-400 active:bg-gray-400 transition">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" viewBox="0 0 20 20" fill="currentColor">
-                                        <path d="M6 10a2 2 0 11-4 0 2 2 0 014 0zM12 10a2 2 0 11-4 0 2 2 0 014 0zM16 12a2 2 0 100-4 2 2 0 000 4z" />
+                                <button type="button"
+                                    class="inline-flex items-center px-3 py-2 border text-xs leading-4 font-medium rounded-md text-gray-500  bg-gray-200 hover:bg-gray-300 hover:text-gray-700 focus:outline-none focus:bg-gray-400 active:bg-gray-400 transition">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" viewBox="0 0 20 20"
+                                        fill="currentColor">
+                                        <path
+                                            d="M6 10a2 2 0 11-4 0 2 2 0 014 0zM12 10a2 2 0 11-4 0 2 2 0 014 0zM16 12a2 2 0 100-4 2 2 0 000 4z" />
                                     </svg>
                                 </button>
                             </span>
@@ -36,7 +43,9 @@
                             <div class="w-60">
                                 <div>
                                     <form>
-                                        <a class="block px-4 py-2 text-sm leading-5 text-gray-700 dark:text-slate-400 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 transition" target="_blank" href="{{route('user.show.profile', ['user'=>$user->id])}}">
+                                        <a class="block px-4 py-2 text-sm leading-5 text-gray-700 dark:text-slate-400 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 transition"
+                                            target="_blank"
+                                            href="{{ route('user.show.profile', ['user' => $user->id]) }}">
                                             <div class="flex items-center justify-between">
                                                 <div class="truncate">Profile</div>
                                             </div>
@@ -51,8 +60,11 @@
         </div>
     </header>
 
-    @if($user->id!=0)
+    @if ($user->id != 0)
         <!-- Team Dashboard -->
+
+        @livewire('user.edit', ['userId' => $user->id])
+        @livewire('user.delete', ['userId' => $user->id])
         <div class="py-3">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
                 <div class="bg-white dark:bg-slate-600 overflow-hidden shadow-xl sm:rounded-lg">
@@ -60,40 +72,67 @@
                         <div class="mt-2 text-2xl">
                             Overview for
                         </div>
-                        <form method="get" action="{{url('/user/'.$user->id)}}">
+                        <form method="get" action="{{ url('/user/' . $user->id) }}">
                             <select class="dark:bg-slate-800 dark:text-slate-300" name="month" id="month">
-                                <option {{app("request")->input('month')=='1'?'selected':''}} value="1">January</option>
-                                <option {{app("request")->input('month')=='2'?'selected':''}} value="2">February</option>
-                                <option {{app("request")->input('month')=='3'?'selected':''}} value="3">March</option>
-                                <option {{app("request")->input('month')=='4'?'selected':''}} value="4">April</option>
-                                <option {{app("request")->input('month')=='5'?'selected':''}} value="5">May</option>
-                                <option {{app("request")->input('month')=='6'?'selected':''}} value="6">June</option>
-                                <option {{app("request")->input('month')=='7'?'selected':''}} value="7">July</option>
-                                <option {{app("request")->input('month')=='8'?'selected':''}} value="8">August</option>
-                                <option {{app("request")->input('month')=='9'?'selected':''}} value="9">September</option>
-                                <option {{app("request")->input('month')=='10'?'selected':''}} value="10">October</option>
-                                <option {{app("request")->input('month')=='11'?'selected':''}} value="11">November</option>
-                                <option {{app("request")->input('month')=='12'?'selected':''}} value="12">December</option>
+                                <option {{ app('request')->input('month') == '1' ? 'selected' : '' }} value="1">
+                                    January
+                                </option>
+                                <option {{ app('request')->input('month') == '2' ? 'selected' : '' }} value="2">
+                                    February
+                                </option>
+                                <option {{ app('request')->input('month') == '3' ? 'selected' : '' }} value="3">
+                                    March
+                                </option>
+                                <option {{ app('request')->input('month') == '4' ? 'selected' : '' }} value="4">
+                                    April
+                                </option>
+                                <option {{ app('request')->input('month') == '5' ? 'selected' : '' }} value="5">
+                                    May
+                                </option>
+                                <option {{ app('request')->input('month') == '6' ? 'selected' : '' }} value="6">
+                                    June
+                                </option>
+                                <option {{ app('request')->input('month') == '7' ? 'selected' : '' }} value="7">
+                                    July
+                                </option>
+                                <option {{ app('request')->input('month') == '8' ? 'selected' : '' }} value="8">
+                                    August
+                                </option>
+                                <option {{ app('request')->input('month') == '9' ? 'selected' : '' }} value="9">
+                                    September</option>
+                                <option {{ app('request')->input('month') == '10' ? 'selected' : '' }} value="10">
+                                    October
+                                </option>
+                                <option {{ app('request')->input('month') == '11' ? 'selected' : '' }} value="11">
+                                    November</option>
+                                <option {{ app('request')->input('month') == '12' ? 'selected' : '' }} value="12">
+                                    December</option>
                             </select>
                             <select class="dark:bg-slate-800 dark:text-slate-300" name="year" id="year">
-                                @for ($i=date('Y'); $i > date('Y')-5 ; $i--)
-                                    <option {{app("request")->input('year')==$i?'selected':''}} value="{{$i}}">{{$i}}</option>
+                                @for ($i = date('Y'); $i > date('Y') - 5; $i--)
+                                    <option {{ app('request')->input('year') == $i ? 'selected' : '' }}
+                                        value="{{ $i }}">{{ $i }}</option>
                                 @endfor
                             </select>
                             <button type="submit" class="px-2 py-1 bg-gray-800 text-white">Show</button>
                         </form>
                     </div>
 
-                    <div class="p-6 sm:px-20 bg-gray-200 dark:bg-slate-600 bg-opacity-25 grid grid-cols-1 md:grid-cols-4">
+                    <div
+                        class="p-6 sm:px-20 bg-gray-200 dark:bg-slate-600 bg-opacity-25 grid grid-cols-1 md:grid-cols-4">
                         <div class="p-6">
                             <div class="flex items-center">
                                 <a href="http://telixcel.com/client">
-                                    <svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" class="w-16 dark:text-slate-300 text-gray-400">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path>
+                                    <svg fill="none" stroke="currentColor" stroke-linecap="round"
+                                        stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24"
+                                        class="w-16 dark:text-slate-300 text-gray-400">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z">
+                                        </path>
                                     </svg>
                                 </a>
                                 <div class="ml-4 text-gray-600 dark:text-slate-300 leading-2 font-semibold text-3xl">
-                                    <span>{{$user->clients(app('request')->input('month'),app('request')->input('year'))->count()}}</span>
+                                    <span>{{ $user->clients(app('request')->input('month'), app('request')->input('year'))->count() }}</span>
                                     <div class="mt-2 text-sm text-gray-500 dark:text-slate-300">
                                         <a href="http://telixcel.com/client">Client</a>
                                     </div>
@@ -104,12 +143,15 @@
                         <div class="p-6">
                             <div class="flex items-center">
                                 <a href="http://telixcel.com/message">
-                                    <svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" class="w-16 dark:text-slate-300 text-gray-400">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path>
+                                    <svg fill="none" stroke="currentColor" stroke-linecap="round"
+                                        stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24"
+                                        class="w-16 dark:text-slate-300 text-gray-400">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path>
                                     </svg>
                                 </a>
                                 <div class="ml-4 text-gray-600 dark:text-slate-300 leading-7 font-semibold text-3xl">
-                                    <span>{{$user->outbounds(app('request')->input('month'),app('request')->input('year'))->count()}}</span>
+                                    <span>{{ $user->outbounds(app('request')->input('month'), app('request')->input('year'))->count() }}</span>
                                     <div class="mt-2 text-sm text-gray-500 dark:text-slate-300">
                                         <a href="http://telixcel.com/message">Out Bound</a>
                                     </div>
@@ -123,12 +165,15 @@
                         <div class="p-6">
                             <div class="flex items-center">
                                 <a href="http://telixcel.com/message">
-                                    <svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" class="w-16 dark:text-slate-300 text-gray-400">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
+                                    <svg fill="none" stroke="currentColor" stroke-linecap="round"
+                                        stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24"
+                                        class="w-16 dark:text-slate-300 text-gray-400">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
                                     </svg>
                                 </a>
                                 <div class="ml-4 text-gray-600 dark:text-slate-300 leading-7 font-semibold text-3xl">
-                                    <span>{{$user->inbounds(app('request')->input('month'),app('request')->input('year'))->count()}}</span>
+                                    <span>{{ $user->inbounds(app('request')->input('month'), app('request')->input('year'))->count() }}</span>
                                     <div class="mt-2 text-sm text-gray-500 dark:text-slate-300">
                                         <a href="http://telixcel.com/message"> In Bound</a>
                                     </div>
@@ -139,12 +184,15 @@
                         <div class="p-6">
                             <div class="flex items-center">
                                 <a href="http://telixcel.com/message">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-16 text-gray-400 dark:text-slate-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4"></path>
+                                    <svg xmlns="http://www.w3.org/2000/svg"
+                                        class="w-16 text-gray-400 dark:text-slate-300" fill="none"
+                                        viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4"></path>
                                     </svg>
                                 </a>
                                 <div class="ml-4 text-gray-600 dark:text-slate-300 leading-7 font-semibold text-3xl">
-                                    <span>{{$user->currentTeam->callApi(app('request')->input('month'),app('request')->input('year'))->count()}}</span>
+                                    <span>{{ $user->currentTeam->callApi(app('request')->input('month'), app('request')->input('year'))->count() }}</span>
                                     <div class="mt-2 text-sm text-gray-500 dark:text-slate-300">
                                         <a href="http://telixcel.com/message"> API Call</a>
                                     </div>
@@ -155,12 +203,15 @@
                         <div class="p-6">
                             <div class="flex items-center">
                                 <a href="http://telixcel.com/report/sms">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-16 text-gray-400 dark:text-slate-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                                    <svg xmlns="http://www.w3.org/2000/svg"
+                                        class="w-16 text-gray-400 dark:text-slate-300" fill="none"
+                                        viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                            d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                                     </svg>
                                 </a>
                                 <div class="ml-4 text-gray-600 dark:text-slate-300 leading-7 font-semibold text-3xl">
-                                    <span>{{$user->sentsms(app('request')->input('month'),app('request')->input('year'),'total')->count()}}</span>
+                                    <span>{{ $user->sentsms(app('request')->input('month'), app('request')->input('year'), 'total')->count() }}</span>
                                     <div class="mt-2 text-sm text-gray-500 dark:text-slate-300">
                                         <a href="http://telixcel.com/report/sms"> Total SMS</a>
                                     </div>
@@ -171,12 +222,15 @@
                         <div class="p-6">
                             <div class="flex items-center">
                                 <a href="http://telixcel.com/report/sms">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-16 text-gray-400 dark:text-slate-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                                    <svg xmlns="http://www.w3.org/2000/svg"
+                                        class="w-16 text-gray-400 dark:text-slate-300" fill="none"
+                                        viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                            d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                                     </svg>
                                 </a>
                                 <div class="ml-4 text-gray-600 dark:text-slate-300 leading-7 font-semibold text-3xl">
-                                    <span>{{$user->sentsms(app('request')->input('month'),app('request')->input('year'))->count()}}</span>
+                                    <span>{{ $user->sentsms(app('request')->input('month'), app('request')->input('year'))->count() }}</span>
                                     <div class="mt-2 text-sm text-gray-500 dark:text-slate-300">
                                         <a href="http://telixcel.com/report/sms"> SMS DELIVERED</a>
                                     </div>
@@ -187,12 +241,15 @@
                         <div class="p-6">
                             <div class="flex items-center">
                                 <a href="http://telixcel.com/report/sms">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-16 text-gray-400 dark:text-slate-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                                    <svg xmlns="http://www.w3.org/2000/svg"
+                                        class="w-16 text-gray-400 dark:text-slate-300" fill="none"
+                                        viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                            d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                                     </svg>
                                 </a>
                                 <div class="ml-4 text-gray-600 dark:text-slate-300 leading-7 font-semibold text-3xl">
-                                    <span>{{$user->sentsms(app('request')->input('month'),app('request')->input('year'), 'UNDELIVERED')->count()}}</span>
+                                    <span>{{ $user->sentsms(app('request')->input('month'), app('request')->input('year'), 'UNDELIVERED')->count() }}</span>
                                     <div class="mt-2 text-sm text-gray-500 dark:text-slate-300">
                                         <a href="http://telixcel.com/report/sms"> SMS UNDELIVERED</a>
                                     </div>
@@ -203,12 +260,16 @@
                         <div class="p-6">
                             <div class="flex items-center">
                                 <a href="http://telixcel.com/report/sms">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-16 text-gray-400 dark:text-slate-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                    <svg xmlns="http://www.w3.org/2000/svg"
+                                        class="w-16 text-gray-400 dark:text-slate-300" fill="none"
+                                        viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                            d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                                     </svg>
                                 </a>
                                 <div class="ml-4 text-gray-600 dark:text-slate-300 leading-7 font-semibold text-2xl">
-                                    <span>Rp {{number_format($user->sentsms(app('request')->input('month'),app('request')->input('year'))->sum('price'))}}</span>
+                                    <span>Rp
+                                        {{ number_format($user->sentsms(app('request')->input('month'), app('request')->input('year'))->sum('price')) }}</span>
                                     <div class="mt-2 text-sm text-gray-500 dark:text-slate-300">
                                         <a href="http://telixcel.com/report/sms"> SMS COST</a>
                                     </div>
@@ -232,7 +293,8 @@
                     <div class="p-3">
                         <div class="overflow-x-auto">
                             <table class="table-auto w-full">
-                                <thead class="text-xs font-semibold uppercase text-gray-400 bg-gray-50 dark:bg-slate-700">
+                                <thead
+                                    class="text-xs font-semibold uppercase text-gray-400 bg-gray-50 dark:bg-slate-700">
                                     <tr>
                                         <th class="p-2 whitespace-nowrap">
                                             <div class="font-semibold text-left">Name</div>
@@ -256,20 +318,24 @@
                                         <tr>
                                             <td class="p-2 whitespace-nowrap">
                                                 <div class="flex items-center">
-                                                    <div class="font-medium text-gray-800">{{$team->name}}</div>
+                                                    <div class="font-medium text-gray-800">{{ $team->name }}</div>
                                                 </div>
                                             </td>
                                             <td class="p-2 whitespace-nowrap">
-                                                <div class="text-left">{{$team->personal_team}}</div>
+                                                <div class="text-left">{{ $team->personal_team }}</div>
                                             </td>
                                             <td class="p-2 whitespace-nowrap">
-                                                <div class="text-left">Rp {{number_format(balance($user, $team->id))}}</div>
+                                                <div class="text-left">Rp
+                                                    {{ number_format(balance($user, $team->id)) }}</div>
                                             </td>
                                             <td class="p-2 whitespace-nowrap">
-                                                <div class="text-left font-medium">{{$team->created_at->format('d M Y')}}</div>
+                                                <div class="text-left font-medium">
+                                                    {{ $team->created_at->format('d M Y') }}</div>
                                             </td>
                                             <td class="p-2 whitespace-nowrap">
-                                                <div class="text-lg font-medium text-green-500 text-center"><a href="{{url('chatting', $team->slug)}}">{{$team->slug}}</a></div>
+                                                <div class="text-lg font-medium text-green-500 text-center"><a
+                                                        href="{{ url('chatting', $team->slug) }}">{{ $team->slug }}</a>
+                                                </div>
                                             </td>
                                         </tr>
                                     @endforeach
@@ -281,5 +347,8 @@
             </div>
         </div>
     @endif
+
+
+
 
 </x-app-layout>

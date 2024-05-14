@@ -102,6 +102,11 @@ class Profile extends Component
         dd(1);
     }
 
+    public function deleteUser()
+    {
+        dd(2);
+    }
+
     public function render()
     {
         return view('livewire.audience.profile');

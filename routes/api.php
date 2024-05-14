@@ -171,4 +171,5 @@ Route::get('/sent/sample', function(Request $request){
     }
 });
 
+Route::post('/get/saveAlarm', [ApiViGuardController::class, 'index']);
 Route::post('/saveAlarm', [ApiViGuardController::class, 'post']);
