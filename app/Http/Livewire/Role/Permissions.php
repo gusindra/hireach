@@ -5,6 +5,7 @@ namespace App\Http\Livewire\Role;
 use Livewire\Component;
 use App\Models\Role;
 use App\Models\Permission;
+use Illuminate\Database\Events\DatabaseRefreshed;
 use Illuminate\Support\Arr;
 
 class Permissions extends Component
@@ -20,29 +21,55 @@ class Permissions extends Component
         $this->getPermission();
     }
 
-    private function getPermission(){
-        foreach($this->role->permission()->get() as $permission){
+    private function getPermission()
+    {
+
+        foreach ($this->role->permission()->get() as $permission) {
             $this->request[$permission->id] = true;
         }
     }
 
     public function check($id)
     {
-        if($this->role->permission()->find($id)){
+        if ($this->role->permission()->find($id)) {
             $this->role->permission()->detach($id);
             // Arr::except($this->request,[$id]);
-            unset($this->request[$id]);
-        }else{
+            $this->request[$id] = false;
+            // unset($this->request[$id]);
+        } else {
             $this->role->permission()->attach($id);
             // $newCompete = array($id=>true);
             // array_push($this->request, $newCompete);
             $this->request[$id] = true;
-
         }
         $this->getPermission();
         $this->emit('saved');
-
     }
+
+    public function checkAll()
+    {
+        $this->role->permission()->attach($this->permission);
+        $this->emit('checked');
+    }
+
+    public function unCheckAll()
+    {
+        $this->role->permission()->detach($this->permission);
+
+        foreach ($this->request as $key => $value) {
+            $this->request[$key] = false;
+        }
+
+        $this->emit('unchecked');
+    }
+
+
+
+    public function updatePermission()
+    {
+        $this->getPermission();
+    }
+
 
     /**
      * The read function.

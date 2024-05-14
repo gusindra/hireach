@@ -24,7 +24,7 @@ class UserController extends Controller
 
     public function index(Request $request)
     {
-        if($request->has('v')){
+        if ($request->has('v')) {
             return view('main-side.user');
         }
         //return view('user.company-table');
@@ -33,20 +33,20 @@ class UserController extends Controller
 
     public function show(Request $request, User $user)
     {
-        if($request->has('v')){
-            return view('main-side.user-details', ['user'=>$user]);
+        if ($request->has('v')) {
+            return view('main-side.user-details', ['user' => $user]);
             // return view('main-side.user-project');
         }
-        if($user->name != 'Admin1'){
-            return view('user.user-detail', ['user'=>$user]);
+        if ($user->name != 'Admin1') {
+            return view('user.user-detail', ['user' => $user]);
         }
         return redirect('user');
     }
 
     public function profile(User $user)
     {
-        if($user->name != 'Admin'){
-            return view('user.user-profile', ['user'=>$user]);
+        if ($user->name != 'Admin') {
+            return view('user.user-profile', ['user' => $user]);
         }
         return redirect('user');
     }
@@ -54,7 +54,7 @@ class UserController extends Controller
     public function balance(User $user, Request $request)
     {
         // if($user->name != 'Admin'){
-            return view('user.user-balance', ['user'=>$user, 'team'=>$request->has('team')?$request->team:0]);
+        return view('user.user-balance', ['user' => $user, 'team' => $request->has('team') ? $request->team : 0]);
         // }
         // return redirect('user');
     }

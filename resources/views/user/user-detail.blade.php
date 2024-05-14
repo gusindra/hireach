@@ -59,7 +59,10 @@
             </div>
         </div>
     </header>
-
+    @includeWhen(auth()->user()->super->first() && auth()->user()->super->first()->role == 'superadmin',
+        'menu.admin-menu-user',
+        []
+    )
     @if ($user->id != 0)
         <!-- Team Dashboard -->
 
