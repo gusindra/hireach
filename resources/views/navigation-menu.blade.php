@@ -103,7 +103,7 @@
             </div>
 
             <div class="hidden sm:flex sm:items-center sm:ml-6 flex-auto justify-end space-x-1">
-
+                @livewire('notification-app', ['client_id' => Auth::user()->id], key(Auth::user()->id))
                 <!-- Teams Dropdown -->
                 @if (Auth::user()->currentTeam && Laravel\Jetstream\Jetstream::hasTeamFeatures())
                     <div class="ml-3 relative">
@@ -138,6 +138,11 @@
                                             {{ __('Team Settings') }}
                                         </x-jet-dropdown-link>
                                     @endif
+                                    @can('create', Laravel\Jetstream\Jetstream::newTeamModel())
+                                        <x-jet-dropdown-link href="{{ route('teams.create') }}">
+                                            {{ __('Create New Team') }}
+                                        </x-jet-dropdown-link>
+                                    @endcan
 
                                     @if (@Auth::user()->isSuper->role == 'superadmin')
                                         @can('create', Laravel\Jetstream\Jetstream::newTeamModel())
@@ -213,11 +218,7 @@
                                     </x-jet-dropdown-link>
                                 @endif
                             @endif
-                            @can('create', Laravel\Jetstream\Jetstream::newTeamModel())
-                                <x-jet-dropdown-link href="{{ route('teams.create') }}">
-                                    {{ __('Create New Team') }}
-                                </x-jet-dropdown-link>
-                            @endcan
+
                             <div class="border-t border-gray-100"></div>
 
                             <!-- Authentication -->
@@ -240,7 +241,7 @@
                 </div>
 
                 <!-- Notification Dropdown -->
-                @livewire('notification-app', ['client_id' => Auth::user()->id], key(Auth::user()->id))
+
 
                 @if (auth()->user()->currentTeam && auth()->user()->currentTeam->id == env('IN_HOUSE_TEAM_ID'))
                     <!-- Global Search -->
