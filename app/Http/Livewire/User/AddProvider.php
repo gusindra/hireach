@@ -1,21 +1,19 @@
 <?php
 
-namespace App\Http\Livewire\Audience;
+namespace App\Http\Livewire\User;
 
-use App\Models\AudienceClient;
+use App\Models\Provider;
+use App\Models\ProviderUser;
 use Livewire\Component;
-use App\Models\Template;
-use App\Models\Action;
-use App\Models\Audience;
-use App\Models\Client;
-use App\Models\DataAction;
 
-class AddContact extends Component
+class AddProvider extends Component
+
+
 {
-    public $audience;
-    public $audienceId;
+    public $user;
+    public $userId;
     public $actionId;
-    public $contactId;
+    public $providerId;
     public $is_multidata;
     public $array_data;
     public $modalActionVisible = false;
@@ -24,38 +22,39 @@ class AddContact extends Component
     public $type;
     public $content = 'text';
 
-    public function mount($audience)
+    public function mount($user)
     {
-        $this->audience = $audience;
-        $this->audienceId = $this->audience->id;
-        $this->type = false;
+        $this->user = $user;
+        $this->userId = $this->user->id;
     }
 
 
 
     public function modelData()
     {
+
         $data = [
-            'client_id'    => $this->contactId,
-            'audience_id'   => $this->audienceId
+            'provider_id'    => $this->providerId,
+            'user_id'   => $this->userId
         ];
+
         return $data;
     }
 
     public function rules()
     {
         return [
-            'contactId'   => 'required',
-            'audienceId' => 'required',
+            'providerId'   => 'required',
+            'userId' => 'required',
         ];
     }
 
     public function messages()
     {
         return [
-            'contactId.required'   => 'The client field is required.',
-            'audienceId.required' => 'The audience field is required.',
-            'contactId.unique'   => 'The Clients  has already been taken.',
+            'providerId.required'   => 'The client field is required.',
+            'userId.required' => 'The user field is required.',
+            'providerId.unique'   => 'The Clients  has already been taken.',
         ];
     }
 
@@ -63,8 +62,8 @@ class AddContact extends Component
     public function create()
     {
         // dd($this->modelData());
-        $this->validate();
-        $action = AudienceClient::firstOrCreate($this->modelData(), $this->modelData());
+        // $this->validate();
+        $action = ProviderUser::firstOrCreate($this->modelData(), $this->modelData());
         $this->modalActionVisible = false;
         $this->resetForm();
         if ($action->wasRecentlyCreated) {
@@ -93,8 +92,8 @@ class AddContact extends Component
      */
     public function delete()
     {
-        $audienceClient = AudienceClient::findOrFail($this->actionId);
-        $audienceClient->delete();
+        $userClient = ProviderUser::findOrFail($this->actionId);
+        $userClient->delete();
         $this->confirmingActionRemoval = false;
 
         $this->dispatchBrowserEvent('event-notification', [
@@ -106,13 +105,13 @@ class AddContact extends Component
 
     public function resetForm()
     {
-        $this->contactId = null;
+        $this->providerId = null;
     }
 
 
     public function actionShowModal()
     {
-        $this->array_data = Client::where('user_id', auth()->user()->currentTeam->user_id)->get();
+        $this->array_data = Provider::all();
         $this->modalActionVisible = true;
         $this->resetForm();
         $this->actionId = null;
@@ -125,7 +124,8 @@ class AddContact extends Component
      */
     public function read()
     {
-        return AudienceClient::where('audience_id', $this->audienceId)->get();
+        $provider = ProviderUser::where('user_id', $this->userId)->get();
+        return $provider;
     }
 
     public function updateShowModal($id)
@@ -145,21 +145,24 @@ class AddContact extends Component
      */
     public function loadModel()
     {
-        $data = AudienceClient::find($this->actionId);
-        $this->contactId    = $data->contact_id;
+        $data = ProviderUser::find($this->actionId);
+        dd($data);
+        $this->providerId    = $data->provider_id;
     }
 
     public function deleteShowModal($id)
     {
         $this->actionId = $id;
-        $data = AudienceClient::find($this->actionId);
-        $this->contactId = $data->contact_id;
+        $data = ProviderUser::find($this->actionId);
+        $this->providerId = $data->provider_id;
         $this->confirmingActionRemoval = true;
     }
 
+
     public function render()
     {
-        return view('livewire.audience.add-action', [
+
+        return view('livewire.user.add-provider', [
             'data' => $this->read(),
         ]);
     }

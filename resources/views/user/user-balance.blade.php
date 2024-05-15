@@ -1,26 +1,38 @@
 <x-app-layout>
-    <header class="bg-white dark:bg-slate-600 shadow">
+    {{-- <header class="bg-white dark:bg-slate-600 shadow">
         <div class="max-w-7xl mx-auto py-3 px-4 sm:px-6 lg:px-8">
             <big class="font-semibold text-xl text-gray-800 dark:text-slate-300 leading-tight">
-                <a class="hover:text-gray-400" href="{{route('user.show', $user->id)}}">{{ __('User Name') }} : <span class="capitalize">{{$user->name}}</span></a>
+                <a class="hover:text-gray-400" href="{{ route('user.show', $user->id) }}">{{ __('User Name') }} : <span
+                        class="capitalize">{{ $user->name }}</span></a>
                 -
-                <a href="#">{{ __('Balance') }} : <span class="capitalize">Rp {{number_format(balance($user))}}</span></a>
+                <a href="#">{{ __('Balance') }} : <span class="capitalize">Rp
+                        {{ number_format(balance($user)) }}</span></a>
             </big>
             <br>
-            @if(balance($user)!=0)
-            <small>
-                {{ __('Estimation') }} :
-                @foreach(estimationSaldo() as $product)
-                    <span class="capitalize">{{$product->name}} ({{number_format(balance($user)/$product->unit_price)}} SMS)</span>
-                @endforeach
-            </small>
+            @if (balance($user) != 0)
+                <small>
+                    {{ __('Estimation') }} :
+                    @foreach (estimationSaldo() as $product)
+                        <span class="capitalize">{{ $product->name }}
+                            ({{ number_format(balance($user) / $product->unit_price) }} SMS)
+                        </span>
+                    @endforeach
+                </small>
             @endif
         </div>
         <div class="max-w-7xl mx-auto py-3 px-4 sm:px-6 lg:px-8">
-            @livewire('saldo.topup', ['user' => $user])
+            @livewire('saldo.topup', ['user' => $user, 'id' => $id])
         </div>
-    </header>
-
+    </header> --}}
+    <div class="bg-white  ml-24 col-8 px-3 mt-2">
+        <div class="px-6 py-4  mx-auto my-3 rounded-lg shadow">
+            @livewire('saldo.topup', ['user' => $user, 'id' => $id])
+        </div>
+    </div>
+    @includeWhen(auth()->user()->super->first() && auth()->user()->super->first()->role == 'superadmin',
+        'menu.admin-menu-user-profile',
+        ['user' => $user]
+    )
     <!-- Team Dashboard -->
     <div class="py-3">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
@@ -32,7 +44,7 @@
                 </div>
 
                 <div class="p-3">
-                    <livewire:table.balance user="{{$user->id}}" exportable />
+                    <livewire:table.balance user="{{ $user->id }}" exportable />
                 </div>
             </div>
         </div>
