@@ -20,8 +20,8 @@ class TeamTable extends LivewireDatatable
     public function columns()
     {
         return [
-    		Column::name('user.name')->filterable()->label('Name'),
-    		Column::name('user.email')->filterable()->label('Email'),
+    		Column::name('user_id')->filterable()->label('Name'),
+    		Column::name('user_id')->filterable()->label('Email'),
     		DateColumn::name('created_at')->label('Register Date'),
             NumberColumn::name('user_id')->label('Detail')->sortBy('user_id')->callback('user_id', function ($value) {
                 return view('datatables::link', [
