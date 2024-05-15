@@ -155,7 +155,7 @@ class AddResource extends Component
                 // send request using template prt action
                 $data[$key] = [
                     'channel' => $channel,
-                    'type' => $type,
+                    'type' => 0,
                     'title' => $title,
                     'text' => $action->message,
                     'templateid' => $templateid,
@@ -168,7 +168,7 @@ class AddResource extends Component
         }else{
             $data = [
                 'channel' => $channel,
-                'type' => $type,
+                'type' => 0,
                 'title' => $title,
                 'text' => $text,
                 'templateid' => $templateid,
@@ -207,6 +207,7 @@ class AddResource extends Component
             //SINGLE RETRIVER
             $this->callJobResource($data, $credential);
         }
+        $this->emit('resource_saved');
     }
 
     public function callJobResource($data, $credential=null){

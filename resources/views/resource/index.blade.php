@@ -22,9 +22,9 @@
                     @endif
                     <div class="m-4">
                         @if(request ()->get('resource')==1)
-                        <livewire:table.requests-table searchable="name, description" resource="{{request ()->get('resource')}}" />
+                            <livewire:table.sms-blast-table searchable="name, description" resource="{{request ()->get('resource')}}" />
                         @elseif(request ()->get('resource')==2)
-                        <livewire:table.sms-blast-table searchable="name, description" resource="{{request ()->get('resource')}}" />
+                            <livewire:table.requests-table searchable="name, description" resource="{{request ()->get('resource')}}" />
                         @else
                         <div class="bg-white dark:bg-slate-600 overflow-hidden sm:rounded-lg">
                             <div class="mt-9 flex justify-center">

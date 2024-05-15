@@ -128,10 +128,10 @@ class ApiViGuardController extends Controller
             ]);
         }
         // show result on progress
-        // return response()->json([
-        //     'msg' => "Error! Nothing to save.",
-        //     'code' => 400
-        // ]);
+        return response()->json([
+            'msg' => "Error! Nothing to save.",
+            'code' => 400
+        ]);
     }
     
     private function convertText($request, $action){
@@ -141,6 +141,7 @@ class ApiViGuardController extends Controller
             $variable[$key] = $req;
         }
         return bind_to_template($variable, $action);
+        return $result;
     }
     
     /**
@@ -189,46 +190,48 @@ class ApiViGuardController extends Controller
                 if($template){
                     foreach($template->actions as $key => $action){
                         // send request using template prt action
-                        $data = [
+                        $data[$key] = [
                             'channel' => $channel,
                             'provider' => $provider,
                             'to' => $to,
                             'from' => $from,
                             'type' => 0,
                             'title' => $request->alarmDetails,
-                            'text' => $action->message,
+                            'text' => $this->convertText($request, $action->message),
                             'templateid' => $template->id,
                             'otp' => checkContentOtp($action->message)
                         ];
     
-                        if($request->channel=='email'){
-                            $reqArr = json_encode($data);
+                        if($channel=='email'){
+                            $reqArr = json_encode($data[$key]);
                             //THIS WILL QUEUE EMAIL JOB
-                            ProcessEmailApi::dispatch($data, $customer->user, $reqArr);
-                        }elseif(strpos($request->channel, 'sms') !== false){
-                            ProcessSmsApi::dispatch($data, $customer->user);
-                        }elseif($request->channel=='wa'){
+                            ProcessEmailApi::dispatch($data[$key], $customer->theUser, $reqArr);
+                        }elseif(strpos($channel, 'sms') !== false){
+                            ProcessSmsApi::dispatch($data[$key], $customer->theUser);
+                        }elseif($channel=='wa'){
                             $credential = null;
-                            foreach($customer->user->credential as $cre){
+                            foreach($customer->theUser->credential as $cre){
                                 if($cre->client=='api_wa_mk'){
                                     $credential = $cre;
                                 }
                             }
                             if($credential){
-                                ProcessWaApi::dispatch($data, $credential);
+                                ProcessWaApi::dispatch($data[$key], $credential);
                             }else{
                                 return response()->json([
                                     'msg' => "Invalid credential",
                                     'code' => 401
                                 ]);
                             }
+                                
                         }
-        
-                        return response()->json([
-                            'msg' => "Successful",
-                            'code' => 0
-                        ]);
                     }
+                    //Return API Respon
+                    return response()->json([
+                        'msg' => "Successful sending to ".$channel,
+                        'data' => $data,
+                        'code' => 0
+                    ]);
                 }else{
                     return response()->json([
                         'msg' => "Template Not Found",

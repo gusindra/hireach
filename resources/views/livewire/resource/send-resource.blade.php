@@ -1,6 +1,6 @@
 <div>
     <!-- This example requires Tailwind CSS v2.0+ -->
-    <div class="bg-indigo-600 mb-4">
+    <div class=" hidden bg-indigo-600 mb-4">
         <div class="w-full mx-auto p-3 px-3">
             <div class="flex items-center justify-between flex-wrap">
                 <div class="w-0 flex-1 flex items-center">
@@ -17,11 +17,14 @@
                             Respond Question
                         </span>
                         <span class="hidden md:inline">
-                            This template is use for respond question {{ $resource }} Way.
+                            This template is use for respond question <span class="font-bold">{{ $resource }} Way</span>.
                         </span>
                     </p>
                 </div>
                 <div class="order-2 flex-shrink-0 sm:order-3 sm:ml-3">
+                    <x-jet-action-message class="mr-3" on="resource_saved">
+                        {{ __('Resource data saved.') }}
+                    </x-jet-action-message>
                     <button type="button"
                         class="flex items-center my-auto p-3 text-xs text-white bg-indigo-800 rounded-md hover:bg-indigo-500 focus:outline-none focus:ring-2 focus:ring-white"
                         wire:click="sendResource">
@@ -32,7 +35,6 @@
                                 d="M15.59 14.37a6 6 0 0 1-5.84 7.38v-4.8m5.84-2.58a14.98 14.98 0 0 0 6.16-12.12A14.98 14.98 0 0 0 9.631 8.41m5.96 5.96a14.926 14.926 0 0 1-5.841 2.58m-.119-8.54a6 6 0 0 0-7.381 5.84h4.8m2.581-5.84a14.927 14.927 0 0 0-2.58 5.84m2.699 2.7c-.103.021-.207.041-.311.06a15.09 15.09 0 0 1-2.448-2.448 14.9 14.9 0 0 1 .06-.312m-2.24 2.39a4.493 4.493 0 0 0-1.757 4.306 4.493 4.493 0 0 0 4.306-1.758M16.5 9a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0Z" />
                         </svg>
                     </button>
-
                 </div>
             </div>
         </div>
@@ -41,55 +43,70 @@
     {{-- Channel Information --}}
     <x-jet-form-section submit="updateTemplate">
         <x-slot name="title">
-            {{ __('Channel') }}
+            {{ __('Sending Resource') }}
         </x-slot>
 
         <x-slot name="description">
-            {{ __('The Channel information.') }}
-        </x-slot>
-
-        <x-slot name="form">
-            <div class="col-span-6 grid grid-cols-5">
-                <!-- Type Information -->
-                <div class="col-span-1">
-                    <x-jet-label class="capitalize text-xs" value="type" />
-                    <div class="flex items-center mt-1">
-                        <div class="p-3 pl-0 pt-0">
-                            <div class="p-1 rounded-lg">
-                                <div class="text-gray-700 dark:text-slate-300 text-base">
-                                    Manual Template
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-span-1">
-                    <x-jet-label for="name" value="{{ __('Created By') }}" />
-                    <div class="flex items-center mt-1">
-                        <div class="p-3 pl-0 pt-0">
-                            <div class="p-1 rounded-lg">
-                                <div class="text-gray-700 dark:text-slate-300 text-base capitalize">
-                                    {{ auth()->user()->name }}
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-span-1">
-                    <x-jet-label for="name" value="{{ __('Created At') }}" />
-                    <div class="flex items-center mt-1">
-                        <div class="p-3 pl-0 pt-0">
-                            <div class="p-1 rounded-lg">
-                                <div class="text-gray-700 dark:text-slate-300 text-base ">
-                                    {{ date('d F Y') }}
-                                </div>
+            {{ __('Resource information.') }}<br><br>
+            <span class="hidden md:inline">
+                This request is use for send request notification using selected channel.
+            </span><br><br>
+            <div class="col-span-1">
+                <x-jet-label class="capitalize text-xs" value="type" />
+                <div class="flex items-center mt-1">
+                    <div class="p-3 pl-0 pt-0">
+                        <div class="p-1 rounded-lg">
+                            <div class="text-gray-700 dark:text-slate-300 text-base">
+                                <span class="font-bold">{{ $resource }} Way</span>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-            <div class="col-span-6 grid grid-cols-6 gap-3">
-                <div class="col-span-2 lg:col-span-2 p-3 bg-gray-100 border-1 rounded-lg space-y-3">
+            <div class="col-span-1">
+                <x-jet-label for="name" value="{{ __('Created By') }}" />
+                <div class="flex items-center mt-1">
+                    <div class="p-3 pl-0 pt-0">
+                        <div class="p-1 rounded-lg">
+                            <div class="text-gray-700 dark:text-slate-300 text-base capitalize">
+                                {{ auth()->user()->name }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-span-1">
+                <x-jet-label for="name" value="{{ __('Created At') }}" />
+                <div class="flex items-center mt-1">
+                    <div class="p-3 pl-0 pt-0">
+                        <div class="p-1 rounded-lg">
+                            <div class="text-gray-700 dark:text-slate-300 text-base ">
+                                {{ date('d F Y') }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div>
+                <x-jet-action-message class="mr-3" on="resource_saved">
+                    {{ __('Resource data saved.') }}
+                </x-jet-action-message>
+                <button type="button"
+                    class="w-full flex justify-center items-center my-auto p-3 text-xs text-white bg-indigo-800 rounded-md hover:bg-indigo-500 focus:outline-none focus:ring-2 focus:ring-white"
+                    wire:click="sendResource">
+                    SEND
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                        stroke="currentColor" class="ml-2 w-4 h-4">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M15.59 14.37a6 6 0 0 1-5.84 7.38v-4.8m5.84-2.58a14.98 14.98 0 0 0 6.16-12.12A14.98 14.98 0 0 0 9.631 8.41m5.96 5.96a14.926 14.926 0 0 1-5.841 2.58m-.119-8.54a6 6 0 0 0-7.381 5.84h4.8m2.581-5.84a14.927 14.927 0 0 0-2.58 5.84m2.699 2.7c-.103.021-.207.041-.311.06a15.09 15.09 0 0 1-2.448-2.448 14.9 14.9 0 0 1 .06-.312m-2.24 2.39a4.493 4.493 0 0 0-1.757 4.306 4.493 4.493 0 0 0 4.306-1.758M16.5 9a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0Z" />
+                    </svg>
+                </button>
+            </div>
+        </x-slot>
+
+        <x-slot name="form">
+            <div class="col-span-6 grid grid-cols-6 gap-2">
+                <div class="col-span-2 lg:col-span-2 p-3 bg-gray-100 border-1 rounded-lg space-y-2">
                     @if ($resource == 2)
                         <!-- Template Name -->
                         {{-- <div class="col-span-6 sm:col-span-4">
@@ -212,9 +229,8 @@
                     </div>
                 </div>
     
-                <div class="col-span-6 lg:col-span-6 space-y-3">
-                    
-                    <div class="col-span-6 lg:col-span-6 p-3 bg-gray-100 border-1 rounded-lg space-y-3">
+                <div class="col-span-6 lg:col-span-6 space-y-2">
+                    <div class="col-span-6 lg:col-span-6 p-3 bg-gray-100 border-1 rounded-lg space-y-2">
                         <x-jet-label for="from" value="{{ __('From') }}" />
                         {{-- <x-jet-input id="from" type="text" class="mt-1 block w-full" wire:model="from"
                             wire:model.defer="from" wire:model.debunce.800ms="from" :disabled="!Gate::check('update', $template)" /> --}}
@@ -229,7 +245,7 @@
                         <x-jet-input-error for="from" class="mt-2" /> 
                     </div>
 
-                    <div class="ol-span-6 lg:col-span-6 p-3 bg-gray-100 border-1 rounded-lg space-y-3">
+                    <div class="ol-span-6 lg:col-span-6 p-3 bg-gray-100 border-1 rounded-lg space-y-2">
                         <x-jet-label for="description" value="{{ __('To') }}" />
         
                         <div class="mb-4">
@@ -355,8 +371,8 @@
         </x-slot>
 
         <x-slot name="actions">
-            <x-jet-action-message class="mr-3" on="saved">
-                {{ __('Template saved.') }}
+            <x-jet-action-message class="mr-3" on="resource_saved">
+                {{ __('Resource data saved.') }}
             </x-jet-action-message>
 
             <x-jet-button wire:click="sendResource">
