@@ -14,7 +14,15 @@ class UsersTable extends LivewireDatatable
 
     public function builder()
     {
-        return User::query();
+        $user = User::query();
+        $role = request()->get('role');
+        if ($role === 'admin') {
+            $user->whereHas('super');
+        } else {
+            $user->whereDoesntHave('super');
+        }
+
+        return $user;
     }
 
     public function columns()
@@ -26,11 +34,11 @@ class UsersTable extends LivewireDatatable
                     'slot' => $x
                 ]);
                 //return $x;
-            })->label('ID')->searchable(), 
-    		Column::name('name')->label('Name'),
-    		Column::name('email')->label('Email'),
-    		Column::name('phone_no')->label('Phone Number'),
-    		DateColumn::name('created_at')->label('Creation Date')
-    	];
+            })->label('ID')->searchable(),
+            Column::name('name')->label('Name'),
+            Column::name('email')->label('Email'),
+            Column::name('phone_no')->label('Phone Number'),
+            DateColumn::name('created_at')->label('Creation Date')
+        ];
     }
 }

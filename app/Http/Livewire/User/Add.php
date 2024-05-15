@@ -19,15 +19,19 @@ class Add extends Component
     public $inputclient;
     public $entity;
     public $model;
+    public $role;
     public $source;
     public $showClients = false;
     public $is_modal = true;
 
-    public function mount($model=null)
+
+    public function mount($role, $model = null)
     {
-        if($model!=null){
+        if ($model != null) {
             $this->showClients = true;
         }
+
+        $this->role = $role;
     }
 
     public function rules()
@@ -39,6 +43,16 @@ class Add extends Component
         ];
     }
 
+    public function createUser()
+    {
+
+        $this->validate();
+        User::create($this->modelData());
+        $this->modalActionVisible = false;
+        $this->resetForm();
+        $this->emit('refreshLivewireDatatable');
+    }
+
     public function create()
     {
         $this->validate();
@@ -47,7 +61,8 @@ class Add extends Component
         $team = Team::find(1);
         $newTeamMember = Jetstream::findUserByEmailOrFail($user->email);
         $team->users()->attach(
-            $newTeamMember, ['role' => 'editor']
+            $newTeamMember,
+            ['role' => 'editor']
         );
         AddingTeam::dispatch($user);
         $user->switchTeam($team = $user->ownedTeams()->create([
@@ -56,7 +71,7 @@ class Add extends Component
             'personal_team' => false,
         ]));
 
-        if($this->showClients){
+        if ($this->showClients) {
             $customer =  Client::create([
                 'title'     => $this->inputclient['title'],
                 'name'      => $this->inputclient['name'],
@@ -69,7 +84,7 @@ class Add extends Component
             ]);
             $team = Team::find(0);
             $customer->teams()->attach($team);
-            if($customer){
+            if ($customer) {
                 $billing = BillingUser::create([
                     'tax_id'        => $this->inputclient['tax_id'],
                     'name'          => $this->inputclient['name'],
@@ -137,7 +152,7 @@ class Add extends Component
 
     public function render()
     {
-        if($this->is_modal==false){
+        if ($this->is_modal == false) {
             return view('livewire.user.form-add');
         }
         return view('livewire.user.add');
