@@ -17,6 +17,8 @@ class Edit extends Component
 
         $this->inputuser['name'] = $this->user->name ?? '';
         $this->inputuser['email'] = $this->user->email ?? '';
+        $this->inputuser['nick'] = $this->user->nick ?? '';
+        $this->inputuser['phone_no'] = $this->user->phone_no ?? '';
     }
 
     public function updateUser($id)
@@ -25,6 +27,8 @@ class Edit extends Component
         $user->update([
             'name'      => $this->inputuser['name'],
             'email'     => $this->inputuser['email'],
+            'nick'     => $this->inputuser['nick'],
+            'phone_no'     => $this->inputuser['phone_no'],
         ]);
         $this->emit('userSaved');
     }

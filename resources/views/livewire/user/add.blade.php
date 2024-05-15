@@ -1,11 +1,14 @@
 <div>
-    <div class="flex items-center text-right">
-        <a wire:click="actionShowModal"
-            class="inline-flex items-center px-2 py-1 dark:bg-slate-900 border border-green-700 text-green-500 cursor-pointer border-transparent rounded-sm font-normal text-xs  1g-widest hover:bg-green-300 active:bg-green-600 focus:outline-none focus:border-gray-900 focus:shadow-outline-gray disabled:opacity-25 transition"
-            wire:click="actionShowModal">
-            {{ __('+ User') }}
-        </a>
-    </div>
+    @if ($role == 'admin')
+        <x-jet-button wire:click="actionShowModal">
+            Add Admin
+        </x-jet-button>
+    @else
+        <x-jet-button wire:click="actionShowModal">
+            Add User
+        </x-jet-button>
+    @endif
+
 
     <!-- Form Action Modal -->
     <x-jet-dialog-modal wire:model="modalActionVisible">
@@ -147,7 +150,7 @@
 
             @if ($role == 'admin')
                 <x-jet-button class="ml-2" wire:click="create" wire:loading.attr="disabled">
-                    {{ __('Create as Admin') }}
+                    {{ __('Create') }}
                 </x-jet-button>
             @else
                 <x-jet-button class="ml-2" wire:click="createUser" wire:loading.attr="disabled">
