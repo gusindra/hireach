@@ -15,6 +15,9 @@ class Topup extends Component
     public $description;
     public $user;
     public $mutation;
+    public $saldoUser;
+    public $userSaldo;
+    public $userId;
 
     public function rules()
     {
@@ -25,6 +28,7 @@ class Topup extends Component
         ];
     }
 
+
     public function create()
     {
         $this->validate();
@@ -33,6 +37,7 @@ class Topup extends Component
         $this->resetForm();
         $this->emit('refreshLivewireDatatable');
     }
+
 
     public function modelData()
     {

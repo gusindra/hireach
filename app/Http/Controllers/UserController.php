@@ -51,6 +51,13 @@ class UserController extends Controller
         return redirect('user');
     }
 
+    public function provider(User $user)
+    {
+        return view('user.user-provider', ['user' => $user]);
+    }
+
+
+
     public function balance(User $user, Request $request)
     {
         // if($user->name != 'Admin'){
