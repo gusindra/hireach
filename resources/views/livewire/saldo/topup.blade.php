@@ -1,22 +1,28 @@
 <div>
-    <div class="flex items-center text-right">
-        <a wire:click="actionShowModal"
-            class="inline-flex items-center px-2 py-1 bg-green-800 border border-transparent rounded-sm font-normal text-xs text-white 1g-widest hover:bg-green-700 active:bg-green-900 focus:outline-none focus:border-gray-900 focus:shadow-outline-gray disabled:opacity-25 transition"
-            wire:click="actionShowModal">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6">
-                <path fill-rule="evenodd"
-                    d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25ZM12.75 9a.75.75 0 0 0-1.5 0v2.25H9a.75.75 0 0 0 0 1.5h2.25V15a.75.75 0 0 0 1.5 0v-2.25H15a.75.75 0 0 0 0-1.5h-2.25V9Z"
-                    clip-rule="evenodd" />
-            </svg>
-        </a>
+    <div class="flex justify-between items-center">
+        <div class="text-left">
+            <p class="text-lg "> {{ $user->name }}</p>
+            @if ($saldoUser)
+                <a class="hover:text-gray-400 text-lg font-semibold dark:text-slate-300"
+                    href="{{ route('user.show.balance', $user->id) }}">{{ __('Balance') }} : <span class="capitalize">Rp
+                        {{ number_format($saldoUser->balance, 0, ',', '.') }}</span></a>
+            @else
+                <p class="text-sm">Pengguna ini belum memiliki saldo.</p>
+            @endif
+        </div>
+        <div class="text-right">
+            <a wire:click="actionShowModal"
+                class="inline-flex items-center px-3 py-1 bg-green-800 border border-transparent rounded font-normal text-xs text-white 1g-widest hover:bg-green-700 active:bg-green-900 focus:outline-none focus:border-gray-900 focus:shadow-outline-gray disabled:opacity-25 transition">
+                <span>Top Up</span>
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6 ml-1">
+                    <path fill-rule="evenodd"
+                        d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25ZM12.75 9a.75.75 0 0 0-1.5 0v2.25H9a.75.75 0 0 0 0 1.5h2.25V15a.75.75 0 0 0 1.5 0v-2.25H15a.75.75 0 0 0 0-1.5h-2.25V9Z"
+                        clip-rule="evenodd" />
+                </svg>
+            </a>
+        </div>
     </div>
-    <div>
-        @if ($userSaldo)
-            Saldo Pengguna: {{ $userSaldo }}
-        @else
-            Pengguna ini belum memiliki saldo.
-        @endif
-    </div>
+
 
     <!-- Form Action Modal -->
     <x-jet-dialog-modal wire:model="modalActionVisible">

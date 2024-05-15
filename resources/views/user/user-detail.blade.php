@@ -1,6 +1,6 @@
 <x-app-layout>
     <x-slot name="header"></x-slot>
-    <header class="bg-white dark:bg-slate-900 dark:border-slate-600 border-b shadow">
+    {{-- <header class="bg-white dark:bg-slate-900 dark:border-slate-600 border-b shadow">
         <div class="max-w-7xl mx-auto py-3 px-4 sm:px-6 lg:px-8">
             <big class="font-semibold text-xl text-gray-800 dark:text-slate-300 leading-tight">
                 {{ __('User Name') }} : <span class="capitalize">{{ $user->name }}</span>
@@ -22,7 +22,8 @@
             @endif
         </div>
         <div class="max-w-7xl mx-auto py-3 px-4 sm:px-6 lg:px-8 justify-between flex">
-            @livewire('saldo.topup', ['user' => $user])
+            @livewire('saldo.topup', ['user' => $user, 'id' => $id])
+
 
 
             <div>
@@ -60,7 +61,15 @@
                 </div>
             </div>
         </div>
-    </header>
+    </header> --}}
+
+    <div class="bg-white  ml-24 col-8 px-3 mt-2">
+        <div class="px-6 py-4  mx-auto my-3 rounded-lg shadow">
+            @livewire('saldo.topup', ['user' => $user, 'id' => $id])
+        </div>
+    </div>
+
+
 
 
     <div class="grid grid-cols-12">
@@ -220,9 +229,8 @@
                                             <div class="p-6">
                                                 <div class="flex items-center">
                                                     <a href="http://telixcel.com/message">
-                                                        <svg fill="none" stroke="currentColor"
-                                                            stroke-linecap="round" stroke-linejoin="round"
-                                                            stroke-width="2" viewBox="0 0 24 24"
+                                                        <svg fill="none" stroke="currentColor" stroke-linecap="round"
+                                                            stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24"
                                                             class="w-16 dark:text-slate-300 text-gray-400">
                                                             <path stroke-linecap="round" stroke-linejoin="round"
                                                                 stroke-width="2"

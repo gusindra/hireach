@@ -19,6 +19,16 @@ class Topup extends Component
     public $userSaldo;
     public $userId;
 
+
+    public function mount($id)
+    {
+        $saldoUser = SaldoUser::where('user_id', $id)->latest()->first();
+        if ($saldoUser) {
+            $this->saldoUser = $saldoUser;
+        }
+    }
+
+
     public function rules()
     {
         return [
@@ -32,9 +42,10 @@ class Topup extends Component
     public function create()
     {
         $this->validate();
-        SaldoUser::create($this->modelData());
+        $saldoUser = SaldoUser::create($this->modelData());
         $this->modalActionVisible = false;
         $this->resetForm();
+        $this->saldoUser = $saldoUser;
         $this->emit('refreshLivewireDatatable');
     }
 
