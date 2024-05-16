@@ -1,6 +1,6 @@
 <div>
     <!-- Manage List Action -->
-    <div class="mt-10 sm:mt-0">
+    <div class="my-4 mx-3">
         <x-jet-action-section>
             <x-slot name="title">
                 {{ __('Add provider') }}
@@ -58,6 +58,10 @@
                                                                         {{ $item->provider->name }}
                                                                     </span>
 
+                                                                    <span>
+                                                                        {{ $item->channel }}
+                                                                    </span>
+
                                                                 </div>
                                                             </div>
                                                         </td>
@@ -93,19 +97,45 @@
 
         <x-slot name="content">
 
-            <div class="col-span-6 sm:col-span-4 p-3">
-                <x-jet-label for="providerId" value="{{ __('Resource') }}" />
-                <select name="providerId" id="providerId"
-                    class="border-gray-300 dark:bg-slate-800 dark:text-slate-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 rounded-md shadow-sm mt-1 block w-full"
-                    wire:model.debunce.800ms="providerId">
-                    <option selected value="text">--Select provider--</option>
-                    @if ($array_data)
-                        @foreach ($array_data as $provider)
-                            <option value="{{ $provider->id }}">{{ $provider->name }}</option>
-                        @endforeach
-                    @endif
-                </select>
-                <x-jet-input-error for="providerId" class="mt-2" />
+            <div class="col-span-6 sm:col-span-4 p-3 space-y-3">
+                <div>
+                    <x-jet-label for="providerId" value="{{ __('Resource') }}" />
+                    <select name="providerId" id="providerId"
+                        class="border-gray-300 dark:bg-slate-800 dark:text-slate-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 rounded-md shadow-sm mt-1 block w-full"
+                        wire:model.debunce.800ms="providerId">
+                        <option selected value="text">--Select provider--</option>
+                        @if ($array_data)
+                            @foreach ($array_data as $provider)
+                                <option value="{{ $provider->id }}">{{ $provider->name }}</option>
+                            @endforeach
+                        @endif
+                    </select>
+                    <x-jet-input-error for="providerId" class="mt-2" />
+                </div>
+                <div>
+                    <x-jet-label for="channel" value="{{ __('Channel') }}" />
+                    <select name="channel" id="channel"
+                        class="border-gray-300 dark:bg-slate-800 dark:text-slate-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 rounded-md shadow-sm mt-1 block w-full"
+                        wire:model.debunce.800ms="channel">
+                        <option selected value="text">--Select channel--</option>
+                        @if ($providerId==1)
+                            <option value="SMSOTP">SMS OTP</option> 
+                            <option value="SMSOTP">WABA</option>
+                        @endif
+                        @if ($providerId==2) 
+                            <option value="SMSNONOTP">SMS NON OTP</option>
+                            <option value="SMSOTP">WABA</option>
+                        @endif
+                        @if ($providerId==3)
+                            <option value="EMAIL">EMAIL</option>
+                        @endif
+                        @if ($providerId==4)
+                            <option value="SMSLN">SMS LONGNUMBER</option>
+                            <option value="WALN">WA LONGNUMBER</option>
+                        @endif
+                    </select>
+                    <x-jet-input-error for="channel" class="mt-2" />
+                </div>
             </div>
 
         </x-slot>

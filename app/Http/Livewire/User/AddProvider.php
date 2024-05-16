@@ -13,14 +13,12 @@ class AddProvider extends Component
     public $user;
     public $userId;
     public $actionId;
+    public $channel;
     public $providerId;
     public $is_multidata;
     public $array_data;
     public $modalActionVisible = false;
     public $confirmingActionRemoval = false;
-    public $link_attachment;
-    public $type;
-    public $content = 'text';
 
     public function mount($user)
     {
@@ -28,14 +26,12 @@ class AddProvider extends Component
         $this->userId = $this->user->id;
     }
 
-
-
     public function modelData()
     {
-
         $data = [
-            'provider_id'    => $this->providerId,
-            'user_id'   => $this->userId
+            'provider_id'   => $this->providerId,
+            'channel'       => $this->channel,
+            'user_id'       => $this->userId
         ];
 
         return $data;
@@ -44,20 +40,21 @@ class AddProvider extends Component
     public function rules()
     {
         return [
-            'providerId'   => 'required',
-            'userId' => 'required',
+            'providerId'    => 'required',
+            'channel'       => 'required',
+            'userId'        => 'required',
         ];
     }
 
     public function messages()
     {
         return [
-            'providerId.required'   => 'The client field is required.',
+            'providerId.required'   => 'The Provider field is required.',
+            'channel.required'   => 'The Channel field is required.',
             'userId.required' => 'The user field is required.',
-            'providerId.unique'   => 'The Clients  has already been taken.',
+            'providerId.unique'   => 'The Provider has already been taken.',
         ];
     }
-
 
     public function create()
     {
@@ -76,14 +73,12 @@ class AddProvider extends Component
         $this->actionId = null;
     }
 
-
     public function dehydrate()
     {
         if (!$this->modalActionVisible) {
             $this->resetForm();
         }
     }
-
 
     /**
      * The delete function.
@@ -102,12 +97,10 @@ class AddProvider extends Component
         ]);
     }
 
-
     public function resetForm()
     {
         $this->providerId = null;
     }
-
 
     public function actionShowModal()
     {
@@ -118,9 +111,9 @@ class AddProvider extends Component
     }
 
     /**
-     * The read function.
+     * The read provider function.
      *
-     * @return void
+     * @return object
      */
     public function read()
     {
@@ -138,7 +131,7 @@ class AddProvider extends Component
     }
 
     /**
-     * Loads the model data
+     * Loads the provider user data
      * of this component.
      *
      * @return void
@@ -146,7 +139,6 @@ class AddProvider extends Component
     public function loadModel()
     {
         $data = ProviderUser::find($this->actionId);
-        dd($data);
         $this->providerId    = $data->provider_id;
     }
 
@@ -161,7 +153,6 @@ class AddProvider extends Component
 
     public function render()
     {
-
         return view('livewire.user.add-provider', [
             'data' => $this->read(),
         ]);
