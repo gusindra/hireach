@@ -13,7 +13,7 @@ use Livewire\Component;
 use App\Models\Template;
 use Illuminate\Support\Facades\Auth;
 
-class AddResource extends Component
+class Send extends Component
 {
     public $resource;
     public $template;
@@ -303,6 +303,6 @@ class AddResource extends Component
         $audience = Audience::orderBy('created_at', 'desc')->where('user_id', auth()->user()->currentTeam->user_id)->get();
         $templates = Template::orderBy('created_at', 'desc')->where('user_id', auth()->user()->currentTeam->user_id)->where('resource', $this->resource)->get();
 
-        return view('livewire.resource.send-resource', compact('contacts', 'audience', 'templates'));
+        return view('livewire.resource.send', compact('contacts', 'audience', 'templates'));
     }
 }
