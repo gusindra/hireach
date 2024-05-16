@@ -205,7 +205,13 @@ class AddResource extends Component
             }
         }else{
             //SINGLE RETRIVER
-            $this->callJobResource($data, $credential);
+            if($templateid){
+                foreach($data as $da){
+                    $this->callJobResource($da, $credential);
+                }
+            }else{
+                $this->callJobResource($data, $credential);
+            }
         }
         $this->emit('resource_saved');
     }

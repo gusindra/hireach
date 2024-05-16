@@ -82,7 +82,7 @@
     </nav>
     <!-- END nav -->
     <video class="w-full fixed top-0 grayscale brightness-50" autoplay muted loop id="myVideo">
-        <source src="frontend/images/preview2.mp4" type="video/mp4">
+        <source src="testfrontend/images/preview2.mp4" type="video/mp4">
     </video>
     
     <section class="ftco-cover ftco-slant" style="background-image: url(frontend/images/bg_81.jpg);" id="section-home">
