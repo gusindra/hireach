@@ -5,10 +5,6 @@ namespace App\Http\Livewire\User;
 use App\Models\Notification as ModelsNotification;
 use App\Models\SaldoUser;
 use Livewire\Component;
-use App\Models\User;
-use Illuminate\Support\Facades\Notification;
-use App\Notifications\LowBalanceNotification;
-use Illuminate\Support\Facades\Auth;
 
 class Balance extends Component
 {
@@ -17,28 +13,39 @@ class Balance extends Component
 
     public function mount($userId)
     {
+        if (!$userId) {
+            return;
+        }
 
-        $this->saldoUser = SaldoUser::find($userId)->latest()->first();
-        $notifications = ModelsNotification::where('user_id', $userId)
-            ->where('status', 'unread')
-            ->get();
+        $saldoUser = SaldoUser::where('id', $userId)->first();
 
+        if (!$saldoUser) {
+            $this->createNotification($userId, 'Balance Alert. Your current balance is empty.');
+            return;
+        }
 
+        $this->saldoUser = $saldoUser;
 
-        if ($this->saldoUser->balance <= 10000 && $notifications->count() == 0) {
-            ModelsNotification::create([
-                'type' => 'Top Up',
-                'model_id' => $this->saldoUser->id,
-                'model' => 'Balance',
-                'notification' =>  'Balance Alert. Your current balance remaining Rp' . number_format($this->saldoUser->balance),
-                'user_id' => $userId,
-                'status' => 'unread'
-            ]);
+        if ($this->saldoUser->balance <= 10000) {
+            $notificationMessage = 'Balance Alert. Your current balance remaining Rp' . number_format($this->saldoUser->balance);
+            $this->createNotification($userId, $notificationMessage);
         }
     }
 
     public function render()
     {
         return view('livewire.user.balance');
+    }
+
+    private function createNotification($userId, $message)
+    {
+        ModelsNotification::create([
+            'type' => 'Top Up',
+            'model_id' => $userId,
+            'model' => 'Balance',
+            'notification' => $message,
+            'user_id' => $userId,
+            'status' => 'unread'
+        ]);
     }
 }
