@@ -24,19 +24,20 @@
             @livewire('saldo.topup', ['user' => $user, 'id' => $id])
         </div>
     </header> --}}
-    <div class="bg-white  ml-24 col-8 px-3 mt-2">
-        <div class="px-6 py-4  mx-auto my-3 rounded-lg shadow">
-            @livewire('saldo.topup', ['user' => $user, 'id' => $id])
-        </div>
-    </div>
+    
     @includeWhen(auth()->user()->super->first() && auth()->user()->super->first()->role == 'superadmin',
         'menu.admin-menu-user-profile',
         ['user' => $user]
     )
     <!-- Team Dashboard -->
-    <div class="py-3">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white dark:bg-slate-600 overflow-hidden shadow-xl sm:rounded-lg">
+    <div class="col-span-12 px-3 ml-24 mt-2 space-y-3">
+        <div class="bg-white col-8 mt-3">
+            <div class="px-6 py-4 mx-auto my-3 rounded-lg shadow">
+                @livewire('saldo.topup', ['user' => $user, 'id' => $id])
+            </div>
+        </div>
+        <div class="bg-white dark:bg-slate-600 overflow-hidden shadow-xl sm:rounded-lg pb-16">
+            <div class="mx-auto">
                 <div class="p-2 border-b border-gray-200">
                     <div class="mt-2 text-2xl">
                         History Balance Saldo

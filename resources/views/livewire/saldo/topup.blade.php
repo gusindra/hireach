@@ -1,11 +1,21 @@
 <div>
     <div class="flex justify-between items-center">
         <div class="text-left">
-            <p class="text-lg "> {{ $user->name }}</p>
+            <p class="text-2xl font-bold"> {{ $user->name }}</p>
             @if ($saldoUser)
                 <a class="hover:text-gray-400 text-lg font-semibold dark:text-slate-300"
                     href="{{ route('user.show.balance', $user->id) }}">{{ __('Balance') }} : <span class="capitalize">Rp
                         {{ number_format($saldoUser->balance, 0, ',', '.') }}</span></a>
+                @if (balance($user) != 0)
+                    <p class="text-xs">
+                        {{ __('Estimation') }} :
+                        @foreach (estimationSaldo() as $product)
+                            <span class="capitalize">{{ $product->name }}
+                                ({{ number_format(balance($user) / $product->unit_price) }} SMS)
+                            </span>
+                        @endforeach
+                    </p>
+                @endif
             @else
                 <p class="text-sm">Pengguna ini belum memiliki saldo.</p>
             @endif
@@ -22,7 +32,6 @@
             </a>
         </div>
     </div>
-
 
     <!-- Form Action Modal -->
     <x-jet-dialog-modal wire:model="modalActionVisible">
