@@ -33,6 +33,11 @@ class OrderController extends Controller
         return view('assistant.order.invoice');
     }
 
+    public function quotation()
+    {
+        return view('assistant.commercial.quotation.index');
+    }
+
     public function show(Order $order)
     {
         return view('assistant.order.show', ['order'=>$order]);

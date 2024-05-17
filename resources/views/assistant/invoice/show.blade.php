@@ -17,7 +17,7 @@
                                 <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
                             </svg>
                         </span>
-                        <x-jet-nav-link href="{{ route('invoice') }}">
+                        <x-jet-nav-link href="{{ route('admin.invoice') }}">
                             {{ __('Invoice ') }}
                         </x-jet-nav-link>
                         <span class="inline-flex items-center px-1 pt-1 text-xs font-medium leading-5 text-gray-900 ">

@@ -1,14 +1,15 @@
 <nav x-data="{ open: false }"
     class="w-full bg-white dark:text-white border-b border-gray-100 dark:border-slate-50/[0.06] supports-backdrop-blur:bg-white/60 dark:bg-slate-800 fixed">
     <!-- Primary Navigation Menu -->
-    <div class="mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="mx-auto px-4 sm:px-6 lg:px-4">
         <div class="flex justify-between h-16">
             <div class="flex">
                 <!-- Logo -->
                 <div class="flex-shrink-0 flex items-center">
                     <a class="navbar-brand" href="/">
-                        <img class="" src="https://hireach.archeeshop.com/frontend/images/logo-trans.png"
+                        <img class="hidden" src="https://hireach.archeeshop.com/frontend/images/logo-trans.png"
                             title="{{ env('APP_NAME') }}" style="width: 150px;" />
+                        <img style="height:50px;" src="{{url('/assets/img/logos/logo2.png')}}" />
                     </a>
                 </div>
 
@@ -103,7 +104,14 @@
             </div>
 
             <div class="hidden sm:flex sm:items-center sm:ml-6 flex-auto justify-end space-x-1">
+                <!-- Global Search -->
+                @if (auth()->user()->currentTeam && auth()->user()->currentTeam->id == env('IN_HOUSE_TEAM_ID'))
+                    @livewire('search.all')
+                @endif
+
+                <!-- Notification Dropdown -->
                 @livewire('notification-app', ['client_id' => Auth::user()->id], key(Auth::user()->id))
+
                 <!-- Teams Dropdown -->
                 @if (Auth::user()->currentTeam && Laravel\Jetstream\Jetstream::hasTeamFeatures())
                     <div class="ml-3 relative">
@@ -240,17 +248,7 @@
                     @livewire('agent-status')
                 </div>
 
-                <!-- Notification Dropdown -->
-
-
-                @if (auth()->user()->currentTeam && auth()->user()->currentTeam->id == env('IN_HOUSE_TEAM_ID'))
-                    <!-- Global Search -->
-                    @livewire('search.all')
-                @endif
-
-
-
-                <div class="flex items-center p-4 text-right">
+                <div class="flex items-center p-4 text-right hidden">
                     <!-- <a href="{{ strpos(Request::fullUrl(), '?') !== false ? Request::fullUrl() . '&' : Request::url() . '?' }}v=1" class="inline-flex dark:hover:bg-slate-600 cursor-pointer items-center px-2 py-1 text-gray-600 dark:bg-slate-800 border border-transparent rounded-md font-normal text-xs dark:text-white 1g-widest hover:text-slate-700 active:bg-green-900 focus:outline-none focus:border-gray-900 focus:shadow-outline-gray disabled:opacity-25 transition">
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M9 17.25v1.007a3 3 0 01-.879 2.122L7.5 21h9l-.621-.621A3 3 0 0115 18.257V17.25m6-12V15a2.25 2.25 0 01-2.25 2.25H5.25A2.25 2.25 0 013 15V5.25m18 0A2.25 2.25 0 0018.75 3H5.25A2.25 2.25 0 003 5.25m18 0V12a2.25 2.25 0 01-2.25 2.25H5.25A2.25 2.25 0 013 12V5.25" />

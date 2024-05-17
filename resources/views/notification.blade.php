@@ -13,9 +13,13 @@
 
         <div class="col-span-12 px-6 ml-24 mt-2">
             <div class="bg-white dark:bg-slate-600 overflow-hidden shadow-xl sm:rounded-lg">
-                <div class="container mx-auto">
-                    <a href="{{ route('notification.read.all') }}" class="p-2 text-xs">Read All Notification</a>
-                    @livewire('setting.notification.add')
+                <div class="mx-auto p-4">
+                    <div class="flex gap-3">
+                        @livewire('setting.notification.add')
+                        <a type="submit" class="inline-flex items-center px-4 py-2 border border-transparent rounded-md font-semibold text-xs text-slate-900 dark:text-slate-300 uppercase tracking-widest hover:border-gray-700 active:bg-gray-900 focus:outline-none focus:border-gray-900 focus:shadow-outline-gray disabled:opacity-25 transition" href="http://hireach.test/notif-center/read/all">
+                            Read All
+                        </a>
+                    </div>
                     <div class="flex flex-col mb-4 mt-5">
                         <form wire:submit.prevent="applyFilter" method="GET" action="{{ route('notification') }}">
 

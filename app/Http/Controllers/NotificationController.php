@@ -15,7 +15,6 @@ class NotificationController extends Controller
         $filterDate = request()->input('filterDate', $currentDate);
         $statusFilter = request()->input('statusFilter', '');
 
-
         return view('notification', compact('filterDate', 'statusFilter'));
     }
 

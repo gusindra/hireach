@@ -138,10 +138,13 @@ class ApiViGuardController extends Controller
         $text = $action;
         $variable = [];
         foreach($request->all() as $key => $req){
-            $variable[$key] = $req;
+            if($key=='image'){
+                $variable[$key] = '<img src="data:image/png;base64, '.$req.'" alt="Red dot" />';
+            }else{
+                $variable[$key] = $req;
+            }
         }
         return bind_to_template($variable, $action);
-        return $result;
     }
     
     /**
