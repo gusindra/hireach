@@ -138,10 +138,12 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
      */
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
-    Route::get('/resources', function () {
-        return view('resource.index');
-    })->name('resources.index');
+    // Route::get('/resources', function () {
+    //     return view('resource.index');
+    // })->name('resources.index');
+    Route::get('/resources', [ResourceController::class, 'index'])->name('resources.index');
     Route::get('/resources/create', [ResourceController::class, 'show'])->name('show.resource');
+
 
     Route::get('/contents', function () {
         return view('contents');
