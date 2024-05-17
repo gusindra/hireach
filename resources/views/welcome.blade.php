@@ -17,10 +17,11 @@
     <link rel="stylesheet" href="/css/all.min.css?v=26112021">
     <link rel="stylesheet" href="frontend/css/cookieconsent.css" media="print" onload="this.media='all'">
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/gh/alpinejs/alpine@v2.x.x/dist/alpine.min.js" defer></script>  
 </head>
 
 <body class="bg-black" data-spy="scroll" data-target="#ftco-navbar" data-offset="200">
-    
+  
     @if(app('request')->input('page')=='landingpage') 
     <!-- END nav -->
     <video class="w-full fixed top-0 grayscale brightness-50" autoplay muted loop id="myVideo">
@@ -51,11 +52,15 @@
         </div>
     </section>
     @else
-    <nav class="navbar navbar-expand-lg navbar-dark ftco_navbar bg-dark ftco-navbar-light" id="ftco-navbar">
-        <div class="container1 flex">
-            <a class="navbar-brand" href="/">
-                <img class="logo-white w-50" src="https://hireach.archeeshop.com/frontend/images/logo-trans.png" title="HiReach">
-                <img class="logo w-50 hidden" src="https://hireach.archeeshop.com/frontend/images/logo.png" title="HiReach">
+    <nav x-data="{ atTop: false }" class="navbar navbar-expand-lg navbar-dark ftco_navbar bg-dark ftco-navbar-light" id="ftco-navbar">
+        <div class="container1 flex" >
+            <a class="navbar-brand" href="/" >
+                {{-- <img class="logo-white w-50" src="https://hireach.archeeshop.com/frontend/images/logo-trans.png" title="HiReach">
+                <img class="logo w-50 hidden" src="https://hireach.archeeshop.com/frontend/images/logo.png" title="HiReach"> --}}
+                <img :class="{ '': atTop, 'block': !atTop, 'hidden': atTop }"
+                @scroll.window="atTop = (window.pageYOffset < 50) ? false: true" class="logo-white w-16" src="{{url('/assets/img/logos/logo2-inverse.svg')}}" title="HiReach">
+                <img :class="{ '': atTop, 'hidden': !atTop, 'block': atTop }"
+                @scroll.window="atTop = (window.pageYOffset < 50) ? false: true" class="logo w-16" src="{{url('/assets/img/logos/logo2.svg')}}" title="HiReach">
             </a>
             <button class="navbar-toggler lg:hidden flex p-1 mt-2" type="button" data-toggle="collapse" data-target="#ftco-nav" aria-controls="ftco-nav" aria-expanded="false" aria-label="Toggle navigation">
                 <svg style="height: 20px;width: 20px;" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
@@ -643,7 +648,7 @@
                 <div class="col-md-12">
                     <div class="ftco-footer-widget mb-4 text-center mt-4"> 
                         <h1 class="ftco-heading-21 text-white navbar-brand">
-                            <img src="https://hireach.archeeshop.com/frontend/images/logo-trans.png" title="{{ env('APP_NAME')}}" style="width: 200px;-webkit-filter: brightness(1000%); /* Safari 6.0 - 9.0 */
+                            <img src="{{url('/assets/img/logos/logo2-inverse.svg')}}" title="{{ env('APP_NAME')}}" style="width: 80px;-webkit-filter: brightness(1000%); /* Safari 6.0 - 9.0 */
   filter: brightness(1000%);" />
                         </h1>
                         <p class=" text-white">&copy; {{ env('APP_NAME')}} {{date('Y')}}. All Rights Reserved.</p>

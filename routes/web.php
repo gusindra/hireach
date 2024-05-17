@@ -130,6 +130,20 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
 
         Route::resource('reportings', 'Backend\ReportingController');
         Route::resource('logs', 'Backend\LogController');
+
+        Route::get('/company/{company}', [SettingController::class, 'company'])->name('settings.company.show');
+
+        Route::get('/project', [ProjectController::class, 'index'])->name('project');
+        Route::get('/project/{project}', [ProjectController::class, 'show'])->name('project.show');
+    
+        Route::get('report', [ReportController::class, 'index'])->name('admin.report');
+        Route::get('report/{key}', [ReportController::class, 'show'])->name('report.show');
+    
+        Route::get('commercial/{key}/{id}', [CommercialController::class, 'edit'])->name('commercial.edit.show');
+        Route::get('commercial/{id}/{type}/print', [CommercialController::class, 'template'])->name('commercial.print');
+        Route::get('product/commercial/syn', [CommercialController::class, 'sync'])->name('commercial.sync');
+        Route::post('product/commercial/syn', [CommercialController::class, 'syncPost'])->name('commercial.sync.post');
+    
     });
     
     /** ------------------------------------------
@@ -143,7 +157,6 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
     // })->name('resources.index');
     Route::get('/resources', [ResourceController::class, 'index'])->name('resources.index');
     Route::get('/resources/create', [ResourceController::class, 'show'])->name('show.resource');
-
 
     Route::get('/contents', function () {
         return view('contents');
@@ -186,22 +199,9 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
     Route::get('/channel/{channel}', [ChannelController::class, 'show'])->name('channel.show');
     //Route::get('/channel/{channel}/{resource}', [ChannelController::class, 'view'])->name('channel.view');
 
-    Route::get('/company/{company}', [SettingController::class, 'company'])->name('settings.company.show');
-
     Route::get('/assistant',  function () {
         return view('assistant.index');
     })->name('assistant');
-
-    Route::get('/project', [ProjectController::class, 'index'])->name('project');
-    Route::get('/project/{project}', [ProjectController::class, 'show'])->name('project.show');
-
-    Route::get('report', [ReportController::class, 'index'])->name('report.index');
-    Route::get('report/{key}', [ReportController::class, 'show'])->name('report.show');
-
-    Route::get('commercial/{key}/{id}', [CommercialController::class, 'edit'])->name('commercial.edit.show');
-    Route::get('commercial/{id}/{type}/print', [CommercialController::class, 'template'])->name('commercial.print');
-    Route::get('product/commercial/syn', [CommercialController::class, 'sync'])->name('commercial.sync');
-    Route::post('product/commercial/syn', [CommercialController::class, 'syncPost'])->name('commercial.sync.post');
 
     Route::get('/payment/deposit', [PaymentController::class, 'index'])->name('payment.deposit');
     Route::get('/payment/topup', [PaymentController::class, 'topup'])->name('payment.topup');
