@@ -3,17 +3,16 @@
         <x-jet-dropdown align="right" width="60">
             <x-slot name="trigger">
                 <span class="inline-flex rounded-md">
-                    <button type="button"
-                        class="inline-flex hover:bg-gray-50 items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 supports-backdrop-blur:bg-white/60 dark:bg-slate-800 dark:hover:bg-slate-600 hover:text-gray-700 focus:outline-none focus:bg-gray-50 active:bg-gray-50 transition">
-                        <svg xmlns="http://www.w3.org/2000/svg"
-                            class="h-4 w-4 dark:text-slate-300 dark:hover:text-slate-500 text-slate-500 hover:text-slate-800"
-                            fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
-                        </svg>
-                        @if ($data['count'] > 0)
-                            <span id="icon-notif"
-                                class="absolute top-0 right-0 px-2 py-1 text-xs font-bold leading-none text-white transform bg-red-600 rounded-full">{{ $data['count'] }}</span>
+                    <button type="button" class="inline-flex hover:bg-gray-50 items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 supports-backdrop-blur:bg-white/60 dark:bg-slate-800 dark:hover:bg-slate-600 hover:text-gray-700 focus:outline-none focus:bg-gray-50 active:bg-gray-50 transition">
+                        @if($data['count']>0)
+                            <span id="icon-notif" style="font-size: xx-small" class="absolute top-0 right-1 p-1 font-bold leading-none text-white transform bg-red-600 rounded-full">{{$data['count']}}</span>
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 dark:text-slate-300 dark:hover:text-slate-500 text-slate-600 hover:text-slate-800" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 0 1-2.25 2.25h-15a2.25 2.25 0 0 1-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25m19.5 0v.243a2.25 2.25 0 0 1-1.07 1.916l-7.5 4.615a2.25 2.25 0 0 1-2.36 0L3.32 8.91a2.25 2.25 0 0 1-1.07-1.916V6.75" />
+                            </svg>
+                        @else
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 dark:text-slate-300 dark:hover:text-slate-500 text-slate-600 hover:text-slate-800" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M21.75 9v.906a2.25 2.25 0 0 1-1.183 1.981l-6.478 3.488M2.25 9v.906a2.25 2.25 0 0 0 1.183 1.981l6.478 3.488m8.839 2.51-4.66-2.51m0 0-1.023-.55a2.25 2.25 0 0 0-2.134 0l-1.022.55m0 0-4.661 2.51m16.5 1.615a2.25 2.25 0 0 1-2.25 2.25h-15a2.25 2.25 0 0 1-2.25-2.25V8.844a2.25 2.25 0 0 1 1.183-1.981l7.5-4.039a2.25 2.25 0 0 1 2.134 0l7.5 4.039a2.25 2.25 0 0 1 1.183 1.98V19.5Z" />
+                            </svg>
                         @endif
                     </button>
                 </span>
