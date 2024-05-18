@@ -33,6 +33,7 @@ use App\Http\Controllers\SynProductController;
 use App\Http\Controllers\TeamInvitationController;
 use App\Http\Controllers\TemplateController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\ProviderController;
 use App\Http\Controllers\ResourceController;
 use App\Jobs\ProcessEmail;
 use App\Models\ApiCredential;
@@ -82,36 +83,40 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
         Route::get('logout', 'Backend\AuthController@logout');
         Route::resource('change-password', 'Backend\ChangePasswordController');
         Route::resource('users', 'Backend\UserController');
-        
+
         Route::get('/user', [UserController::class, 'index'])->name('admin.user');
         Route::get('/user/{user}', [UserController::class, 'show'])->name('user.show');
         Route::get('/user/{user}/balance', [UserController::class, 'balance'])->name('user.show.balance');
         Route::get('/user/{user}/profile', [UserController::class, 'profile'])->name('user.show.profile');
         Route::get('/user/{user}/provider', [UserController::class, 'provider'])->name('user.show.provider');
         Route::get('/user/{user}/order', [UserController::class, 'profile'])->name('user.show.order');
-        
+
         Route::get('/settings/clear-cache', 'Backend\SettingController@clearCache')->name('settings.clear-cache');
         Route::get('/settings/rebuild-cache', 'Backend\SettingController@rebuildCache')->name('settings.rebuild-cache');
         //Route::resource('settings', 'Backend\SettingController', ['only' => ['index', 'update']]);
-        
+
         Route::get('/user-billing', [UserBillingController::class, 'index'])->name('user.billing.index');
         Route::get('/user-billing/generate', [UserBillingController::class, 'generate'])->name('user.billing.generate');
         Route::post('/user-billing/invoice', [UserBillingController::class, 'invoice'])->name('user.billing.create.invoice');
-        
+
         Route::get('/invoice/{billing}', [UserBillingController::class, 'showInvoice'])->name('user.billing.invoice.show');
         Route::put('/invoice/{billing}', [UserBillingController::class, 'updateInvoice'])->name('user.billing.update.invoice');
-        
+
         Route::get('/roles', [RoleController::class, 'index'])->name('role.index');
         Route::get('/roles/{role}', [RoleController::class, 'show'])->name('role.show');
-        
+        Route::get('/settings/providers', [ProviderController::class, 'index'])->name('admin.settings.provider');
+        Route::get('/settings/providers/{provider}', [ProviderController::class, 'show'])->name('admin.settings.provider.show');
+
         Route::get('/permission', function () {
             return view('permission.index', ['page' => 'permission']);
         })->name('permission.index');
+
         Route::get('/flow/{model}', [FlowController::class, 'show'])->name('flow.show');
-        
+
         Route::get('/settings', [SettingController::class, 'index'])->name('admin.settings');
+
         Route::get('/settings/{page}', [SettingController::class, 'show'])->name('settings.show');
-        
+
         Route::get('/order', [OrderController::class, 'index'])->name('admin.order');
         Route::get('/order/{order}', [OrderController::class, 'show'])->name('show.order');
 
@@ -123,7 +128,7 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
 
         Route::get('/commission', [CommissionController::class, 'index'])->name('admin.commission');
         Route::get('/commission/{commission}', [CommissionController::class, 'show'])->name('show.commission');
-        
+
         Route::get('/commercial', [CommercialController::class, 'index'])->name('commercial');
         Route::get('/commercial/{key}', [CommercialController::class, 'show'])->name('commercial.show');
         Route::get('/commercial/{key}/{id}', [CommercialController::class, 'template'])->name('invoice');
@@ -145,7 +150,7 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
         Route::post('product/commercial/syn', [CommercialController::class, 'syncPost'])->name('commercial.sync.post');
     
     });
-    
+
     /** ------------------------------------------
      * User Routes
      * --------------------------------------------
@@ -275,34 +280,34 @@ Route::get('queue/{id}', function ($id) {
         // $path = public_path() . "/csvjson.json";
         // $content = json_decode(file_get_contents($path), true);
         // try {
-            //     foreach($content as $sms){
-                //         $msg_id = preg_replace('/\s+/', '', $sms['Message ID']);
-                //         $msisdn = preg_replace('/\s+/', '', $sms['Send to']);
-                //         $user_id = 16;
-                //         // return $sms['Date/Time'];
-                //         // return $sms['From'];
-                //         // return $sms['Send to'];
-                //         // return $sms['Message Title'];
-                //         // return $sms['Message Content'];
-                //         // return $sms['Message Status'];
-                //         $myDate = $sms['Date/Time'];
+        //     foreach($content as $sms){
+        //         $msg_id = preg_replace('/\s+/', '', $sms['Message ID']);
+        //         $msisdn = preg_replace('/\s+/', '', $sms['Send to']);
+        //         $user_id = 16;
+        //         // return $sms['Date/Time'];
+        //         // return $sms['From'];
+        //         // return $sms['Send to'];
+        //         // return $sms['Message Title'];
+        //         // return $sms['Message Content'];
+        //         // return $sms['Message Status'];
+        //         $myDate = $sms['Date/Time'];
         //         $smsDate = Carbon::createFromFormat('d/m/Y H:i', $myDate)->format('Y-m-d H:i');
         //         $client = Client::where('phone', $msisdn)->where('user_id', $user_id)->firstOr(function () use ($msisdn, $user_id) {
-            //             return Client::create([
-                //                 'phone' => $msisdn,
-                //                 'user_id' => $user_id,
-                //                 'uuid' => Str::uuid()
-                //             ]);
-                //         });
-                //         $modelData = [
-                    //             'msg_id'    => $msg_id,
-                    //             'user_id'   => $user_id,
-                    //             'client_id' => $client->uuid,
-                    //             'sender_id' => $sms['From'],
-                    //             'type'      => '0',
-                    //             'status'    => $sms['Message Status'],
-                    //             'code'      => '200',
-                    //             'message_content'  => $sms['Message Content'],
+        //             return Client::create([
+        //                 'phone' => $msisdn,
+        //                 'user_id' => $user_id,
+        //                 'uuid' => Str::uuid()
+        //             ]);
+        //         });
+        //         $modelData = [
+        //             'msg_id'    => $msg_id,
+        //             'user_id'   => $user_id,
+        //             'client_id' => $client->uuid,
+        //             'sender_id' => $sms['From'],
+        //             'type'      => '0',
+        //             'status'    => $sms['Message Status'],
+        //             'code'      => '200',
+        //             'message_content'  => $sms['Message Content'],
         //             'currency'  => 'IDR',
         //             'price'     => 500,
         //             'balance'   => 0,
@@ -311,58 +316,58 @@ Route::get('queue/{id}', function ($id) {
         //             'updated_by'=> $date,
         //         ];
         //         $blast = BlastMessage::create($modelData);
-        
+
         //         $blast->created_at = $smsDate;
         //         $blast->updated_at = $smsDate;
         //         $blast->save();
         //     }
         // } catch (\Throwable $th) {
-            //     dd($th);
-            // }
-            
-        }
-        dd("Job is done");
-    });
+        //     dd($th);
+        // }
 
-    Route::get('/restart-service', function () {
-        $curl = curl_init();
-        curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, 0);
-        curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, 0);
-        curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
-        
-        $header[0] = "Authorization: whm $user:$token";
-        curl_setopt($curl, CURLOPT_HTTPHEADER, $header);
-        curl_setopt($curl, CURLOPT_URL, $query);
-        
-        $result = curl_exec($curl);
-        
-        $http_status = curl_getinfo($curl, CURLINFO_HTTP_CODE);
-        if ($http_status != 200) {
-            echo "[!] Error: " . $http_status . " returned\n";
-        } else {
-            $json = json_decode($result);
-            echo "[+] Current cPanel users on the system:\n";
-            echo "\t" . $result . "\n";
-        }
-        
-        curl_close($curl);
-        return 'success';
+    }
+    dd("Job is done");
+});
+
+Route::get('/restart-service', function () {
+    $curl = curl_init();
+    curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, 0);
+    curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, 0);
+    curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
+
+    $header[0] = "Authorization: whm $user:$token";
+    curl_setopt($curl, CURLOPT_HTTPHEADER, $header);
+    curl_setopt($curl, CURLOPT_URL, $query);
+
+    $result = curl_exec($curl);
+
+    $http_status = curl_getinfo($curl, CURLINFO_HTTP_CODE);
+    if ($http_status != 200) {
+        echo "[!] Error: " . $http_status . " returned\n";
+    } else {
+        $json = json_decode($result);
+        echo "[+] Current cPanel users on the system:\n";
+        echo "\t" . $result . "\n";
+    }
+
+    curl_close($curl);
+    return 'success';
 });
 
 Route::get('/saveAlarm', [ApiViGuardController::class, 'index']);
 
-// 
-// 
+//
+//
 // BELOW IS ROUTE FOR TESTING
 // PLEASE CLEAR ALL ROUTE IN BELOW IF APP DEPOLY IN PRODUCTION SERVER
-// 
-// 
+//
+//
 Route::get('/test', [WebhookController::class, 'index']);
 Route::get('/testing', function () {
     // return 1;
     $lastError = SaldoUser::find(63);
     $errors = SaldoUser::where('balance', '<', 0)->where('user_id', '=', 1)->orderBy('id', 'asc')->get();
-    
+
     foreach ($errors as $er) {
         $lastError = SaldoUser::find($er->id - 1);
         SaldoUser::find($er->id)->update([
