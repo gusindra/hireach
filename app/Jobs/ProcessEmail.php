@@ -40,14 +40,14 @@ class ProcessEmail implements ShouldQueue
         if($this->type=="create_order" || $this->type=="payment_order"){
             $notif = $this->request->notifications('unread')->count();
             $email = 'support@telixcel.com';
-            $mail = Mail::to($email);
-            if($notif && $notif>0){
-                $mail->cc('finance@telixcel.com','mirza@telixcel.com','elly@goldeunion.group');
-            }
-            $mail->send(new OrderTelixcel($this->request));
+            //$mail = Mail::to($email);
+            // if($notif && $notif>0){
+            //     $mail->cc('finance@telixcel.com','mirza@telixcel.com','elly@goldeunion.group');
+            // }
+            // $mail->send(new OrderTelixcel($this->request));
         }elseif($this->type=="alert_balance"){
-            $email = $this->request->user->email;
-            Mail::to($email)->bcc('support@telixcel.com')->send(new BalanceAlert($this->request));
+            //$email = $this->request->user->email;
+            //Mail::to($email)->bcc('support@telixcel.com')->send(new BalanceAlert($this->request));
         }
     }
 }

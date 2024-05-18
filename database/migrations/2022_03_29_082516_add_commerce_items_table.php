@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('sku');
             $table->string('name');
             $table->string('spec');
+            $table->unsignedBigInteger('product_line');
             $table->string('source_id', 255)->nullable();
             $table->string('source', 255)->nullable();
             $table->string('type', 100)->nullable()->comment('sku, without_sku, one_time, monthly, annually');

@@ -31,7 +31,7 @@ class Transfer extends Component
                 'status' => 'unread'
             ]);
             
-            ProcessEmail::dispatch($this->order, 'payment_order');
+            //ProcessEmail::dispatch($this->order, 'payment_order');
         }else{
             $this->emit('already');
         }

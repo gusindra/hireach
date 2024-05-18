@@ -99,7 +99,7 @@
         </div>
     </header>
     <div>
-        <div class="max-w-7xl mx-auto pt-4 pb-10 sm:px-6 lg:px-8">
+        <div class="max-w-8xl mx-auto pt-4 pb-10 sm:px-6 lg:px-8 lg:ml-20">
             @if($quote->status=='approved' || $quote->status=='released')
                 <div class="md:grid md:grid-cols-5 md:gap-4">
                     <div class="md:col-span-1 flex justify-between">
@@ -134,3 +134,16 @@
         </div>
     </div>
 </x-app-layout>
+
+<x-app-layout>
+    <x-slot name="header">
+        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+            {{ __('Quotation') }}
+        </h2>
+    </x-slot>
+
+    <div class="grid grid-cols-12">
+        @includeWhen(auth()->user()->super->first() && auth()->user()->super->first()->role == 'superadmin', 'menu.admin-menu-order', [])
+    </div>
+</x-app-layout>
+

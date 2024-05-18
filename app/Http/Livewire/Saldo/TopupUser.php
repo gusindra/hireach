@@ -95,7 +95,7 @@ class TopupUser extends Component
                 ]);
             }
             
-            ProcessEmail::dispatch($order, 'create_order');
+            //ProcessEmail::dispatch($order, 'create_order');
             
             return redirect()->to('/payment/invoice/'.$order->id);
         } catch (\Throwable $th) {

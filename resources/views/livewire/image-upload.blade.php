@@ -13,12 +13,13 @@
             <div class="flex flex-wrap1 -mx-2">
                 @foreach($photos as $photo)
                 <div class="w-full p-2">
-                    <div class="w-full h-full border dark:border-0">
-                        <img class="w-full mt-4 rounded-xl shadow-soft-3xl" src="https://telixcel.s3.ap-southeast-1.amazonaws.com/{{ $photo->file }}">
+                    <div class="w-auto border dark:border-0">
+                        <img class="w-auto mt-4 rounded-xl shadow-soft-3xl max-h-32" src="https://telixcel.s3.ap-southeast-1.amazonaws.com/{{ $photo->file }}">
                     </div>
                 </div>
                 @endforeach
             </div>
+
             <div class="mb-6 pb-6">
                 <form wire:submit.prevent="save">
                     <div class="mb-3">
@@ -32,7 +33,6 @@
                     <button type="submit" class="px-4 py-2 font-bold text-white bg-blue-500 rounded hover:bg-blue-700">Upload Image</button>
                 </form>
             </div>
-
         </div>
     </div>
 </div>

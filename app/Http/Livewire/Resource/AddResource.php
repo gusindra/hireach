@@ -8,8 +8,10 @@ use App\Jobs\ProcessWaApi;
 use App\Models\Audience;
 use App\Models\AudienceClient;
 use App\Models\Client;
+use App\Models\ProviderUser;
 use Livewire\Component;
 use App\Models\Template;
+use Illuminate\Support\Facades\Auth;
 
 class AddResource extends Component
 {
@@ -31,9 +33,13 @@ class AddResource extends Component
     public $email;
     public $selectedContact;
     public $to;
+    public $providers;
     public $selectTo;
     public $selectedAudience;
     public $clients = [];
+
+    public $modalActionVisible = false;
+
 
     /**
      * mount
@@ -43,6 +49,7 @@ class AddResource extends Component
      */
     public function mount($uuid)
     {
+        $user = Auth::user();
         $this->resource = $uuid;
         $this->template = Template::with('question')->where('uuid', $uuid)->first();
         $this->channel = $this->channel ? $this->channel : '';
@@ -53,11 +60,18 @@ class AddResource extends Component
         $this->templateId =  '0';
         $this->selectTo = 'manual';
         $this->otp;
-        if($this->resource == 2){
+        if ($this->resource == 2) {
             $this->bound = 'out';
+        }
+        if ($user) {
+            $this->providers = ProviderUser::where('user_id', $user->id)->get();
         }
     }
 
+    public function actionShowModal()
+    {
+        $this->modalActionVisible = true;
+    }
     /**
      * rules
      *
@@ -107,8 +121,8 @@ class AddResource extends Component
         $this->text = '';
         $this->templateId = $value;
         $template = Template::with('actions')->find($value);
-        foreach($template->actions as $action){
-            $this->text = $this->text.'<div class="bg-green-200 p-3 rounded-lg my-4">'.$action->message.'</div>';
+        foreach ($template->actions as $action) {
+            $this->text = $this->text . '<div class="bg-green-200 p-3 rounded-lg my-4">' . $action->message . '</div>';
         }
     }
 
@@ -129,7 +143,7 @@ class AddResource extends Component
                 $to = Client::whereIn('uuid', $clientIds)->pluck('phone')->implode(',');
             }
         }
-        
+
         $credential = null;
         $channel = $this->channel;
         $type = $this->type;
@@ -148,14 +162,14 @@ class AddResource extends Component
         }
         $contact = explode(',', $to);
         //SENDING RESOURCE
-        if($templateid){
+        if ($templateid) {
             //set text using template
             $template = Template::find($templateid);
-            foreach($template->actions as $key => $action){
+            foreach ($template->actions as $key => $action) {
                 // send request using template prt action
                 $data[$key] = [
                     'channel' => $channel,
-                    'type' => $type,
+                    'type' => 0,
                     'title' => $title,
                     'text' => $action->message,
                     'templateid' => $templateid,
@@ -165,10 +179,10 @@ class AddResource extends Component
                     'otp' => checkContentOtp($action->message)
                 ];
             }
-        }else{
+        } else {
             $data = [
                 'channel' => $channel,
-                'type' => $type,
+                'type' => 0,
                 'title' => $title,
                 'text' => $text,
                 'templateid' => $templateid,
@@ -180,52 +194,60 @@ class AddResource extends Component
         }
         //dd($data);
 
-        if($this->channel=='wa'){
-            foreach(auth()->user()->credential as $cre){
-                if($cre->client=='api_wa_mk'){
+        if ($this->channel == 'wa') {
+            foreach (auth()->user()->credential as $cre) {
+                if ($cre->client == 'api_wa_mk') {
                     $credential = $cre;
                 }
             }
         }
-        
+
         //ONEWAY BLAST
-        if(count($contact)>1){
+        if (count($contact) > 1) {
             //GROUP RETRIVER
-            foreach($contact as $p){
+            foreach ($contact as $p) {
                 $data['to'] = $p;
-                if($template){
-                    foreach($data as $da){
+                if ($template) {
+                    foreach ($data as $da) {
                         $da['to'] = $p;
                         $this->callJobResource($da, $credential);
                     }
-                }else{
+                } else {
                     $data['to'] = $p;
                     $this->callJobResource($data, $credential);
                 }
             }
-        }else{
+        } else {
             //SINGLE RETRIVER
-            $this->callJobResource($data, $credential);
+            if ($templateid) {
+                foreach ($data as $da) {
+                    $this->callJobResource($da, $credential);
+                }
+            } else {
+                $this->callJobResource($data, $credential);
+            }
         }
+        $this->emit('resource_saved');
     }
 
-    public function callJobResource($data, $credential=null){
-        if($this->channel=='email'){
+    public function callJobResource($data, $credential = null)
+    {
+        if ($this->channel == 'email') {
             //THIS WILL QUEUE EMAIL JOB
             $reqArr = json_encode($data);
             ProcessEmailApi::dispatch($data, auth()->user(), $reqArr);
-        }elseif(strpos($this->channel, 'sms') !== false){
+        } elseif (strpos($this->channel, 'sms') !== false) {
             ProcessSmsApi::dispatch($data, auth()->user());
-        }elseif($this->channel=='wa'){
-            if($credential){
+        } elseif ($this->channel == 'wa') {
+            if ($credential) {
                 ProcessWaApi::dispatch($data, $credential);
-            }else{
+            } else {
                 return response()->json([
                     'message' => "Invalid credential",
                     'code' => 401
                 ]);
             }
-        }elseif($this->channel=='wa'){
+        } elseif ($this->channel == 'wa') {
             //ProcessChatApi::dispatch($request->all(), auth()->user());
         }
     }
@@ -269,7 +291,7 @@ class AddResource extends Component
             $this->from = 'noreply@hireach.archeeshop.com';
         } elseif ($this->channel == 'wa' || $this->channel == 'sm' || $this->channel == 'pl' || $this->channel == 'waba' || $this->channel == 'wc') {
             $this->fromList[0] = 'Auto';
-            if(auth()->user()->phone_no)
+            if (auth()->user()->phone_no)
                 $this->fromList[1] = auth()->user()->phone_no;
             $this->from = 'Auto';
         }

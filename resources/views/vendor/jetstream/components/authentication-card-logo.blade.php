@@ -1,6 +1,7 @@
 <a href="/">
     <a class="navbar-brand" style="text-transform: uppercase; font-size: 2em;" href="/">
-        <img class="logo" src="https://hireach.archeeshop.com/frontend/images/logo-trans.png" title="Telixcel" >
+        <img class="logo hidden" src="https://hireach.archeeshop.com/frontend/images/logo-trans.png" title="Telixcel" >
+        <img class="logo" style="height:100px;" src="{{url('/assets/img/logos/logo2.svg')}}" />
     </a>
 
     <!-- <svg class="w-16 h-16" viewbox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
