@@ -20,22 +20,22 @@ class Progress extends Component
     public $approval = false;
     public $remark;
     public $theme;
-    
+
     public function mount($model, $id)
     {
         $this->model_type = $model;
         $this->model_id = $id;
-        if($model=='project'){
+        if ($model == 'project') {
             $this->model = Project::find($id);
-        }elseif($model=='quotation'){
+        } elseif ($model == 'quotation') {
             $this->model = Quotation::find($id);
-        }elseif($model=='contract'){
+        } elseif ($model == 'contract') {
             $this->model = Contract::find($id);
-        }elseif($model=='order'){
+        } elseif ($model == 'order') {
             $this->model = Order::find($id);
-        }elseif($model=='commission'){
+        } elseif ($model == 'commission') {
             $this->model = Commision::find($id);
-        }elseif($model=='invoice'){
+        } elseif ($model == 'invoice') {
             $this->model = Billing::find($id);
         }
     }
@@ -45,7 +45,8 @@ class Progress extends Component
         return FlowProcess::where('model', $this->model_type)->where('model_id', $this->model_id)->get();
     }
 
-    public function submit(){
+    public function submit()
+    {
         $this->model->update([
             'status' => 'submit'
         ]);
@@ -54,11 +55,12 @@ class Progress extends Component
         $this->emit('saved');
     }
 
-    public function next($status=''){
+    public function next($status = '')
+    {
         $update_status = $status;
         $flow = FlowProcess::find($this->model->approval->id);
         $setting = FlowSetting::where('description', $flow->task)->where('role_id', $flow->role_id)->first();
-        if($setting){
+        if ($setting) {
             $update_status = $setting->result_status;
         }
         // dd($update_status);
@@ -76,11 +78,10 @@ class Progress extends Component
 
         return redirect(request()->header('Referer'));
         $this->emit('saved');
-
-
     }
 
-    public function decline(){
+    public function decline()
+    {
         $this->model->update([
             'status' => 'draft'
         ]);
@@ -98,8 +99,9 @@ class Progress extends Component
         return redirect(request()->header('Referer'));
         $this->emit('saved');
     }
-    
-    public function revise(){
+
+    public function revise()
+    {
         $this->model->update([
             'status' => 'draft'
         ]);
@@ -110,7 +112,7 @@ class Progress extends Component
 
     public function render()
     {
-        if($this->theme==1){
+        if ($this->theme == 1) {
             return view('livewire.commercial.theme.progress', [
                 'approvals' => $this->read()
             ]);

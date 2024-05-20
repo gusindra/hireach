@@ -39,7 +39,7 @@ class Quotation extends Model
         'addressed_company',
     ];
 
-    public static $searchable=[
+    public static $searchable = [
         "title",
         "quote_no"
     ];
@@ -66,24 +66,27 @@ class Quotation extends Model
     //     return $this->belongsTo('App\Models\Endpoint');
     // }
 
-    public function items(){
+    public function items()
+    {
         return $this->hasMany('App\Models\OrderProduct', 'model_id')->where('model', 'Quotation');
     }
 
     /**
      * Get all of team.
      */
-    public function approval(){
-    	return $this->hasOne('App\Models\FlowProcess', 'model_id')->where('model', 'quotation')->whereNull('status');
+    public function approval()
+    {
+        return $this->hasOne('App\Models\FlowProcess', 'model_id')->where('model', 'QUOTATION'); //->whereNull('status');
     }
-    public function userApproval(){
-    	return $this->hasMany('App\Models\FlowProcess', 'model_id')->where('model', 'quotation')->whereNotNull('user_id')->groupBy('user_id');
+    public function userApproval()
+    {
+        return $this->hasMany('App\Models\FlowProcess', 'model_id')->where('model', 'quotation')->whereNotNull('user_id')->groupBy('user_id');
     }
 
     // source model
     public function company()
     {
-    	return $this->belongsTo('App\Models\Company', 'model_id');
+        return $this->belongsTo('App\Models\Company', 'model_id');
     }
     public function project()
     {
@@ -92,6 +95,10 @@ class Quotation extends Model
     public function client()
     {
         return $this->belongsTo('App\Models\Client', 'model_id');
+    }
+    public function user()
+    {
+        return $this->belongsTo('App\Models\User', 'model_id')->where('model', 'USER');
     }
     public function order()
     {
@@ -103,13 +110,15 @@ class Quotation extends Model
      *
      * @return void
      */
-    public function attachments(){
+    public function attachments()
+    {
         return $this->hasMany('App\Models\Attachment', 'model_id')->where('model', 'quotation');
     }
 
     protected $appends = ['expired_date'];
 
-    public function getExpiredDateAttribute(){
+    public function getExpiredDateAttribute()
+    {
         $date = Carbon::createFromFormat('Y-m-d',  $this->date->format('Y-m-d'));
         $daysToAdd = $this->valid_day;
         return $date = $date->addDays($daysToAdd);

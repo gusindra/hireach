@@ -121,7 +121,7 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
         Route::get('/order/{order}', [OrderController::class, 'show'])->name('show.order');
 
         Route::get('/quotation', [OrderController::class, 'quotation'])->name('admin.quotation');
-        Route::get('/quotation/{quotation}', [OrderController::class, 'show'])->name('show.quotation');
+        Route::get('/quotation/{quotation}', [OrderController::class, 'showQuotation'])->name('show.quotation');
 
         Route::get('/invoice', [InvoiceController::class, 'index'])->name('admin.invoice');
         Route::get('/invoice-order/{invoice}', [InvoiceController::class, 'show'])->name('show.invoice');
@@ -140,15 +140,14 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
 
         Route::get('/project', [ProjectController::class, 'index'])->name('project');
         Route::get('/project/{project}', [ProjectController::class, 'show'])->name('project.show');
-    
+
         Route::get('report', [ReportController::class, 'index'])->name('admin.report');
         Route::get('report/{key}', [ReportController::class, 'show'])->name('report.show');
-    
+
         Route::get('commercial/{key}/{id}', [CommercialController::class, 'edit'])->name('commercial.edit.show');
         Route::get('commercial/{id}/{type}/print', [CommercialController::class, 'template'])->name('commercial.print');
         Route::get('product/commercial/syn', [CommercialController::class, 'sync'])->name('commercial.sync');
         Route::post('product/commercial/syn', [CommercialController::class, 'syncPost'])->name('commercial.sync.post');
-    
     });
 
     /** ------------------------------------------

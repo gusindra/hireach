@@ -22,7 +22,8 @@
                 <!-- Member Email -->
                 <div class="col-span-6 sm:col-span-4">
                     <x-jet-label for="inviteEmail" value="{{ __('Email') }}" />
-                    <x-jet-input id="inviteEmail" type="email" class="mt-1 block w-full" wire:model.defer="inviteEmail" />
+                    <x-jet-input id="inviteEmail" type="email" class="mt-1 block w-full" wire:model="inviteEmail"
+                        wire:model.defer="inviteEmail" wire:model.debunce.800ms="inviteEmail" />
                     <x-jet-input-error for="inviteEmail" class="mt-2" />
                 </div>
 
@@ -40,84 +41,87 @@
         </x-jet-form-section>
     </div>
 
-    @if(count($invites)>0)
-    <x-jet-section-border />
-    <!-- Team Member Invitations -->
-    <div class="mt-10 sm:mt-0">
-        <x-jet-action-section>
-            <x-slot name="title">
-                {{ __('Pending Invitations') }}
-            </x-slot>
+    @if (count($invites) > 0)
+        <x-jet-section-border />
+        <!-- Team Member Invitations -->
+        <div class="mt-10 sm:mt-0">
+            <x-jet-action-section>
+                <x-slot name="title">
+                    {{ __('Pending Invitations') }}
+                </x-slot>
 
-            <x-slot name="description">
-                {{ __('These people have been invited to your team and have been sent an invitation email. They may join the team by accepting the email invitation.') }}
-            </x-slot>
+                <x-slot name="description">
+                    {{ __('These people have been invited to your team and have been sent an invitation email. They may join the team by accepting the email invitation.') }}
+                </x-slot>
 
-            <x-slot name="content">
-                <div class="space-y-6">
-                    <!-- foreach invite user -->
-                    @foreach ($invites as $invite)
-                        <div class="flex items-center justify-between">
-                            <div class="text-gray-600 dark:text-slate-300">{{$invite->email}}</div>
+                <x-slot name="content">
+                    <div class="space-y-6">
+                        <!-- foreach invite user -->
+                        @foreach ($invites as $invite)
+                            <div class="flex items-center justify-between">
+                                <div class="text-gray-600 dark:text-slate-300">{{ $invite->email }}</div>
 
-                            <div class="flex items-center">
-                                <!-- Cancel Team Invitation -->
-                                <button class="cursor-pointer ml-6 text-sm text-red-500 focus:outline-none" wire:click="cancelTeamInvitation({{$invite->id}})">
-                                    {{ __('Cancel') }}
-                                </button>
+                                <div class="flex items-center">
+                                    <!-- Cancel Team Invitation -->
+                                    <button class="cursor-pointer ml-6 text-sm text-red-500 focus:outline-none"
+                                        wire:click="cancelTeamInvitation({{ $invite->id }})">
+                                        {{ __('Cancel') }}
+                                    </button>
+                                </div>
                             </div>
-                        </div>
-                    @endforeach
+                        @endforeach
 
-                </div>
-            </x-slot>
+                    </div>
+                </x-slot>
 
-            <x-slot name="actions">
-                <x-jet-action-message class="mr-3" on="deleted">
-                    {{ __('Deleted.') }}
-                </x-jet-action-message>
-            </x-slot>
-        </x-jet-action-section>
-    </div>
+                <x-slot name="actions">
+                    <x-jet-action-message class="mr-3" on="deleted">
+                        {{ __('Deleted.') }}
+                    </x-jet-action-message>
+                </x-slot>
+            </x-jet-action-section>
+        </div>
     @endif
 
-    @if(count($users)>0)
-    <x-jet-section-border />
-    <!-- Manage Team Members -->
-    <div class="mt-10 sm:mt-0">
-        <x-jet-action-section>
-            <x-slot name="title">
-                {{ __('Users') }}
-            </x-slot>
+    @if (count($users) > 0)
+        <x-jet-section-border />
+        <!-- Manage Team Members -->
+        <div class="mt-10 sm:mt-0">
+            <x-jet-action-section>
+                <x-slot name="title">
+                    {{ __('Users') }}
+                </x-slot>
 
-            <x-slot name="description">
-                {{ __('All of the people that are part of this team.') }}
-            </x-slot>
+                <x-slot name="description">
+                    {{ __('All of the people that are part of this team.') }}
+                </x-slot>
 
-            <!-- Team Member List -->
-            <x-slot name="content">
-                <div class="space-y-6">
+                <!-- Team Member List -->
+                <x-slot name="content">
+                    <div class="space-y-6">
                         <!-- foreach -->
-                    @foreach ($users as $user)
-                        <div class="flex items-center justify-between">
-                            <div class="flex items-center">
-                                <img class="w-8 h-8 rounded-full" src="{{ $user->user->profile_photo_url }}" alt="name">
-                                <div class="ml-4">{{$user->user->email}}</div>
-                                <div class="ml-4">( {{$user->user->name}} )</div>
-                            </div>
+                        @foreach ($users as $user)
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center">
+                                    <img class="w-8 h-8 rounded-full" src="{{ $user->user->profile_photo_url }}"
+                                        alt="name">
+                                    <div class="ml-4">{{ $user->user->email }}</div>
+                                    <div class="ml-4">( {{ $user->user->name }} )</div>
+                                </div>
 
-                            <div class="flex items-center">
-                                <!-- Remove Team Member -->
-                                <button class="cursor-pointer ml-6 text-sm text-red-500" wire:click="confirmTeamMemberRemoval({{$user->id}})">
-                                    {{ __('Remove') }}
-                                </button>
+                                <div class="flex items-center">
+                                    <!-- Remove Team Member -->
+                                    <button class="cursor-pointer ml-6 text-sm text-red-500"
+                                        wire:click="confirmTeamMemberRemoval({{ $user->id }})">
+                                        {{ __('Remove') }}
+                                    </button>
+                                </div>
                             </div>
-                        </div>
-                    @endforeach
-                </div>
-            </x-slot>
-        </x-jet-action-section>
-    </div>
+                        @endforeach
+                    </div>
+                </x-slot>
+            </x-jet-action-section>
+        </div>
     @endif
 
     <!-- Remove Team Member Confirmation Modal -->
