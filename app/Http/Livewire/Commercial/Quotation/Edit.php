@@ -34,6 +34,7 @@ class Edit extends Component
     public $source;
     public $source_id;
     public $modalDeleteVisible = false;
+    public $formName;
 
 
 
@@ -70,9 +71,45 @@ class Edit extends Component
 
     public function rules()
     {
-        return [
-            'quoteNo' => 'required'
+
+
+        $data = [
+            'quoteNo' => 'required',
+            'name' => 'required',
+            'valid_day' => 'required',
+
+
         ];
+        if ($this->formName == 'customer') {
+            $data = [
+                'model' => 'required',
+                'model_id' => 'required',
+            ];
+        } elseif ($this->formName == 'description') {
+            $data = [
+                'description' => 'required',
+            ];
+        } elseif ($this->formName == 'price') {
+            $data = [
+                'title' => 'required',
+                'title' => 'required',
+            ];
+        } elseif ($this->formName == 'terms') {
+            $data = [
+                'terms' => 'required',
+
+            ];
+        } elseif ($this->formName == 'footer') {
+            $data = [
+                'addressed_name' => 'required',
+                'addressed_role' => 'required',
+                'addressed_company' => 'required',
+                'crated_by' => 'required',
+            ];
+        }
+
+
+        return $data;
     }
 
     public function modelData()
@@ -118,8 +155,9 @@ class Edit extends Component
     }
 
 
-    public function update($id)
+    public function update($id, $formName = 'basic')
     {
+        $this->formName = $formName;
         $this->validate();
         Quotation::find($id)->update($this->modelData());
         $this->emit('saved');

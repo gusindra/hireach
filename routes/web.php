@@ -209,6 +209,9 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
 
     Route::get('/payment/deposit', [PaymentController::class, 'index'])->name('payment.deposit');
     Route::get('/payment/topup', [PaymentController::class, 'topup'])->name('payment.topup');
+    Route::get('/quotation', [PaymentController::class, 'quotation'])->name('quotation');
+    Route::get('/quotation/{quotation}', [PaymentController::class, 'quotationShow'])->name('quotation.show');
+
     Route::get('/payment/invoice/{id}', [PaymentController::class, 'invoice'])->name('invoice.topup');
 
     Route::get('/update-sms/{id}/{status}', [AdminSmsController::class, 'updateStatus'])->name('admin.update.sms.status');

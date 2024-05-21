@@ -1,5 +1,5 @@
 <div>
-    <x-jet-form-section submit="update({{ $quote->id }})">
+    <x-jet-form-section submit="update({{ $quote->id }},'basic')">
         <x-slot name="title">
             {{ __('1. Quotation Basic') }}
         </x-slot>
@@ -101,7 +101,7 @@
 
     <x-jet-section-border />
 
-    <x-jet-form-section submit="update({{ $quote->id }})">
+    <x-jet-form-section submit="update({{ $quote->id }},'customer')">
         <x-slot name="title">
             {{ __('1. Customer Information') }}
         </x-slot>
@@ -174,7 +174,7 @@
 
     <x-jet-section-border />
 
-    <x-jet-form-section submit="update({{ $quote->id }})">
+    <x-jet-form-section submit="update({{ $quote->id }},'description')">
         <x-slot name="title">2. Description</x-slot>
 
         <x-slot name="description">
@@ -210,7 +210,7 @@
 
     <x-jet-section-border />
 
-    <x-jet-form-section submit="update({{ $quote->id }})">
+    <x-jet-form-section submit="update({{ $quote->id }}),'terms">
         <x-slot name="title">4. Terms & Conditions :</x-slot>
 
         <x-slot name="description">
@@ -240,7 +240,7 @@
 
     <x-jet-section-border />
 
-    <x-jet-form-section submit="update({{ $quote->id }})">
+    <x-jet-form-section submit="update({{ $quote->id }}),'footer">
         <x-slot name="title">5. Footer :</x-slot>
 
         <x-slot name="description">
