@@ -19,10 +19,7 @@ class Balance extends Component
 
         $saldoUser = SaldoUser::where('id', $userId)->first();
 
-        if (!$saldoUser) {
-            $this->createNotification($userId, 'Balance Alert. Your current balance is empty.');
-            return;
-        }
+
 
         $this->saldoUser = $saldoUser;
 

@@ -2,7 +2,9 @@
 
 namespace App\Http\Livewire\Commercial\Quotation;
 
+use App\Models\Client;
 use App\Models\Quotation;
+use App\Models\User;
 use Carbon\Carbon;
 use Livewire\Component;
 use Illuminate\Support\Facades\Auth;
@@ -16,6 +18,14 @@ class Add extends Component
     public $valid_day;
     public $model;
     public $source;
+    public $model_id;
+    public $users;
+    public $source_id;
+
+    public function mount()
+    {
+        $this->users = User::all();
+    }
 
     public function rules()
     {
@@ -29,13 +39,19 @@ class Add extends Component
 
     public function create()
     {
+
         $this->validate();
+
         Quotation::create($this->modelData());
         $this->modalActionVisible = false;
         $this->resetForm();
         $this->emit('refreshLivewireDatatable');
     }
 
+    public function updatedModelId($value)
+    {
+        $this->source_id = $value;
+    }
     public function modelData()
     {
         $data = [
@@ -45,15 +61,19 @@ class Add extends Component
             'date'          => $this->date,
             'user_id'       => Auth::user()->id,
         ];
-        if($this->model && $this->source){
-            $data['model']      = $this->model;
+
+
+        if ($this->source) {
+            $data['model']      = 'USER';
             $data['model_id']   = $this->source;
         }
+
         return $data;
     }
 
     public function resetForm()
     {
+        $this->model_id = null;
         $this->type = null;
         $this->title = null;
         $this->date = null;
