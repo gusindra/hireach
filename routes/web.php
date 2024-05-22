@@ -80,9 +80,9 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
     Route::prefix('admin')->middleware('admin')->group(function () {
         Route::get('/', [DashboardController::class, 'show'])->name('admin');
 
-        Route::get('logout', 'Backend\AuthController@logout');
-        Route::resource('change-password', 'Backend\ChangePasswordController');
-        Route::resource('users', 'Backend\UserController');
+        //Route::get('logout', 'Backend\AuthController@logout');
+        //Route::resource('change-password', 'Backend\ChangePasswordController');
+        // Route::resource('users', 'Backend\UserController');
 
         Route::get('/user', [UserController::class, 'index'])->name('admin.user');
         Route::get('/user/{user}', [UserController::class, 'show'])->name('user.show');
@@ -91,8 +91,8 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
         Route::get('/user/{user}/provider', [UserController::class, 'provider'])->name('user.show.provider');
         Route::get('/user/{user}/order', [UserController::class, 'profile'])->name('user.show.order');
 
-        Route::get('/settings/clear-cache', 'Backend\SettingController@clearCache')->name('settings.clear-cache');
-        Route::get('/settings/rebuild-cache', 'Backend\SettingController@rebuildCache')->name('settings.rebuild-cache');
+        // Route::get('/settings/clear-cache', 'Backend\SettingController@clearCache')->name('settings.clear-cache');
+        // Route::get('/settings/rebuild-cache', 'Backend\SettingController@rebuildCache')->name('settings.rebuild-cache');
         //Route::resource('settings', 'Backend\SettingController', ['only' => ['index', 'update']]);
 
         Route::get('/user-billing', [UserBillingController::class, 'index'])->name('user.billing.index');
@@ -133,8 +133,8 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
         Route::get('/commercial/{key}', [CommercialController::class, 'show'])->name('commercial.show');
         Route::get('/commercial/{key}/{id}', [CommercialController::class, 'template'])->name('invoice');
 
-        Route::resource('reportings', 'Backend\ReportingController');
-        Route::resource('logs', 'Backend\LogController');
+        // Route::resource('reportings', 'Backend\ReportingController');
+        // Route::resource('logs', 'Backend\LogController');
 
         Route::get('/company/{company}', [SettingController::class, 'company'])->name('settings.company.show');
 
@@ -831,7 +831,7 @@ Route::get('/email', function () {
 // })->name('billing');
 
 //retrive json and save to db
-Route::get('/get-from-ginee', [SynProductController::class, 'index']);
+// Route::get('/get-from-ginee', [SynProductController::class, 'index']);
 
 // testing response json format\
 Route::get('/json', [ApiBulkSmsController::class, 'ginee']);
