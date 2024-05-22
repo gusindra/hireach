@@ -24,11 +24,10 @@
             </div>
         </div>
     </header>
-    @includeWhen(auth()->user()->super->first() && auth()->user()->super->first()->provider == 'superadmin',
+    @includeWhen(auth()->user()->isSuper || (auth()->user()->team && auth()->user()->team->role == 'superadmin'),
         'menu.admin-menu-setting',
         []
     )
-    @include('menu.admin-menu-setting')
     <div>
         <div class="max-w-7xl mx-auto py-10 sm:px-6 lg:px-8">
             @livewire('provider.edit', ['uuid' => $provider->id])

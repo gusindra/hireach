@@ -100,28 +100,28 @@
                 <x-slot name="content">
                     <div class="space-y-6">
                         <!-- foreach -->
-                        @foreach ($users as $user)
+                    @foreach ($users as $user)
+                        @if($user->user)
                             <div class="flex items-center justify-between">
                                 <div class="flex items-center">
-                                    <img class="w-8 h-8 rounded-full" src="{{ $user->user->profile_photo_url }}"
-                                        alt="name">
-                                    <div class="ml-4">{{ $user->user->email }}</div>
-                                    <div class="ml-4">( {{ $user->user->name }} )</div>
+                                    <img class="w-8 h-8 rounded-full" src="{{ $user->user->profile_photo_url }}" alt="name">
+                                    <div class="ml-4">{{$user->user->email}}</div>
+                                    <div class="ml-4">( {{$user->user->name}} )</div>
                                 </div>
 
                                 <div class="flex items-center">
                                     <!-- Remove Team Member -->
-                                    <button class="cursor-pointer ml-6 text-sm text-red-500"
-                                        wire:click="confirmTeamMemberRemoval({{ $user->id }})">
+                                    <button class="cursor-pointer ml-6 text-sm text-red-500" wire:click="confirmTeamMemberRemoval({{$user->id}})">
                                         {{ __('Remove') }}
                                     </button>
                                 </div>
                             </div>
-                        @endforeach
-                    </div>
-                </x-slot>
-            </x-jet-action-section>
-        </div>
+                        @endif
+                    @endforeach
+                </div>
+            </x-slot>
+        </x-jet-action-section>
+    </div>
     @endif
 
     <!-- Remove Team Member Confirmation Modal -->
