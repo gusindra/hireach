@@ -17,33 +17,33 @@
     <link rel="stylesheet" href="/css/all.min.css?v=26112021">
     <link rel="stylesheet" href="frontend/css/cookieconsent.css" media="print" onload="this.media='all'">
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/gh/alpinejs/alpine@v2.x.x/dist/alpine.min.js" defer></script>  
+    <script src="https://cdn.jsdelivr.net/gh/alpinejs/alpine@v2.x.x/dist/alpine.min.js" defer></script>
 </head>
 
 <body class="bg-black" data-spy="scroll" data-target="#ftco-navbar" data-offset="200">
-  
-    @if(app('request')->input('page')=='landingpage') 
+
+    @if(app('request')->input('page')!='landingpage')
     <!-- END nav -->
-    <video class="w-full fixed top-0 grayscale brightness-50" autoplay muted loop id="myVideo">
+    <div class="w-full fixed top-0 grayscale brightness-50" autoplay muted loop id="myVideo">
         <source src="frontend/images/preview2.mp4" type="video/mp4">
-    </video>
-    
+    </div>
+
     <section class="ftco-cover1 ftco-slant1" id="section-home">
         <div class="container">
             <div class="row align-items-center justify-content-center items-center text-center ftc1o-vh-100 mt-48">
                 <div class="col-md-12"><div class="text-3xl text-white uppercase">Welcome to</div></div>
                 <div class="col-md-12 flex justify-center items-bottom text-center mx-auto mb-20">
-                    <img class="logo-white w-64 h-auto" src="https://hireach.archeeshop.com/frontend/images/logo-trans.png" title="HiReach" style="filter: brightness(1000%);">
+                    <img class="logo-white w-24 h-auto mt-8" src="{{url('/assets/img/logos/logo2-inverse.svg')}}" title="HiReach" style="filter: brightness(1000%);">
                 </div>
                 <div class="col-md-12">
                     <div class="visible" id="ftco-nav">
                         <ul class="navbar-nav1 ml-auto lg:flex  justify-center gap-10">
-                            <li class="nav-item text-white"><a href="{{url('/')}}" class="nav-link text-lg hover:bg-white hover:text-black rounded-sm border-4 border-white hover:font-bold px-8">Website</a></li>  
+                            <li class="nav-item text-white"><a href="{{url('/')}}?page=landingpage" class="nav-link text-lg hover:bg-white hover:text-black rounded-sm border-4 border-white hover:font-bold px-8">Website</a></li>
                             <li class="nav-item text-white"><a href="{{url('/api/documentation')}}" class="nav-link text-lg hover:bg-white hover:text-black rounded-sm border-4 border-white hover:font-bold px-8">API Documentation</a></li>
                             @if(auth()->user())
                             <li class="nav-item text-white"><a href="{{url('/dashboard')}}" class="nav-link text-lg hover:bg-white hover:text-black rounded-sm border-4 border-white hover:font-bold px-8">Dashboard</a></li>
                             @else
-                            <li class="nav-item text-white"><a href="{{url('/login')}}" class="nav-link text-lg hover:bg-white hover:text-black rounded-sm border-4 border-white hover:font-bold px-8">Login</a></li> 
+                            <li class="nav-item text-white"><a href="{{url('/login')}}" class="nav-link text-lg hover:bg-white hover:text-black rounded-sm border-4 border-white hover:font-bold px-8">Login</a></li>
                             @endif
                         </ul>
                     </div>
@@ -89,7 +89,7 @@
     <video class="w-full fixed top-0 grayscale brightness-50" autoplay muted loop id="myVideo">
         <source src="testfrontend/images/preview2.mp4" type="video/mp4">
     </video>
-    
+
     <section class="ftco-cover ftco-slant" style="background-image: url(frontend/images/bg_81.jpg);" id="section-home">
         <div class="container">
             <div class="row align-items-center justify-content-center text-center ftco-vh-100">
@@ -457,7 +457,7 @@
           </div>
         </div>
       </div>
-    </section> 
+    </section>
 
     <section class="ftco-section bg-white ftco-slant" id="section-contact">
         <div class="container">
@@ -590,7 +590,7 @@
                   <span class="ftco-label">Number of Clients</span>
                 </div>
               </div>
-            </div> 
+            </div>
         </div>
     </section>
 
@@ -646,7 +646,7 @@
                     </div>
                 </div>
                 <div class="col-md-12">
-                    <div class="ftco-footer-widget mb-4 text-center mt-4"> 
+                    <div class="ftco-footer-widget mb-4 text-center mt-4">
                         <h1 class="ftco-heading-21 text-white navbar-brand">
                             <img src="{{url('/assets/img/logos/logo2-inverse.svg')}}" title="{{ env('APP_NAME')}}" style="width: 80px;-webkit-filter: brightness(1000%); /* Safari 6.0 - 9.0 */
   filter: brightness(1000%);" />
