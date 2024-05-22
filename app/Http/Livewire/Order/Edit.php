@@ -34,6 +34,7 @@ class Edit extends Component
     public $input;
     public $modalAttach = false;
     public $url;
+    public $modalDeleteVisible = false;
 
     public function mount($uuid)
     {
@@ -51,7 +52,7 @@ class Edit extends Component
         $this->input['status'] = $this->order->status ?? '';
         $this->input['source'] = $this->order->source ?? '';
         $this->input['source_id'] = $this->order->source_id ?? '';
-        $this->input['date'] = $this->order->date ? $this->order->date->format('Y-m-d') :'';
+        $this->input['date'] = $this->order->date ? $this->order->date->format('Y-m-d') : '';
         $this->input['total'] = $this->order->total ?? '';
     }
 
@@ -101,10 +102,10 @@ class Edit extends Component
 
     public function onChangeModelId()
     {
-        if($this->model_id!=0){
+        if ($this->model_id != 0) {
             $this->addressed = $this->order->customer;
             $this->addressed_company = $this->addressed->name;
-        }else{
+        } else {
             $this->model = NULL;
             $this->model_id = NULL;
             $this->addressed_company = NULL;
@@ -144,6 +145,19 @@ class Edit extends Component
 
         return $data;
     }
+    public function actionShowDeleteModal()
+    {
+        $this->modalDeleteVisible = true;
+    }
+    public function delete()
+    {
+        if ($this->order) {
+            $this->order->delete();
+        }
+        $this->modalDeleteVisible = false;
+        return redirect()->route('admin.order');
+    }
+
 
     public function render()
     {
