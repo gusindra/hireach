@@ -6,17 +6,17 @@
     </x-slot>
 
     <div class="grid grid-cols-12">
-        @includeWhen(auth()->user()->super->first() && auth()->user()->super->first()->role == 'superadmin',
+        @includeWhen(auth()->user()->isSuper || (auth()->user()->team && auth()->user()->team->role == 'superadmin'),
             'menu.admin-menu-setting',
             []
         )
 
-        <div class="col-span-12 px-6 ml-24 mt-2">
+        <div class="col-span-12 px-3 ml-24 mt-2">
             <div class="bg-white dark:bg-slate-600 overflow-hidden shadow-xl sm:rounded-lg">
                 <div class="mx-auto p-4">
                     <div class="flex gap-3">
                         @livewire('setting.notification.add')
-                        <a type="submit" class="inline-flex items-center px-4 py-2 border border-transparent rounded-md font-semibold text-xs text-slate-900 dark:text-slate-300 uppercase tracking-widest hover:border-gray-700 active:bg-gray-900 focus:outline-none focus:border-gray-900 focus:shadow-outline-gray disabled:opacity-25 transition" href="http://hireach.test/notif-center/read/all">
+                        <a class="inline-flex items-center px-4 py-2 border border-transparent rounded-md font-semibold text-xs text-slate-900 dark:text-slate-300 uppercase tracking-widest hover:border-gray-700 active:bg-gray-900 focus:outline-none focus:border-gray-900 focus:shadow-outline-gray disabled:opacity-25 transition" href="{{route('notification.read.all')}}">
                             Read All
                         </a>
                     </div>

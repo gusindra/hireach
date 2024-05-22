@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Order;
+use App\Models\Quotation;
 use Illuminate\Support\Facades\Auth as FacadesAuth;
 
 class OrderController extends Controller
@@ -16,7 +17,7 @@ class OrderController extends Controller
             $id = array("ORDER");
             $permission = checkPermisissions($id);
 
-            if($permission){
+            if ($permission) {
                 return $next($request);
             }
             abort(404);
@@ -38,8 +39,14 @@ class OrderController extends Controller
         return view('assistant.commercial.quotation.index');
     }
 
+    public function showQuotation(Quotation $quotation)
+    {
+
+        return view('assistant.commercial.quotation.show', ['quote' => $quotation]);
+    }
+
     public function show(Order $order)
     {
-        return view('assistant.order.show', ['order'=>$order]);
+        return view('assistant.order.show', ['order' => $order]);
     }
 }

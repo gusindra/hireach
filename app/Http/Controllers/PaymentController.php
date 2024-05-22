@@ -3,14 +3,16 @@
 namespace App\Http\Controllers;
 
 use App\Models\Order;
+use App\Models\Quotation;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class PaymentController extends Controller
 {
 
     public function index(Request $request)
     {
-        if($request->has('v')){
+        if ($request->has('v')) {
             return view('main-side.payment-deposit');
         }
         return view('payment.deposit');
@@ -21,11 +23,22 @@ class PaymentController extends Controller
         return view('payment.topup');
     }
 
+    public function quotation()
+    {
+        return view('payment.quotation');
+    }
+
+    public function quotationShow($id)
+    {
+        $data = Quotation::find($id);
+        return view('payment.show-quotation', compact('data'));
+    }
+
     public function invoice(Order $id)
     {
-        if(auth()->user()->isClient->uuid!=$id->customer_id)
+        if (auth()->user()->isClient->uuid != $id->customer_id)
             abort(404);
 
-        return view('payment.pay', ['order'=>$id]);
+        return view('payment.pay', ['order' => $id]);
     }
 }

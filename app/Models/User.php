@@ -135,6 +135,14 @@ class User extends Authenticatable
         return $this->hasOne('App\Models\TeamUser', 'user_id')->where('team_id', env('IN_HOUSE_TEAM_ID'));
     }
 
+
+    public function scopeNoadmin($query)
+    {
+        return $query->where('current_team_id', '!=', env('IN_HOUSE_TEAM_ID'))->orWhere('current_team_id', NULL);
+    }
+
+
+
     /**
      * teams
      *

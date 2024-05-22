@@ -27,19 +27,17 @@ class AddResource extends Component
     public $title;
     public $text;
     public $from;
-    public $fromList = [];
     public $type;
     public $otp;
-    public $email;
     public $selectedContact;
     public $to;
     public $providers;
     public $selectTo;
     public $selectedAudience;
     public $clients = [];
-
+    public $fromList = [];
+    public $modal;
     public $modalActionVisible = false;
-
 
     /**
      * mount
@@ -47,7 +45,7 @@ class AddResource extends Component
      * @param  mixed $uuid
      * @return void
      */
-    public function mount($uuid)
+    public function mount($uuid, $modal = false)
     {
         $user = Auth::user();
         $this->resource = $uuid;
@@ -59,6 +57,7 @@ class AddResource extends Component
         $this->from = auth()->user()->email;
         $this->templateId =  '0';
         $this->selectTo = 'manual';
+        $this->modal = $modal;
         $this->otp;
         if ($this->resource == 2) {
             $this->bound = 'out';

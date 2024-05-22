@@ -23,6 +23,7 @@ class Member extends Component
 
     public function addRoleMember()
     {
+
         $invitation = RoleInvitation::create([
             'email' => $this->inviteEmail,
             'role_id' => $this->role,

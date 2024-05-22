@@ -78,7 +78,6 @@
         class="fixed inset-0 bg-gray-900 bg-opacity-50 flex items-center justify-center hidden z-50 p-4">
         <div id="modalContent" class="bg-white p-6 rounded-lg shadow-lg w-2/3 max-h-full overflow-y-auto">
 
-
             <div class="flex justify-between items-center mb-4">
                 <h2 class="text-2xl font-bold">Send Resource</h2>
                 <button onclick="closeModal()" class="text-gray-500 hover:text-gray-700">
@@ -86,12 +85,11 @@
                         stroke="currentColor" class="w-6 h-6">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
                     </svg>
-
                 </button>
             </div>
 
             <div>
-                @livewire('resource.add-resource', ['uuid' => request()->get('resource')])
+                @livewire('resource.add-resource', ['uuid' => request()->get('resource'), 'modal' => true])
             </div>
         </div>
     </div>
