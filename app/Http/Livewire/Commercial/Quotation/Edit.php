@@ -33,9 +33,14 @@ class Edit extends Component
     public $description;
     public $source;
     public $source_id;
+    public $modalDeleteVisible = false;
+    public $formName;
 
-    public function mount($code, $source=null, $source_id=null)
+
+
+    public function mount($code, $source = null, $source_id = null)
     {
+
         $this->quote = Quotation::find($code);
         $this->name = $this->quote->title;
         $this->date = $this->quote->date;
@@ -54,10 +59,10 @@ class Edit extends Component
         $this->created_role = $this->quote->created_role == '' ? '' : $this->quote->created_role;
         $this->addressed_name = $this->quote->addressed_name;
         $this->addressed_role = $this->quote->addressed_role;
-        if($source && $source_id){
+        if ($source && $source_id) {
             $this->source = $source;
             $this->source_id = $source_id;
-            if($this->source=='project'){
+            if ($this->source == 'project') {
                 $this->addressed_company = $this->quote->project->customer_name;
                 $this->addressed_name = $this->quote->project->customer_name;
             }
@@ -66,9 +71,45 @@ class Edit extends Component
 
     public function rules()
     {
-        return [
-            'quoteNo' => 'required'
+
+
+        $data = [
+            'quoteNo' => 'required',
+            'name' => 'required',
+            'valid_day' => 'required',
+
+
         ];
+        if ($this->formName == 'customer') {
+            $data = [
+                'model' => 'required',
+                'model_id' => 'required',
+            ];
+        } elseif ($this->formName == 'description') {
+            $data = [
+                'description' => 'required',
+            ];
+        } elseif ($this->formName == 'price') {
+            $data = [
+                'title' => 'required',
+                'title' => 'required',
+            ];
+        } elseif ($this->formName == 'terms') {
+            $data = [
+                'terms' => 'required',
+
+            ];
+        } elseif ($this->formName == 'footer') {
+            $data = [
+                'addressed_name' => 'required',
+                'addressed_role' => 'required',
+                'addressed_company' => 'required',
+                'crated_by' => 'required',
+            ];
+        }
+
+
+        return $data;
     }
 
     public function modelData()
@@ -90,9 +131,9 @@ class Edit extends Component
             'addressed_role'    => $this->addressed_role,
         ];
 
-        if($this->source=='project'){
+        if ($this->source == 'project') {
             $client = User::where('email', $this->quote->project->customer_address)->first();
-            if($client){
+            if ($client) {
                 $data['client_id'] = $client->id;
             }
         }
@@ -100,8 +141,23 @@ class Edit extends Component
         return $data;
     }
 
-    public function update($id)
+    public function actionShowDeleteModal()
     {
+        $this->modalDeleteVisible = true;
+    }
+    public function delete()
+    {
+        if ($this->quote) {
+            $this->quote->delete();
+        }
+        $this->modalDeleteVisible = false;
+        return redirect()->route('admin.quotation');
+    }
+
+
+    public function update($id, $formName = 'basic')
+    {
+        $this->formName = $formName;
         $this->validate();
         Quotation::find($id)->update($this->modelData());
         $this->emit('saved');
@@ -109,31 +165,37 @@ class Edit extends Component
 
     public function onChangeModelId()
     {
-        if($this->model_id!=0){
-            if($this->type=='project'){
+        if ($this->model_id != 0) {
+            if ($this->type == 'project') {
                 $this->addressed = Project::find($this->model_id);
                 $this->model = 'PROJECT';
-            }else{
+            } elseif ($this->model = 'USER') {
+                $this->addressed = User::find($this->model_id);
+                $this->model = 'USER';
+            } else {
+
                 $this->addressed = Client::find($this->model_id);
                 $this->model = 'CLIENT';
             }
+
             $this->addressed_company = $this->addressed->name;
-        }else{
+        } else {
             $this->model = NULL;
             $this->model_id = NULL;
             $this->addressed_company = NULL;
             $this->addressed = '';
         }
     }
-    
-    public function generateNo(){
+
+    public function generateNo()
+    {
         $code = '';
-        if($this->type=='PROJECT'){
+        if ($this->type == 'PROJECT') {
             $code = $this->quote->project->company->code;
-        }elseif($this->type=='COMPANY'){
+        } elseif ($this->type == 'COMPANY') {
             $code = $this->quote->company->code;
         }
-        $this->quoteNo = $code.date('Ymd').$this->quote->id;
+        $this->quoteNo = $code . date('Ymd') . $this->quote->id;
     }
 
 
@@ -144,29 +206,32 @@ class Edit extends Component
      */
     public function readModelSelection()
     {
-        if($this->type=='project'){
+        if ($this->type == 'project') {
             $data = Project::where('team_id', auth()->user()->currentTeam->team_id)->pluck('name', 'id');
-        }else{
+        } elseif ($this->model == 'USER') {
+            $data = User::Noadmin()->pluck('name', 'id');
+        } else {
             $data = Client::where('user_id', auth()->user()->currentTeam->user_id)->pluck('name', 'id');
         }
+
         return $data;
     }
 
-     /**
+    /**
      * The read function.
      *
      * @return void
      */
     public function readSourceSelection()
     {
-        if($this->source=='project' || $this->model=='PROJECT'){
-           return Project::where('id', $this->model_id)->pluck('name', 'id');
+        if ($this->source == 'project' || $this->model == 'PROJECT') {
+            return Project::where('id', $this->model_id)->pluck('name', 'id');
         }
-        if($this->model=='PROJECT'){
+        if ($this->model == 'PROJECT') {
             $data = Project::where('team_id', auth()->user()->currentTeam->team_id)->pluck('name', 'id');
-        }elseif($this->model=='COMPANY'){
+        } elseif ($this->model == 'COMPANY') {
             $data = Company::where('user_id', auth()->user()->id)->pluck('name', 'id');
-        }else{
+        } else {
             $data = Client::where('user_id', auth()->user()->currentTeam->user_id)->pluck('name', 'id');
         }
         return $data;
@@ -179,8 +244,14 @@ class Edit extends Component
      */
     public function readClient()
     {
+        if ($this->model = 'USER') {
+            $this->addressed = User::find($this->model_id);
+            $this->model = 'USER';
+        }
+
         return $this->addressed;
     }
+
 
     public function render()
     {

@@ -1,17 +1,28 @@
 <div>
+    <x-jet-form-section submit="saveUser({{$user->id}})">
+        <x-slot name="title">
+            {{ __('Delete User Account') }}
+        </x-slot>
 
-    <div class="flex items-center justify-between">
-        <div>
-            <h3 class="text-lg font-medium text-gray-900">{{ __('Delete  Details') }}</h3>
-            <p class="mt-1 text-sm text-gray-500">{{ __('Delete User Account') }}</p>
-        </div>
-        <div class="ml-4">
+        <x-slot name="description">
+            {{ __('Delete User Account.') }}
+        </x-slot>
+
+        <x-slot name="form">
+            <div class="col-span-12 sm:col-span-12">
+                {{ __('Once your account is deleted, all of its resources and data will be permanently deleted. Before deleting your account, please download any data or information that you wish to retain.') }}
+            </div>
+        </x-slot>
+        <x-slot name="actions">
+            <x-jet-action-message class="mr-3" on="user_saved">
+                {{ __('Profile user saved.') }}
+            </x-jet-action-message>
+
             <x-jet-danger-button wire:click="confirmDelete" wire:loading.attr="disabled" class="p-2">
                 {{ __('Delete User') }}
             </x-jet-danger-button>
-        </div>
-    </div>
-
+        </x-slot>
+    </x-jet-form-section>
 
     <x-jet-dialog-modal wire:model="modalDeleteVisible">
         <x-slot name="title">
@@ -37,4 +48,7 @@
             </x-jet-danger-button>
         </x-slot>
     </x-jet-dialog-modal>
+
+    <x-jet-section-border />
+
 </div>

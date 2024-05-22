@@ -57,6 +57,8 @@ class ProcessEmailApi implements ShouldQueue
         //     $serve  = $request['servid'];
         // }
         if(true){
+            Log::debug('start job sending email');
+
             $response = '';
             if($request['type']=="0"){
                 $curl = curl_init();
@@ -83,24 +85,25 @@ class ProcessEmailApi implements ShouldQueue
             }
             // return $response;
             //Log::debug("MK Res:");
-            //Log::debug($response);
             // check response code
-            $success=$result['data']['succeeded'];
-            $failed=$result['data']['failed'];
+            Log::debug($result);
+            $response=json_decode($result, true);
+            // $response=$result['data']['succeeded'];
+            // $failed=$result['data']['failed'];
 
-            if($failed>=1){
-                $msg = $result['data']['failures'];
+            if($response!='' && $response['data']['failed']==1){
+                $msg = $response['data']['failures'];
             }else{
                 $balance = 0;
                 //check client && array
                 $modelData = [
-                    'msg_id'    => $result['request_id'],
+                    'msg_id'    => $response['request_id'],
                     'user_id'   => $this->user->id,
                     'client_id' => $this->chechClient("200", $request['to']),
                     'sender_id' => $request['from'],
                     'type'      => $request['type'],
                     'otp'       => $request['otp'],
-                    'status'    => "PROCESSED",
+                    'status'    => "SUCCESS",
                     'code'      => 200,
                     'message_content'  => $request['text'],
                     'currency'  => 'IDR',
@@ -169,7 +172,7 @@ class ProcessEmailApi implements ShouldQueue
                     'sender_id' => $request['from'],
                     'type'      => $request['type'],
                     'otp'       => $request['otp'],
-                    'status'    => "PROCESSED",
+                    'status'    => "SUCCESS",
                     'code'      => 200,
                     'message_content'  => $request['text'],
                     'currency'  => 'IDR',

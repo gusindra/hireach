@@ -41,7 +41,7 @@
             {{ $printButton }}
         @else
             <div class="print:hidden sticky top-1 right-1 left-1 p-2 flex text-right justify-between">
-                <a href="{{route('invoice')}}" class="text-xs bg-opacity-50 bg-gray-100 text-gray-700 px-2 py-1 rounded-sm hover:bg-gray-300 flex items-center">Back</a>
+                <a href="{{route('admin.invoice')}}" class="text-xs bg-opacity-50 bg-gray-100 text-gray-700 px-2 py-1 rounded-sm hover:bg-gray-300 flex items-center">Back</a>
                 <button type="button" x-on:click="printDiv()" class="text-xs bg-opacity-50 hover:bg-gray-300 text-gray-700 shadow-sm border px-2 py-1 rounded-sm bg-white flex items-center"><svg xmlns="http://www.w3.org/2000/svg" class="-ml-1 mr-1 h-5 w-5 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" /></svg>Print</button>
             </div>
         @endisset
@@ -53,7 +53,8 @@
                             <div class="md:col-span-1 flex justify-between">
                                 <div class="px-4 sm:px-0">
                                     @if($data->company && $data->company->img_logo)
-                                    <img style="height:100px;" src="https://telixcel.s3.ap-southeast-1.amazonaws.com/{{$data->company->img_logo->file}}" />
+                                    {{-- <img style="height:100px;" src="https://telixcel.s3.ap-southeast-1.amazonaws.com/{{$data->company->img_logo->file}}" /> --}}
+                                    <img style="height:100px;" src="{{url('/assets/img/logos/logo2.png')}}" />
                                     @else
                                     <h3 class="text-lg font-medium text-gray-900">{{$data->company ? $data->company->name : $data->entity_party}}</h3>
                                     @endif

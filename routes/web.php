@@ -33,6 +33,7 @@ use App\Http\Controllers\SynProductController;
 use App\Http\Controllers\TeamInvitationController;
 use App\Http\Controllers\TemplateController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\ProviderController;
 use App\Http\Controllers\ResourceController;
 use App\Jobs\ProcessEmail;
 use App\Models\ApiCredential;
@@ -76,52 +77,77 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
      * Admin Routes
      * --------------------------------------------
      */
-
     Route::prefix('admin')->middleware('admin')->group(function () {
         Route::get('/', [DashboardController::class, 'show'])->name('admin');
 
-        Route::resource('reportings', 'Backend\ReportingController');
-        Route::resource('logs', 'Backend\LogController');
-        //Route::resource('settings', 'Backend\SettingController', ['only' => ['index', 'update']]);
-        Route::resource('users', 'Backend\UserController');
-
-        Route::resource('change-password', 'Backend\ChangePasswordController');
-        Route::get('settings/clear-cache', 'Backend\SettingController@clearCache')->name('settings.clear-cache');
-        Route::get('settings/rebuild-cache', 'Backend\SettingController@rebuildCache')->name('settings.rebuild-cache');
         Route::get('logout', 'Backend\AuthController@logout');
+        Route::resource('change-password', 'Backend\ChangePasswordController');
+        Route::resource('users', 'Backend\UserController');
 
         Route::get('/user', [UserController::class, 'index'])->name('admin.user');
         Route::get('/user/{user}', [UserController::class, 'show'])->name('user.show');
         Route::get('/user/{user}/balance', [UserController::class, 'balance'])->name('user.show.balance');
         Route::get('/user/{user}/profile', [UserController::class, 'profile'])->name('user.show.profile');
+        Route::get('/user/{user}/provider', [UserController::class, 'provider'])->name('user.show.provider');
+        Route::get('/user/{user}/order', [UserController::class, 'profile'])->name('user.show.order');
+
+        Route::get('/settings/clear-cache', 'Backend\SettingController@clearCache')->name('settings.clear-cache');
+        Route::get('/settings/rebuild-cache', 'Backend\SettingController@rebuildCache')->name('settings.rebuild-cache');
+        //Route::resource('settings', 'Backend\SettingController', ['only' => ['index', 'update']]);
+
         Route::get('/user-billing', [UserBillingController::class, 'index'])->name('user.billing.index');
         Route::get('/user-billing/generate', [UserBillingController::class, 'generate'])->name('user.billing.generate');
-
         Route::post('/user-billing/invoice', [UserBillingController::class, 'invoice'])->name('user.billing.create.invoice');
+
         Route::get('/invoice/{billing}', [UserBillingController::class, 'showInvoice'])->name('user.billing.invoice.show');
         Route::put('/invoice/{billing}', [UserBillingController::class, 'updateInvoice'])->name('user.billing.update.invoice');
 
-
         Route::get('/roles', [RoleController::class, 'index'])->name('role.index');
         Route::get('/roles/{role}', [RoleController::class, 'show'])->name('role.show');
+        Route::get('/settings/providers', [ProviderController::class, 'index'])->name('admin.settings.provider');
+        Route::get('/settings/providers/{provider}', [ProviderController::class, 'show'])->name('admin.settings.provider.show');
 
         Route::get('/permission', function () {
             return view('permission.index', ['page' => 'permission']);
         })->name('permission.index');
+
         Route::get('/flow/{model}', [FlowController::class, 'show'])->name('flow.show');
 
         Route::get('/settings', [SettingController::class, 'index'])->name('admin.settings');
+
         Route::get('/settings/{page}', [SettingController::class, 'show'])->name('settings.show');
 
         Route::get('/order', [OrderController::class, 'index'])->name('admin.order');
         Route::get('/order/{order}', [OrderController::class, 'show'])->name('show.order');
+
+        Route::get('/quotation', [OrderController::class, 'quotation'])->name('admin.quotation');
+        Route::get('/quotation/{quotation}', [OrderController::class, 'showQuotation'])->name('show.quotation');
+
         Route::get('/invoice', [InvoiceController::class, 'index'])->name('admin.invoice');
         Route::get('/invoice-order/{invoice}', [InvoiceController::class, 'show'])->name('show.invoice');
+
         Route::get('/commission', [CommissionController::class, 'index'])->name('admin.commission');
         Route::get('/commission/{commission}', [CommissionController::class, 'show'])->name('show.commission');
 
         Route::get('/commercial', [CommercialController::class, 'index'])->name('commercial');
-        Route::get('commercial/{key}', [CommercialController::class, 'show'])->name('commercial.show');
+        Route::get('/commercial/{key}', [CommercialController::class, 'show'])->name('commercial.show');
+        Route::get('/commercial/{key}/{id}', [CommercialController::class, 'template'])->name('invoice');
+
+        Route::resource('reportings', 'Backend\ReportingController');
+        Route::resource('logs', 'Backend\LogController');
+
+        Route::get('/company/{company}', [SettingController::class, 'company'])->name('settings.company.show');
+
+        Route::get('/project', [ProjectController::class, 'index'])->name('project');
+        Route::get('/project/{project}', [ProjectController::class, 'show'])->name('project.show');
+
+        Route::get('report', [ReportController::class, 'index'])->name('admin.report');
+        Route::get('report/{key}', [ReportController::class, 'show'])->name('report.show');
+
+        Route::get('commercial/{key}/{id}', [CommercialController::class, 'edit'])->name('commercial.edit.show');
+        Route::get('commercial/{id}/{type}/print', [CommercialController::class, 'template'])->name('commercial.print');
+        Route::get('product/commercial/syn', [CommercialController::class, 'sync'])->name('commercial.sync');
+        Route::post('product/commercial/syn', [CommercialController::class, 'syncPost'])->name('commercial.sync.post');
     });
 
     /** ------------------------------------------
@@ -130,9 +156,10 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
      */
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
-    Route::get('/resources', function () {
-        return view('resource.index');
-    })->name('resources.index');
+    // Route::get('/resources', function () {
+    //     return view('resource.index');
+    // })->name('resources.index');
+    Route::get('/resources', [ResourceController::class, 'index'])->name('resources.index');
     Route::get('/resources/create', [ResourceController::class, 'show'])->name('show.resource');
 
     Route::get('/contents', function () {
@@ -152,58 +179,39 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
     Route::get('/template', function () {
         return view('template.index');
     })->name('template');
-
     Route::get('/template/helper/index', function () {
         return view('livewire.template.table-helper');
     })->name('template.helper');
-
     Route::get('/template/create', function () {
         return view('template.form-template');
     })->name('create.template');
-
     Route::get('/template/tree/view', [TemplateController::class, 'view'])->name('view.template');
-
     Route::get('/template/{uuid}', [TemplateController::class, 'show'])->name('show.template');
     Route::get('/template/{template}/edit', [TemplateController::class, 'edit'])->name('edit.template');
 
     Route::get('/billing', [BillingController::class, 'index'])->name('billing');
 
     Route::get('/notif-center', [NotificationController::class, 'index'])->name('notification');
-
     Route::get('/notif-center/{notification}', [NotificationController::class, 'show'])->name('notification.read');
     Route::get('/notif-center/read/all', [NotificationController::class, 'readAll'])->name('notification.read.all');
-
 
     Route::get('/contact/{client}', [ContactController::class, 'show'])->name('contact.show');
     Route::get('/audience', [ContactController::class, 'audience'])->name('audience.index');
     Route::get('/audience/{audience}', [ContactController::class, 'audienceShow'])->name('audience.show');
-    // Route::delete('audiences/{id}', [Delete::class, 'delete'])->name('audience.delete');
 
     Route::get('/channel', [ChannelController::class, 'index'])->name('channel');
     Route::get('/channel/{channel}', [ChannelController::class, 'show'])->name('channel.show');
     //Route::get('/channel/{channel}/{resource}', [ChannelController::class, 'view'])->name('channel.view');
 
-    Route::get('/company/{company}', [SettingController::class, 'company'])->name('settings.company.show');
-
     Route::get('/assistant',  function () {
         return view('assistant.index');
     })->name('assistant');
 
-    Route::get('/project', [ProjectController::class, 'index'])->name('project');
-    Route::get('/project/{project}', [ProjectController::class, 'show'])->name('project.show');
-
-
-
-    Route::get('report', [ReportController::class, 'index'])->name('report.index');
-    Route::get('report/{key}', [ReportController::class, 'show'])->name('report.show');
-
-    Route::get('commercial/{key}/{id}', [CommercialController::class, 'edit'])->name('commercial.edit.show');
-    Route::get('commercial/{id}/{type}/print', [CommercialController::class, 'template'])->name('commercial.print');
-    Route::get('product/commercial/syn', [CommercialController::class, 'sync'])->name('commercial.sync');
-    Route::post('product/commercial/syn', [CommercialController::class, 'syncPost'])->name('commercial.sync.post');
-
     Route::get('/payment/deposit', [PaymentController::class, 'index'])->name('payment.deposit');
     Route::get('/payment/topup', [PaymentController::class, 'topup'])->name('payment.topup');
+    Route::get('/quotation', [PaymentController::class, 'quotation'])->name('quotation');
+    Route::get('/quotation/{quotation}', [PaymentController::class, 'quotationShow'])->name('quotation.show');
+
     Route::get('/payment/invoice/{id}', [PaymentController::class, 'invoice'])->name('invoice.topup');
 
     Route::get('/update-sms/{id}/{status}', [AdminSmsController::class, 'updateStatus'])->name('admin.update.sms.status');
@@ -242,17 +250,16 @@ Route::post('/webhook/{slug}', [ApiWaController::class, 'inbounceMessage'])->nam
 
 Route::get('/endpoint', [ApiWaController::class, 'checkEndpoint'])->name('endpoint.check');
 
-Route::get('/test', [WebhookController::class, 'index']);
 
 Route::get('/chat/{slug}', function ($slug) {
     return view('chat.show', ['slug' => $slug]);
 });
-
 Route::get('/chating/{slug}', [ChatController::class, 'show'])->name('chat.slug');
 Route::get('/chat-me', [ChatController::class, 'chatme'])->name('chatme');
 Route::get('/upload', [UploadController::class, 'index']);
 Route::get('/logout', [AuthController::class, 'destroy'])->name('logout');
 Route::post('/logout', [AuthController::class, 'destroy'])->name('logout');
+
 
 Route::get('cache/{id}', function ($id) {
     if ($id == "clear") {
@@ -263,6 +270,7 @@ Route::get('cache/{id}', function ($id) {
     }
     dd("Job is done");
 });
+
 
 Route::get('queue/{id}', function ($id) {
     if ($id == "work") {
@@ -350,8 +358,13 @@ Route::get('/restart-service', function () {
 
 Route::get('/saveAlarm', [ApiViGuardController::class, 'index']);
 
-
-// TESTING
+//
+//
+// BELOW IS ROUTE FOR TESTING
+// PLEASE CLEAR ALL ROUTE IN BELOW IF APP DEPOLY IN PRODUCTION SERVER
+//
+//
+Route::get('/test', [WebhookController::class, 'index']);
 Route::get('/testing', function () {
     // return 1;
     $lastError = SaldoUser::find(63);

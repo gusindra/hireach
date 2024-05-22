@@ -15,11 +15,9 @@ return new class extends Migration
     {
         Schema::create('providers', function (Blueprint $table) {
             $table->id();
-            $table->integer('code')->nullable();
-            $table->integer('name')->nullable();
+            $table->string('code', 50)->unique();
+            $table->string('name', 200)->nullable();
             $table->timestamps();
-
-            $table->unique('code');
         });
     }
 

@@ -31,7 +31,7 @@ class Companies extends LivewireDatatable
     		Column::name('address')->label('Address'),
             NumberColumn::name('id')->label('Detail')->sortBy('id')->callback('id', function ($value) {
                 return view('datatables::link', [
-                    'href' => "/company/" . $value,
+                    'href' => "/admin/company/" . $value,
                     'slot' => 'View'
                 ]);
             }),

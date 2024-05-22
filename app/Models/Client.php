@@ -111,10 +111,17 @@ class Client extends Model
     }
 
     /**
-     * Get the teams for the api.
+     * Get the data user if as user.
      */
     public function user()
     {
         return $this->hasOne('App\Models\User', 'email', 'email');
+    }
+
+    /**
+     * Get the own of the data.
+     */
+    public function theUser(){
+    	return $this->belongsTo('App\Models\User', 'user_id');
     }
 }

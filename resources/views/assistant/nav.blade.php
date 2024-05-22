@@ -5,7 +5,7 @@
             <div class="flex">
                 <!-- Navigation Links -->
                 <div class="space-x-8 sm:-my-px">
-                    <x-jet-nav-link href="{{ route('commercial.show', ['item']) }}" :active="$key=='item'">
+                    {{-- <x-jet-nav-link href="{{ route('commercial.show', ['item']) }}" :active="$key=='item'">
                         {{__('Product Master Data')}}
                     </x-jet-nav-link>
                     <x-jet-nav-link href="{{ route('commercial.show', ['quotation']) }}" :active="$key=='quotation'">
@@ -13,7 +13,7 @@
                     </x-jet-nav-link>
                     <x-jet-nav-link href="{{ route('commercial.show', ['contract']) }}" :active="$key=='contract'">
                         {{__('Contract')}}
-                    </x-jet-nav-link>
+                    </x-jet-nav-link> --}}
                 </div>
             </div>
         </div>

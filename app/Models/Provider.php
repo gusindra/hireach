@@ -5,17 +5,17 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Povider extends Model
+class Provider extends Model
 {
     use HasFactory;
 
-     protected $fillable = [
+    protected $fillable = [
         'code',
         'name',
     ];
 
     protected $casts = [
-        'code' => 'integer',
+        'code' => 'string',
         'name' => 'string',
     ];
 }

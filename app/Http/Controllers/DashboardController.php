@@ -13,6 +13,7 @@ use App\Models\Request as ModelsRequest;
 use Auth;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth as FacadesAuth;
 
 class DashboardController extends Controller
 {
@@ -31,6 +32,7 @@ class DashboardController extends Controller
 
     public function index(Request $request)
     {
+        $userId = FacadesAuth::user()->id;
 
         if (empty(auth()->user()->currentTeam)) {
             return redirect()->route('teams.create');
@@ -60,7 +62,7 @@ class DashboardController extends Controller
 
             return view('main-side.dashboard', ['event' => $arr_event, 'stat' => $stat]);
         } else {
-            return view('dashboard');
+            return view('dashboard', ['userId' => $userId]);
         }
     }
 

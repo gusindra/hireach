@@ -24,38 +24,48 @@ class UserController extends Controller
 
     public function index(Request $request)
     {
-        if($request->has('v')){
+        if ($request->has('v')) {
             return view('main-side.user');
         }
         //return view('user.company-table');
         return view('user.user-table');
     }
 
-    public function show(Request $request, User $user)
+    public function show(Request $request, $id)
     {
-        if($request->has('v')){
-            return view('main-side.user-details', ['user'=>$user]);
-            // return view('main-side.user-project');
+        $user = User::find($id);
+
+        if ($request->has('v')) {
+            return view('main-side.user-details', ['user' => $user, 'id' => $id]);
         }
-        if($user->name != 'Admin1'){
-            return view('user.user-detail', ['user'=>$user]);
+
+        if ($user->name != 'Admin1') {
+            return view('user.user-detail', ['user' => $user, 'id' => $id]);
         }
         return redirect('user');
     }
+
 
     public function profile(User $user)
     {
-        if($user->name != 'Admin'){
-            return view('user.user-profile', ['user'=>$user]);
+        if ($user->name != 'Admin') {
+            return view('user.user-profile', ['user' => $user]);
         }
         return redirect('user');
     }
 
-    public function balance(User $user, Request $request)
+    public function provider(User $user)
     {
-        // if($user->name != 'Admin'){
-            return view('user.user-balance', ['user'=>$user, 'team'=>$request->has('team')?$request->team:0]);
-        // }
-        // return redirect('user');
+        return view('user.user-provider', ['user' => $user]);
+    }
+
+
+
+    public function balance($id, Request $request)
+    {
+        // Lakukan sesuatu dengan argumen yang diberikan
+        $user = User::find($id);
+
+        return view('user.user-balance', ['user' => $user, 'id' => $id, 'team' => $request->has('team') ? $request->team : 0]);
     }
 }

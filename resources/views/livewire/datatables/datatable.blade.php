@@ -5,14 +5,9 @@
             <div class="flex items-center h-10">
                 @if($this->searchableColumns()->count())
                     <div class="flex rounded-lg w-96 shadow-sm">
-                        <div class="flex-grow focus-within:z-10">
-                            <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-                                <svg class="w-5 h-5 text-gray-400" viewBox="0 0 20 20" stroke="currentColor" fill="none">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                                </svg>
-                            </div>
-                            <input wire:model.debounce.500ms="search" class="block w-full py-3 pl-10 text-sm border-gray-300 leading-4 rounded-md shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50 focus:outline-none" placeholder="{{__('Search in')}} {{ $this->searchableColumns()->map->label->join(', ') }}" type="text" />
-                            <div class="absolute inset-y-0 right-0 flex items-center pr-2">
+                        <div class="flex focus-within:z-10">
+                            <input wire:model.debounce.500ms="search" class="block w-full py-3 text-sm border-gray-300 leading-4 rounded-md shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50 focus:outline-none" placeholder="{{__('Search in')}} {{ $this->searchableColumns()->map->label->join(', ') }}" type="text" />
+                            <div class=" inset-y-0 right-0 flex items-center pr-2">
                                 <button wire:click="$set('search', null)" class="text-gray-300 hover:text-red-600 focus:outline-none">
                                     <x-icons.x-circle class="w-5 h-5 stroke-current" />
                                 </button>

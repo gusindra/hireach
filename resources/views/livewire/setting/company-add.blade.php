@@ -1,9 +1,8 @@
 <div class="p-6">
-    <div class="flex items-center justify-end">
-        <x-jet-button wire:click="actionShowModal">
-            {{__('Add Company')}}
-        </x-jet-button>
-    </div>
+    <x-jet-button wire:click="actionShowModal">
+        {{__('Add Company')}}
+    </x-jet-button>
+
 
     <!-- Form Action Modal -->
     <x-jet-dialog-modal wire:model="modalActionVisible">

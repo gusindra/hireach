@@ -17,6 +17,8 @@ class SaldoUser extends Model
     protected $fillable = [
         'user_id',
         'team_id',
+        'model_id',
+        'model',
         'mutation',
         'description',
         'currency',
