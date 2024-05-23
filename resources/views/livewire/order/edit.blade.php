@@ -31,7 +31,6 @@
             </x-slot>
         </x-jet-dialog-modal>
     @endif
-
     @if (
         ($order->status == 'draft' || $order->status == 'unpaid' || $order->status == 'paid') &&
             @Auth::user()->role &&
@@ -39,22 +38,23 @@
             @Auth::user()->super->first()->role == 'superadmin')
         <x-jet-form-section submit="updateStatus({{ $order->id }})">
             <x-slot name="title">
-                {{ __('Update') }}
+                {{ __('Status') }}
             </x-slot>
 
             <x-slot name="description">
-                {{ __('Status information.') }}
+                {{ __('The Customer basic information.') }}
             </x-slot>
 
             <x-slot name="form">
-
                 <div class="col-span-6 grid grid-cols-2">
                     <div class="col-span-12 sm:col-span-1 mx-4">
-                        <x-jet-label for="status" value="{{ __('Status') }}" />
-                        <select name="valid_day" id="valid_day"
+                        <x-jet-label for="input.status" value="{{ __('Status') }}" />
+                        <select {{ disableInput($order->status) ? 'disabled' : '' }} name="input.status"
+                            id="input.status"
                             class="border-gray-300 dark:bg-slate-800 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 rounded-md shadow-sm mt-1 block w-full"
                             wire:model.debunce.800ms="input.status">
                             <option selected>-- Select --</option>
+
                             @if ($order->status == 'draft')
                                 <option value="draft">Draft</option>
                             @endif
@@ -67,24 +67,27 @@
                             @if ($order->status == 'paid')
                                 <option value="done">Done</option>
                             @endif
+
                         </select>
-                        <x-jet-input-error for="status" class="mt-2" />
+                        <x-jet-input-error for="input.status" class="mt-2" />
                     </div>
+
                 </div>
             </x-slot>
 
             <x-slot name="actions">
-                <x-jet-action-message class="mr-3" on="update_status">
-                    {{ __('Status updated') }}
+                <x-jet-action-message class="mr-3" on="saved">
+                    {{ __('Order saved.') }}
                 </x-jet-action-message>
 
-                <x-jet-button class="ml-2" type="submit" wire:loading.attr="disabled">
+                <x-save-button show="{{ $order->status == 'draft' ? true : false }}">
                     {{ __('Save') }}
-                </x-jet-button>
+                    </x-jet-button>
             </x-slot>
         </x-jet-form-section>
-        <x-jet-section-border />
     @endif
+
+
 
     <x-jet-form-section submit="update({{ $order->id }})">
         <x-slot name="title">
@@ -137,7 +140,8 @@
         </x-slot>
     </x-jet-form-section>
 
-    <x-jet-section-border />
+
+
 
     <x-jet-form-section submit="update({{ $order->id }})">
         <x-slot name="title">
@@ -157,14 +161,16 @@
                         class="border-gray-300 dark:bg-slate-800 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 rounded-md shadow-sm mt-1 block w-full"
                         wire:model.debunce.800ms="input.customer_id">
                         <option selected>-- Select --</option>
-                        @foreach ($model_list as $key => $item)
-                            <option value="{{ $key }}">{{ $item }}</option>
+                        @foreach ($user as $item)
+                            <option value="{{ $item->id }}">{{ $item->name }}</option>
                         @endforeach
-                        <option value="new">New User</option>
+
 
                     </select>
                     <x-jet-input-error for="input.customer_id" class="mt-2" />
                 </div>
+
+
 
                 <div class="col-span-12 sm:col-span-1">
                     <x-jet-label for="addressed_company" value="{{ __('Customer') }}" />
@@ -176,7 +182,18 @@
                         @endif
                         <span
                             class="border dark:bg-slate-800 rounded-md shadow-sm mt-1 block w-full p-2 capitalize">{{ $client->name }}</span>
+                    @elseif ($customer)
+                        @if ($customer)
+                            <div class="absolute p-3 ml-20" style=" margin-top: -35px; ">
+                                <a href="{{ route('user.show', $customer->id) }}" class="text-xs">view</a>
+                            </div>
+                        @endif
+
+                        <span
+                            class="border dark:bg-slate-800 rounded-md shadow-sm mt-1 block w-full p-2 capitalize">{{ $customer->name }}</span>
+
                     @endif
+
                     @if ($input['customer_id'] == 'new')
                         <div class="py-3">
                             @livewire('user.add', ['model' => 'order'])
@@ -203,13 +220,14 @@
 
     <x-jet-section-border />
 
+
     @livewire('commission.edit', ['model' => 'order', 'data' => $order])
 
     @if ($order->status == 'draft')
         <div class="grid ml-5 grid-cols-2 gap-4 mt-6 shadow p-4">
             <div class="">
-                <h2 class="text-lg">Delete order</h2>
-                <p class="mt-2 text-sm text-gray-600">This is for delete order</p>
+                <h2 class="text-lg">Delete Order</h2>
+                <p class="mt-2 text-sm text-gray-600">This is for delete quotaton</p>
             </div>
 
             <div class="text-right ">
@@ -217,7 +235,7 @@
                 <div class="p-4">
                     <div class="flex items-center justify-end">
                         <x-jet-button wire:click="actionShowDeleteModal">
-                            {{ __('Delete order') }}
+                            {{ __('Delete Order') }}
                         </x-jet-button>
                     </div>
 
@@ -227,11 +245,11 @@
         </div>
         <x-jet-dialog-modal class="text-left" wire:model="modalDeleteVisible">
             <x-slot name="title">
-                {{ __('Delete order') }}
+                {{ __('Delete Order') }}
             </x-slot>
 
             <x-slot name="content">
-                <p>{{ __('Are you sure you want to delete this order?') }}</p>
+                <p>{{ __('Are you sure you want to delete this Order?') }}</p>
             </x-slot>
 
             <x-slot name="footer">

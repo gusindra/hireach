@@ -2,11 +2,9 @@
 
 namespace App\Http\Livewire\Order;
 
-use Livewire\Component;
-use App\Models\Client;
 use App\Models\Order;
-use App\Models\Project;
-use App\Models\Quotation;
+use App\Models\User;
+use Livewire\Component;
 
 class Edit extends Component
 {
@@ -32,16 +30,21 @@ class Edit extends Component
     public $addressed_company;
     public $description;
     public $input;
+    public $user;
     public $modalAttach = false;
     public $url;
     public $modalDeleteVisible = false;
+    public $customer;
 
     public function mount($uuid)
     {
+
         $this->order = Order::find($uuid);
+        $this->user = User::noadmin()->get();
+        $this->customer = User::find($this->order->customer_id);
         $this->date = $this->order->date;
         $this->input['name'] = $this->order->name ?? '';
-        $this->input['no'] = $this->order->no ?? '';
+        $this->input['no'] =    'HAPP' . date("YmdHis");
         $this->input['type'] = $this->order->type ?? '';
         $this->input['entity_party'] = $this->order->entity_party ?? '';
         $this->input['customer_type'] = $this->order->customer_type ?? '';
@@ -72,8 +75,6 @@ class Edit extends Component
             'date'              => $this->input['date'],
             'customer_id'       => $this->input['customer_id'],
             'type'              => $this->input['type'],
-            'model'             => $this->model,
-            'model_id'          => $this->model_id,
             'addressed_company' => $this->addressed_company,
             'description'       => $this->description,
             'created_by'        => $this->created_by,
@@ -83,28 +84,25 @@ class Edit extends Component
         ];
     }
 
-    public function update($id)
-    {
-        // dd($id);
-        $this->validate();
-        // dd($this->modelData());
-        $order = Order::find($id)->update($this->modelData());
-        $this->emit('saved');
-    }
-
     public function updateStatus($id)
     {
         Order::find($id)->update([
             'status' => $this->input['status']
         ]);
-        $this->emit('update_status');
+        // $this->emit('update_status');
     }
 
     public function onChangeModelId()
     {
-        if ($this->model_id != 0) {
-            $this->addressed = $this->order->customer;
-            $this->addressed_company = $this->addressed->name;
+        if ($this->order) {
+            $this->order->customer_id;
+            $customer = User::find($this->input['customer_id']);
+
+            if ($customer) {
+                $this->customer = $customer;
+            } else {
+                $this->customer = NULL;
+            }
         } else {
             $this->model = NULL;
             $this->model_id = NULL;
@@ -118,18 +116,13 @@ class Edit extends Component
         $this->url = $url;
         $this->modalAttach = true;
     }
-
-    /**
-     * The read function.
-     *
-     * @return void
-     */
-    public function readModelSelection()
+    public function update($id)
     {
-
-        $data = Client::where('user_id', auth()->user()->currentTeam->user_id)->pluck('name', 'uuid');
-
-        return $data;
+        // dd($id);
+        $this->validate();
+        // dd($this->modelData());
+        $order = Order::find($id)->update($this->modelData());
+        $this->emit('saved');
     }
 
     public function readClient()
@@ -137,14 +130,6 @@ class Edit extends Component
         return $this->order->customer;
     }
 
-    public function readItem()
-    {
-        $data = [];
-        $data[0] = $this->order->items->count();
-        $data[1] = $this->order->total;
-
-        return $data;
-    }
     public function actionShowDeleteModal()
     {
         $this->modalDeleteVisible = true;
@@ -158,13 +143,12 @@ class Edit extends Component
         return redirect()->route('admin.order');
     }
 
-
     public function render()
     {
         return view('livewire.order.edit', [
-            'model_list' => $this->readModelSelection(),
+            // 'model_list' => $this->readModelSelection(),
             'client' => $this->readClient(),
-            'data' => $this->readItem(),
+            // 'data' => $this->readItem(),
         ]);
     }
 }
