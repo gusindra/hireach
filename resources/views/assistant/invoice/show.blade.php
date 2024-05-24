@@ -86,6 +86,10 @@
     </header>
     <div>
         <div class="max-w-7xl mx-auto py-4 sm:px-6 lg:px-8 mb-6">
+            @includeWhen(auth()->user()->super->first() && auth()->user()->super->first()->role == 'superadmin',
+                'menu.admin-menu-order',
+                []
+            )
             @if ($order->status == 'paid' || $invoice->status == 'paid')
                 <div class="bg-green-100 border sm:rounde border-green-500 text-green-700 px-4 py-3 mb-4"
                     role="alert">

@@ -49,8 +49,7 @@
                 <div class="col-span-6 grid grid-cols-2">
                     <div class="col-span-12 sm:col-span-1 mx-4">
                         <x-jet-label for="input.status" value="{{ __('Status') }}" />
-                        <select {{ disableInput($order->status) ? 'disabled' : '' }} name="input.status"
-                            id="input.status"
+                        <select name="input.status" id="input.status"
                             class="border-gray-300 dark:bg-slate-800 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 rounded-md shadow-sm mt-1 block w-full"
                             wire:model.debunce.800ms="input.status">
                             <option selected>-- Select --</option>
@@ -80,7 +79,7 @@
                     {{ __('Order saved.') }}
                 </x-jet-action-message>
 
-                <x-save-button show="{{ $order->status == 'draft' ? true : false }}">
+                <x-save-button show="{{ $order->status == 'unpaid' ? true : false }}">
                     {{ __('Save') }}
                     </x-jet-button>
             </x-slot>

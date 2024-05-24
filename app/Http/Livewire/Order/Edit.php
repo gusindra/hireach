@@ -2,6 +2,7 @@
 
 namespace App\Http\Livewire\Order;
 
+use App\Models\Billing;
 use App\Models\Order;
 use App\Models\User;
 use Livewire\Component;
@@ -105,7 +106,10 @@ class Edit extends Component
         Order::find($id)->update([
             'status' => $this->input['status']
         ]);
-        // $this->emit('update_status');
+        Billing::where('order_id', $id)->update([
+            'status' => $this->input['status']
+        ]);
+        $this->emit('update_status');
     }
 
     public function onChangeModelId()
