@@ -20,7 +20,7 @@
     <script src="https://cdn.jsdelivr.net/gh/alpinejs/alpine@v2.x.x/dist/alpine.min.js" defer></script>
 </head>
 
-<body class="bg-black" data-spy="scroll" data-target="#ftco-navbar" data-offset="200">
+<body class="bg-sky-500/85" data-spy="scroll" data-target="#ftco-navbar" data-offset="200">
 
     @if(app('request')->input('page')!='landingpage')
     <!-- END nav -->
@@ -33,7 +33,7 @@
             <div class="row align-items-center justify-content-center items-center text-center ftc1o-vh-100 mt-48">
                 <div class="col-md-12"><div class="text-3xl text-white uppercase">Welcome to</div></div>
                 <div class="col-md-12 flex justify-center items-bottom text-center mx-auto mb-20">
-                    <img class="logo-white w-24 h-auto mt-8" src="{{url('/assets/img/logos/logo2-inverse.svg')}}" title="HiReach" style="filter: brightness(1000%);">
+                    <img class="w-24 h-auto mt-8" src="{{url('/assets/img/logos/logo2-wh-nobg.png')}}" title="HiReach" style="filter: brightness(1000%);">
                 </div>
                 <div class="col-md-12">
                     <div class="visible" id="ftco-nav">
@@ -58,7 +58,7 @@
                 {{-- <img class="logo-white w-50" src="https://hireach.archeeshop.com/frontend/images/logo-trans.png" title="HiReach">
                 <img class="logo w-50 hidden" src="https://hireach.archeeshop.com/frontend/images/logo.png" title="HiReach"> --}}
                 <img :class="{ '': atTop, 'block': !atTop, 'hidden': atTop }"
-                @scroll.window="atTop = (window.pageYOffset < 50) ? false: true" class="logo-white w-16" src="{{url('/assets/img/logos/logo2-inverse.svg')}}" title="HiReach">
+                @scroll.window="atTop = (window.pageYOffset < 50) ? false: true" class="logo-white w-16" src="{{url('/assets/img/logos/logo2-wh-nobg.png')}}" title="HiReach">
                 <img :class="{ '': atTop, 'hidden': !atTop, 'block': atTop }"
                 @scroll.window="atTop = (window.pageYOffset < 50) ? false: true" class="logo w-16" src="{{url('/assets/img/logos/logo2.svg')}}" title="HiReach">
             </a>
@@ -74,8 +74,8 @@
                 <li class="nav-item active"><a href="#section-home" class="nav-link">Home</a></li>
                 <li class="nav-item"><a href="#section-features" class="nav-link">Features</a></li>
                 <!-- <li class="nav-item"><a href="#section-pricing" class="nav-link">Pricing</a></li> -->
-                <li class="nav-item"><a href="#section-contact" class="nav-link">Contact</a></li>
-                <li class="nav-item"><a href="#section-about" class="nav-link">About</a></li>
+                <li class="nav-item hidden"><a href="#section-contact" class="nav-link">Contact</a></li>
+                <li class="nav-item hidden"><a href="#section-about" class="nav-link">About</a></li>
                 <li class="nav-item"><a href="#section-counter" class="nav-link">Services</a></li>
                 @if(auth()->user())
                 <li class="nav-item"><a href="{{url('/dashboard')}}" class="btn btn-sm btn-outline-white text-slate-100 hover:text-slate-900">Dashboard</a></li>
@@ -95,7 +95,7 @@
             <div class="row align-items-center justify-content-center text-center ftco-vh-100">
                 <div class="col-md-12">
                     <h1 class="title-text-2" style="display: none;">REACH OUT TO YOUR CUSTOMERS GLOBALLY ON THEIR PREFERRED CONVERSATION CHANNEL.</h1>
-                    <h1 class="title-text-1" style="display: none;">THE BEST TOOLS FOR INSTANT REACH TO BILLION WHATSAPP USERS.</h1>
+                    <h1 class="title-text-1" style="display: none;">THE ALL-IN-ONE TOOLS FOR INSTANT REACH TO BILLION CONSUMER USERS.</h1>
                     <h1 id="aksen" class="ftco-heading ftco-animate text-right"></h1>
                     <!-- <h2 class="h5 ftco-subheading mb-5 ftco-animate">A free template by <a href="#">Free-Template.co</a></h2> -->
                     <br><br><br>
@@ -105,7 +105,7 @@
         </div>
     </section>
 
-    <section class="ftco-section bg-light  ftco-slant ftco-slant-white" id="section-features">
+    <section class="ftco-section bg-light  ftco-slant ftco-slant" id="section-features">
         <div class="container">
 
             <div class="row">
@@ -124,9 +124,9 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path>
                             </svg>
                         </div>
-                        <div class="media-body">
+                        <div class="media-body h-32">
                             <h5 class="mt-0">Notification</h5>
-                            <small class="mb-5">Alert, Reminders, Ticketing, Digital receipts, Delivery locations.</small>
+                            <small class="md-5 text-xs h-32">Alert reminders, OTP, promotional messages, delivery notifications, digital reports.</small>
                             <!-- <p class="mb-0"><a href="#" class="btn btn-primary btn-sm">Learn More</a></p> -->
                         </div>
                     </div>
@@ -138,9 +138,9 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8h2a2 2 0 012 2v6a2 2 0 01-2 2h-2v4l-4-4H9a1.994 1.994 0 01-1.414-.586m0 0L11 14h4a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2v4l.586-.586z"></path>
                             </svg>
                         </div>
-                        <div class="media-body">
-                            <h5 class="mt-0">Customer Support</h5>
-                            <small class="mb-5">Live chat support, Chat commerce.</small>
+                        <div class="media-body h-32">
+                            <h5 class="mt-0">Omnichannel</h5>
+                            <small class="md-5 text-xs h-32">SMS, WhatsApp, email and others.</small>
                             <!-- <p class="mb-0"><a href="#" class="btn btn-primary btn-sm">Learn More</a></p> -->
                         </div>
                     </div>
@@ -152,9 +152,9 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
                             </svg>
                         </div>
-                        <div class="media-body">
-                            <h5 class="mt-0">Authentication</h5>
-                            <small class="mb-5">Second Factor of Authentication (2FA).</small>
+                        <div class="media-body h-32">
+                            <h5 class="mt-0">Customer Service</h5>
+                            <small class="md-5 text-xs h-32">Live chat for D2C web, multiple agents, ticketing handling, inbound & outbound.</small>
                             <!-- <p class="mb-0"><a href="#" class="btn btn-primary btn-sm">Learn More</a></p> -->
                         </div>
                     </div>
@@ -167,9 +167,9 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
                             </svg>
                         </div>
-                        <div class="media-body">
-                            <h5 class="mt-0">Educational</h5>
-                            <small class="mb-5">Videos, Quizzes, Live chat tutorials.</small>
+                        <div class="media-body h-32">
+                            <h5 class="mt-0">Easy Integration</h5>
+                            <small class="md-5 text-xs h-32">API available, webhook, professional tech support team, IT tutorial & advisory.</small>
                             <!-- <p class="mb-0"><a href="#" class="btn btn-primary btn-sm">Learn More</a></p> -->
                         </div>
                     </div>
@@ -182,9 +182,9 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                             </svg>
                         </div>
-                        <div class="media-body">
+                        <div class="media-body h-32">
                             <h5 class="mt-0">Entertainment</h5>
-                            <small class="mb-5">Images, Video trailers, Audio files.</small>
+                            <small class="md-5 text-xs h-32">Images, Video trailers, Audio files.</small>
                             <!-- <p class="mb-0"><a href="#" class="btn btn-primary btn-sm">Learn More</a></p> -->
                         </div>
                     </div>
@@ -196,9 +196,9 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"></path>
                             </svg>
                         </div>
-                        <div class="media-body">
-                            <h5 class="mt-0">Enterprise</h5>
-                            <small class="mb-5">Information and Documentation sharing.</small>
+                        <div class="media-body h-32">
+                            <h5 class="mt-0">Digital Report</h5>
+                            <small class="md-5 text-xs h-32 text-xs">Visional reporting, delivery rate, channel performance analysis.</small>
                             <!-- <p class="mb-0"><a href="#" class="btn btn-primary btn-sm">Learn More</a></p> -->
                         </div>
                     </div>
@@ -210,9 +210,9 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 3h5m0 0v5m0-5l-6 6M5 3a2 2 0 00-2 2v1c0 8.284 6.716 15 15 15h1a2 2 0 002-2v-3.28a1 1 0 00-.684-.948l-4.493-1.498a1 1 0 00-1.21.502l-1.13 2.257a11.042 11.042 0 01-5.516-5.517l2.257-1.128a1 1 0 00.502-1.21L9.228 3.683A1 1 0 008.279 3H5z"></path>
                             </svg>
                         </div>
-                        <div class="media-body">
-                            <h5 class="mt-0">Emergency Service</h5>
-                            <small class="mb-5">Share real time location.</small>
+                        <div class="media-body h-32">
+                            <h5 class="mt-0">Customization</h5>
+                            <small class="md-5 text-xs h-32">Middleware development, on-premise deployment, customized frontend.</small>
                             <!-- <p class="mb-0"><a href="#" class="btn btn-primary btn-sm">Learn More</a></p> -->
                         </div>
                     </div>
@@ -224,9 +224,9 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 14v6m-3-3h6M6 10h2a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v2a2 2 0 002 2zm10 0h2a2 2 0 002-2V6a2 2 0 00-2-2h-2a2 2 0 00-2 2v2a2 2 0 002 2zM6 20h2a2 2 0 002-2v-2a2 2 0 00-2-2H6a2 2 0 00-2 2v2a2 2 0 002 2z"></path>
                             </svg>
                         </div>
-                        <div class="media-body">
+                        <div class="media-body h-32">
                             <h5 class="mt-0">Customization</h5>
-                            <small class="mb-5">Other needs.</small>
+                            <small class="md-5 text-xs h-32">Other needs.</small>
                             <!-- <p class="mb-0"><a href="#" class="btn btn-primary btn-sm">Learn More</a></p> -->
                         </div>
                     </div>
@@ -241,7 +241,7 @@
         <div class="row">
           <div class="col-md-12 text-center ftco-animate">
             <h2 class="text-uppercase ftco-uppercase">Services</h2>
-            <div class="row justify-content-center mb-5">
+            <div class="row justify-content-center md-5 text-xs h-32">
               <div class="col-md-7">
                 <p class="lead">Far far away, behind the word mountains, far from the countries Vokalia and Consonantia, there live the blind texts.</p>
               </div>
@@ -497,7 +497,7 @@
         </div>
     </section> -->
 
-    <section class="ftco-section bg-light ftco-slant ftco-slant-white" id="section-about">
+    <section class="ftco-section bg-light ftco-slant ftco-slant-white hidden" id="section-about">
         <div class="container">
 
             <div class="row mb-5">
@@ -558,13 +558,15 @@
         <div class="container">
             <div class="lg:flex justify-center">
                 <div class=" text-center ftco-animate">
-                    <h5 class="text-uppercase ftco-uppercase text-white">The Best tool for</h5>
+                    <h5 class="text-uppercase ftco-uppercase text-white">One-stop engagement tool for</h5>
                 </div>
-                <div class=" text-center ftco-animate w-full lg:w-2/5">
+                <div class=" text-center ftco-animate w-full lg:w-3/6">
                     <div class="row justify-content-center mb-5">
                         <div class="col-md-7">
-                            <h1 class="tool-1" style="display: none;">E-Commerce.</h1>
-                            <h1 class="tool-2" style="display: none;">Customer Service.</h1>
+                            <h1 class="tool-1" style="display: none;">Customer Service.</h1>
+                            <h1 class="tool-2" style="display: none;">Telemarketing.</h1>
+                            <h1 class="tool-3" style="display: none;">Notification.</h1>
+                            <h1 class="tool-4" style="display: none;">Market Survey.</h1>
                             <h1 class="text-4xl text-white"  id="best"></h1>
                         </div>
                     </div>
@@ -574,20 +576,20 @@
             <div class="row">
               <div class="col-md ftco-animate">
                 <div class="ftco-counter text-center">
-                  <span class="ftco-number text-white" data-number="34146">0</span>
-                  <span class="ftco-label">Notification Sent</span>
+                  <span class="ftco-number text-white" data-number="34146188">0</span>
+                  <span class="ftco-label text-white" >NOTIFICATION SENT</span>
                 </div>
               </div>
               <div class="col-md ftco-animate">
                 <div class="ftco-counter text-center">
-                  <span class="ftco-number text-white" data-number="1239">0</span>
-                  <span class="ftco-label">Number of Chat</span>
+                  <span class="ftco-number text-white" data-number="123916">0</span>
+                  <span class="ftco-label text-white">NUMBER OF CHAT</span>
                 </div>
               </div>
               <div class="col-md ftco-animate">
                 <div class="ftco-counter text-center">
-                  <span class="ftco-number text-white" data-number="124">0</span>
-                  <span class="ftco-label">Number of Clients</span>
+                  <span class="ftco-number text-white" data-number="6312299">0</span>
+                  <span class="ftco-label text-white">NUMBER OF QUERIES</span>
                 </div>
               </div>
             </div>
@@ -596,7 +598,7 @@
 
 
 
-    <footer class="ftco-footer ftco-bg-dark bg-black">
+    <footer class="ftco-footer ftco-bg-dark bg-sky-500/85">
         <div class="container">
             <div class="row mb-5">
                 <div class="col-md-8 hidden">
@@ -648,10 +650,10 @@
                 <div class="col-md-12">
                     <div class="ftco-footer-widget mb-4 text-center mt-4">
                         <h1 class="ftco-heading-21 text-white navbar-brand">
-                            <img src="{{url('/assets/img/logos/logo2-inverse.svg')}}" title="{{ env('APP_NAME')}}" style="width: 80px;-webkit-filter: brightness(1000%); /* Safari 6.0 - 9.0 */
+                            <img src="{{url('/assets/img/logos/logo2-wh-nobg.png')}}" title="{{ env('APP_NAME')}}" style="width: 80px;-webkit-filter: brightness(1000%); /* Safari 6.0 - 9.0 */
   filter: brightness(1000%);" />
                         </h1>
-                        <p class=" text-white">&copy; {{ env('APP_NAME')}} {{date('Y')}}. All Rights Reserved.</p>
+                        <p class=" text-white">&copy; FirmApps.ai {{date('Y')}}. All Rights Reserved.</p>
                     </div>
                 </div>
             </div>
