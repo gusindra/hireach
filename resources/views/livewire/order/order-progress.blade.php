@@ -8,6 +8,12 @@
             <x-jet-button class="ml-2" type="submit" wire:click="update">
                 {{ __('Submit Order') }}
             </x-jet-button>
+
+            @if ($errorMessage)
+                <div class="text-red-500 p-2">
+                    {!! $errorMessage !!}
+                </div>
+            @endif
         </div>
     @endif
 </div>

@@ -35,6 +35,7 @@ class Edit extends Component
     public $url;
     public $modalDeleteVisible = false;
     public $customer;
+    public $formName;
 
     public function mount($uuid)
     {
@@ -61,9 +62,21 @@ class Edit extends Component
 
     public function rules()
     {
-        return [
-            'input' => 'required'
+
+
+        $data = [
+            'input.no' => 'required',
+            'input.name' => 'required',
+            'input.date' => 'required',
+
         ];
+        if ($this->formName == 'customer') {
+            $data = [
+                'input.customer_id'       => 'required',
+            ];
+        }
+
+        return $data;
     }
 
     public function modelData()
@@ -84,8 +97,11 @@ class Edit extends Component
         ];
     }
 
-    public function updateStatus($id)
+    public function updateStatus($id, $formName = 'basic')
+
     {
+        $this->formName = $formName;
+        $this->validate();
         Order::find($id)->update([
             'status' => $this->input['status']
         ]);

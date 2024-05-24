@@ -103,8 +103,8 @@
                 <div class="col-span-12 sm:col-span-1">
                     <x-jet-label for="name" value="{{ __('Title') }}" />
                     <x-jet-input id="name" disabled="{{ disableInput($order->status) }}" type="text"
-                        class="mt-1 block w-full" wire:model="input.name" wire:model.defer="input.name"
-                        wire:model.debunce.800ms="input.name" />
+                        class="mt-1 block w-full" wire:model="input.name" wire:model.defer="name"
+                        wire:model.debunce.800ms="name" />
                     <x-jet-input-error for="name" class="mt-2" />
                 </div>
             </div>
@@ -143,7 +143,7 @@
 
 
 
-    <x-jet-form-section submit="update({{ $order->id }})">
+    <x-jet-form-section submit="update({{ $order->id }},'customer')">
         <x-slot name="title">
             {{ __('2. Customer Information') }}
         </x-slot>
