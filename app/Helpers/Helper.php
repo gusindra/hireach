@@ -282,7 +282,9 @@ function balance($user, $team_id=0, $type='total')
 
 function estimationSaldo(){
     $master = ProductLine::where('name', 'Telixcel')->first();
-    return $master->items;
+    if($master)
+        return $master->items;
+    return array();
 }
 
 function masterSaldo($type='otp'){
