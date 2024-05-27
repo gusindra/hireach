@@ -8,21 +8,21 @@ use Illuminate\Support\Facades\Auth as FacadesAuth;
 
 class OrderController extends Controller
 {
-    public $user_info;
-    public function __construct()
-    {
-        $this->middleware(function ($request, $next) {
-            // Your auth here
-            $permission = false;
-            $id = array("ORDER");
-            $permission = checkPermisissions($id);
+    // public $user_info;
+    // public function __construct()
+    // {
+    //     $this->middleware(function ($request, $next) {
+    //         // Your auth here
+    //         $permission = false;
+    //         $id = array("ORDER");
+    //         $permission = checkPermisissions($id);
 
-            if ($permission) {
-                return $next($request);
-            }
-            abort(404);
-        });
-    }
+    //         if ($permission) {
+    //             return $next($request);
+    //         }
+    //         abort(404);
+    //     });
+    // }
 
     public function index()
     {
@@ -48,5 +48,11 @@ class OrderController extends Controller
     public function show(Order $order)
     {
         return view('assistant.order.show', ['order' => $order]);
+    }
+
+    public function showUserOrder(Order $order)
+    {
+
+        return view('assistant.order.show-order-user', ['data' => $order]);
     }
 }
