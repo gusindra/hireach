@@ -7,11 +7,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="description" content="Telixcel by MGI" />
     <meta name="keywords" content="Chat Templating CMS" />
-    <meta name="author" content="Gusindra" />
-    <link rel="icon" type="image/png" href="/frontend/images/favicon.png">
-    <link rel="manifest" href="/manifest.json">
+    <meta name="author" content="Gusindra - FirmApps.AI" />
+    <!-- <link rel="icon" type="image/png" href="{{url('frontend/images/favicon.png')}}"> -->
+    <link rel="manifest" href="{{url('frontend/images/webmanifest.json')}}">
+    <link rel="apple-touch-icon" sizes="180x180" href="{{url('frontend/images/apple-touch-icon.png')}}">
+    <link rel="icon" type="image/png" sizes="32x32" href="{{url('frontend/images/favicon-32x32.png')}}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{{url('frontend/images/favicon-16x16.png')}}">
     <meta name="msapplication-TileColor" content="#ffffff">
-    <meta name="msapplication-TileImage" content="/ms-icon-144x144.png">
+    <meta name="msapplication-TileImage" content="{{url('frontend/images/android-chrome-512x512.png')}}">
     <meta name="theme-color" content="#ffffff">
     <link href="https://fonts.googleapis.com/css?family=Raleway" rel="stylesheet">
     <link rel="stylesheet" href="/css/all.min.css?v=26112021">
