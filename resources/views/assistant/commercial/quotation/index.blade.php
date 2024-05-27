@@ -14,7 +14,7 @@
     </div>
 
     <div class="grid grid-cols-12">
-        @includeWhen(auth()->user()->super->first() && auth()->user()->super->first()->role == 'superadmin',
+        @includeWhen(auth()->user()->isSuper || (auth()->user()->team && auth()->user()->team->role == 'superadmin'),
             'menu.admin-menu-order',
             []
         )
