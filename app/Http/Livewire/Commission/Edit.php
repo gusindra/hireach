@@ -8,6 +8,8 @@ use App\Models\Order;
 use App\Models\Commision;
 use App\Models\ProductLine;
 use App\Models\Project;
+use App\Models\Role;
+use App\Models\User;
 use Livewire\Component;
 
 class Edit extends Component
@@ -81,7 +83,11 @@ class Edit extends Component
 
     public function read()
     {
-        $data = Client::where('user_id', auth()->user()->currentTeam->user_id)->pluck('name', 'id');
+        $sales = Role::where('name', 'LIKE', 'sales')->value('id');
+
+        $data = User::whereHas('activeRole', function ($query) use ($sales) {
+            $query->where('role_id', $sales);
+        })->get();
         return $data;
     }
 
