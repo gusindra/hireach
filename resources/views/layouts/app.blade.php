@@ -8,6 +8,14 @@
 
         <title>{{ config('app.name', 'Telixcel') }}</title>
 
+        <!--Favicon-->
+        <link rel="manifest" href="{{url('frontend/images/webmanifest.json')}}">
+        <link rel="apple-touch-icon" sizes="180x180" href="{{url('frontend/images/apple-touch-icon.png')}}">
+        <link rel="icon" type="image/png" sizes="32x32" href="{{url('frontend/images/favicon-32x32.png')}}">
+        <link rel="icon" type="image/png" sizes="16x16" href="{{url('frontend/images/favicon-16x16.png')}}">
+        <meta name="msapplication-TileColor" content="#ffffff">
+        <meta name="msapplication-TileImage" content="{{url('frontend/images/android-chrome-512x512.png')}}">
+
         <!-- Fonts -->
         <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap">
 
@@ -15,22 +23,6 @@
         <!--<link rel="stylesheet" href="https://telixcel.s3.ap-southeast-1.amazonaws.com/assets/app.min.css">-->
         <link rel="stylesheet" href="https://telixcel.s3.ap-southeast-1.amazonaws.com/assets/2022/app.min.css">
         <link rel="stylesheet" href="https://telixcel.s3.ap-southeast-1.amazonaws.com/assets/2022/tail.min.css">
-        <link rel="apple-touch-icon" sizes="57x57" href="{{url('favicon/apple-icon-57x57.png')}}">
-        <link rel="apple-touch-icon" sizes="60x60" href="{{url('favicon/apple-icon-60x60.png')}}">
-        <link rel="apple-touch-icon" sizes="72x72" href="{{url('favicon/apple-icon-72x72.png')}}">
-        <link rel="apple-touch-icon" sizes="76x76" href="{{url('favicon/apple-icon-76x76.png')}}">
-        <link rel="apple-touch-icon" sizes="114x114" href="{{url('favicon/apple-icon-114x114.png')}}">
-        <link rel="apple-touch-icon" sizes="120x120" href="{{url('favicon/apple-icon-120x120.png')}}">
-        <link rel="apple-touch-icon" sizes="144x144" href="{{url('favicon/apple-icon-144x144.png')}}">
-        <link rel="apple-touch-icon" sizes="152x152" href="{{url('favicon/apple-icon-152x152.png')}}">
-        <link rel="apple-touch-icon" sizes="180x180" href="{{url('favicon/apple-icon-180x180.png')}}">
-        <!--<link rel="icon" type="image/png" sizes="192x192"  href="{{url('android-icon-192x192.png')}}">-->
-        <link rel="icon" type="image/png" sizes="32x32" href="{{url('favicon/favicon-32x32.png')}}">
-        <link rel="icon" type="image/png" sizes="96x96" href="{{url('favicon/favicon-96x96.png')}}">
-        <link rel="icon" type="image/png" sizes="16x16" href="{{url('favicon/favicon-16x16.png')}}">
-        <!--<link rel="manifest" href="/manifest.json">-->
-        <meta name="msapplication-TileColor" content="#ffffff">
-        <meta name="msapplication-TileImage" content="/ms-icon-144x144.png">
         <style>
             #livewire-error {width: 100% !important;height: 100% !important;}
         </style>
@@ -53,7 +45,7 @@
                     <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
                 </svg>
             </button> --}}
-            
+
             @livewire('navigation-menu')
 
             <!-- Page Heading -->
@@ -105,7 +97,7 @@
                     switchMode(mode)
                 }
             });
-    
+
             function switchMode(mode) {
                 if (localStorage.dark === 'true') {
                     document.documentElement.classList.add('dark')
@@ -114,7 +106,7 @@
                 }
                 Livewire.emitTo('dark', 'ModeView', mode)
             }
-    
+
             // this emitted from Livewire to change the Class DarkMoe on and Off.
             window.addEventListener('view-mode', event => {
                 localStorage.dark = event.detail.newMode;
@@ -135,6 +127,6 @@
             novu.init('GmksWJkfvKlW', '#notification-bell', {
                 subscriberId: "on-boarding-subscriber-id-123",
             });
-        </script>   
+        </script>
     </body>
 </html>
