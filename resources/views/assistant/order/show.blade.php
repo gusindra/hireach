@@ -92,7 +92,7 @@
 
         <div class="col-span-12 px-3 ml-24 mt-2">
             <div class="bg-white dark:bg-slate-600 overflow-hidden shadow-xl sm:rounded-lg">
-                <div class="container mx-auto">
+                <div class="mx-auto">
                     @if ($order->status == 'paid')
                         <div class="bg-green-100 border sm:rounde border-green-500 text-green-700 px-4 py-3 mb-4"
                             role="alert">

@@ -78,7 +78,7 @@
                 <li class="nav-item hidden"><a href="#section-about" class="nav-link">About</a></li>
                 <li class="nav-item"><a href="#section-counter" class="nav-link">Services</a></li>
                 @if(auth()->user())
-                <li class="nav-item"><a href="{{url('/dashboard')}}" class="btn btn-sm btn-outline-white text-slate-100 hover:text-slate-900">Dashboard</a></li>
+                <li class="nav-item"><a href="{{url('/dashboard')}}" class="btn btn-sm btn-outline-white border border-2 bg-white hover:text-slate-900">Dashboard</a></li>
                 @else
                 <li class="nav-item"><a href="{{url('/login')}}" class="nav-link">Login</a></li>
                 @endif
@@ -125,7 +125,7 @@
                             </svg>
                         </div>
                         <div class="media-body h-32">
-                            <h5 class="mt-0">Notification</h5>
+                            <h5 class="mt-0 mb-2">Notification</h5>
                             <small class="md-5 text-xs h-32">Alert reminders, OTP, promotional messages, delivery notifications, digital reports.</small>
                             <!-- <p class="mb-0"><a href="#" class="btn btn-primary btn-sm">Learn More</a></p> -->
                         </div>
@@ -139,7 +139,7 @@
                             </svg>
                         </div>
                         <div class="media-body h-32">
-                            <h5 class="mt-0">Omnichannel</h5>
+                            <h5 class="mt-0 mb-2">Omnichannel</h5>
                             <small class="md-5 text-xs h-32">SMS, WhatsApp, email and others.</small>
                             <!-- <p class="mb-0"><a href="#" class="btn btn-primary btn-sm">Learn More</a></p> -->
                         </div>
@@ -148,12 +148,13 @@
                 <div class="col-lg-3 col-md-6">
                     <div class="media d-block mb-4 text-center ftco-media p-md-5 p-4 ftco-animate">
                         <div class="ftco-icon mb-3 flex justify-center">
+
                             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 3h5m0 0v5m0-5l-6 6M5 3a2 2 0 00-2 2v1c0 8.284 6.716 15 15 15h1a2 2 0 002-2v-3.28a1 1 0 00-.684-.948l-4.493-1.498a1 1 0 00-1.21.502l-1.13 2.257a11.042 11.042 0 01-5.516-5.517l2.257-1.128a1 1 0 00.502-1.21L9.228 3.683A1 1 0 008.279 3H5z"></path>
                             </svg>
                         </div>
                         <div class="media-body h-32">
-                            <h5 class="mt-0">Customer Service</h5>
+                            <h5 class="mt-0 mb-2">Customer Service</h5>
                             <small class="md-5 text-xs h-32">Live chat for D2C web, multiple agents, ticketing handling, inbound & outbound.</small>
                             <!-- <p class="mb-0"><a href="#" class="btn btn-primary btn-sm">Learn More</a></p> -->
                         </div>
@@ -163,12 +164,12 @@
                 <div class="col-lg-3 col-md-6">
                     <div class="media d-block mb-4 text-center ftco-media p-md-5 p-4 ftco-animate">
                         <div class="ftco-icon mb-3 flex justify-center">
-                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M13.19 8.688a4.5 4.5 0 0 1 1.242 7.244l-4.5 4.5a4.5 4.5 0 0 1-6.364-6.364l1.757-1.757m13.35-.622 1.757-1.757a4.5 4.5 0 0 0-6.364-6.364l-4.5 4.5a4.5 4.5 0 0 0 1.242 7.244" />
                             </svg>
                         </div>
                         <div class="media-body h-32">
-                            <h5 class="mt-0">Easy Integration</h5>
+                            <h5 class="mt-0 mb-2">Easy Integration</h5>
                             <small class="md-5 text-xs h-32">API available, webhook, professional tech support team, IT tutorial & advisory.</small>
                             <!-- <p class="mb-0"><a href="#" class="btn btn-primary btn-sm">Learn More</a></p> -->
                         </div>
@@ -183,8 +184,23 @@
                             </svg>
                         </div>
                         <div class="media-body h-32">
-                            <h5 class="mt-0">Entertainment</h5>
-                            <small class="md-5 text-xs h-32">Images, Video trailers, Audio files.</small>
+                            <h5 class="mt-0 mb-2">Multimedia</h5>
+                            <small class="md-5 text-xs h-32">Text, Images, Video, Audio files and hyper link.</small>
+                            <!-- <p class="mb-0"><a href="#" class="btn btn-primary btn-sm">Learn More</a></p> -->
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="media d-block mb-4 text-center ftco-media p-md-5 p-4 ftco-animate">
+                        <div class="ftco-icon mb-3 flex justify-center">
+
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+                            </svg>
+                        </div>
+                        <div class="media-body h-32">
+                            <h5 class="mt-0 mb-2">Digital Report</h5>
+                            <small class="md-5 text-xs h-32">Visional reporting, delivery rate, channel performance analysis.</small>
                             <!-- <p class="mb-0"><a href="#" class="btn btn-primary btn-sm">Learn More</a></p> -->
                         </div>
                     </div>
@@ -197,21 +213,7 @@
                             </svg>
                         </div>
                         <div class="media-body h-32">
-                            <h5 class="mt-0">Digital Report</h5>
-                            <small class="md-5 text-xs h-32 text-xs">Visional reporting, delivery rate, channel performance analysis.</small>
-                            <!-- <p class="mb-0"><a href="#" class="btn btn-primary btn-sm">Learn More</a></p> -->
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-3 col-md-6">
-                    <div class="media d-block mb-4 text-center ftco-media p-md-5 p-4 ftco-animate">
-                        <div class="ftco-icon mb-3 flex justify-center">
-                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 3h5m0 0v5m0-5l-6 6M5 3a2 2 0 00-2 2v1c0 8.284 6.716 15 15 15h1a2 2 0 002-2v-3.28a1 1 0 00-.684-.948l-4.493-1.498a1 1 0 00-1.21.502l-1.13 2.257a11.042 11.042 0 01-5.516-5.517l2.257-1.128a1 1 0 00.502-1.21L9.228 3.683A1 1 0 008.279 3H5z"></path>
-                            </svg>
-                        </div>
-                        <div class="media-body h-32">
-                            <h5 class="mt-0">Customization</h5>
+                            <h5 class="mt-0 mb-2">Customization</h5>
                             <small class="md-5 text-xs h-32">Middleware development, on-premise deployment, customized frontend.</small>
                             <!-- <p class="mb-0"><a href="#" class="btn btn-primary btn-sm">Learn More</a></p> -->
                         </div>
@@ -225,8 +227,8 @@
                             </svg>
                         </div>
                         <div class="media-body h-32">
-                            <h5 class="mt-0">Customization</h5>
-                            <small class="md-5 text-xs h-32">Other needs.</small>
+                            <h5 class="mt-0 mb-2">A.I. Powered</h5>
+                            <small class="md-5 text-xs h-32">Intelligent template, knowledge bank, ChatGPT.</small>
                             <!-- <p class="mb-0"><a href="#" class="btn btn-primary btn-sm">Learn More</a></p> -->
                         </div>
                     </div>
@@ -380,7 +382,7 @@
                 <div class="media d-block text-left ftco-media p-md-5 p-4">
                   <div class="ftco-icon mb-3"><span class="oi oi-pencil display-4"></span></div>
                   <div class="media-body">
-                    <h5 class="mt-0">Easy to Customize</h5>
+                    <h5 class="mt-0 mb-2">Easy to Customize</h5>
                     <p>Far far away, behind the word mountains, far from the countries Vokalia and Consonantia, there live the blind texts.</p>
                   </div>
                 </div>

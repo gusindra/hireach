@@ -63,7 +63,7 @@ class OrderObserver
             }
 
             Notification::create([
-                'type'          => 'Invoicve',
+                'type'          => 'Invoice',
                 'model_id'      => $request->id,
                 'model'         => 'Order',
                 'notification'  => 'Please paid your order invoice',

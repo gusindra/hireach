@@ -31,6 +31,7 @@
             </x-slot>
         </x-jet-dialog-modal>
     @endif
+
     @if (
         ($order->status == 'draft' || $order->status == 'unpaid' || $order->status == 'paid') &&
             @Auth::user()->role &&
@@ -86,7 +87,7 @@
         </x-jet-form-section>
     @endif
 
-
+    <x-jet-section-border />
 
     <x-jet-form-section submit="update({{ $order->id }})">
         <x-slot name="title">
@@ -139,8 +140,7 @@
         </x-slot>
     </x-jet-form-section>
 
-
-
+    <x-jet-section-border />
 
     <x-jet-form-section submit="update({{ $order->id }},'customer')">
         <x-slot name="title">
@@ -219,29 +219,38 @@
 
     <x-jet-section-border />
 
-
     @livewire('commission.edit', ['model' => 'order', 'data' => $order])
 
     @if ($order->status == 'draft')
-        <div class="grid ml-5 grid-cols-2 gap-4 mt-6 shadow p-4">
-            <div class="">
-                <h2 class="text-lg">Delete Order</h2>
-                <p class="mt-2 text-sm text-gray-600">This is for delete quotaton</p>
-            </div>
+        <x-jet-form-section submit="actionShowDeleteModal">
+            <x-slot name="title">
+                {{ __('Delete Order') }}
+            </x-slot>
 
-            <div class="text-right ">
+            <x-slot name="description">
+                {{ __('This is for delete order.') }}
+            </x-slot>
 
-                <div class="p-4">
-                    <div class="flex items-center justify-end">
-                        <x-jet-button wire:click="actionShowDeleteModal">
-                            {{ __('Delete Order') }}
-                        </x-jet-button>
+            <x-slot name="form">
+                <div class="col-span-6 grid grid-cols-2">
+                    <div class="col-span-12 sm:col-span-1 mx-4 text-right">
                     </div>
-
-
+                    <div class="col-span-12 sm:col-span-1 mx-4 text-right">
+                    </div>
                 </div>
-            </div>
-        </div>
+            </x-slot>
+
+            <x-slot name="actions">
+                <x-jet-action-message class="mr-3" on="saved">
+                    {{ __('Order saved.') }}
+                </x-jet-action-message>
+
+                <x-jet-button class="bg-red-600" wire:click="actionShowDeleteModal">
+                    {{ __('Delete Order') }}
+                </x-jet-button>
+            </x-slot>
+        </x-jet-form-section>
+
         <x-jet-dialog-modal class="text-left" wire:model="modalDeleteVisible">
             <x-slot name="title">
                 {{ __('Delete Order') }}
@@ -261,6 +270,9 @@
                 </x-jet-danger-button>
             </x-slot>
         </x-jet-dialog-modal>
+
+        <x-jet-section-border />
+
     @endif
 
 </div>

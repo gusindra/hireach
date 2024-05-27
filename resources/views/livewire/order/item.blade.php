@@ -1,6 +1,6 @@
 <div>
     <x-jet-action-section>
-        <x-slot name="title">Order items :</x-slot>
+        <x-slot name="title">3. Items order</x-slot>
 
         <x-slot name="description">
             {{ __('The Order Product detail.') }}

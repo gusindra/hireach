@@ -69,7 +69,7 @@
                                 <div class="px-4 sm:px-0">
                                     @if ($data->company && $data->company->img_logo)
                                         {{-- <img style="height:100px;" src="https://telixcel.s3.ap-southeast-1.amazonaws.com/{{$data->company->img_logo->file}}" /> --}}
-                                        <img style="height:100px;" src="{{ url('/assets/img/logos/logo2.png') }}" />
+                                        <img style="height:100px;" src="{{ url('/assets/img/logos/logo2.svg') }}" />
                                     @else
                                         <h3 class="text-lg font-medium text-gray-900">
                                             {{ $data->company ? $data->company->name : $data->entity_party }}</h3>

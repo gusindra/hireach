@@ -23,6 +23,7 @@ use App\Models\Request;
 use App\Models\SaldoUser;
 use App\Models\Template;
 use App\Models\Ticket;
+use App\Models\TeamUser;
 use App\Observers\ApiCredentialObserver;
 use App\Observers\ApprovalObserver;
 use App\Observers\AttachmentObserver;
@@ -39,6 +40,7 @@ use App\Observers\QuotationObserver;
 use App\Observers\SaldoUserObserver;
 use App\Observers\SmsBlastObserver;
 use App\Observers\CommissionObserver;
+use App\Observers\TeamUserObserver;
 use Laravel\Jetstream\Events\TeamUpdated;
 
 class EventServiceProvider extends ServiceProvider
@@ -80,5 +82,6 @@ class EventServiceProvider extends ServiceProvider
         Commision::observe(CommissionObserver::class);
         FlowProcess::observe(ApprovalObserver::class);
         Billing::observe(BillingObserver::class);
+        TeamUser::observe(TeamUserObserver::class);
     }
 }
