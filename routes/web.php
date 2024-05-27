@@ -138,7 +138,8 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
         // Route::resource('reportings', 'Backend\ReportingController');
         // Route::resource('logs', 'Backend\LogController');
 
-        Route::get('/company/{company}', [SettingController::class, 'company'])->name('settings.company.show');
+        Route::get('/setting/company', [SettingController::class, 'company'])->name('settings.company');
+        Route::get('setting/company/{company}', [SettingController::class, 'companyShow'])->name('settings.company.show');
 
         Route::get('/project', [ProjectController::class, 'index'])->name('project');
         Route::get('/project/{project}', [ProjectController::class, 'show'])->name('project.show');

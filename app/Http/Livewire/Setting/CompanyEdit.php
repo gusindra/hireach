@@ -15,6 +15,7 @@ class CompanyEdit extends Component
     public $original_attachment;
     public $result_attachment;
     public $addressed;
+    public $modalDeleteVisible = false;
 
     public function mount($company)
     {
@@ -63,6 +64,20 @@ class CompanyEdit extends Component
     {
         $this->input['model_id'] = '';
         $this->addressed = '';
+    }
+
+
+    public function actionShowDeleteModal()
+    {
+        $this->modalDeleteVisible = true;
+    }
+    public function delete()
+    {
+        if ($this->company) {
+            $this->company->delete();
+        }
+        $this->modalDeleteVisible = false;
+        return redirect()->route('settings.company');
     }
 
     /**
