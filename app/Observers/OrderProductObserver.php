@@ -2,6 +2,7 @@
 
 namespace App\Observers;
 
+use App\Models\Billing;
 use App\Models\OrderProduct;
 use App\Models\Order;
 use Illuminate\Support\Facades\Auth;
@@ -19,11 +20,20 @@ class OrderProductObserver
     public function created(OrderProduct $request)
     {
         $order = Order::find($request->model_id);
-        if($order){
-            $amount = $request->price * $request->qty * $request->total_percentage / 100;
+        $billing = Billing::where('order_id', $order->id);
+        if ($order) {
+            $subTotal = $request->where('name', 'Topup')->latest()->first();
+            $vat = $subTotal->price * 0.11;
+            $amount = $subTotal->price * $request->qty * $request->total_percentage / 100;
             $order->update([
-                'total' => $order->total + $amount
+                'total' => $subTotal->price,
+                'vat' => 11
             ]);
+            $billing->update([
+                'amount' => $subTotal->price,
+            ]);
+
+
             // Log::info($request->price.$request->qty.$request->total_percentage);
         }
     }
@@ -37,24 +47,21 @@ class OrderProductObserver
     public function deleted(OrderProduct $request)
     {
         $order = Order::find($request->model_id);
-        if($order){
+        if ($order) {
             // $amount = $request->price * $request->qty * $request->total_percentage / 100;
-            if(count($order->items)==0){
+            if (count($order->items) == 0) {
                 $order->update([
                     'total' => 0
                 ]);
-            }else{
+            } else {
                 $total = 0;
-                foreach($order->items as $item){
-                    $total = $total + ($item->price * $item->qty * $item->total_percentage /100);
+                foreach ($order->items as $item) {
+                    $total = $total + ($item->price * $item->qty * $item->total_percentage / 100);
                 }
                 $order->update([
                     'total' => $total
                 ]);
             }
         }
-
     }
 }
-
-

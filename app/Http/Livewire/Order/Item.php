@@ -107,7 +107,7 @@ class Item extends Component
 
         $this->emit('saved');
     }
-    
+
     /**
      * The update order vat.
      *
@@ -115,9 +115,8 @@ class Item extends Component
      */
     public function updateTax()
     {
-        // dd($this->tax);
         $order = Order::find($this->data->id);
-        $order->update(['vat'=>$this->tax]);
+        $order->update(['vat' => $this->tax]);
     }
 
     /**

@@ -9,7 +9,7 @@
                     <a class="navbar-brand" href="/">
                         <img class="hidden" src="https://hireach.archeeshop.com/frontend/images/logo-trans.png"
                             title="{{ env('APP_NAME') }}" style="width: 150px;" />
-                        <img style="height:50px;" src="{{url('/assets/img/logos/logo2.png')}}" />
+                        <img style="height:50px;" src="{{url('/assets/img/logos/logo2.svg')}}" />
                     </a>
                 </div>
 

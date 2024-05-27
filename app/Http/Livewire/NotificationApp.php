@@ -81,7 +81,7 @@ class NotificationApp extends Component
         $data['waiting'] = []; //$this->waiting();
         $data['notif'] = Notification::where('user_id', $this->client_id)->orderBy('id', 'desc')->take(15)->get();
         $data['count'] = Notification::where('user_id', $this->client_id)->whereIn('status', ['new','unread'])->count() + count($data['waiting']);
-
+        $data['status'] = auth()->user()->team->status;
         $this->dispatchBrowserEvent('event-notification',[
             'eventName' => 'Sound Alert',
             'eventMessage' => $data['count']

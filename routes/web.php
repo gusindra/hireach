@@ -118,7 +118,9 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
         Route::get('/settings/{page}', [SettingController::class, 'show'])->name('settings.show');
 
         Route::get('/order', [OrderController::class, 'index'])->name('admin.order');
+
         Route::get('/order/{order}', [OrderController::class, 'show'])->name('show.order');
+
 
         Route::get('/quotation', [OrderController::class, 'quotation'])->name('admin.quotation');
         Route::get('/quotation/{quotation}', [OrderController::class, 'showQuotation'])->name('show.quotation');
@@ -210,6 +212,10 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
     Route::get('/payment/deposit', [PaymentController::class, 'index'])->name('payment.deposit');
     Route::get('/payment/topup', [PaymentController::class, 'topup'])->name('payment.topup');
     Route::get('/quotation', [PaymentController::class, 'quotation'])->name('quotation');
+    Route::get('/order', function () {
+        return view('assistant.invoice.index');
+    })->name('user.order');
+    Route::get('/order/{order}', [OrderController::class, 'showUserOrder'])->name('order.show');
     Route::get('/quotation/{quotation}', [PaymentController::class, 'quotationShow'])->name('quotation.show');
 
     Route::get('/payment/invoice/{id}', [PaymentController::class, 'invoice'])->name('invoice.topup');

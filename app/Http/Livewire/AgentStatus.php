@@ -4,6 +4,7 @@ namespace App\Http\Livewire;
 
 use Livewire\Component;
 use App\Models\TeamUser;
+use App\Models\User;
 
 class AgentStatus extends Component
 {
@@ -35,7 +36,8 @@ class AgentStatus extends Component
      */
     public function updateStatus($status)
     {
-        $teamuser = TeamUser::where('team_id', $this->team_id)->where('user_id', auth()->user()->id)->first();
+        $userId = auth()->user()->id;
+        $teamuser = TeamUser::where('team_id', $this->team_id)->where('user_id', $userId)->first();
         if($status == 'Offline'){
             $status = null;
         }
@@ -43,6 +45,8 @@ class AgentStatus extends Component
             $teamuser->update([
                 'status' => $status
             ]);
+            $user = User::find($userId)->update(['status', $status]);
+            // dd($user);
         }
 
         $this->status = $status;

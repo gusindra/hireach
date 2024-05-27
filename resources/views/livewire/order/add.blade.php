@@ -3,8 +3,9 @@
         Add Order
     </x-jet-button>
     <div class="flex items-center text-right">
-        <a class="ml-2 cursor-pointer hidden inline-flex items-center px-2 py-1 bg-green-800 border border-transparent rounded-sm font-normal text-xs text-white 1g-widest hover:bg-green-700 active:bg-green-900 focus:outline-none focus:border-gray-900 focus:shadow-outline-gray disabled:opacity-25 transition" >
-            {{__('Import Order')}}
+        <a
+            class="ml-2 cursor-pointer hidden inline-flex items-center px-2 py-1 bg-green-800 border border-transparent rounded-sm font-normal text-xs text-white 1g-widest hover:bg-green-700 active:bg-green-900 focus:outline-none focus:border-gray-900 focus:shadow-outline-gray disabled:opacity-25 transition">
+            {{ __('Import Order') }}
         </a>
     </div>
 
@@ -16,36 +17,35 @@
 
         <x-slot name="content">
             <div class="col-span-6 sm:col-span-4 p-3">
-                <x-jet-label for="type" value="{{ __('Type') }}" />
-                <select
-                    name="type"
-                    id="type"
-                    class="border-gray-300 dark:bg-slate-800 focus:border-indigo-300 focus:ring focus:ring-indigo-200focus:ring-opacity-50 rounded-md shadow-sm mt-1 block w-full"
-                    wire:model.debunce.800ms="type"
-                    >
-                    <option selected>-- Select Type --</option>
-                    <option value="selling">Selling Product</option>
-                    <option value="saas">SAAS Service</option>
-                    <option value="referral">Referral</option>
-                </select>
-                <x-jet-input-error for="type" class="mt-2" />
-            </div>
-            <div class="col-span-6 sm:col-span-4 p-3">
                 <x-jet-label for="entity" value="{{ __('Entity of Party B') }}" />
-                <select
-                    name="entity"
-                    id="entity"
+                <select name="entity" id="entity"
                     class="border-gray-300 dark:bg-slate-800 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 rounded-md shadow-sm mt-1 block w-full"
-                    wire:model.debunce.800ms="entity"
-                    >
+                    wire:model.debunce.800ms="entity">
                     <option selected>-- Select Party --</option>
                     @foreach ($companies as $company)
-                        <option value="{{$company->id}}">{{$company->name}}</option>
+                        <option value="{{ $company->id }}">{{ $company->name }}</option>
                     @endforeach
-                    <option value="sti">PT STI</option>
-                    <option value="goldenunion">Goldenunion Group</option>
                 </select>
                 <x-jet-input-error for="entity" class="mt-2" />
+            </div>
+            <div class="col-span-6 sm:col-span-4 p-2">
+                <x-jet-label for="name" value="{{ __('Name') }}" />
+                <x-jet-input autocomplete="off" id="name" type="text" class="mt-1 block w-full"
+                    wire:model.debunce.800ms="name" autofocus />
+                <x-jet-input-error for="name" class="mt-2" />
+            </div>
+
+            <div class="col-span-6 sm:col-span-4 p-3">
+                <x-jet-label for="customer_id" value="{{ __('Customer') }}" />
+                <select name="customer_id" id="customer_id"
+                    class="border-gray-300 dark:bg-slate-800 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 rounded-md shadow-sm mt-1 block w-full"
+                    wire:model.debunce.800ms="customer_id">
+                    <option selected>-- Select Customer --</option>
+                    @foreach ($customer as $item)
+                        <option value="{{ $item->id }}">{{ $item->name }}</option>
+                    @endforeach
+                </select>
+                <x-jet-input-error for="customer_id" class="mt-2" />
             </div>
         </x-slot>
 
@@ -60,4 +60,3 @@
         </x-slot>
     </x-jet-dialog-modal>
 </div>
-

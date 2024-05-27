@@ -81,7 +81,7 @@
             </x-jet-secondary-button>
         </x-slot>
     </x-jet-dialog-modal>
-    @if ($data['count'] > 0)
+    @if ($data['count'] > 0 && $data['status']=='Online')
         <style>
             .apply-shake {
                 animation: shake 1s;
@@ -143,7 +143,7 @@
                     setTimeout((e) => {
                         var d = document.getElementById("icon-notif");
                         d.classList.add("apply-shake");
-                    }, 3000);
+                    }, 10000);
                     d.classList.remove("apply-shake");
                 });
             });

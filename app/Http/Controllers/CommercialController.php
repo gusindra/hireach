@@ -21,7 +21,7 @@ class CommercialController extends Controller
             $id = array("PRODUCT", "QUOTATION", "CONTRACT");
             $permission = checkPermisissions($id);
 
-            if($permission){
+            if ($permission) {
                 return $next($request);
             }
             abort(404);
@@ -30,75 +30,76 @@ class CommercialController extends Controller
 
     public function index()
     {
-        return view('assistant.commercial.index', ['key'=>'item']);
+        return view('assistant.commercial.index', ['key' => 'item']);
     }
 
     public function create(Request $request)
     {
-        if($request->get('data')=='quotation'){
+        if ($request->get('data') == 'quotation') {
             return view('assistant.commercial.quotation.create');
-        }elseif($request->get('data')=='contract'){
+        } elseif ($request->get('data') == 'contract') {
             return view('assistant.commercial.contract.create');
-        }else{
+        } else {
             return view('assistant.commercial.create');
         }
     }
 
     public function show(Request $request, $key)
     {
-        if($key=='quotation'){
-            if($request->has('v')){
+        if ($key == 'quotation') {
+            if ($request->has('v')) {
                 return view('main-side.quotation-details');
             }
-            return view('assistant.commercial.quotation.index', ['key'=>$key]);
-        }elseif($key=='contract'){
-            return view('assistant.commercial.contract.index', ['key'=>$key]);
+            return view('assistant.commercial.quotation.index', ['key' => $key]);
+        } elseif ($key == 'contract') {
+            return view('assistant.commercial.contract.index', ['key' => $key]);
         }
 
-        if($request->has('v')){
+        if ($request->has('v')) {
             return view('main-side.master-product');
         }
-        return view('assistant.commercial.index', ['key'=>$key]);
+        return view('assistant.commercial.index', ['key' => $key]);
     }
 
     public function edit(Request $request, $key, $id)
     {
-        if($key=='quotation'){
+        if ($key == 'quotation') {
             $data = Quotation::find($id);
-            if($data){
-                if($request->has('v')){
-                    return view('main-side.quotation-details', ['code'=>$id, 'quote' => $data]);
+            if ($data) {
+                if ($request->has('v')) {
+                    return view('main-side.quotation-details', ['code' => $id, 'quote' => $data]);
                 }
-                return view('assistant.commercial.quotation.show', ['code'=>$id, 'quote' => $data]);
+                return view('assistant.commercial.quotation.show', ['code' => $id, 'quote' => $data]);
             }
-        }elseif($key=='contract'){
+        } elseif ($key == 'contract') {
             $data = Contract::find($id);
-            if($data){
-                return view('assistant.commercial.contract.show', ['code'=>$id, 'contract' => $data]);
+            if ($data) {
+                return view('assistant.commercial.contract.show', ['code' => $id, 'contract' => $data]);
             }
         }
         $data = CommerceItem::find($id);
-        if($data){
-            if($request->has('v')){
-                return view('main-side.detail-product', ['code'=>$id, 'data' => $data]);
+        if ($data) {
+            if ($request->has('v')) {
+                return view('main-side.detail-product', ['code' => $id, 'data' => $data]);
             }
-            return view('assistant.commercial.show', ['code'=>$id, 'data' => $data]);
+            return view('assistant.commercial.show', ['code' => $id, 'data' => $data]);
         }
         abort(404);
-
     }
 
-    public function template($key, $id){
+    public function template($key, $id)
+    {
         // return $key;
-        if($id=='quotation'){
+        if ($id == 'quotation') {
             $q = Quotation::find($key);
             return view('assistant.commercial.quotation.template', ['data' => $q]);
-        }elseif($id=='contract'){
+        } elseif ($id == 'contract') {
             $c = Contract::find($key);
-            return view('assistant.commercial.contract.template', ['code'=>$c]);
-        }elseif($id=='invoice'){
+            return view('assistant.commercial.contract.template', ['code' => $c]);
+        } elseif ($id == 'invoice') {
             $o = Order::find($key);
-            return view('assistant.order.template', ['data'=>$o]);
+
+            return view('assistant.order.template', ['data' => $o]);
         }
     }
 }

@@ -7,6 +7,7 @@ use App\Models\Billing;
 use App\Models\Commision;
 use App\Models\FlowProcess;
 use App\Models\FlowSetting;
+use App\Models\Notification;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Log;
@@ -21,7 +22,7 @@ class OrderObserver
      */
     public function created(Order $request)
     {
-        if($request->status=='unpaid'){
+        if ($request->status == 'unpaid') {
             Billing::create([
                 'uuid'          => Str::uuid(),
                 'status'        => $request->status,
@@ -43,10 +44,12 @@ class OrderObserver
      */
     public function updated(Order $request)
     {
+
         //Log::debug($request->status);
-        if($request->status=='unpaid'){
+        if ($request->status == 'unpaid') {
             $bill = Billing::where('order_id', $request->id)->get();
-            if(count($bill)==0){
+            $order = Order::where('customer_id', $request->id)->get();
+            if (count($bill) == 0) {
                 Billing::create([
                     'uuid'          => Str::uuid(),
                     'status'        => $request->status,
@@ -58,7 +61,16 @@ class OrderObserver
                     'period'        => $request->date->format('Y-m-d')
                 ]);
             }
-        }elseif($request->status=='paid'){
+
+            Notification::create([
+                'type'          => 'Invoice',
+                'model_id'      => $request->id,
+                'model'         => 'Order',
+                'notification'  => 'Please paid your order invoice',
+                'user_id'       => $request->customer_id,
+                'status'        => 'unread',
+            ]);
+        } elseif ($request->status == 'paid') {
             // $request->bill->update([
             //     'status'    => 'paid'
             // ]);
@@ -70,7 +82,7 @@ class OrderObserver
             //         'status'    => 'unpaid'
             //     ]);
             // }
-        }elseif($request->status == 'submit'){
+        } elseif ($request->status == 'submit') {
             FlowProcess::create([
                 'model'     => 'ORDER',
                 'model_id'  => $request->id,
@@ -79,7 +91,7 @@ class OrderObserver
             ]);
 
             $flow = FlowSetting::where('model', 'ORDER')->where('team_id', auth()->user()->currentTeam->id)->get();
-            foreach($flow as $key => $value){
+            foreach ($flow as $key => $value) {
                 FlowProcess::create([
                     'model'     => $value->model,
                     'model_id'  => $request->id,
@@ -105,14 +117,11 @@ class OrderObserver
         //         'task'      => 'Releasor'
         //     ]);
         // }
-        if($request->status == 'approved')
-        {
+        if ($request->status == 'approved') {
             Order::find($request->id)->update([
                 'status'    => 'unpaid'
             ]);
         }
-
-
     }
 
     /**
@@ -126,5 +135,3 @@ class OrderObserver
         $bill = Billing::where('order_id', $request->order_id)->delete();
     }
 }
-
-
