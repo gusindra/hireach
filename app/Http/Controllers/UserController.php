@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Client;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth as FacadesAuth;
@@ -55,6 +56,22 @@ class UserController extends Controller
         }
         return redirect('user');
     }
+
+    public function client(User $user)
+    {
+
+        return view('user.client-to-user', ['user' => $user]);
+    }
+
+
+    public function clientUser(User $user, $client)
+
+    {
+        $clients = Client::find($client);
+        return view('user.client-to-user-create', compact('user', 'clients'));
+    }
+
+
 
     public function provider(User $user)
     {
