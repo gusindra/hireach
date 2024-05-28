@@ -1,14 +1,14 @@
-<div class="py-3">
+<div class="lg:ml-20 p-3">
     <div class="max-w-9xl mx-auto sm:px-6 lg:px-8">
         <div class="bg-white dark:bg-slate-600 overflow-hidden sm:rounded-lg">
-            <div class="py-2 sm:px-2 bg-opacity-10 grid grid-cols-1 md:grid-cols-1 gap-3">
+            <div class="py-2 bg-opacity-10 grid grid-cols-1 md:grid-cols-1 gap-3">
                 <div class="col-span-2 row-span-3 m-2">
                     <div class="h-full">
                         <livewire:personal-chart />
                     </div>
                 </div>
-                <div class="flex justify-content">
-                    <div class="m-2 w-full">
+                <div class="flex justify-content gap-2">
+                    <div class="w-full">
                         <div class="flex shadow rounded p-2 border">
                             <a href="#">
                                 <svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" class="w-6 text-gray-400">
@@ -38,7 +38,7 @@
 
                     </div>
 
-                    <div class="m-2 w-full">
+                    <div class="w-full">
                         <div class="flex shadow rounded p-2 border">
                             <a href="#">
                                 <svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" class="w-6 text-gray-400">
@@ -68,7 +68,7 @@
                         </div>
                     </div>
 
-                    <div class="m-2 w-full">
+                    <div class="w-full">
                         <div class="flex shadow rounded p-2  border">
                             <a href="#">
                                 <svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" class="w-6 text-gray-400">
@@ -84,7 +84,7 @@
                         </div>
                     </div>
 
-                    <div class="m-2 w-full">
+                    <div class="w-full">
                         <div class="flex shadow rounded p-2 border">
                             <a href="#">
                                 <svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" class="w-6 text-gray-400">

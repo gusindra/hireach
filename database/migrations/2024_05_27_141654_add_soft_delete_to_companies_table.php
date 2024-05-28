@@ -13,12 +13,8 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('providers', function (Blueprint $table) {
-            $table->id();
-            $table->string('code', 50)->unique();
-            $table->string('name', 200)->nullable();
-            $table->string('company', 200)->nullable();
-            $table->timestamps();
+        Schema::table('companies', function (Blueprint $table) {
+            $table->softDeletes();
         });
     }
 
@@ -29,6 +25,8 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('providers');
+        Schema::table('companies', function (Blueprint $table) {
+            $table->dropSoftDeletes();
+        });
     }
 };

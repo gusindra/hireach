@@ -8,14 +8,15 @@
 
         @includeWhen(auth()->user()->isSuper || (auth()->user()->team && auth()->user()->team->role == 'superadmin'),
             'menu.admin-menu-user-profile',
-            ['user' => $user]
+            []
         )
 
         <div class="col-span-12 px-3 lg:ml-24 mt-2">
             <div class="bg-white dark:bg-slate-600 overflow-hidden shadow-xl sm:rounded-lg">
                 <div class="mx-auto">
-                    @livewire('user.profile', ['user' => $user])
-                    @livewire('user.delete', ['userId' => $user->id])
+                    @livewire('user.client', ['client' => $clients, 'user' => $user])
+
+
                 </div>
             </div>
         </div>

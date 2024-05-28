@@ -5,8 +5,8 @@
         class="overflow-y-auto py-2 px-2 h-full bg-white dark:bg-slate-800 border-r border-gray-200 dark:bg-gray-800 dark:border-gray-700">
         <ul class="space-y-2">
             <li>
-                <button type="button" onclick="window.location='{{ route('dashboard') }}'"
-                    class="items-center p-2 w-full text-base font-normal text-gray-600 rounded-lg transition duration-75 group hover:bg-gray-100 dark:text-white dark:hover:bg-slate-700 dark:bg-slate-600"
+                <a href="{{ route('dashboard') }}" type="button"
+                    class="items-center p-2 w-full text-base font-normal text-gray-600 rounded-lg transition duration-75 group hover:bg-gray-100 dark:text-white dark:hover:bg-slate-700 dark:bg-slate-600 dark:bg-slate-600"
                     aria-controls="dropdown-pages" data-collapse-toggle="dropdown-pages">
                     <center><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
                             stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
@@ -17,11 +17,11 @@
                         </svg>
                     </center>
                     <span class="text-left whitespace-nowrap text-xs">Overview</span>
-                </button>
+                </a>
             </li>
             <li>
-                <button type="button" onclick="window.location='{{ route('dashboard') }}'"
-                    class="items-center p-2 w-full text-base font-normal text-gray-600 rounded-lg transition duration-75 group hover:bg-gray-100 dark:text-white dark:hover:bg-slate-700 dark:bg-slate-600"
+                <a href="#" type="button"
+                    class="hidden items-center p-2 w-full text-base font-normal text-gray-600 rounded-lg transition duration-75 group hover:bg-gray-100 dark:text-white dark:hover:bg-slate-700 dark:bg-slate-600 dark:bg-slate-600"
                     aria-controls="dropdown-pages" data-collapse-toggle="dropdown-pages">
                     <center>
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
@@ -31,11 +31,11 @@
                         </svg>
                     </center>
                     <span class="text-left whitespace-nowrap text-xs">Flow</span>
-                </button>
+                </a>
             </li>
             <li>
-                <button type="button" onclick="window.location='{{ route('dashboard.inbound') }}'"
-                    class="items-center p-2 w-full text-base font-normal text-gray-600 rounded-lg transition duration-75 group hover:bg-gray-100 dark:text-white dark:hover:bg-slate-700 dark:bg-slate-600 {{ request()->is('dashboard/inbound*') ? 'bg-gray-100 dark:bg-slate-700' : '' }}"
+                <a href="{{ route('dashboard.inbound') }}" type="button"
+                    class="items-center p-2 w-full text-base font-normal text-gray-600 rounded-lg transition duration-75 group hover:bg-gray-100 dark:text-white dark:hover:bg-slate-700 dark:bg-slate-600 dark:bg-slate-600 {{ request()->is('dashboard/inbound*') ? 'bg-gray-100 dark:bg-slate-700' : '' }}"
                     aria-controls="dropdown-pages" data-collapse-toggle="dropdown-pages">
                     <center>
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
@@ -45,12 +45,12 @@
                         </svg>
                     </center>
                     <span class="text-left whitespace-nowrap text-xs">Inbound</span>
-                </button>
+                </a>
             </li>
 
             <li>
-                <button type="button" onclick="window.location='{{ route('dashboard.outbound') }}'"
-                    class="items-center p-2 w-full text-base font-normal text-gray-600 rounded-lg transition duration-75 group hover:bg-gray-100 dark:text-white dark:hover:bg-slate-700 dark:bg-slate-600 {{ request()->is('dashboard/outbound*') ? 'bg-gray-100 dark:bg-slate-700' : '' }}"
+                <a href="{{ route('dashboard.outbound') }}" type="button"
+                    class="items-center p-2 w-full text-base font-normal text-gray-600 rounded-lg transition duration-75 group hover:bg-gray-100 dark:text-white dark:hover:bg-slate-700 dark:bg-slate-600 dark:bg-slate-600 {{ request()->is('dashboard/outbound*') ? 'bg-gray-100 dark:bg-slate-700' : '' }}"
                     aria-controls="dropdown-pages" data-collapse-toggle="dropdown-pages">
                     <center>
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
@@ -60,14 +60,14 @@
                         </svg>
                     </center>
                     <span class="text-left whitespace-nowrap text-xs">Outbound</span>
-                </button>
+                </a>
             </li>
 
         </ul>
         <ul class="pt-5 mt-5 space-y-2 border-t border-gray-200 dark:border-gray-700">
             <li>
                 <button type="button"
-                    class="items-center p-2 w-full text-base font-normal text-gray-600 rounded-lg transition duration-75 group hover:bg-gray-100 dark:text-white dark:hover:bg-slate-700 dark:bg-slate-600"
+                    class="items-center p-2 w-full text-base font-normal text-gray-600 rounded-lg transition duration-75 group hover:bg-gray-100 dark:text-white dark:hover:bg-slate-700 dark:bg-slate-600 dark:bg-slate-600"
                     aria-controls="dropdown-pages" data-collapse-toggle="dropdown-pages">
                     <center>
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"

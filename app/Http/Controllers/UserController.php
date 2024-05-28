@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Client;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth as FacadesAuth;
@@ -35,10 +36,12 @@ class UserController extends Controller
     {
         $user = User::find($id);
 
-        if ($request->has('v')) {
-            return view('main-side.user-details', ['user' => $user, 'id' => $id]);
+        // if ($request->has('v')) {
+        //     return view('main-side.user-details', ['user' => $user, 'id' => $id]);
+        // }
+        if (count($user->super) > 0) {
+            return view('user.user-profile', ['user' => $user]);
         }
-
         if ($user->name != 'Admin1') {
             return view('user.user-detail', ['user' => $user, 'id' => $id]);
         }
@@ -54,6 +57,22 @@ class UserController extends Controller
         return redirect('user');
     }
 
+    public function client(User $user)
+    {
+
+        return view('user.client-to-user', ['user' => $user]);
+    }
+
+
+    public function clientUser(User $user, $client)
+
+    {
+        $clients = Client::find($client);
+        return view('user.client-to-user-create', compact('user', 'clients'));
+    }
+
+
+
     public function provider(User $user)
     {
         return view('user.user-provider', ['user' => $user]);
@@ -61,9 +80,9 @@ class UserController extends Controller
 
 
 
+
     public function balance($id, Request $request)
     {
-        // Lakukan sesuatu dengan argumen yang diberikan
         $user = User::find($id);
 
         return view('user.user-balance', ['user' => $user, 'id' => $id, 'team' => $request->has('team') ? $request->team : 0]);

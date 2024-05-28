@@ -6,7 +6,6 @@ use App\Http\Controllers\ApiViGuardController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\DevhookController;
 use App\Http\Controllers\WebhookController;
-use App\Http\Livewire\ShowTemplate;
 use App\Http\Controllers\ApiWaController;
 use App\Http\Controllers\ChatController;
 use App\Http\Controllers\AuthController;
@@ -29,12 +28,16 @@ use App\Http\Controllers\OrderController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\RoleInvitationController;
-use App\Http\Controllers\SynProductController;
 use App\Http\Controllers\TeamInvitationController;
 use App\Http\Controllers\TemplateController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ProviderController;
 use App\Http\Controllers\ResourceController;
+use App\Models\SaldoUser;
+use Illuminate\Http\Request as HttpRequest;
+use Illuminate\Support\Facades\Http;
+use App\Http\Livewire\ShowTemplate;
+use App\Http\Controllers\SynProductController;
 use App\Jobs\ProcessEmail;
 use App\Models\ApiCredential;
 use App\Models\BlastMessage;
@@ -46,13 +49,10 @@ use App\Models\OperatorPhoneNumber;
 use App\Models\OrderProduct;
 use App\Models\Template;
 use App\Models\Request;
-use App\Models\SaldoUser;
 use Carbon\Carbon;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Mail;
-use Illuminate\Http\Request as HttpRequest;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Http;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -79,17 +79,22 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
      */
     Route::prefix('admin')->middleware('admin')->group(function () {
         Route::get('/', [DashboardController::class, 'show'])->name('admin');
-
+        Route::get('/dashboard/active-user', [DashboardController::class, 'activeUser'])->name('dashboard.active.user');
+        Route::get('/dashboard/order', [DashboardController::class, 'orderSummary'])->name('dashboard.order');
+        Route::get('/dashboard/provider', [DashboardController::class, 'providerSummary'])->name('dashboard.provider');
         //Route::get('logout', 'Backend\AuthController@logout');
         //Route::resource('change-password', 'Backend\ChangePasswordController');
         // Route::resource('users', 'Backend\UserController');
 
         Route::get('/user', [UserController::class, 'index'])->name('admin.user');
+
         Route::get('/user/{user}', [UserController::class, 'show'])->name('user.show');
         Route::get('/user/{user}/balance', [UserController::class, 'balance'])->name('user.show.balance');
         Route::get('/user/{user}/profile', [UserController::class, 'profile'])->name('user.show.profile');
         Route::get('/user/{user}/provider', [UserController::class, 'provider'])->name('user.show.provider');
         Route::get('/user/{user}/order', [UserController::class, 'profile'])->name('user.show.order');
+        Route::get('/user/{user}/client', [UserController::class, 'client'])->name('user.show.client');
+        Route::get('/user/{user}/client/{client}', [UserController::class, 'clientUser'])->name('client.create.user');
 
         // Route::get('/settings/clear-cache', 'Backend\SettingController@clearCache')->name('settings.clear-cache');
         // Route::get('/settings/rebuild-cache', 'Backend\SettingController@rebuildCache')->name('settings.rebuild-cache');
@@ -138,7 +143,8 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
         // Route::resource('reportings', 'Backend\ReportingController');
         // Route::resource('logs', 'Backend\LogController');
 
-        Route::get('/company/{company}', [SettingController::class, 'company'])->name('settings.company.show');
+        Route::get('/setting/company', [SettingController::class, 'company'])->name('settings.company');
+        Route::get('setting/company/{company}', [SettingController::class, 'companyShow'])->name('settings.company.show');
 
         Route::get('/project', [ProjectController::class, 'index'])->name('project');
         Route::get('/project/{project}', [ProjectController::class, 'show'])->name('project.show');

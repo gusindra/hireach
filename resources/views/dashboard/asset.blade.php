@@ -1,9 +1,9 @@
 <div class="ml-20 p-3">
     <div class="max-w-9xl mx-auto sm:px-6 lg:px-8">
         <div class="bg-white dark:bg-slate-600 overflow-hidden sm:rounded-lg">
-            <div class="py-2 sm:px-2 bg-opacity-10 grid grid-cols-1 md:grid-cols-1 gap-3">
+            <div class="py-2 bg-opacity-10 grid grid-cols-1 md:grid-cols-1 gap-3">
                 <div class="flex justify-between">
-                    <div class="w-full m-2">
+                    <div class="w-full">
                         <div class="items-center shadow rounded border">
                             <div class="ml-4 text-gray-600 dark:text-gray-300 leading-7 font-semibold text-3xl p-3">
                                 <div class="text-sm text-gray-500 dark:text-gray-300">
@@ -26,7 +26,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="w-full m-2">
+                    <div class="w-full">
                         <div class="items-center shadow rounded border">
                             <div class="ml-4 text-gray-600 dark:text-gray-300 leading-7 font-semibold text-3xl p-3">
                                 <div class="text-sm text-gray-500 dark:text-gray-300">
