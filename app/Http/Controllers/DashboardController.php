@@ -10,6 +10,7 @@ use App\Models\Contract;
 use App\Models\Order;
 use App\Models\Project;
 use App\Models\Request as ModelsRequest;
+use App\Models\User;
 use Auth;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -175,8 +176,6 @@ class DashboardController extends Controller
         ));
     }
 
-
-
     public function getInBound()
     {
         $currentMonth = now()->format('Y-m');
@@ -215,5 +214,20 @@ class DashboardController extends Controller
             'successRequest',
 
         ));
+    }
+
+    public function activeUser()
+    {
+        return view('user.user-active-user');
+    }
+
+    public function orderSummary(User $user)
+    {
+        return view('dashboard-order-summary', ['user' => $user]);
+    }
+
+    public function providerSummary()
+    {
+        return view('dashboard-provider-summary');
     }
 }

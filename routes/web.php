@@ -79,12 +79,15 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
      */
     Route::prefix('admin')->middleware('admin')->group(function () {
         Route::get('/', [DashboardController::class, 'show'])->name('admin');
-
+        Route::get('/dashboard/active-user', [DashboardController::class, 'activeUser'])->name('dashboard.active.user');
+        Route::get('/dashboard/order', [DashboardController::class, 'orderSummary'])->name('dashboard.order');
+        Route::get('/dashboard/provider', [DashboardController::class, 'providerSummary'])->name('dashboard.provider');
         //Route::get('logout', 'Backend\AuthController@logout');
         //Route::resource('change-password', 'Backend\ChangePasswordController');
         // Route::resource('users', 'Backend\UserController');
 
         Route::get('/user', [UserController::class, 'index'])->name('admin.user');
+
         Route::get('/user/{user}', [UserController::class, 'show'])->name('user.show');
         Route::get('/user/{user}/balance', [UserController::class, 'balance'])->name('user.show.balance');
         Route::get('/user/{user}/profile', [UserController::class, 'profile'])->name('user.show.profile');
