@@ -10,6 +10,7 @@ use App\Models\Contract;
 use App\Models\Order;
 use App\Models\Project;
 use App\Models\Request as ModelsRequest;
+use App\Models\User;
 use Auth;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -215,5 +216,15 @@ class DashboardController extends Controller
             'successRequest',
 
         ));
+    }
+
+    public function activeUser(User $user)
+    {
+        return view('user.user-active-user', ['user' => $user]);
+    }
+
+    public function orderSummary(User $user)
+    {
+        return view('dashboard-order-summary', ['user' => $user]);
     }
 }

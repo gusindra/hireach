@@ -39,7 +39,7 @@ class UserController extends Controller
         // if ($request->has('v')) {
         //     return view('main-side.user-details', ['user' => $user, 'id' => $id]);
         // }
-        if(count($user->super)>0){
+        if (count($user->super) > 0) {
             return view('user.user-profile', ['user' => $user]);
         }
         if ($user->name != 'Admin1') {
@@ -80,9 +80,9 @@ class UserController extends Controller
 
 
 
+
     public function balance($id, Request $request)
     {
-        // Lakukan sesuatu dengan argumen yang diberikan
         $user = User::find($id);
 
         return view('user.user-balance', ['user' => $user, 'id' => $id, 'team' => $request->has('team') ? $request->team : 0]);

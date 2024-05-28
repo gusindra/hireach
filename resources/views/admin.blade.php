@@ -4,8 +4,8 @@
             {{ __('Admin') }}
         </h2>
     </x-slot>
-    
-    @if ( Auth::user()->currentTeam && Auth::user()->currentTeam->user_id == Auth::user()->id )
+
+    @if (Auth::user()->currentTeam && Auth::user()->currentTeam->user_id == Auth::user()->id)
         <!-- Team Dashboard -->
         <div class="grid grid-cols-12">
             @includeWhen(auth()->user(), 'menu.admin-menu-dashboard', [])
@@ -18,8 +18,7 @@
         </div>
     @endif
 
-    @if(Auth::user()->role)
-
+    @if (Auth::user()->role)
     @endif
 
     <!-- First User Member to create Team -->
@@ -27,16 +26,26 @@
         {{-- {{Auth::user()->currentTeam}} --}}
     @endif
 
-    @includeWhen(auth()->user()->super->first() && auth()->user()->super->first()->role == 'superadmin', 'dashboard.online', ['status' => 'complete'])
+    {{-- @includeWhen(auth()->user()->super->first() && auth()->user()->super->first()->role == 'superadmin', 'dashboard.online', ['status' => 'complete']) --}}
 
-    @if(auth()->user()->currentTeam)
+    @if (auth()->user()->currentTeam)
         <!-- Stat -->
-        @includeWhen(false && auth()->user()->currentTeam && auth()->user()->currentTeam->id!=env('IN_HOUSE_TEAM_ID'), 'dashboard.statistic', ['status' => 'complete'])
+        @includeWhen(false && auth()->user()->currentTeam && auth()->user()->currentTeam->id != env('IN_HOUSE_TEAM_ID'),
+            'dashboard.statistic',
+            ['status' => 'complete']
+        )
         <!-- Asset -->
-        @includeWhen(auth()->user()->super->first() && auth()->user()->super->first()->role == 'superadmin', 'dashboard.asset', ['status' => 'complete'])
+        @includeWhen(auth()->user()->super->first() && auth()->user()->super->first()->role == 'superadmin',
+            'dashboard.asset',
+            ['status' => 'complete']
+        )
         <!-- Task List -->
-        @if(auth()->user()->role()->exists() || auth()->user()->super)
-            @includeWhen(auth()->user()->currentTeam->id==env('IN_HOUSE_TEAM_ID') || (auth()->user()->super->first() && auth()->user()->super->first()->role == 'superadmin'), 'dashboard.task', ['status' => 'complete'])
+        @if (auth()->user()->role()->exists() || auth()->user()->super)
+            @includeWhen(auth()->user()->currentTeam->id == env('IN_HOUSE_TEAM_ID') ||
+                    (auth()->user()->super->first() && auth()->user()->super->first()->role == 'superadmin'),
+                'dashboard.task',
+                ['status' => 'complete']
+            )
         @endif
     @endif
 
