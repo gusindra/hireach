@@ -57,6 +57,7 @@ class UserController extends Controller
 
     public function client(User $user)
     {
+
         return view('user.client-to-user', ['user' => $user]);
     }
 

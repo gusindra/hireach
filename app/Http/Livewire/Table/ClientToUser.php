@@ -3,25 +3,27 @@
 namespace App\Http\Livewire\Table;
 
 use App\Models\Client;
+use App\Models\User; // Import model User
 use Mediconesystems\LivewireDatatables\Http\Livewire\LivewireDatatable;
-use App\Models\User;
-use Mediconesystems\LivewireDatatables\BooleanColumn;
 use Mediconesystems\LivewireDatatables\Column;
 use Mediconesystems\LivewireDatatables\NumberColumn;
-use Mediconesystems\LivewireDatatables\DateColumn;
-use Illuminate\Support\Facades\DB;
 
 class ClientToUser extends LivewireDatatable
 {
     public $model = Client::class;
+    public $user;
 
-
+    public $params = ['user'];
 
     public function builder()
     {
-        return Client::query()
-            ->leftJoin('users', 'clients.email', '=', 'users.email')
-            ->whereNull('users.email');
+        $query = Client::query();
+
+        if (!empty($this->user)) {
+            $query->where('user_id', $this->user->id);
+        }
+
+        return $query;
     }
 
     public function columns()
@@ -30,11 +32,20 @@ class ClientToUser extends LivewireDatatable
             Column::name('name')->label('Name'),
             Column::name('phone')->label('Phone'),
             Column::name('email')->label('Email'),
-            NumberColumn::name('id')->label('Detail')->sortBy('id')->callback('id', function ($value) {
-                return view('datatables::link', [
-                    'href' => 'client/' . $value,
-                    'slot' => 'Convert to User'
-                ]);
+            NumberColumn::name('id')->label('Detail')->sortBy('id')->callback(['id'], function ($id) {
+                $client = Client::find($id);
+
+                // Mengecek apakah tidak ada user dengan alamat email yang sama dengan klien
+                $userWithEmailExists = User::where('email', $client->email)->exists();
+
+                if (!$userWithEmailExists && $this->user && $client && $this->user->email !== $client->email) {
+                    return view('datatables::link', [
+                        'href' => url('admin/user/' . $this->user->id . '/client/' . $id),
+                        'slot' => 'Convert to User'
+                    ]);
+                }
+
+                return '';
             }),
         ];
     }
