@@ -13,7 +13,7 @@ servers:
     url: 'https://hireach.archeeshop.com/api'
     description: 'HiReach API Staging'
   -
-    url: 'https://hireach.firmapps.com/api'
+    url: 'https://hireach.firmapps.ai/api'
     description: 'HiReach API Production'
 paths:
   /one-way:
@@ -38,7 +38,7 @@ paths:
         - One Way
       summary: 'Get all one way resource'
       operationId: getOneWayResource
-      parameters: 
+      parameters:
         -
           name: page
           in: query
@@ -115,7 +115,7 @@ paths:
         - Two Way
       summary: 'Get all two way resource'
       operationId: getTwoWayResource
-      parameters: 
+      parameters:
         -
           name: phone
           in: query
@@ -339,7 +339,7 @@ components:
           title: 'provider'
           description: 'Provider is to sending Notification given by HiReach. Default will set by system.'
           required: 'Yes'
-          type: string 
+          type: string
         otp:
           title: 'otp'
           description: 'SMS Type OTP for verification, authentication and security or NON OTP for normal notification text.'
@@ -411,7 +411,7 @@ components:
           title: 'provider'
           description: 'Provider is to sending Notification given by HiReach. Default will set by system.'
           required: 'No'
-          type: string 
+          type: string
       type: object
       xml:
         name: TwoWayNotification
@@ -532,14 +532,14 @@ components:
       required: true
       content:
         application/json:
-          schema: 
+          schema:
             $ref: '#/components/schemas/OneWayRequest'
     TwoWay:
       description: 'List of two way request'
       required: true
       content:
         application/json:
-          schema: 
+          schema:
             $ref: '#/components/schemas/TwoWayRequest'
     OneWayArray:
       description: 'List of one way request'
