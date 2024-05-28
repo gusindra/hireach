@@ -5,15 +5,15 @@
         </h2>
     </x-slot>
     <header class="bg-white dark:bg-slate-900 border-b dark:border-slate-600 shadow">
-        <div class="flex justify-between pt-2 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex justify-between max-w-8xl mx-auto pt-4 pb-2 sm:px-6 lg:px-8 lg:ml-20">
             <div class="justify-end flex">
                 <div class="items-center justify-end px-2">
                     <div class="space-x-1 sm:-my-px pb-2">
-                        <x-jet-nav-link href="{{ route('assistant') }}">
+                        <x-jet-nav-link class="hidden" href="{{ route('assistant') }}">
                             {{ __('Assistant') }}
                         </x-jet-nav-link>
                         <span
-                            class="inline-flex items-center px-1 pt-1 text-xs font-medium leading-5 text-gray-900 dark:text-slate-300">
+                            class="hidden inline-flex items-center px-1 pt-1 text-xs font-medium leading-5 text-gray-900 dark:text-slate-300">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" viewBox="0 0 20 20"
                                 fill="currentColor">
                                 <path fill-rule="evenodd"
@@ -22,16 +22,16 @@
                             </svg>
                         </span>
                         @if (app('request')->input('source') == 'project' || $quote->model == 'PROJECT')
-                            <x-jet-nav-link
+                            <x-jet-nav-link class="hidden"
                                 href="{{ route('project.show', app('request')->input('id') ?? $quote->model_id) }}">
                                 {{ __('Project ') }} {{ $quote->project ? ': ' . $quote->project->name : '' }}
                             </x-jet-nav-link>
                         @else
-                            <x-jet-nav-link href="{{ route('commercial') }}">
+                            <x-jet-nav-link class="hidden" href="{{ route('commercial') }}">
                                 {{ __('Commercial') }}
                             </x-jet-nav-link>
                             <span
-                                class="inline-flex items-center px-1 pt-1 text-xs font-medium leading-5 text-gray-900 dark:text-slate-300">
+                                class="hidden inline-flex items-center px-1 pt-1 text-xs font-medium leading-5 text-gray-900 dark:text-slate-300">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" viewBox="0 0 20 20"
                                     fill="currentColor">
                                     <path fill-rule="evenodd"
@@ -39,7 +39,7 @@
                                         clip-rule="evenodd" />
                                 </svg>
                             </span>
-                            <x-jet-nav-link href="{{ route('commercial.show', 'quotation') }}">
+                            <x-jet-nav-link href="{{ route('admin.quotation') }}">
                                 {{ __('Quotation ') }}
                             </x-jet-nav-link>
                         @endif

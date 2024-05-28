@@ -8,7 +8,7 @@
 
         @includeWhen(auth()->user()->isSuper || (auth()->user()->team && auth()->user()->team->role == 'superadmin'),
             'menu.admin-menu-user-profile',
-            []
+            ['user' => $user]
         )
 
         <div class="col-span-12 px-3 lg:ml-24 mt-2">

@@ -35,10 +35,12 @@ class UserController extends Controller
     {
         $user = User::find($id);
 
-        if ($request->has('v')) {
-            return view('main-side.user-details', ['user' => $user, 'id' => $id]);
+        // if ($request->has('v')) {
+        //     return view('main-side.user-details', ['user' => $user, 'id' => $id]);
+        // }
+        if(count($user->super)>0){
+            return view('user.user-profile', ['user' => $user]);
         }
-
         if ($user->name != 'Admin1') {
             return view('user.user-detail', ['user' => $user, 'id' => $id]);
         }

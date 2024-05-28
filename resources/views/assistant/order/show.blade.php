@@ -5,14 +5,14 @@
         </h2>
     </x-slot>
     <header class="bg-white dark:bg-slate-900 dark:border-slate-600 border-b shadow">
-        <div class="flex justify-between pt-2 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex justify-between max-w-8xl mx-auto pt-4 pb-2 sm:px-6 lg:px-8 lg:ml-20">
             <div class="justify-end flex mb-2">
                 <div class="items-center justify-end px-2">
                     <div class="space-x-1 sm:-my-px">
-                        <x-jet-nav-link href="{{ route('assistant') }}">
+                        <x-jet-nav-link class="hidden" href="{{ route('assistant') }}">
                             {{ __('Assistant') }}
                         </x-jet-nav-link>
-                        <span class="inline-flex items-center px-1 pt-1 text-xs font-medium leading-5 text-gray-900 ">
+                        <span class="hidden inline-flex items-center px-1 pt-1 text-xs font-medium leading-5 text-gray-900 ">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" viewBox="0 0 20 20"
                                 fill="currentColor">
                                 <path fill-rule="evenodd"
@@ -32,7 +32,7 @@
                             </svg>
                         </span>
                         <x-jet-nav-link href="#" :active="true">
-                            {{ $order->no }}
+                            {{ $order->name }}
                         </x-jet-nav-link>
                     </div>
                 </div>

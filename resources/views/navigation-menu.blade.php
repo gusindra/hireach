@@ -17,7 +17,7 @@
                 <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
                     @if (Auth::user()->activeRole && str_contains(Auth::user()->activeRole->role->name, 'Admin'))
                         <x-jet-nav-link href="{{ route('admin') }}" :active="request()->routeIs('admin')">
-                            {{ __('Admin') }}
+                            {{ __('Dashboard') }}
                         </x-jet-nav-link>
                         <x-jet-nav-link href="{{ route('admin.user') }}" :active="request()->routeIs('admin.user')">
                             {{ __('User') }}

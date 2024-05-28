@@ -1,12 +1,12 @@
 <div>
-    <div class="max-w-full mx-1 sm:px-1 lg:px-1">
-        <div class="lg:grid lg:grid-cols-12 gap-2 lg:h-screen">
+    <div class="max-w-full sm:px-1 lg:px-1 mr-6">
+        <div class="lg:grid lg:grid-cols-10 gap-2 lg:h-screen">
             <!-- List Customer -->
-            <div class="bg-white dark:bg-slate-600 mt-2 overflow-hidden shadow-xl sm:rounded-sm col-span-3 lg:h-screen lg:max-h-full">
+            <div class="col-start-2 bg-white dark:bg-slate-600 mt-2 overflow-hidden shadow-xl sm:rounded-sm col-span-2 lg:h-screen lg:max-h-full">
                 <div class="bg-gray-400 dark:bg-slate-600  h-10">
                     <div class="w-full mx-auto">
                         <div class="flex items-center justify-between flex-wrap">
-                            <div class="w-0 flex-1 flex items-center"> 
+                            <div class="w-0 flex-1 flex items-center">
                                 <div class="form-check mx-2 mt-2">
                                     <label class="form-check-label ps-2 text-sm " for="active">
                                         <input class="hidden" value="active" type="radio" name="filter" id="active" wire:model="filter">
@@ -46,7 +46,7 @@
                                 </div>
                             </a>
                         @endforeach
-                        
+
                         <!-- //CHAT -->
                         @foreach ($data as $item)
                             <a x-on:click="window.scrollBy(0, $refs.blue.getBoundingClientRect().top - 50" wire:click="chatCustomer('{{ Hashids::encode($item->id) }}')" class="cursor-pointer client-click">
@@ -78,7 +78,7 @@
             </div>
 
             <!-- Area Chatting -->
-            <div x-ref="blue" id="chatArea" class="bg-gray-200 dark:bg-slate-600 overflow-hidden shadow-xl mt-2 sm:rounded-sm col-span-7 bg-blend-darken h-auto">
+            <div x-ref="blue" id="chatArea" class="bg-gray-200 dark:bg-slate-600 overflow-hidden shadow-xl mt-2 sm:rounded-sm col-span-4 bg-blend-darken h-auto">
                 @livewire('chat-box', ['client_id' => $client_id ?? @request('id')], key($client_id))
             </div>
 
@@ -152,7 +152,7 @@
                     </div>
                 </div>
                 @endif
-                <div id="texting-area" class="{{$handlingSession && $handlingSession->client_id==$client_id?'block':'hidden'}} py-3 grid grid-cols-8 z-10 md:static sm:fixed sm:inset-x-0 sm:bottom-0 lg:fixed lg:bottom-0 dark:bg-slate-800">
+                <div id="texting-area" class="{{$handlingSession && $handlingSession->client_id==$client_id?'block':'hidden'}} pb-12 grid grid-cols-8 z-10 md:static sm:fixed sm:inset-x-0 sm:bottom-0 lg:fixed lg:bottom-0 dark:bg-slate-800 bg-gray-50">
                     <div class="flex items-center justify-center col-span-1 align-text-bottom">
                         <button class="cursor-pointer text-sm text-grey-500 p-2" wire:click="actionShowModal">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -176,14 +176,14 @@
                         />
                     </div>
                     <div class="flex items-center justify-center col-span-1 align-text-bottom">
-                        <button class="p-2 sm:p-2 md:p-4 lg:p-4 bg-green-600 text-white rounded-full" wire:click="sendMessage">
+                        <button class="w-full p-2 sm:p-2 md:p-4 lg:p-4 bg-green-600 text-white rounded-full" wire:click="sendMessage">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 rotate-30" viewBox="0 0 20 20" fill="currentColor">
-                                    <path style="transform: rotate(90deg);transform-origin: 50% 50%;" d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z" />
+                                <path style="transform: rotate(90deg);transform-origin: 50% 50%;" d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z" />
                             </svg>
                         </button>
                     </div>
                 </div>
-                <div class="{{$handlingSession?'hidden':'block'}} py-6 z-10 md:static sm:fixed sm:inset-x-0 sm:bottom-0 lg:fixed lg:bottom-0 dark:bg-slate-800">
+                <div class="{{$handlingSession?'hidden':'block'}} py-12 z-10 md:static sm:fixed sm:inset-x-0 sm:bottom-0 lg:fixed lg:bottom-0 dark:bg-slate-800">
                     <div id="handle_session">
                         <div class="justify-center w-100 flex col-span-12">
                             <button class="bg-green-600 text-white border border-gray-300 px-8 py-4 text-lg" wire:click="joinChat">
@@ -259,146 +259,147 @@
             }, 2000);
         });
     </script>
+    @if(false)
+        @push('chat-websocket')
+            <script>
+                $(function(){
+                    /**
+                    * Keeps the chat message box focus
+                    * at the bottom.
+                    *
+                    * @param {string} elementId
+                    */
+                    function keepChatboxFocusAtBottom(elementId) {
+                        var element = document.getElementById(elementId);
+                        element.scrollTop = element.scrollHeight;
+                    }
+                    /**
+                    * Returns the chat message proper format
+                    *
+                    * @param {string} id
+                    * @param {string} username
+                    * @param {string} message
+                    */
+                    function messageFormat(id, name, message) {
+                        let userId = "{{ auth()->user()->id }}";
+                        let color = id == userId ? "bg-blue-400" : "bg-green-400";
+                        let alignment = id == userId ? "text-right" : "text-left";
+                        return `
+                            <div class="grid grid-cols-1 items-center gap-0">
+                                <span class="${alignment} font-semibold text-sm">${name}</span>
+                                <span class="${alignment} ${color} text-sm text-white px-3 py-2 rounded mb-2">${message}</span>
+                            </div>
+                        `;
+                    }
 
-    @push('chat-websocket')
-        <script>
-            $(function(){
+                    // Instantiate a connection
+                    var chatConnection = clientSocket({ port: 3281 });
+                    // The messageBox element
+                    var messageBox = $("#messageBox");
+                    // The message element
+                    var message = $("#message");
+
+                    /**
+                    * When the connection is open
+                    */
+                    chatConnection.onopen = function () {
+                        // console.log("Chat connection is open!");
+                        // Send the information of the client user here
+                        chatConnection.send(
+                            JSON.stringify({
+                                type: "info",
+                                data: {
+                                    from: '{{ $client_id }}',
+                                    user_id: '{{ auth()->user()->id }}'
+                                }
+                            })
+                        );
+                    }
+
+                    /**
+                    * Will receive messages from the websocket server
+                    */
+                    chatConnection.onmessage = function(message){
+                        var result = JSON.parse(message.data);
+                        console.log(result);
+                        var chatMessage = result.data;
+                        if (result.type == "chatMessage") {
+                            messageBox.append(messageFormat(
+                                chatMessage.user_id,
+                                chatMessage.from,
+                                chatMessage.message
+                            ));
+                        }
+                        keepChatboxFocusAtBottom("messageBox");
+                    }
+
+                    /**
+                    * Send the prompt to the websocket server
+                    */
+                    window.addEventListener('chat-send-message', event => {
+                        console.log(event.detail);
+                        chatConnection.send(JSON.stringify({
+                            type: "chatMessage",
+                            date: event.detail
+                        }));
+                    });
+
+                    /**
+                    * Reload the page
+                    */
+                    window.addEventListener('reload-page', event => {
+                    //    window.location.reload();
+                    });
+                });
+            </script>
+            <script>
+                // Instaniate a connection
+                var connection = clientSocket();
+
                 /**
-                 * Keeps the chat message box focus
-                 * at the bottom.
-                 *
-                 * @param {string} elementId
-                 */
-                function keepChatboxFocusAtBottom(elementId) {
-                    var element = document.getElementById(elementId);
-                    element.scrollTop = element.scrollHeight;
+                * The event listener that will be dispatched
+                * to the websocket server.
+                */
+
+                window.addEventListener('event-notification', event => {
+                    // alert('Event '+ event.detail.eventName);
+                    connection.send(JSON.stringify({
+                        eventName: event.detail.eventName,
+                        eventMessage: event.detail.eventMessage
+                    }));
+                })
+
+                /**
+                * When the connection is open
+                */
+                connection.onopen = function (){
+                    console.log("Connection is open");
                 }
+
                 /**
-                 * Returns the chat message proper format
-                 *
-                 * @param {string} id
-                 * @param {string} username
-                 * @param {string} message
-                 */
-                function messageFormat(id, name, message) {
-                    let userId = "{{ auth()->user()->id }}";
-                    let color = id == userId ? "bg-blue-400" : "bg-green-400";
-                    let alignment = id == userId ? "text-right" : "text-left";
-                    return `
-                        <div class="grid grid-cols-1 items-center gap-0">
-                            <span class="${alignment} font-semibold text-sm">${name}</span>
-                            <span class="${alignment} ${color} text-sm text-white px-3 py-2 rounded mb-2">${message}</span>
-                        </div>
-                    `;
+                * When the connection is open
+                */
+                connection.onclose = function (){
+                    console.log("Connection was closed!");
+                    console.log("Reconnecting after 60 seconds...");
+                    setTimeout(() => {
+                        // window.location.reload();
+                    }, 5000)
                 }
 
-                // Instantiate a connection
-                var chatConnection = clientSocket({ port: 3281 });
-                // The messageBox element
-                var messageBox = $("#messageBox");
-                // The message element
-                var message = $("#message");
-
-                /**
-                 * When the connection is open
-                 */
-                chatConnection.onopen = function () {
-                    // console.log("Chat connection is open!");
-                    // Send the information of the client user here
-                    chatConnection.send(
-                        JSON.stringify({
-                            type: "info",
-                            data: {
-                                from: '{{ $client_id }}',
-                                user_id: '{{ auth()->user()->id }}'
-                            }
-                        })
-                    );
-                }
-
-                /**
-                 * Will receive messages from the websocket server
-                 */
-                chatConnection.onmessage = function(message){
+                connection.onmessage = function (message){
                     var result = JSON.parse(message.data);
                     console.log(result);
-                    var chatMessage = result.data;
-                    if (result.type == "chatMessage") {
-                        messageBox.append(messageFormat(
-                            chatMessage.user_id,
-                            chatMessage.from,
-                            chatMessage.message
-                        ));
-                    }
-                    keepChatboxFocusAtBottom("messageBox");
+
+                    var notificationMessage = `
+                        <div class="sm:max-w-sm sm:flex-none md:w-auto md:flex-auto flex flex-col items-start relative z-10 p-3 xl:p-3">${result.eventMessage}</div>
+                    `;
+
+                    document.getElementById('chat-event').innerHTML = notificationMessage;
                 }
-
-                /**
-                 * Send the prompt to the websocket server
-                 */
-                window.addEventListener('chat-send-message', event => {
-                    console.log(event.detail);
-                    chatConnection.send(JSON.stringify({
-                        type: "chatMessage",
-                        date: event.detail
-                    }));
-                });
-
-                /**
-                 * Reload the page
-                 */
-                window.addEventListener('reload-page', event => {
-                //    window.location.reload();
-                });
-            });
-        </script>
-        <script>
-            // Instaniate a connection
-            var connection = clientSocket();
-
-            /**
-             * The event listener that will be dispatched
-             * to the websocket server.
-             */
-
-            window.addEventListener('event-notification', event => {
-                // alert('Event '+ event.detail.eventName);
-                connection.send(JSON.stringify({
-                    eventName: event.detail.eventName,
-                    eventMessage: event.detail.eventMessage
-                }));
-            })
-
-            /**
-             * When the connection is open
-             */
-            connection.onopen = function (){
-                console.log("Connection is open");
-            }
-
-            /**
-             * When the connection is open
-             */
-            connection.onclose = function (){
-                console.log("Connection was closed!");
-                console.log("Reconnecting after 60 seconds...");
-                setTimeout(() => {
-                    // window.location.reload();
-                }, 5000)
-            }
-
-            connection.onmessage = function (message){
-                var result = JSON.parse(message.data);
-                console.log(result);
-
-                var notificationMessage = `
-                    <div class="sm:max-w-sm sm:flex-none md:w-auto md:flex-auto flex flex-col items-start relative z-10 p-3 xl:p-3">${result.eventMessage}</div>
-                `;
-
-                document.getElementById('chat-event').innerHTML = notificationMessage;
-            }
-        </script>
-    @endpush
+            </script>
+        @endpush
+    @endif
 
     @push('chat-waweb')
         <script>
