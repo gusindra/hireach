@@ -4,30 +4,21 @@
                 <div class="flex justify-between">
                     <div class="w-full">
                         <div class="items-center shadow rounded border">
-                            <div class="ml-4 text-gray-600 dark:text-gray-300 leading-7 font-semibold text-3xl p-3">
+                        <div class="ml-4 text-gray-600 dark:text-gray-300 leading-7 font-semibold text-3xl p-3">
                                 <div class="text-sm text-gray-500 dark:text-gray-300">
-                                    <a href="#">Order Summary</a>
+                                    <a href="#">MacroKiosk</a>
                                 </div>
                                 <div class="flex justify-between">
                                     <div class="text-lg text-gray-600 dark:text-gray-300 leading-7 font-semibold ">
-                                        <small>Draft</small>
+                                        <small>OTP Balance</small>
                                         <div class="mt-2 text-sm text-gray-500 dark:text-gray-300">
-                                            <span
-                                                class="text-2xl">{{ masterOrder('draft') ? masterOrder('draft') : 0 }}</span>
+                                            <span class="text-2xl">Rp{{masterSaldo() ? number_format(masterSaldo()) : 0}}</span>
                                         </div>
                                     </div>
                                     <div class="ml-4 text-lg text-gray-600 dark:text-gray-300 leading-7 font-semibold ">
-                                        <small>Unpaid</small>
+                                        <small>Non OTP Balance</small>
                                         <div class="mt-2 text-sm text-gray-500 dark:text-gray-300">
-                                            <span
-                                                class="text-2xl">{{ masterOrder('unpaid') ? masterOrder('unpaid') : 0 }}</span>
-                                        </div>
-                                    </div>
-                                    <div class="ml-4 text-lg text-gray-600 dark:text-gray-300 leading-7 font-semibold ">
-                                        <small>Paid</small>
-                                        <div class="mt-2 text-sm text-gray-500 dark:text-gray-300">
-                                            <span
-                                                class="text-2xl">{{ masterOrder('paid') ? masterOrder('paid') : 0 }}</span>
+                                            <span class="text-2xl">Rp{{masterSaldo('non') ? number_format(masterSaldo('non')) : 0}}</span>
                                         </div>
                                     </div>
                                 </div>

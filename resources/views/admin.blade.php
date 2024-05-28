@@ -34,11 +34,12 @@
             'dashboard.statistic',
             ['status' => 'complete']
         )
-        <!-- Asset -->
-        @includeWhen(auth()->user()->super->first() && auth()->user()->super->first()->role == 'superadmin',
-            'dashboard.asset',
+        @includeWhen(auth()->user(),
+            'dashboard.statistic',
             ['status' => 'complete']
         )
+        <!-- Asset -->
+
         <!-- Task List -->
         @if (auth()->user()->role()->exists() || auth()->user()->super)
             @includeWhen(auth()->user()->currentTeam->id == env('IN_HOUSE_TEAM_ID') ||

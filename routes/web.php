@@ -81,6 +81,7 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
         Route::get('/', [DashboardController::class, 'show'])->name('admin');
         Route::get('/dashboard/active-user', [DashboardController::class, 'activeUser'])->name('dashboard.active.user');
         Route::get('/dashboard/order', [DashboardController::class, 'orderSummary'])->name('dashboard.order');
+        Route::get('/dashboard/provider', [DashboardController::class, 'providerSummary'])->name('dashboard.provider');
         //Route::get('logout', 'Backend\AuthController@logout');
         //Route::resource('change-password', 'Backend\ChangePasswordController');
         // Route::resource('users', 'Backend\UserController');

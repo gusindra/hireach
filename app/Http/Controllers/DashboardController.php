@@ -176,8 +176,6 @@ class DashboardController extends Controller
         ));
     }
 
-
-
     public function getInBound()
     {
         $currentMonth = now()->format('Y-m');
@@ -218,13 +216,18 @@ class DashboardController extends Controller
         ));
     }
 
-    public function activeUser(User $user)
+    public function activeUser()
     {
-        return view('user.user-active-user', ['user' => $user]);
+        return view('user.user-active-user');
     }
 
     public function orderSummary(User $user)
     {
         return view('dashboard-order-summary', ['user' => $user]);
+    }
+
+    public function providerSummary()
+    {
+        return view('dashboard-provider-summary');
     }
 }

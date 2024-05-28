@@ -33,8 +33,8 @@
                 </a>
             </li>
             <li>
-                <a href="{{ route('admin.invoice') }}" type="button"
-                    class="{{ url()->full() == route('payment.deposit') ? 'bg-slate-100' : '' }} items-center p-2 w-full text-base font-normal text-gray-600 rounded-lg transition duration-75 group hover:bg-gray-100 dark:text-white dark:hover:bg-slate-700 dark:bg-slate-600"
+                <a href="{{ route('dashboard.provider') }}" type="button"
+                    class="{{ url()->full() == route('dashboard.provider') ? 'bg-slate-100' : '' }} items-center p-2 w-full text-base font-normal text-gray-600 rounded-lg transition duration-75 group hover:bg-gray-100 dark:text-white dark:hover:bg-slate-700 dark:bg-slate-600"
                     aria-controls="dropdown-pages" data-collapse-toggle="dropdown-pages">
                     <center>
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"

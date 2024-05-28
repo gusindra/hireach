@@ -24,7 +24,7 @@ class ProviderTable extends LivewireDatatable
             Column::name('name')->label('Name')->searchable(),
             NumberColumn::name('id')->label('Detail')->sortBy('id')->callback('id', function ($value) {
                 return view('datatables::link', [
-                    'href' => 'providers/' . $value,
+                    'href' => url('/admin/settings/providers/'). '/' . $value,
                     'slot' => 'View'
                 ]);
             }),
