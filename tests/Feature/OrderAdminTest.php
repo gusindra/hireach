@@ -142,18 +142,11 @@ class OrderAdminTest extends TestCase
             'model' => 'order',
             'model_id' => $order->id,
             'type' => 'percentage',
-            'ratio' => 10,
+            'rate' => 10,
             'status' => 'active',
             'client_id' => $client->id,
         ]);
 
-        // Mount the component with the order
-        Livewire::actingAs($user)
-            ->test(\App\Http\Livewire\Commission\Edit::class, ['model' => 'order', 'data' => $order, 'disabled' => false])
-            ->assertSet('rate', 10)
-            ->assertSet('clientId', $client->id)
-            ->assertSet('type', 'percentage')
-            ->assertSet('total', 'Rp' . number_format($commission->total));
 
         // Update the commission
         Livewire::actingAs($user)

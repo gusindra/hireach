@@ -25,7 +25,9 @@ class Item extends Component
 
     public function mount($data)
     {
+
         $this->data = $data;
+
         $this->products = CommerceItem::where('user_id', $data->user_id)->get();
     }
 
