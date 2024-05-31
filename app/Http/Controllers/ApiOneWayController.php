@@ -55,7 +55,6 @@ class ApiOneWayController extends Controller
      */
     public function show($phone)
     {
-        return $request;
         $customer = Client::where('phone', $phone)->where('user_id', auth()->user()->id)->first();
         if($customer){
             $data = BlastMessage::where('user_id', '=', auth()->user()->id)->where('client_id', $customer->uuid)->get();
@@ -96,7 +95,7 @@ class ApiOneWayController extends Controller
         }elseif($request->channel == 'email'){
             $validateArr['from'] = 'required';
         }
-        $fields = $request->validate($validateArr); 
+        $fields = $request->validate($validateArr);
         // return response()->json([
         //     'message' => "Successful",
         //     'code' => 200
@@ -132,7 +131,7 @@ class ApiOneWayController extends Controller
                         ]);
                     }
                 }
-                
+
                 if($request->channel=='wa'){
                     $credential = null;
                     foreach(auth()->user()->credential as $cre){
@@ -177,7 +176,9 @@ class ApiOneWayController extends Controller
                                     'code' => 401
                                 ]);
                             }
-                        }elseif($request->channel=='wa'){
+                        }elseif($request->channel=='longwa'){
+                            //ProcessChatApi::dispatch($request->all(), auth()->user());
+                        }elseif($request->channel=='longsms'){
                             //ProcessChatApi::dispatch($request->all(), auth()->user());
                         }
                     }
@@ -198,7 +199,10 @@ class ApiOneWayController extends Controller
                                 'code' => 401
                             ]);
                         }
-                            
+                    }elseif($request->channel=='longwa'){
+                        //ProcessChatApi::dispatch($request->all(), auth()->user());
+                    }elseif($request->channel=='longsms'){
+                        //ProcessChatApi::dispatch($request->all(), auth()->user());
                     }
                 }
             }else{

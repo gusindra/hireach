@@ -34,15 +34,16 @@ class AddResource extends Component
     public $providers;
     public $selectTo;
     public $selectedAudience;
+    public $modal;
     public $clients = [];
     public $fromList = [];
-    public $modal;
     public $modalActionVisible = false;
 
     /**
      * mount
      *
-     * @param  mixed $uuid
+     * @param  string $uuid
+     * @param  boolean $modal
      * @return void
      */
     public function mount($uuid, $modal = false)
@@ -67,14 +68,20 @@ class AddResource extends Component
         }
     }
 
+    /**
+     * actionShowModal
+     *
+     * @return void
+     */
     public function actionShowModal()
     {
         $this->modalActionVisible = true;
     }
+
     /**
      * rules
      *
-     * @return void
+     * @return array
      */
     public function rules()
     {
@@ -90,7 +97,7 @@ class AddResource extends Component
     /**
      * modelData
      *
-     * @return void
+     * @return array
      */
     public function modelData()
     {
@@ -103,18 +110,11 @@ class AddResource extends Component
     }
 
     /**
-     * Update Template
+     * updatedTemplateId
      *
+     * @param  mixed $value
      * @return void
      */
-    public function updateTemplate($value)
-    {
-        // dd(1);
-        $this->validate();
-        Template::find($this->templateId)->update($this->modelData());
-        $this->emit('saved');
-    }
-
     public function updatedTemplateId($value)
     {
         $this->text = '';
@@ -125,6 +125,11 @@ class AddResource extends Component
         }
     }
 
+    /**
+     * sendResource
+     *
+     * @return void
+     */
     public function sendResource()
     {
         $this->validate();
@@ -229,6 +234,13 @@ class AddResource extends Component
         $this->emit('resource_saved');
     }
 
+    /**
+     * callJobResource
+     *
+     * @param  mixed $data
+     * @param  mixed $credential
+     * @return json
+     */
     public function callJobResource($data, $credential = null)
     {
         if ($this->channel == 'email') {
@@ -241,25 +253,41 @@ class AddResource extends Component
             if ($credential) {
                 ProcessWaApi::dispatch($data, $credential);
             } else {
-                return response()->json([
-                    'message' => "Invalid credential",
-                    'code' => 401
-                ]);
+                $this->emit('invalid_credential');
             }
         } elseif ($this->channel == 'wa') {
             //ProcessChatApi::dispatch($request->all(), auth()->user());
         }
+        //add wa long number
+        //add sms long number
     }
 
+    /**
+     * updatedSelectTo
+     *
+     * @return void
+     */
     public function updatedSelectTo()
     {
         $this->reset('to');
     }
+
+    /**
+     * updatedSelectedContact
+     *
+     * @return void
+     */
     public function updatedSelectedContact()
     {
         $this->to = $this->selectedContact;
     }
 
+    /**
+     * updatedSelectedAudience
+     *
+     * @param  mixed $audienceId
+     * @return void
+     */
     public function updatedSelectedAudience($audienceId)
     {
         if ($audienceId) {
@@ -278,6 +306,11 @@ class AddResource extends Component
     }
 
 
+    /**
+     * updatedChannel
+     *
+     * @return void
+     */
     public function updatedChannel()
     {
         $this->reset('fromList');
@@ -296,6 +329,11 @@ class AddResource extends Component
         }
     }
 
+    /**
+     * render component
+     *
+     * @return
+     */
     public function render()
     {
         $contacts = Client::orderBy('created_at', 'desc')->where('user_id', auth()->user()->currentTeam->user_id)->get();

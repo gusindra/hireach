@@ -23,6 +23,11 @@ class NotificationApp extends Component
         $this->client = $client_id;
     }
 
+    /**
+     * waiting
+     *
+     * @return void
+     */
     public function waiting()
     {
         if(auth()->user()->currentTeam && auth()->user()->currentTeam->client){
@@ -73,7 +78,7 @@ class NotificationApp extends Component
     /**
      * The read function.
      *
-     * @return void
+     * @return array data
      */
     public function read()
     {
@@ -90,6 +95,11 @@ class NotificationApp extends Component
         return $data;
     }
 
+    /**
+     * render
+     *
+     * @return void
+     */
     public function render()
     {
         return view('livewire.notification-app', [

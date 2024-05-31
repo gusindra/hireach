@@ -24,6 +24,7 @@
                     <div class="block px-4 py-2 text-xs text-gray-400">
                         {{ __('Notification') }}
                     </div>
+
                     @foreach ($data['waiting'] as $wait)
                         <a class="block px-4 py-2 text-sm font-bold leading-5 bg-pink-400 text-white hover:bg-pink-300 focus:outline-none focus:bg-pink-600 transition"
                             href="{{ route('message') }}?id={{ Hashids::encode($wait->id) }}">
@@ -36,6 +37,7 @@
                             </div>
                         </a>
                     @endforeach
+
                     @if ($data['notif']->count() > 0)
                         @foreach ($data['notif'] as $item)
                             <a class="block px-4 py-2 text-sm leading-5 text-gray-700 dark:bg-blue-600  dark:text-slate-800 {{ $item->status == 'unread' ? 'bg-green-200' : '' }} {{ $item->status == 'new' ? 'bg-gray-200' : '' }} hover:bg-gray-300 focus:outline-none focus:bg-gray-100 transition"

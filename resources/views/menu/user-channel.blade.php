@@ -1,7 +1,7 @@
 <aside id="default-sidebar" class="dark:text-white w-24 mt-16 col-span-1 left-0 z-30 transition-transform -translate-x-full sm:translate-x-0 fixed overflow-y-auto lg:block inset-0 bg-white" aria-label="Sidenav">
     <div class="overflow-y-auto py-2 px-2 h-full bg-white dark:bg-slate-800 border-r border-gray-200 dark:bg-gray-800 dark:border-gray-700">
         <ul class="space-y-2">
-            <li>
+            <li class="text-center flex items-center">
                 <a href="{{route('channel.show', ['message'])}}" type="button" class="{{url()->full()==route('payment.topup')?'bg-slate-100':''}} items-center p-2 w-full text-base font-normal text-gray-600 rounded-lg transition duration-75 group hover:bg-gray-100 dark:text-white dark:hover:bg-slate-700 dark:bg-slate-600 dark:bg-slate-600" aria-controls="dropdown-pages" data-collapse-toggle="dropdown-pages">
                     <center>
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
@@ -11,7 +11,7 @@
                     </center>
                 </a>
             </li>
-            <li>
+            <li class="text-center flex items-center">
                 <a href="{{route('channel.show', ['voice'])}}" type="button" class="{{url()->full()==route('payment.deposit')?'bg-slate-100':''}} items-center p-2 w-full text-base font-normal text-gray-600 rounded-lg transition duration-75 group hover:bg-gray-100 dark:text-white dark:hover:bg-slate-700 dark:bg-slate-600 dark:bg-slate-600" aria-controls="dropdown-pages" data-collapse-toggle="dropdown-pages">
                     <center>
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
@@ -21,7 +21,7 @@
                     </center>
                 </a>
             </li>
-            <li>
+            <li class="text-center flex items-center">
                 <a href="{{route('channel.show', ['social'])}}" type="button" class="{{url()->full()==route('payment.deposit')?'bg-slate-100':''}} items-center p-2 w-full text-base font-normal text-gray-600 rounded-lg transition duration-75 group hover:bg-gray-100 dark:text-white dark:hover:bg-slate-700 dark:bg-slate-600 dark:bg-slate-600" aria-controls="dropdown-pages" data-collapse-toggle="dropdown-pages">
                     <center>
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
@@ -32,8 +32,8 @@
                 </a>
             </li>
         </ul>
-        <ul class="pt-5 mt-5 space-y-2 border-t border-gray-200 dark:border-gray-700">
-            <li>
+        <ul class="pt-5 mt-5 space-y-2 border-t border-gray-200 dark:border-gray-700 hidden">
+            <li class="text-center flex items-center">
                 <button type="button" class="items-center p-2 w-full text-base font-normal text-gray-600 rounded-lg transition duration-75 group hover:bg-gray-100 dark:text-white dark:hover:bg-slate-700 dark:bg-slate-600" aria-controls="dropdown-pages" data-collapse-toggle="dropdown-pages">
                     <center>
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
@@ -62,7 +62,7 @@
         <!-- Dropdown -->
         <div class="hidden z-50 my-4 text-base list-none bg-white rounded divide-y divide-gray-100 shadow dark:bg-gray-700" id="language-dropdown">
             <ul class="py-1" role="none">
-                <li>
+                <li class="text-center flex items-center">
                     <a href="#" class="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100 dark:hover:text-white dark:text-gray-300 dark:hover:bg-gray-600" role="menuitem">
                     <div class="inline-items-center">
                         <svg aria-hidden="true" class="h-3.5 w-3.5 rounded-full mr-2" xmlns="http://www.w3.org/2000/svg" id="flag-icon-css-us" viewBox="0 0 512 512">
@@ -79,7 +79,7 @@
                     </div>
                     </a>
                 </li>
-                <li>
+                <li class="text-center flex items-center">
                     <a href="#" class="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:text-white dark:hover:bg-gray-600" role="menuitem">
                     <div class="inline-items-center">
                         <svg aria-hidden="true" class="h-3.5 w-3.5 rounded-full mr-2" xmlns="http://www.w3.org/2000/svg" id="flag-icon-css-de" viewBox="0 0 512 512">
@@ -91,7 +91,7 @@
                     </div>
                     </a>
                 </li>
-                <li>
+                <li class="text-center flex items-center">
                     <a href="#" class="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:text-white dark:hover:bg-gray-600" role="menuitem">
                     <div class="inline-items-center">
                         <svg aria-hidden="true" class="h-3.5 w-3.5 rounded-full mr-2" xmlns="http://www.w3.org/2000/svg" id="flag-icon-css-it" viewBox="0 0 512 512">

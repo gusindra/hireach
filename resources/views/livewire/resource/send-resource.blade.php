@@ -2,7 +2,7 @@
     @if($modal)
         <div class="col-span-6 grid grid-cols-6 gap-2">
             <div class="col-span-2 lg:col-span-2 p-3 bg-gray-100 border-1 rounded-lg space-y-2">
-                <!-- Template Name -->
+                <!-- Channel -->
                 <div class="col-span-6 sm:col-span-4">
                     <x-jet-label for="channel" value="{{ __('Channel') }}" />
                     <select name="channel" id="channel"
@@ -10,7 +10,7 @@
                         wire:model.debunce.800ms="channel">
                         <option selected>-- Select Channel --</option>
                         @if ($resource == 1)
-                            @if ($providers->isNotEmpty())
+                            @if (!empty($providers))
                                 @foreach ($providers as $provider)
                                     <option value="{{ strtolower($provider->channel) }}">{{ $provider->channel }}
                                     </option>
@@ -128,7 +128,7 @@
                     <x-jet-input-error for="from" class="mt-2" />
                 </div>
 
-                <div class="ol-span-6 lg:col-span-6 p-3 bg-gray-100 border-1 rounded-lg space-x-2 grid grid-cols-2">
+                <div class="ol-span-6 lg:col-span-6 p-3 bg-gray-100 border-1 rounded-lg space-x-0 grid grid-cols-2">
                     <div>
                         <x-jet-label for="description" value="{{ __('To') }}" />
                         <div class="mb-4">
@@ -212,7 +212,7 @@
                                         @endforeach
                                     </select>
                                 </div>
-    
+
                                 @if ($to)
                                     <div class="col-span-2">
                                         <label class="block font-medium text-sm text-gray-700 dark:text-slate-300">Audience Clients</label>
@@ -235,6 +235,9 @@
             </div>
 
             <div class="col-end-7 col-span-1">
+                <x-jet-action-message class="mr-3" on="resource_saved">
+                    {{ __('Resource data saved.') }}
+                </x-jet-action-message>
                 <button type="button"
                     class="w-full flex justify-center items-center my-auto p-3 text-xs text-white bg-indigo-800 rounded-md hover:bg-indigo-500 focus:outline-none focus:ring-2 focus:ring-white"
                     wire:click="sendResource">
@@ -275,7 +278,7 @@
                         <x-jet-action-message class="mr-3" on="resource_saved">
                             {{ __('Resource data saved.') }}
                         </x-jet-action-message>
-                        <button type="button"
+                        <button type="button" onclick="closeModal()"
                             class="flex items-center my-auto p-3 text-xs text-white bg-indigo-800 rounded-md hover:bg-indigo-500 focus:outline-none focus:ring-2 focus:ring-white"
                             wire:click="sendResource">
                             SEND

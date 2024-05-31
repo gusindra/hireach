@@ -12,6 +12,7 @@ class Provider extends Model
     protected $fillable = [
         'code',
         'name',
+        'company',
     ];
 
     protected $casts = [
