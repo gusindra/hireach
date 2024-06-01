@@ -23,9 +23,9 @@ class Add extends Component
     public function create()
     {
         $this->validate();
-        foreach($this->type as $key => $menu){
+        foreach ($this->type as $key => $menu) {
             Permission::create([
-                'name'  => strtoupper($key.' '.$this->model),
+                'name'  => strtoupper($key . ' ' . $this->model),
                 'model'  => strtoupper($this->model)
             ]);
         }

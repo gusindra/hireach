@@ -2,6 +2,7 @@
 
 namespace App\Http\Livewire\Permission;
 
+use App\Models\Permission;
 use Livewire\Component;
 
 class Delete extends Component
@@ -13,11 +14,14 @@ class Delete extends Component
         $this->permission = $permission;
     }
 
-    public function deletePermission()
+    public function deletePermission($id)
     {
-        $this->permission->delete();
-        // You may add a success message or any other action upon successful deletion.
+        $permission = Permission::find($id);
+        if ($permission) {
+            $permission->delete();
+        }
     }
+
 
 
     public function render()

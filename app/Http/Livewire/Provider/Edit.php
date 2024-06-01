@@ -14,6 +14,7 @@ class Edit extends Component
     public $modalDeleteVisible = false;
     public function mount($uuid)
     {
+
         $this->provider = Provider::find($uuid);
         $this->name = $this->provider->name;
         $this->code = $this->provider->code;

@@ -43,6 +43,7 @@ class Permission extends LivewireDatatable
             Column::callback(['id'], function ($id) {
                 return view('livewire.permission.delete', ['id' => $id]);
             })->label('Actions'),
+
         ];
     }
 }
