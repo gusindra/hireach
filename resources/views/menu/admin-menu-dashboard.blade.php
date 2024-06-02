@@ -4,7 +4,7 @@
     <div
         class="overflow-y-auto py-2 px-2 h-full bg-white dark:bg-slate-800 border-r border-gray-200 dark:bg-gray-800 dark:border-gray-700">
         <ul class="space-y-2">
-            <li>
+            <li class="text-center flex items-center">
                 <a href="{{ route('dashboard.active.user') }}" type="button"
                     class="{{ url()->full() == route('dashboard.active.user') ? 'bg-slate-100' : '' }} items-center p-2 w-full text-base font-normal text-gray-600 rounded-lg transition duration-75 group hover:bg-gray-100 dark:text-white dark:hover:bg-slate-700 dark:bg-slate-600"
                     aria-controls="dropdown-pages" data-collapse-toggle="dropdown-pages">
@@ -18,7 +18,7 @@
                     </center>
                 </a>
             </li>
-            <li>
+            <li class="text-center flex items-center">
                 <a href="{{ route('dashboard.order') }}" type="button"
                     class="{{ url()->full() == route('dashboard.order') ? 'bg-slate-100' : '' }} items-center p-2 w-full text-base font-normal text-gray-600 rounded-lg transition duration-75 group hover:bg-gray-100 dark:text-white dark:hover:bg-slate-700 dark:bg-slate-600"
                     aria-controls="dropdown-pages" data-collapse-toggle="dropdown-pages">
@@ -32,7 +32,7 @@
                     </center>
                 </a>
             </li>
-            <li>
+            <li class="text-center flex items-center">
                 <a href="{{ route('dashboard.provider') }}" type="button"
                     class="{{ url()->full() == route('dashboard.provider') ? 'bg-slate-100' : '' }} items-center p-2 w-full text-base font-normal text-gray-600 rounded-lg transition duration-75 group hover:bg-gray-100 dark:text-white dark:hover:bg-slate-700 dark:bg-slate-600"
                     aria-controls="dropdown-pages" data-collapse-toggle="dropdown-pages">
@@ -46,7 +46,7 @@
                     </center>
                 </a>
             </li>
-            <li>
+            <li class="text-center flex items-center">
                 <a href="{{ route('admin.report') }}" type="button"
                     class="{{ url()->full() == route('payment.deposit') ? 'bg-slate-100' : '' }} items-center p-2 w-full text-base font-normal text-gray-600 rounded-lg transition duration-75 group hover:bg-gray-100 dark:text-white dark:hover:bg-slate-700 dark:bg-slate-600"
                     aria-controls="dropdown-pages" data-collapse-toggle="dropdown-pages">
@@ -62,7 +62,7 @@
             </li>
         </ul>
         <ul class="pt-5 mt-5 space-y-2 border-t border-gray-200 dark:border-gray-700">
-            <li>
+            <li class="text-center flex items-center">
                 <button type="button"
                     class="items-center p-2 w-full text-base font-normal text-gray-600 rounded-lg transition duration-75 group hover:bg-gray-100 dark:text-white dark:hover:bg-slate-700 dark:bg-slate-600"
                     aria-controls="dropdown-pages" data-collapse-toggle="dropdown-pages">
@@ -138,7 +138,7 @@
         <div class="hidden z-50 my-4 text-base list-none bg-white rounded divide-y divide-gray-100 shadow dark:bg-gray-700"
             id="language-dropdown">
             <ul class="py-1" role="none">
-                <li>
+                <li class="text-center flex items-center">
                     <a href="#"
                         class="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100 dark:hover:text-white dark:text-gray-300 dark:hover:bg-gray-600"
                         role="menuitem">
@@ -164,7 +164,7 @@
                         </div>
                     </a>
                 </li>
-                <li>
+                <li class="text-center flex items-center">
                     <a href="#"
                         class="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:text-white dark:hover:bg-gray-600"
                         role="menuitem">
@@ -179,7 +179,7 @@
                         </div>
                     </a>
                 </li>
-                <li>
+                <li class="text-center flex items-center">
                     <a href="#"
                         class="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:text-white dark:hover:bg-gray-600"
                         role="menuitem">

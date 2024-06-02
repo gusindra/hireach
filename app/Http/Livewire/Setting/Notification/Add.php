@@ -2,7 +2,7 @@
 
 namespace App\Http\Livewire\Setting\Notification;
 
-use App\Models\Notification;
+use App\Models\Notice;
 use App\Models\Role;
 use App\Models\RoleUser;
 use App\Models\Team;
@@ -32,7 +32,7 @@ class Add extends Component
     {
         $this->validate();
         $this->user = auth()->user()->id;
-        if(auth()->user()->super->first()->role == 'superadmin'){
+        if(auth()->user()->isSuper || (auth()->user()->team && auth()->user()->team->role == 'superadmin')){
             $this->user = 0;
         }
         if($this->grouptype=='user'){
@@ -58,7 +58,7 @@ class Add extends Component
     }
 
     private function create($type, $msg, $user){
-        Notification::create([
+        Notice::create([
             'type' => $type,
             'model' => null,
             'model_id' => null,

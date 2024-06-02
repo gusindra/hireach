@@ -13,7 +13,7 @@ class QuotationObserver
     /**
      * Handle the Project "updated" event.
      *
-     * @param  \App\Models\Request  $request
+     * @param Quotation $request
      * @return void
      */
     public function updated(Quotation $request)

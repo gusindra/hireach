@@ -16,7 +16,7 @@ class SmsBlastObserver
     /**
      * Handle the SaldoUser "created" event.
      *
-     * @param  \App\Models\Request  $request
+     * @param  BlastMessage  $request
      * @return void
      */
     public function created(BlastMessage $request)

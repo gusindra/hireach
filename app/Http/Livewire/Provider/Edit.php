@@ -9,6 +9,7 @@ class Edit extends Component
 {
     public $provider;
     public $name;
+    public $company;
     public $code;
     public $uuid;
     public $modalDeleteVisible = false;
@@ -17,6 +18,7 @@ class Edit extends Component
         $this->provider = Provider::find($uuid);
         $this->name = $this->provider->name;
         $this->code = $this->provider->code;
+        $this->company = $this->provider->company;
     }
 
     public function rules()
@@ -24,14 +26,16 @@ class Edit extends Component
         return [
             'code' => 'required',
             'name' => 'required',
+            'company' => 'string',
         ];
     }
 
     public function modelData()
     {
         return [
-            'name'                  => $this->name,
+            'name'           => $this->name,
             'code'           => $this->code,
+            'company'        => $this->company,
         ];
     }
 

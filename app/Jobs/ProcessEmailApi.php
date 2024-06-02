@@ -51,6 +51,12 @@ class ProcessEmailApi implements ShouldQueue
         }
     }
 
+    /**
+     * FreeProvider
+     *
+     * @param  mixed $request
+     * @return void
+     */
     private function FreeProvider($request){
         $msg    = '';
         // if(array_key_exists('servid', $request)){
@@ -113,7 +119,7 @@ class ProcessEmailApi implements ShouldQueue
                 ];
                 // Log::debug($modelData);
                 BlastMessage::create($modelData);
-                    
+
             }
             Log::debug("Respone MSG:");
             Log::debug($msg);
@@ -182,7 +188,7 @@ class ProcessEmailApi implements ShouldQueue
                 ];
                 // Log::debug($modelData);
                 BlastMessage::create($modelData);
-                    
+
             }
             Log::debug("Respone MSG:");
             Log::debug($msg);
@@ -194,6 +200,12 @@ class ProcessEmailApi implements ShouldQueue
         }
     }
 
+    /**
+     * saveResult
+     *
+     * @param  mixed $msg
+     * @return object BlastMessage
+     */
     private function saveResult($msg){
         $user_id = $this->user->id;
         $modelData = [
@@ -213,6 +225,13 @@ class ProcessEmailApi implements ShouldQueue
         return $mms;
     }
 
+    /**
+     * chechClient
+     *
+     * @param  mixed $status
+     * @param  mixed $msisdn
+     * @return sting uuid
+     */
     private function chechClient($status, $msisdn=null){
         $user_id = $this->user->id;
         if($status=="200"){

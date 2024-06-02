@@ -33,7 +33,7 @@ class ProcessWaApi implements ShouldQueue
     }
 
     /**
-     * Execute the job.
+     * Execute the job to processing WA.
      *
      * @return void
      */
@@ -48,8 +48,14 @@ class ProcessWaApi implements ShouldQueue
         }
     }
 
-    private function MKProvider($request){ 
-        $msg    = ''; 
+    /**
+     * This function is execute the job using MK Provider
+     *
+     * @param  mixed $request
+     * @return void
+     */
+    private function MKProvider($request){
+        $msg    = '';
         try{
             //$url = 'http://www.etracker.cc/bulksms/mesapi.aspx';
             $url = 'https://www.etracker.cc/OTT/api/Send';
@@ -59,7 +65,7 @@ class ProcessWaApi implements ShouldQueue
 
             $username = $this->user->credential;
             $password = $this->user->api_key;
-        
+
             if($this->request['type']==1){
                 if($this->request['text'] && !$this->request['templateid']){
                     $str = $this->request->reply;
@@ -110,19 +116,19 @@ class ProcessWaApi implements ShouldQueue
                         'recipient' => $send_to,
                         'type' => 'template',
                         'template'=> [
-                            'name'=> 'reminder', 
-                            'language_code'=> 'EN', 
-                            'template_params'=> [ 
+                            'name'=> 'reminder',
+                            'language_code'=> 'EN',
+                            'template_params'=> [
                                 [
                                     'value'=> 'David'
-                                ], 
-                                [  
+                                ],
+                                [
                                     'value'=> 'TN12399512'
-                                ], 
-                                [  
+                                ],
+                                [
                                     'value'=>'2020-06-28'
                                 ]
-                            ] 
+                            ]
                         ]
                     ]);
                 }elseif($this->request->type=='text'){
@@ -187,20 +193,20 @@ class ProcessWaApi implements ShouldQueue
                     ]);
                 }
                 else{
-                    
+
                 }
             }
-            
+
             Log::debug($response);
-            
+
             /*if($response){
                 $response  = json_decode(json_encode(simplexml_load_string($response->getBody()->getContents())), true);
-    
+
                 $chat = BlastMessage::find($this->request->id);
                 $chat->source_id = @$response['message_id'];
                 $chat->save();
             }*/
-            
+
             // check response code
             if ($response['message_id']){
                 $modelData = [
@@ -224,7 +230,7 @@ class ProcessWaApi implements ShouldQueue
                 Log::debug("failed msis format: ");
                 Log::debug($msg_msis);
             }
-            
+
             Log::debug("Respone MSG:");
             Log::debug($msg);
             if($msg!=''){
@@ -238,23 +244,29 @@ class ProcessWaApi implements ShouldQueue
         }
     }
 
+    /**
+     * This function is execure the job EM Provider
+     *
+     * @param  mixed $request
+     * @return void
+     */
     private function EMProvider($request){
         $msg = $this->saveResult('progress');
         if($msg){
             $url = 'https://enjoymov.co/prod-api/kstbCore/sms/send';
             $md5_key = env('EM_MD5_KEY'); //'AFD4274C39AB55D8C8D08FA6E145D535';
             $merchantId = env('EM_MERCHANT_ID'); //'KSTB904790';
-            $callbackUrl = 'http://hireach.archeeshop.com/receive-sms-status';
+            $callbackUrl = 'http://hireach.firmapps.ai/receive-sms-status';
             $phone = '81339668556';
             $content = 'test enjoymov api';
             $msgChannel = 'WA'; //WA
             $countryCode = '62';
 
-            
+
             $code = str_split($request->to, 2);
             $countryCode = $code[0];
             $phone = substr($request->to, 2);
-    
+
             $sb = $md5_key . $merchantId . $phone . $content;
             $sign = md5($sb);
             //return $sign;
@@ -266,12 +278,18 @@ class ProcessWaApi implements ShouldQueue
                 'content' => $request->text,
                 "callbackUrl" => $callbackUrl,
                 'countryCode' => $countryCode,
-                'msgChannel' => $request['msgChannel'],
+                'msgChannel' => $msgChannel,
                 "msgId" => $msg->id
             ]);
         }
     }
 
+    /**
+     * saveResult
+     *
+     * @param  mixed $msg
+     * @return object $mms
+     */
     private function saveResult($msg){
         $user_id = $this->user->id;
         $modelData = [
@@ -291,6 +309,13 @@ class ProcessWaApi implements ShouldQueue
         return $mms;
     }
 
+    /**
+     * chechClient
+     *
+     * @param  mixed $status
+     * @param  mixed $msisdn
+     * @return string uuid
+     */
     private function chechClient($status, $msisdn=null){
         $user_id = $this->user->id;
         if($status=="200"){

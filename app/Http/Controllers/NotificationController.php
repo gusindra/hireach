@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\FlowProcess;
-use App\Models\Notification;
+use App\Models\Notice;
 use Illuminate\Http\Request;
 use Vinkla\Hashids\Facades\Hashids;
 
@@ -19,7 +19,7 @@ class NotificationController extends Controller
     }
 
 
-    public function show(Notification $notification)
+    public function show(Notice $notification)
     {
         $notification->update(array('status' => 'read'));
         if ($notification->model == 'Ticket') {
@@ -57,7 +57,7 @@ class NotificationController extends Controller
 
     public function readAll()
     {
-        $notification = Notification::where('user_id', auth()->user()->id)->where('status', 'unread')->update([
+        $notification = Notice::where('user_id', auth()->user()->id)->where('status', 'unread')->update([
             'status' => 'read'
         ]);
         return redirect()->back();

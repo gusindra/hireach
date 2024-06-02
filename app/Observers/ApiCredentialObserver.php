@@ -35,7 +35,7 @@ class ApiCredentialObserver
     /**
      * Handle the ApiCredential "deleted" event.
      *
-     * @param  \App\ApiCredential  $audio
+     * @param  \App\Models\ApiCredential  $audio
      * @return void
      */
     public function deleted(ApiCredential $request)

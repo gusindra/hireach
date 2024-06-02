@@ -128,6 +128,7 @@ class Send extends Component
 
     public function sendResource()
     {
+        dd(2);
         $this->validate();
         if ($this->selectTo === 'manual') {
             $to = $this->to;
