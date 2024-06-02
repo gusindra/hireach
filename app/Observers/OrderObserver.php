@@ -7,7 +7,7 @@ use App\Models\Billing;
 use App\Models\Commision;
 use App\Models\FlowProcess;
 use App\Models\FlowSetting;
-use App\Models\Notification;
+use App\Models\Notice;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Log;
@@ -62,7 +62,7 @@ class OrderObserver
                 ]);
             }
 
-            Notification::create([
+            Notice::create([
                 'type'          => 'Invoice',
                 'model_id'      => $request->id,
                 'model'         => 'Order',
@@ -127,7 +127,7 @@ class OrderObserver
     /**
      * Handle the Project "deleted" event.
      *
-     * @param  \App\Project  $request
+     * @param  Order  $request
      * @return void
      */
     public function deleted(Order $request)

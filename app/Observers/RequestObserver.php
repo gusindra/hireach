@@ -17,7 +17,7 @@ class RequestObserver
     /**
      * Handle the Request "created" event.
      *
-     * @param  \App\Models\Request  $request
+     * @param Message $request
      * @return void
      */
     public function created(Message $request)

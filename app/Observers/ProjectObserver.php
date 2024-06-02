@@ -12,7 +12,7 @@ class ProjectObserver
     /**
      * Handle the Project "created" event.
      *
-     * @param  \App\Models\Request  $request
+     * @param  Project $request
      * @return void
      */
     public function created(Project $request)
@@ -23,7 +23,7 @@ class ProjectObserver
     /**
      * Handle the Project "updated" event.
      *
-     * @param  \App\Models\Request  $request
+     * @param  Project $request
      * @return void
      */
     public function updated(Project $request)
@@ -60,7 +60,7 @@ class ProjectObserver
     /**
      * Handle the Project "deleted" event.
      *
-     * @param  \App\Project  $request
+     * @param  Project $request
      * @return void
      */
     public function deleted()

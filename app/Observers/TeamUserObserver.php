@@ -10,7 +10,7 @@ class TeamUserObserver
     /**
      * Handle the Request "created" event.
      *
-     * @param  \App\Models\Request  $request
+     * @param  TeamUser  $request
      * @return void
      */
     public function updated(TeamUser $request)

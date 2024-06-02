@@ -2,7 +2,7 @@
 
 namespace App\Http\Livewire;
 
-use App\Models\Notification;
+use App\Models\Notice;
 use Livewire\Component;
 
 class NotificationApp extends Component
@@ -68,7 +68,7 @@ class NotificationApp extends Component
      */
     public function actionShowModal($id)
     {
-        $notif = Notification::find($id);
+        $notif = Notice::find($id);
         $this->currentMessage = $notif->notification;
         $this->modalActionVisible = true;
         $notif->status = 'read';
@@ -84,9 +84,9 @@ class NotificationApp extends Component
     {
         //$data = [];
         $data['waiting'] = []; //$this->waiting();
-        $data['notif'] = Notification::where('user_id', $this->client_id)->orderBy('id', 'desc')->take(15)->get();
-        $data['count'] = Notification::where('user_id', $this->client_id)->whereIn('status', ['new','unread'])->count() + count($data['waiting']);
-        $data['status'] = auth()->user()->team->status;
+        $data['notif'] = Notice::where('user_id', $this->client_id)->orderBy('id', 'desc')->take(15)->get();
+        $data['count'] = Notice::where('user_id', $this->client_id)->whereIn('status', ['new','unread'])->count() + count($data['waiting']);
+        $data['status'] = auth()->user()->team ? auth()->user()->team->status : 'Online';
         $this->dispatchBrowserEvent('event-notification',[
             'eventName' => 'Sound Alert',
             'eventMessage' => $data['count']
@@ -98,7 +98,7 @@ class NotificationApp extends Component
     /**
      * render
      *
-     * @return void
+     * @return /Illuminate/Contracts/View/Factory|Illuminate/Contracts/View/View
      */
     public function render()
     {

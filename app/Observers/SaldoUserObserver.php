@@ -3,7 +3,7 @@
 namespace App\Observers;
 
 use App\Jobs\ProcessEmail;
-use App\Models\Notification;
+use App\Models\Notice;
 use App\Models\SaldoUser;
 
 class SaldoUserObserver
@@ -11,7 +11,7 @@ class SaldoUserObserver
     /**
      * Handle the SaldoUser "created" event.
      *
-     * @param  \App\Models\Request  $request
+     * @param  SaldoUser  $request
      * @return void
      */
     public function created(SaldoUser $request)
@@ -30,9 +30,9 @@ class SaldoUserObserver
         }
 
         if ($request->mutation == 'debit') {
-            $notif_count = Notification::where('model', 'Balance')->where('user_id', $request->user_id)->count();
+            $notif_count = Notice::where('model', 'Balance')->where('user_id', $request->user_id)->count();
             if (($notif_count == 1 && $request->balance <= 50000) || ($notif_count == 0 && $request->balance <= 100000)) {
-                $notif = Notification::create([
+                $notif = Notice::create([
                     'type'          => 'email',
                     'model_id'      => $request->id,
                     'model'         => 'Balance',
@@ -47,12 +47,12 @@ class SaldoUserObserver
             }
         }
         if ($request->mutation == 'credit') {
-            Notification::where('type', 'email')->where('model', 'Balance')->where('user_id', $request->user_id)->delete();
+            Notice::where('type', 'email')->where('model', 'Balance')->where('user_id', $request->user_id)->delete();
         }
 
         if ($request->mutation == 'credit') {
 
-            Notification::create([
+            Notice::create([
                 'type' => 'Top Up',
                 'model_id' => $request->id,
                 'model' => 'Balance',
@@ -66,7 +66,7 @@ class SaldoUserObserver
     /**
      * Handle the SaldoUser "deleted" event.
      *
-     * @param  \App\SaldoUser  $request
+     * @param  SaldoUser $request
      * @return void
      */
     public function deleted()

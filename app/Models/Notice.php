@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Carbon\Carbon;
 
-class Notification extends Model
+class Notice extends Model
 {
     use HasFactory;
     use SoftDeletes;

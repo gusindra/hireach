@@ -19,7 +19,7 @@ class Profile extends Component
     public function mount($user)
     {
         //dd($user);
-        $this->user = Client::find($user->id);
+        $this->user = Client::find(auth()->user()->id);
 
         $this->inputuser = [
         'name'      => $this->user->name ?? '',
@@ -124,11 +124,6 @@ class Profile extends Component
             }
         }
         $this->emit('client_saved');
-    }
-
-    public function delete()
-    {
-        dd(1);
     }
 
     public function render()

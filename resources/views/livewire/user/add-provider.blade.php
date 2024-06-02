@@ -92,7 +92,7 @@
     <!-- Form Action Modal -->
     <x-jet-dialog-modal wire:model="modalActionVisible">
         <x-slot name="title">
-            {{ __('Action message') }}
+            {{ __('Action Add Provider') }}
         </x-slot>
 
         <x-slot name="content">

@@ -12,7 +12,7 @@ class CommissionObserver
     /**
      * Handle the Project "updated" event.
      *
-     * @param  \App\Models\Request  $request
+     * @param  \App\Models\Commision  $request
      * @return void
      */
     public function updated(Commision $request)

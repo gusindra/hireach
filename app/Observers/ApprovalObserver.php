@@ -3,7 +3,7 @@
 namespace App\Observers;
 
 use App\Models\FlowProcess;
-use App\Models\Notification;
+use App\Models\Notice;
 use App\Models\RoleUser;
 use Illuminate\Support\Facades\Log;
 
@@ -19,7 +19,7 @@ class ApprovalObserver
     {
         $users = RoleUser::where('team_id', auth()->user()->current_team_id)->where('role_id', $request->role_id)->get();
         foreach($users as $user){
-            Notification::create([
+            Notice::create([
                 'type' => 'app',
                 'model' => 'FlowProcess',
                 'model_id' => $request->id,
@@ -45,7 +45,7 @@ class ApprovalObserver
             if($checkFlow==0){
                 $users = FlowProcess::where('model', $request->model)->where('model_id', $request->model_id)->groupBy('user_id')->get();
                 foreach($users as $user){
-                    Notification::create([
+                    Notice::create([
                         'type' => 'app',
                         'model' => 'FlowProcess',
                         'model_id' => $request->id,
@@ -60,7 +60,7 @@ class ApprovalObserver
             if($flow){
                 $users = RoleUser::where('team_id', auth()->user()->current_team_id)->where('role_id', $flow->role_id)->get();
                 foreach($users as $user){
-                    Notification::create([
+                    Notice::create([
                         'type' => 'app',
                         'model' => 'FlowProcess',
                         'model_id' => $flow->id,
@@ -77,14 +77,14 @@ class ApprovalObserver
     /**
      * Handle the FlowProcess "deleted" event.
      *
-     * @param  \App\Model\FlowProcess  $request
+     * @param  \App\Models\FlowProcess  $request
      * @return void
      */
     public function deleted(FlowProcess $request)
     {
         $flows = FlowProcess::whereNull('status')->where('model', $request->model)->where('model', $request->model_id)->get();
         foreach($flows as $flow){
-            Notification::where('model', 'FlowProcess')->where('model_id', $flow->id)->delete();
+            Notice::where('model', 'FlowProcess')->where('model_id', $flow->id)->delete();
         }
         // Log::debug('delete approval', $request);
     }

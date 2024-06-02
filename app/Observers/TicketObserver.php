@@ -3,7 +3,7 @@
 namespace App\Observers;
 
 use App\Models\Ticket;
-use App\Models\Notification;
+use App\Models\Notice;
 use App\Models\Request as Message;
 
 class TicketObserver
@@ -11,7 +11,7 @@ class TicketObserver
     /**
      * Handle the Request "created" event.
      *
-     * @param  \App\Models\Request  $request
+     * @param  Ticket  $request
      * @return void
      */
     public function created(Ticket $request)
@@ -28,7 +28,7 @@ class TicketObserver
                 'client_id'     => $request->request->client_id
             ]);
         }else if($request->status == 'waiting'){
-            $notif = Notification::create([
+            $notif = Notice::create([
                 'type'          => 'forward',
                 'model_id'      => $request->id,
                 'model'         => 'Ticket',
@@ -76,7 +76,7 @@ class TicketObserver
     /**
      * Handle the Ticket "deleted" event.
      *
-     * @param  \App\Ticket  $request
+     * @param  Ticket  $request
      * @return void
      */
     public function deleted(Ticket $request)
@@ -95,7 +95,7 @@ class TicketObserver
                 'client_id'     => $request->request->client_id
             ]);
         }else{
-            Notification::where('model', 'Ticket')->where('model_id', $request->id)->delete();
+            Notice::where('model', 'Ticket')->where('model_id', $request->id)->delete();
         }
 
     }

@@ -4,20 +4,20 @@ namespace App\Observers;
 
 use App\Models\Attachment;
 use App\Models\Billing;
-use App\Models\Notification;
+use App\Models\Notice;
 
 class AttachmentObserver
 {
     /**
      * Handle the SaldoUser "created" event.
      *
-     * @param  \App\Models\Request  $request
+     * @param  \App\Models\Attachment  $request
      * @return void
      */
     public function created(Attachment $request)
     {
         if($request->model=='order'){
-            Notification::create([
+            Notice::create([
                 'type' => 'message',
                 'model' => 'Order',
                 'model_id' => $request->model_id,
@@ -26,7 +26,7 @@ class AttachmentObserver
                 'status' => 'unread'
             ]);
         }elseif($request->model=='invoice'){
-            Notification::create([
+            Notice::create([
                 'type' => 'App',
                 'model' => 'Invoice',
                 'model_id' => $request->model_id,
@@ -42,9 +42,9 @@ class AttachmentObserver
     }
 
     /**
-     * Handle the SaldoUser "deleted" event.
+     * Handle the Attachment "deleted" event.
      *
-     * @param  \App\SaldoUser  $request
+     * @param  \App\Models\Attachment  $request
      * @return void
      */
     public function deleted()

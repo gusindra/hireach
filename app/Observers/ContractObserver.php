@@ -14,7 +14,7 @@ class ContractObserver
     /**
      * Handle the Project "updated" event.
      *
-     * @param  \App\Models\Request  $request
+     * @param  \App\Models\Contract  $request
      * @return void
      */
     public function updated(Contract $request)

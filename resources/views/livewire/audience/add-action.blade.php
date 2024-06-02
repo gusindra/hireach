@@ -90,13 +90,13 @@
     <!-- Form Action Modal -->
     <x-jet-dialog-modal wire:model="modalActionVisible">
         <x-slot name="title">
-            {{ __('Action message') }}
+            {{ __('Action add contact') }}
         </x-slot>
 
         <x-slot name="content">
 
             <div class="col-span-6 sm:col-span-4 p-3">
-                <x-jet-label for="contactId" value="{{ __('Resource') }}" />
+                <x-jet-label for="contactId" value="{{ __('List Contact') }}" />
                 <select name="contactId" id="contactId"
                     class="border-gray-300 dark:bg-slate-800 dark:text-slate-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 rounded-md shadow-sm mt-1 block w-full"
                     wire:model.debunce.800ms="contactId">

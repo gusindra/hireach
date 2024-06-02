@@ -240,8 +240,8 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
     Route::get('/contact/create', [ContactController::class, 'create'])->name('contacts.create');
     Route::post('/contact', [ContactController::class, 'store'])->name('contacts.store');
 
-    Route::get('/contact/exports', [ContactController::class, 'export'])->name('contact.export');
-    Route::get('/contact/import', [ContactController::class, 'showFormImport'])->name('contacts.showFormImport');
+    Route::get('/contact/request/exports', [ContactController::class, 'export'])->name('contact.export');
+    Route::get('/contact/request/import', [ContactController::class, 'showFormImport'])->name('contacts.showFormImport');
 
     Route::post('/contact/import', [ContactController::class, 'import'])->name('contact.import');
 
