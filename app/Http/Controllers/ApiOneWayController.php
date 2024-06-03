@@ -177,9 +177,15 @@ class ApiOneWayController extends Controller
                                 ]);
                             }
                         }elseif($request->channel=='longwa'){
-                            //ProcessChatApi::dispatch($request->all(), auth()->user());
+                            $request->merge([
+                                'provider' => 'provider2'
+                            ]);
+                            ProcessWaApi::dispatch($request->all(), auth()->user());
                         }elseif($request->channel=='longsms'){
-                            //ProcessChatApi::dispatch($request->all(), auth()->user());
+                            $request->merge([
+                                'provider' => 'provider2'
+                            ]);
+                            ProcessWaApi::dispatch($request->all(), auth()->user());
                         }
                     }
                 }else{
@@ -195,14 +201,20 @@ class ApiOneWayController extends Controller
                             ProcessWaApi::dispatch($request->all(), $credential);
                         }else{
                             return response()->json([
-                                'message' => "Invalid credential",
+                                'message' => "Invalid provider credential",
                                 'code' => 401
                             ]);
                         }
                     }elseif($request->channel=='longwa'){
-                        //ProcessChatApi::dispatch($request->all(), auth()->user());
+                        $request->merge([
+                            'provider' => 'provider2'
+                        ]);
+                        ProcessWaApi::dispatch($request->all(), auth()->user());
                     }elseif($request->channel=='longsms'){
-                        //ProcessChatApi::dispatch($request->all(), auth()->user());
+                        $request->merge([
+                            'provider' => 'provider2'
+                        ]);
+                        ProcessWaApi::dispatch($request->all(), auth()->user());
                     }
                 }
             }else{

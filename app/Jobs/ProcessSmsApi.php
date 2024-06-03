@@ -275,7 +275,7 @@ class ProcessSmsApi implements ShouldQueue
             $callbackUrl = 'http://hireach.archeeshop.com/receive-sms-status';
             $phone = '81339668556';
             $content = 'test enjoymov api';
-            $msgChannel = 5; //'SM'; //WA
+            $msgChannel = env('EM_CODE_LSMS', 5); //'SM'; //WA
             $countryCode = '62';
 
             $code = str_split($request['to'], 2);
