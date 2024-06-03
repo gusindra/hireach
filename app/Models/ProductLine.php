@@ -17,7 +17,7 @@ class ProductLine extends Model
     protected $fillable = [
         'name',
         'type',
-        'user_id'
+        'company_id'
     ];
 
     protected $guarded = [];
@@ -25,7 +25,8 @@ class ProductLine extends Model
     /**
      * Get all item commerce of lines.
      */
-    public function items(){
+    public function items()
+    {
         return $this->hasMany('App\Models\CommerceItem', 'product_line');
     }
 }

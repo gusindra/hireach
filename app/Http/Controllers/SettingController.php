@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\CommerceItem;
 use App\Models\Company;
+use App\Models\ProductLine;
 use Auth;
 
 class SettingController extends Controller
@@ -49,5 +51,14 @@ class SettingController extends Controller
     public function companyShow(Company $company)
     {
         return view('settings.company.details', ['company' => $company]);
+    }
+
+    public function commerceItemShow(CommerceItem $commerceItem)
+    {
+        return view('settings.commerce-item.details', ['commerceItem' => $commerceItem]);
+    }
+    public function productLineShow(ProductLine $productLine)
+    {
+        return view('settings.product-line.details', ['productLine' => $productLine]);
     }
 }
