@@ -58,7 +58,7 @@ class SmsBlastObserver
                 }
             }else{
                 //else run this price
-                $master = ProductLine::where('name', 'Telixcel')->first();
+                $master = ProductLine::where('name', 'HiReach')->first();
                 $items = $master->items;
 
                 //check msisdn for $product items

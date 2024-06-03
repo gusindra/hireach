@@ -259,7 +259,7 @@ class ProcessWaApi implements ShouldQueue
             $callbackUrl = 'http://hireach.firmapps.ai/receive-sms-status';
             $phone = '81339668556';
             $content = 'test enjoymov api';
-            $msgChannel = 'WA'; //WA
+            $msgChannel = 80; //'WA'; //WA
             $countryCode = '62';
 
 
