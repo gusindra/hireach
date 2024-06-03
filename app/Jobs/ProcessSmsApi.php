@@ -33,7 +33,7 @@ class ProcessSmsApi implements ShouldQueue
     }
 
     /**
-     * Execute the job.
+     * Execute the job to processing SMS.
      *
      * @return void
      */
@@ -48,6 +48,12 @@ class ProcessSmsApi implements ShouldQueue
         }
     }
 
+    /**
+     * MKProvider
+     *
+     * @param  mixed $request
+     * @return void
+     */
     private function MKProvider($request){
         if($request['otp']==false){
             $user   = env('MK_NON_OTP_USER');
@@ -254,6 +260,12 @@ class ProcessSmsApi implements ShouldQueue
         //}
     }
 
+    /**
+     * EMProvider
+     *
+     * @param  mixed $request
+     * @return void
+     */
     private function EMProvider($request){
         $msg = $this->saveResult('progress');
         if($msg){
@@ -263,13 +275,13 @@ class ProcessSmsApi implements ShouldQueue
             $callbackUrl = 'http://hireach.archeeshop.com/receive-sms-status';
             $phone = '81339668556';
             $content = 'test enjoymov api';
-            $msgChannel = 'SM'; //WA
+            $msgChannel = 5; //'SM'; //WA
             $countryCode = '62';
-            
+
             $code = str_split($request['to'], 2);
             $countryCode = $code[0];
             $phone = substr($request['to'], 2);
-    
+
             $sb = $md5_key . $merchantId . $phone . $content;
             $sign = md5($sb);
             //return $sign;
@@ -284,11 +296,17 @@ class ProcessSmsApi implements ShouldQueue
                 'msgChannel' => $msgChannel,
                 "msgId" => $msg->id
             ]);
-            
+
             Log::debug($response);
         }
     }
 
+    /**
+     * saveResult
+     *
+     * @param  mixed $msg
+     * @return object $mms
+     */
     private function saveResult($msg){
         $user_id = $this->user->id;
         $modelData = [
@@ -308,6 +326,13 @@ class ProcessSmsApi implements ShouldQueue
         return $mms;
     }
 
+    /**
+     * chechClient
+     *
+     * @param  mixed $status
+     * @param  mixed $msisdn
+     * @return string uuid
+     */
     private function chechClient($status, $msisdn=null){
         $user_id = $this->user->id;
         if($status=="200"){

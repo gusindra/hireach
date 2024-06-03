@@ -13,7 +13,7 @@ class BillingObserver
     /**
      * Handle the Request "created" event.
      *
-     * @param  \App\Models\Request  $request
+     * @param  \App\Models\Billing  $request
      * @return void
      */
     public function created(Billing $request)
@@ -41,7 +41,7 @@ class BillingObserver
     /**
      * Handle the Project "updated" event.
      *
-     * @param  \App\Models\Request  $request
+     * @param  \App\Models\Billing  $request
      * @return void
      */
     public function updated(Billing $request)
@@ -68,7 +68,7 @@ class BillingObserver
     /**
      * Handle the Client "deleted" event.
      *
-     * @param  \App\Client  $request
+     * @param  \App\Models\Billing $request
      * @return void
      */
     public function deleted( )

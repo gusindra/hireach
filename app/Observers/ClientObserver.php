@@ -9,7 +9,7 @@ class ClientObserver
     /**
      * Handle the Request "created" event.
      *
-     * @param  \App\Models\Request  $request
+     * @param  \App\Models\Client  $request
      * @return void
      */
     public function created(Client $request)
@@ -20,7 +20,7 @@ class ClientObserver
     /**
      * Handle the Client "deleted" event.
      *
-     * @param  \App\Client  $request
+     * @param \App\Models\Client  $request
      * @return void
      */
     public function deleted(Client $request)

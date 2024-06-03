@@ -41,7 +41,7 @@ class OrderProductObserver
     /**
      * Handle the Project "deleted" event.
      *
-     * @param  \App\Project  $request
+     * @param  OrderProduct  $request
      * @return void
      */
     public function deleted(OrderProduct $request)

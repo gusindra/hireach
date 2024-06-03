@@ -83,7 +83,12 @@ class Export extends Component
         ];
         return $data;
     }
-
+    
+    /**
+     * resetForm
+     *
+     * @return void
+     */
     public function resetForm()
     {
         $this->input = null;
@@ -97,11 +102,6 @@ class Export extends Component
     public function actionShowModal()
     {
         $this->modalActionVisible = true;
-    }
-
-    public function createFormUser()
-    {
-        dd(1);
     }
 
     public function render()

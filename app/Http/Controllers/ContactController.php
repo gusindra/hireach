@@ -166,15 +166,16 @@ class ContactController extends Controller
             if ($key > 0) {
                 $data = str_getcsv($line);
 
-                // dd($data);
-                // $perData = explode(',', $data[0]);
+                //dd($data);
+                $perData = explode(',', $data[0]);
                 // return $perData[1];
-                $exsist = Client::where('user_id', auth()->user()->id)->where('phone', $data[1])->count();
+                $exsist = Client::where('user_id', auth()->user()->id)->where('phone', $perData[1])->count();
                 if ($exsist == 0) {
                     Client::create([
                         'uuid'      => Str::uuid(),
-                        'name' => $data[0],
-                        'phone' => $data[1],
+                        'name' => $perData[0],
+                        'phone' => $perData[1],
+                        'email' => $perData[2],
                         'user_id' => auth()->user()->id,
                         'created_at' => date('Y-m-d H:i:s')
                         // Add more fields as needed
@@ -188,14 +189,13 @@ class ContactController extends Controller
 
     public function export(Request $request)
     {
-
         $table = Client::where('user_id', auth()->user()->id)->get();
         $filename = "tweets.csv";
         $handle = fopen($filename, 'w+');
-        fputcsv($handle, array('name', 'phone', 'created_at'));
+        fputcsv($handle, array('name', 'phone', 'email', 'created_at'));
 
         foreach ($table as $row) {
-            fputcsv($handle, array($row['name'], $row['phone'], $row['created_at']));
+            fputcsv($handle, array($row['name'], $row['phone'],$row['email'], $row['created_at']));
         }
 
         fclose($handle);
