@@ -14,20 +14,26 @@ class CommerceItem extends LivewireDatatable
     public function columns()
     {
         return [
-    		Column::callback(['type'], function ($y) {
+            Column::callback(['type'], function ($y) {
                 return view('label.type', ['type' => $y]);
             })->label('Type')->filterable(["SKU", "NOSKU", "ONE_TIME", "MONTHLY", "YEARLY"]),
             Column::callback(['name', 'sku'], function ($name, $sku) {
-                return "<span class='font-bold'>".$name."</span><br><small class='text-sx'>sku: ".$sku."</small>";
+                return "<span class='font-bold'>" . $name . "</span><br><small class='text-sx'>sku: " . $sku . "</small>";
             })->label('Name')->searchable()->filterable(),
-    		Column::name('description')->truncate(150)->label('Description'),
+            Column::name('description')->truncate(150)->label('Description'),
             Column::callback(['status'], function ($y) {
                 return view('label.type', ['type' => $y]);
             })->label('Status')->filterable(["active", "not active"]),
             Column::callback(['id', 'name', 'source'], function ($id, $name, $s) {
-                return view('tables.product-actions', ['id' => $id, 'name' => $name, 'url' =>  "/commercial/item/" . $id, 'source' => $s ]);
-            })->label('Action')
+                return view('tables.product-actions', ['id' => $id, 'name' => $name, 'url' =>  "/commercial/item/" . $id, 'source' => $s]);
+            })->label('Action'),
+            NumberColumn::name('id')->label('Detail')->sortBy('id')->callback('id', function ($value) {
+                return view('datatables::link', [
+                    'href' => "/admin/setting/commerce-item/" . $value,
+                    'slot' => 'View'
+                ]);
+            }),
 
-    	];
+        ];
     }
 }
