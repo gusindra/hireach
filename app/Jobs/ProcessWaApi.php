@@ -251,36 +251,51 @@ class ProcessWaApi implements ShouldQueue
      * @return void
      */
     private function EMProvider($request){
-        $msg = $this->saveResult('progress');
-        if($msg){
+        try{
             $url = 'https://enjoymov.co/prod-api/kstbCore/sms/send';
-            $md5_key = env('EM_MD5_KEY'); //'AFD4274C39AB55D8C8D08FA6E145D535';
-            $merchantId = env('EM_MERCHANT_ID'); //'KSTB904790';
-            $callbackUrl = 'http://hireach.firmapps.ai/receive-sms-status';
-            $phone = '81339668556';
-            $content = 'test enjoymov api';
-            $msgChannel = env('EM_CODE_LWA', 80); //'WA'; //WA
-            $countryCode = '62';
+            $md5_key = env('EM_MD5_KEY', 'AFD4274C39AB55D8C8D08FA6E145D535'); //'AFD4274C39AB55D8C8D08FA6E145D535';
+            $merchantId = env('EM_MERCHANT_ID', 'KSTB904790'); //'KSTB904790';
+            $callbackUrl = 'http://hireach.firmapps.ai/receive-sms-status'; 
+            $content = $request['text']; //'test enjoymov api';
+            $msgChannel = env('EM_CODE_LWA', 80); //'WA'; //WA 
 
-
-            $code = str_split($request->to, 2);
+            $code = str_split($request['to'], 2);
             $countryCode = $code[0];
-            $phone = substr($request->to, 2);
+            $phone = substr($request['to'], 2);
 
             $sb = $md5_key . $merchantId . $phone . $content;
-            $sign = md5($sb);
+            //$sign = md5($sb);
             //return $sign;
-            $response = Http::get($url, [
+            $signature = Http::acceptJson()->withUrlParameters([
+                'endpoint' => 'http://8.215.55.87:34080/sign',
+                'sb' => $sb
+            ])->get('{+endpoint}?sb={sb}'); 
+            $reSign = json_decode($signature, true);
+            //return $signature['sign'];
+            //Log::debug($sb);
+            //Log::debug($reSign['sign']);
+            $sign = $reSign['sign'];
+
+            $msg = $this->saveResult('progress');
+            $data = [
                 'merchantId' => $merchantId,
                 'sign' => $sign,
-                'type' => $request->type,
+                'type' => $request['otp']==1?2:1,
                 'phone' => $phone,
-                'content' => $request->text,
+                'content' => $request['text'],
                 "callbackUrl" => $callbackUrl,
                 'countryCode' => $countryCode,
                 'msgChannel' => $msgChannel,
                 "msgId" => $msg->id
-            ]);
+            ];
+            
+            //Log::debug($data);
+            $response = Http::withBody(json_encode($data), 'application/json')->withOptions([ 'verify' => false, ])->post($url);
+            //Log::debug($response);
+        }catch(\Exception $e){
+            Log::debug($e->getMessage());
+            $this->saveResult('Reject invalid servid', $this->request['to']);
+            Log::debug('Reject invalid servid');
         }
     }
 
@@ -295,7 +310,7 @@ class ProcessWaApi implements ShouldQueue
         $modelData = [
             'msg_id'            => 0,
             'user_id'           => $user_id,
-            'client_id'         => $this->chechClient("400"),
+            'client_id'         => $this->chechClient("400", $this->request['to']),
             'type'              => $this->request['type'],
             'otp'               => $this->request['otp'],
             'status'            => $msg,
@@ -318,15 +333,13 @@ class ProcessWaApi implements ShouldQueue
      */
     private function chechClient($status, $msisdn=null){
         $user_id = $this->user->id;
-        if($status=="200"){
-            $client = Client::where('phone', $msisdn)->where('user_id', $user_id)->firstOr(function () use ($msisdn, $user_id) {
-                return Client::create([
-                    'phone' => $msisdn,
-                    'user_id' => $user_id,
-                    'uuid' => Str::uuid()
-                ]);
-            });
-        }
+        $client = Client::where('phone', $msisdn)->where('user_id', $user_id)->firstOr(function () use ($msisdn, $user_id) {
+            return Client::create([
+                'phone' => $msisdn,
+                'user_id' => $user_id,
+                'uuid' => Str::uuid()
+            ]);
+        });
         $team = $this->user->currentTeam;
         $client->teams()->attach($team);
 

@@ -76,7 +76,7 @@
                 </button>
             </li>
         </ul>
-        @livewire('notification-app', ['client_id' => Auth::user()->id], key(Auth::user()->id))
+        <!-- @livewire('notification-app', ['client_id' => Auth::user()->id], key(Auth::user()->id)) -->
 
     </div>
     <div

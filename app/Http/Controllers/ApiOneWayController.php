@@ -185,7 +185,7 @@ class ApiOneWayController extends Controller
                             $request->merge([
                                 'provider' => 'provider2'
                             ]);
-                            ProcessWaApi::dispatch($request->all(), auth()->user());
+                            ProcessSmsApi::dispatch($request->all(), auth()->user());
                         }
                     }
                 }else{

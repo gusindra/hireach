@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Jobs\ProcessEmailApi;
+use App\Jobs\ProcessSmsApi;
 use App\Models\BlastMessage;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
@@ -47,6 +48,13 @@ class ApiProviderTest extends TestCase
 
     public function test_enjoymov_can_sending_long_number_sms()
     {
+        Queue::fake();
+
+        // Do some things to set up date, call an endpoint, etc.
+
+        Queue::assertPushed(ProcessSmsApi::class, function ($job) {
+            return $job->data['action'] === 'EMProvider';
+        });
         $response = $this->get('/');
 
         $response->assertStatus(200);

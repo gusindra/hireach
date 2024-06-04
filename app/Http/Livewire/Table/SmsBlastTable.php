@@ -126,7 +126,7 @@ class SmsBlastTable extends LivewireDatatable
         //return $row->{'status'};
         $extra = '';
         if (str_contains(strtolower($row->{'status'}), 'invalid')) {
-            $extra = 'w-full';
+            $extra = 'w-1/4';
         }
         return 'px-2 text-xs ' . $extra;
     }
