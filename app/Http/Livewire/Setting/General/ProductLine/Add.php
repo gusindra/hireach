@@ -19,10 +19,6 @@ class Add extends Component
         'company_id' => 'required',
     ];
 
-    public function mount()
-    {
-        $this->company = Company::all();
-    }
     public function actionShowModal()
     {
         $this->modalActionVisible = true;
@@ -44,8 +40,13 @@ class Add extends Component
         session()->flash('message', 'Product line added successfully.');
     }
 
+
+    public function read()
+    {
+        $this->company = Company::all();
+    }
     public function render()
     {
-        return view('livewire.setting.general.product-line.add');
+        return view('livewire.setting.general.product-line.add', ['company' => $this->read()]);
     }
 }
