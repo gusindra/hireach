@@ -146,6 +146,11 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
         Route::get('/setting/company', [SettingController::class, 'company'])->name('settings.company');
         Route::get('setting/company/{company}', [SettingController::class, 'companyShow'])->name('settings.company.show');
 
+
+
+        Route::get('setting/product-line/{productLine}', [SettingController::class, 'productLineShow'])->name('settings.productLine.show');
+        Route::get('setting/commerce-item/{commerceItem}', [SettingController::class, 'commerceItemShow'])->name('settings.commerceItem.show');
+
         Route::get('/project', [ProjectController::class, 'index'])->name('project');
         Route::get('/project/{project}', [ProjectController::class, 'show'])->name('project.show');
 
