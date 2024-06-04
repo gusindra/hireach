@@ -138,7 +138,7 @@ class UserAdminTest extends TestCase
         Livewire::actingAs($userLogin)->test(Delete::class, ['userId' => $user->id])
             ->call('delete')
             ->assertRedirect(route('admin.user'));
-
         $this->assertSoftDeleted('users', ['id' => $user->id]);
+        $user->forceDelete();
     }
 }
