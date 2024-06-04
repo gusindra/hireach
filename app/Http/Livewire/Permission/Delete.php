@@ -8,18 +8,30 @@ use Livewire\Component;
 class Delete extends Component
 {
     public $permission;
+    public $modalDeleteVisible = false;
+    public $actionShowDeleteModal = false;
 
     public function mount($permission)
     {
+
         $this->permission = $permission;
     }
 
-    public function deletePermission($id)
+    public function delete($id)
     {
+
         $permission = Permission::find($id);
         if ($permission) {
             $permission->delete();
         }
+        $this->modalDeleteVisible = false;
+        $this->redirect('permission');
+    }
+
+    public function actionShowDeleteModal()
+    {
+
+        $this->modalDeleteVisible = true;
     }
 
 

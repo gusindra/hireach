@@ -20,6 +20,13 @@ use Tests\TestCase;
 
 class RoleAdminTest extends TestCase
 {
+    public function test_role_detail_can_be_rendered()
+    {
+        $user = User::find(1);
+        $response = $this->actingAs($user)->get('admin/roles/1');
+
+        $response->assertStatus(200);
+    }
     /**
      * A basic feature test example.
      *

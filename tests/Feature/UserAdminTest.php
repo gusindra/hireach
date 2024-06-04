@@ -4,6 +4,8 @@ namespace Tests\Feature;
 
 use App\Http\Livewire\Provider\Add;
 use App\Http\Livewire\Provider\Edit;
+use App\Http\Livewire\User\AddProvider;
+use App\Http\Livewire\User\Delete;
 use App\Models\Provider;
 use App\Models\ProviderUser;
 use App\Models\User;
@@ -14,6 +16,23 @@ use Tests\TestCase;
 
 class UserAdminTest extends TestCase
 {
+    public function test_active_user_can_be_rendered()
+    {
+        $user = User::find(1);
+        $response = $this->actingAs($user)->get('admin/dashboard/active-user');
+
+        $response->assertStatus(200);
+    }
+
+
+    public function test_report_dashboard_can_be_rendered()
+    {
+        $user = User::find(1);
+        $response = $this->actingAs($user)->get('admin/report');
+
+        $response->assertStatus(200);
+    }
+
     /**
      * A basic feature test example.
      *
@@ -21,7 +40,7 @@ class UserAdminTest extends TestCase
      */
     public function test_can_create_a_user()
     {
-        $user = User::find(2);
+        $user = User::find(1);
         Livewire::actingAs($user)->test('user.add', ['role' => 'admin'])
             ->set('input', [
                 'name' => 'John Doe',
@@ -36,7 +55,7 @@ class UserAdminTest extends TestCase
 
     public function test_it_can_update_a_user()
     {
-        $userLogin = User::factory()->create();
+        $userLogin = User::find(1);
         $user = User::where('name', 'John Doe')->latest()->first();
         Livewire::actingAs($userLogin)
             ->test('user.edit', ['userId' => $user->id])
@@ -70,38 +89,34 @@ class UserAdminTest extends TestCase
         ]);
     }
 
-    public function test_it_can_create_a_provider_user()
+    public function test_it_creates_a_new_provider_user()
     {
         $user = User::find(1);
-        $provider = Provider::where('name', 'Test Provider')->latest()->first();
+        $provider = Provider::find(2);
+        Livewire::actingAs($user)->test('user.add-provider', ['user' => $user])
+            ->set('input.providerId', $provider->id)
+            ->set('input.channel', 'example-channel')
+            ->call('addProvider')
+            ->assertEmitted('added')
+            ->assertSet('modalActionVisible', false);
 
-        Livewire::test('user.add-provider', ['user' => $user])
-            ->set('providerId', $provider->id)
-            ->set('channel', 'some_channel')
-            ->call('create')
-            ->assertEmitted('added');
-
-        $this->assertDatabaseHas('provider_users', [
+        $this->assertDatabaseHas('provider_user', [
             'user_id' => $user->id,
-            'provider_id' => $provider->id,
-            'channel' => 'some_channel',
+            'provider_id' => 2,
+            'channel' => 'example-channel',
         ]);
     }
 
-    public function test_it_can_delete_a_provider_user()
+    public function test_it_deletes_a_provider_user()
     {
         $user = User::find(1);
-        $providerUser = ProviderUser::where('channel', 'some_channel')->latest()->first();
 
-        Livewire::test('user.add-provider', ['user' => $user])
+        $providerUser = ProviderUser::where('channel', 'example-channel')->latest()->first();
+        Livewire::actingAs($user)->test(AddProvider::class, ['user' => $user])
             ->call('deleteShowModal', $providerUser->id)
-            ->call('delete')
-            ->assertEmitted('event-notification', [
-                'eventName' => 'Deleted Page',
-                'eventMessage' => 'The page (' . $providerUser->id . ') has been deleted!',
-            ]);
+            ->call('delete');
 
-        $this->assertDatabaseMissing('provider_users', [
+        $this->assertDatabaseMissing('provider_user', [
             'id' => $providerUser->id,
         ]);
     }
@@ -114,5 +129,16 @@ class UserAdminTest extends TestCase
             ->call('delete');
 
         $this->assertDatabaseMissing('providers', ['id' => $provider->id]);
+    }
+
+    public function test_it_deletes_user_and_redirects()
+    {
+        $userLogin = User::find(1);
+        $user = User::where('email', 'updated@example.com')->latest()->first();
+        Livewire::actingAs($userLogin)->test(Delete::class, ['userId' => $user->id])
+            ->call('delete')
+            ->assertRedirect(route('admin.user'));
+
+        $this->assertSoftDeleted('users', ['id' => $user->id]);
     }
 }

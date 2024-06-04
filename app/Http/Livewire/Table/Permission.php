@@ -13,6 +13,9 @@ use Mediconesystems\LivewireDatatables\DateColumn;
 class Permission extends LivewireDatatable
 {
     public $model = ModelsPermission::class;
+    public $modalDeleteVisible = false;
+
+
 
     public function builder()
     {
@@ -41,7 +44,7 @@ class Permission extends LivewireDatatable
             //     ]);
             // }),
             Column::callback(['id'], function ($id) {
-                return view('livewire.permission.delete', ['id' => $id]);
+                return view('tables.delete-modal', ['id' => $id]);
             })->label('Actions'),
 
         ];

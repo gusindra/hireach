@@ -13,6 +13,13 @@ use Tests\TestCase;
 
 class PermissionAdminTest extends TestCase
 {
+    public function test_permission_index_can_be_rendered()
+    {
+        $user = User::find(1);
+        $response = $this->actingAs($user)->get('admin/permission');
+
+        $response->assertStatus(200);
+    }
     /**
      * test_create_permission
      *
@@ -43,14 +50,14 @@ class PermissionAdminTest extends TestCase
      *
      * @return void
      */
-    public function test_delete_permission()
+    public function test_can_delete_permission()
     {
         $permission = Permission::where('name', 'EDIT POST')->latest()->first();
-        $user = User::find(1);
 
+        Livewire::test(Delete::class, ['permission' => $permission])
+            ->call('actionShowDeleteModal')
+            ->call('delete', $permission->id);
 
-        Livewire::actingAs($user)->test(Delete::class, ['permission' => $permission, 'id' => $permission->id])
-            ->call('deletePermission');
-        $this->assertDatabaseMissing('permissions', ['id' => $permission->id]);
+        $this->assertSoftDeleted('permissions', ['id' => $permission->id]);
     }
 }

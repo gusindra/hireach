@@ -99,10 +99,10 @@
 
             <div class="col-span-6 sm:col-span-4 p-3 space-y-3">
                 <div>
-                    <x-jet-label for="providerId" value="{{ __('Resource') }}" />
-                    <select name="providerId" id="providerId"
+                    <x-jet-label for="input.providerId" value="{{ __('Resource') }}" />
+                    <select name="input.providerId" id="input.providerId"
                         class="border-gray-300 dark:bg-slate-800 dark:text-slate-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 rounded-md shadow-sm mt-1 block w-full"
-                        wire:model.debunce.800ms="providerId">
+                        wire:model.debunce.800ms="input.providerId">
                         <option selected value="text">--Select provider--</option>
                         @if ($array_data)
                             @foreach ($array_data as $provider)
@@ -110,26 +110,27 @@
                             @endforeach
                         @endif
                     </select>
-                    <x-jet-input-error for="providerId" class="mt-2" />
+                    <x-jet-input-error for="input.providerId" class="mt-2" />
                 </div>
                 <div>
-                    <x-jet-label for="channel" value="{{ __('Channel') }}" />
-                    <select name="channel" id="channel"
+
+                    <x-jet-label for="input.channel" value="{{ __('input.Channel') }}" />
+                    <select name="input.channel" id="input.channel"
                         class="border-gray-300 dark:bg-slate-800 dark:text-slate-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 rounded-md shadow-sm mt-1 block w-full"
-                        wire:model.debunce.800ms="channel">
-                        <option selected value="text">--Select channel--</option>
-                        @if ($providerId==1)
-                            <option value="SMSOTP">SMS OTP</option> 
+                        wire:model.debunce.800ms="input.channel">
+                        <option selected value="text">--Select input.channel--</option>
+                        @if ($input['providerId'] == 1)
+                            <option value="SMSOTP">SMS OTP</option>
                             <option value="SMSOTP">WABA</option>
                         @endif
-                        @if ($providerId==2) 
+                        @if ($input['providerId'] == 2)
                             <option value="SMSNONOTP">SMS NON OTP</option>
                             <option value="SMSOTP">WABA</option>
                         @endif
-                        @if ($providerId==3)
+                        @if ($input['providerId'] == 3)
                             <option value="EMAIL">EMAIL</option>
                         @endif
-                        @if ($providerId==4)
+                        @if ($input['providerId'] == 4)
                             <option value="SMSLN">SMS LONGNUMBER</option>
                             <option value="WALN">WA LONGNUMBER</option>
                         @endif
@@ -145,11 +146,11 @@
                 {{ __('Cancel') }}
             </x-jet-secondary-button>
             @if ($actionId)
-                <x-jet-button class="ml-2" wire:click="update" wire:loading.attr="disabled">
+                <x-jet-button class="ml-2" wire:click="addProvider" wire:loading.attr="disabled">
                     {{ __('Save') }}
                 </x-jet-button>
             @else
-                <x-jet-button class="ml-2" wire:click="create" wire:loading.attr="disabled">
+                <x-jet-button class="ml-2" wire:click="addProvider" wire:loading.attr="disabled">
                     {{ __('Add') }}
                 </x-jet-button>
             @endif
