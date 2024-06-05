@@ -18,7 +18,7 @@ class ProviderUser extends Model
 
     public function provider()
     {
-        return $this->belongsTo(Provider::class);
+        return $this->belongsTo(Provider::class, 'user_id');
     }
 
     public function user()

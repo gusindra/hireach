@@ -21,7 +21,7 @@ class Provider extends Model
         'name' => 'string',
     ];
 
-    public function settinProvider()
+    public function settingProvider()
     {
         return $this->hasMany(SettingProvider::class);
     }
