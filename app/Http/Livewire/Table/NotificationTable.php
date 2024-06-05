@@ -20,7 +20,6 @@ class NotificationTable extends LivewireDatatable
     public function builder()
     {
         $query = Notice::query()->where('user_id', auth()->user()->id);
-
         if(auth()->user()->super && auth()->user()->super->first() && auth()->user()->super->first()->role == 'superadmin'){
             $query = Notice::query()->withTrashed();
         }
