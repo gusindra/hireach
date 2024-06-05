@@ -1,8 +1,14 @@
 <div>
 
-    <x-jet-button class="bg-red-600" wire:click="actionShowDeleteModal">
-        {{ __('Delete Permissions') }}
-    </x-jet-button>
+    @if ($notification->status != 'deleted')
+        <x-jet-button class="bg-red-600" wire:click="actionShowDeleteModal">
+            {{ __('Delete Permissions') }}
+        </x-jet-button>
+    @else
+        <x-jet-button disabled class="bg-red-600" wire:click="actionShowDeleteModal">
+            {{ __('Delete Permissions') }}
+        </x-jet-button>
+    @endif
     <x-jet-dialog-modal class="text-left" wire:model="modalDeleteVisible">
         <x-slot name="title">
             {{ __('Delete Permissions') }}
@@ -17,7 +23,7 @@
                 {{ __('Cancel') }}
             </x-jet-secondary-button>
 
-            <x-jet-danger-button class="ml-2" wire:click="delete({{ $permission }})" wire:loading.attr="disabled">
+            <x-jet-danger-button class="ml-2" wire:click="delete({{ $notification }})" wire:loading.attr="disabled">
                 {{ __('Delete') }}
             </x-jet-danger-button>
         </x-slot>

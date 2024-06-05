@@ -15,6 +15,7 @@ class AddProvider extends Component
     public $actionId;
     public $channel;
     public $providerId;
+    public $input;
     public $is_multidata;
     public $array_data;
     public $modalActionVisible = false;
@@ -22,6 +23,7 @@ class AddProvider extends Component
 
     public function mount($user)
     {
+        $this->input['providerId'] = '';
         $this->user = $user;
         $this->userId = $this->user->id;
     }
@@ -61,6 +63,28 @@ class AddProvider extends Component
         // dd($this->modelData());
         // $this->validate();
         $action = ProviderUser::firstOrCreate($this->modelData(), $this->modelData());
+        $this->modalActionVisible = false;
+        $this->resetForm();
+        if ($action->wasRecentlyCreated) {
+            $this->emit('added');
+        } else {
+            $this->emit('exist');
+        }
+
+        $this->emit('addArrayData', $action->id);
+        $this->actionId = null;
+    }
+
+
+    public function addProvider()
+    {
+
+        $action = ProviderUser::firstOrCreate([
+            'provider_id'   => $this->input['providerId'],
+            'channel'       => $this->input['channel'],
+            'user_id'       => $this->userId
+        ]);
+
         $this->modalActionVisible = false;
         $this->resetForm();
         if ($action->wasRecentlyCreated) {
@@ -139,7 +163,7 @@ class AddProvider extends Component
     public function loadModel()
     {
         $data = ProviderUser::find($this->actionId);
-        $this->providerId    = $data->provider_id;
+        $this->providerId = $data->provider_id;
     }
 
     public function deleteShowModal($id)

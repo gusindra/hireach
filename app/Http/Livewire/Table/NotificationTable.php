@@ -56,7 +56,7 @@ class NotificationTable extends LivewireDatatable
     private function adminTbl()
     {
         return [
-            
+
             Column::name('user_id')->callback(['user_id'], function ($value) {
                 return view('datatables::link', [
                     'href' => "/admin/user/" . $value,
@@ -74,7 +74,7 @@ class NotificationTable extends LivewireDatatable
             }),
             Column::callback(['status', 'id'], function ($status, $id) {
                 $disabled = $status === 'deleted' ? 'disabled' : '';
-                return view('datatables::delete-notification', [
+                return view('tables.delete-notification', [
                     'id' => $id,
                     'disabled' => $disabled,
                 ]);

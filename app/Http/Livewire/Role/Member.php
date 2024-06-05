@@ -30,7 +30,7 @@ class Member extends Component
             'team_id' => auth()->user()->current_team_id
         ]);
 
-        Mail::to($this->inviteEmail)->send(new MailRoleInvitation($invitation));
+        // Mail::to($this->inviteEmail)->send(new MailRoleInvitation($invitation));
 
         $this->resetForm();
 
