@@ -29,4 +29,12 @@ class ProductLine extends Model
     {
         return $this->hasMany('App\Models\CommerceItem', 'product_line');
     }
+
+    /**
+     * Get belong to company.
+     */
+    public function company()
+    {
+        return $this->belongsTo('App\Models\Company');
+    }
 }

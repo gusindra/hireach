@@ -1,4 +1,4 @@
-<div class="p-6">
+<div class="px-4 pt-6">
     <x-jet-button wire:click="actionShowModal">
         {{__('Add Company')}}
     </x-jet-button>

@@ -1,6 +1,4 @@
 <div>
-
-
     <div>
         <x-jet-form-section submit="updateProductLine({{ $productLine->id }})">
             <x-slot name="title">
@@ -65,10 +63,34 @@
                 </x-jet-button>
             </x-slot>
         </x-jet-form-section>
+
+        <x-jet-section-border />
+
         <!-- Trigger the modal -->
-        <x-jet-danger-button wire:click="modalAction" wire:loading.attr="disabled">
-            {{ __('Delete Product Line') }}
-        </x-jet-danger-button>
+        <x-jet-form-section submit="modalAction">
+            <x-slot name="title">
+                {{ __('Delete Product Line') }}
+            </x-slot>
+
+            <x-slot name="description">
+                {{ __('This is for delete Product Line.') }}
+            </x-slot>
+
+            <x-slot name="form">
+                <div class="col-span-6 grid grid-cols-2">
+                    <div class="col-span-12 sm:col-span-1 mx-4 text-right">
+                    </div>
+                    <div class="col-span-12 sm:col-span-1 mx-4 text-right">
+                    </div>
+                </div>
+            </x-slot>
+
+            <x-slot name="actions"> 
+                <x-jet-button class="bg-red-600" wire:click="modalAction">
+                    {{ __('Delete Product Line') }}
+                </x-jet-button>
+            </x-slot>
+        </x-jet-form-section>
 
         <x-jet-dialog-modal wire:model="modalActionVisible">
             <x-slot name="title">
@@ -80,7 +102,7 @@
             </x-slot>
 
             <x-slot name="footer">
-                <x-jet-secondary-button wire:click="modalAction" wire:loading.attr="disabled">
+                <x-jet-secondary-button wire:click="$toggle('modalActionVisible')" wire:loading.attr="disabled">
                     {{ __('Cancel') }}
                 </x-jet-secondary-button>
 
@@ -91,5 +113,4 @@
         </x-jet-dialog-modal>
 
     </div>
-
 </div>

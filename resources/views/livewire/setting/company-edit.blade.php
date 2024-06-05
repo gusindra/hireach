@@ -99,25 +99,34 @@
 
 
     </div>
-    <div class="grid ml-5 grid-cols-2 gap-4 mt-6 shadow p-4">
-        <div class="">
-            <h2 class="text-lg">Delete Order</h2>
-            <p class="mt-2 text-sm text-gray-600">This is for delete quotaton</p>
-        </div>
 
-        <div class="text-right ">
+    <x-jet-section-border />
 
-            <div class="p-4">
-                <div class="flex items-center justify-end">
-                    <x-jet-button wire:click="actionShowDeleteModal">
-                        {{ __('Delete Order') }}
-                    </x-jet-button>
+    <x-jet-form-section submit="actionShowDeleteModal">
+        <x-slot name="title">
+            {{ __('Delete Company') }}
+        </x-slot>
+
+        <x-slot name="description">
+            {{ __('This is for delete Company.') }}
+        </x-slot>
+
+        <x-slot name="form">
+            <div class="col-span-6 grid grid-cols-2">
+                <div class="col-span-12 sm:col-span-1 mx-4 text-right">
                 </div>
-
-
+                <div class="col-span-12 sm:col-span-1 mx-4 text-right">
+                </div>
             </div>
-        </div>
-    </div>
+        </x-slot>
+
+        <x-slot name="actions"> 
+            <x-jet-button class="bg-red-600" wire:click="actionShowDeleteModal">
+                {{ __('Delete Company') }}
+            </x-jet-button>
+        </x-slot>
+    </x-jet-form-section>
+
     <x-jet-dialog-modal class="text-left" wire:model="modalDeleteVisible">
         <x-slot name="title">
             {{ __('Delete Company') }}
