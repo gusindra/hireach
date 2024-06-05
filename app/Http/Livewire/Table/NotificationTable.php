@@ -2,7 +2,7 @@
 
 namespace App\Http\Livewire\Table;
 
-use App\Models\Notification;
+use App\Models\Notice;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Redirect;
 use Mediconesystems\LivewireDatatables\Http\Livewire\LivewireDatatable;
@@ -12,16 +12,16 @@ use Mediconesystems\LivewireDatatables\DateColumn;
 
 class NotificationTable extends LivewireDatatable
 {
-    public $model = Notification::class;
+    public $model = Notice::class;
     public $filterDate;
     public $statusFilter;
 
 
     public function builder()
     {
-        $query = Notification::query()->where('user_id', auth()->user()->id);
+        $query = Notice::query()->where('user_id', auth()->user()->id);
         if (auth()->user()->super && auth()->user()->super->first() && auth()->user()->super->first()->role == 'superadmin') {
-            $query = Notification::query()->withTrashed();
+            $query = Notice::query()->withTrashed();
         }
 
         if ($this->filterDate) {
@@ -43,7 +43,7 @@ class NotificationTable extends LivewireDatatable
 
     public function deleteNotification($id)
     {
-        $notification = Notification::findOrFail($id);
+        $notification = Notice::findOrFail($id);
         $notification->delete();
         $notification->update(['status' => 'deleted']);
     }
@@ -109,7 +109,6 @@ class NotificationTable extends LivewireDatatable
                     'disabled' => $disabled,
                 ]);
             })->label('Actions'),
-
         ];
     }
 }
