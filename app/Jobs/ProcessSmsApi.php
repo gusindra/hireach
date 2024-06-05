@@ -268,29 +268,33 @@ class ProcessSmsApi implements ShouldQueue
      */
     private function EMProvider($request){
         $msg = $this->saveResult('progress');
-        try{
+        if($msg){
             $url = 'https://enjoymov.co/prod-api/kstbCore/sms/send';
-            $md5_key = env('EM_MD5_KEY', 'AFD4274C39AB55D8C8D08FA6E145D535');
-            $merchantId = env('EM_MERCHANT_ID', 'KSTB904790');
+            $md5_key = env('EM_MD5_KEY', 'AFD4274C39AB55D8C8D08FA6E145D535'); //'AFD4274C39AB55D8C8D08FA6E145D535';
+            $merchantId = env('EM_MERCHANT_ID', 'KSTB904790'); //'KSTB904790';
             $callbackUrl = 'http://hireach.firmapps.ai/receive-sms-status';
-            
+            //$phone = '81339668556';
             $content = $request['text']; //'test enjoymov api';
             $msgChannel = env('EM_CODE_LSMS', 5); //'SM'; //WA
+            //$countryCode = '62';
 
             $code = str_split($request['to'], 2);
             $countryCode = $code[0];
             $phone = substr($request['to'], 2);
 
             $sb = $md5_key . $merchantId . $phone . $content;
+            //$sign = md5($sb);
+            //return $sign;
             $signature = Http::acceptJson()->withUrlParameters([
                 'endpoint' => 'http://8.215.55.87:34080/sign',
                 'sb' => $sb
             ])->get('{+endpoint}?sb={sb}'); 
             $reSign = json_decode($signature, true);
             //return $signature['sign'];
+            //Log::debug($sb);
             //Log::debug($reSign['sign']);
             $sign = $reSign['sign'];
-            //return $sign;
+            
             $data = [
                 'merchantId' => $merchantId,
                 'sign' => $sign,
@@ -306,11 +310,7 @@ class ProcessSmsApi implements ShouldQueue
             $response = Http::withBody(json_encode($data), 'application/json')->withOptions([ 'verify' => false, ])->post($url);
             //Log::debug($response);
             $resData = json_decode($response, true);
-            BlastMessage::find($msg->id)->update(['status'=>$resData->message]);
-        }catch(\Exception $e){
-            Log::debug($e->getMessage());
-            $this->saveResult('Reject invalid servid', $this->request['to']);
-            Log::debug('Reject invalid servid');
+            BlastMessage::find($msg->id)->update(['status'=>$resData['message']]);
         }
     }
 

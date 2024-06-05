@@ -255,9 +255,12 @@ class ProcessWaApi implements ShouldQueue
             $url = 'https://enjoymov.co/prod-api/kstbCore/sms/send';
             $md5_key = env('EM_MD5_KEY', 'AFD4274C39AB55D8C8D08FA6E145D535'); //'AFD4274C39AB55D8C8D08FA6E145D535';
             $merchantId = env('EM_MERCHANT_ID', 'KSTB904790'); //'KSTB904790';
-            $callbackUrl = 'http://hireach.firmapps.ai/receive-sms-status'; 
+            $callbackUrl = 'http://hireach.firmapps.ai/receive-sms-status';
+            //$phone = '81339668556';
             $content = $request['text']; //'test enjoymov api';
-            $msgChannel = env('EM_CODE_LWA', 80); //'WA'; //WA 
+            $msgChannel = env('EM_CODE_LWA', 80); //'WA'; //WA
+            //$countryCode = '62';
+
 
             $code = str_split($request['to'], 2);
             $countryCode = $code[0];
@@ -292,6 +295,8 @@ class ProcessWaApi implements ShouldQueue
             //Log::debug($data);
             $response = Http::withBody(json_encode($data), 'application/json')->withOptions([ 'verify' => false, ])->post($url);
             //Log::debug($response);
+            $resData = json_decode($response, true);
+            BlastMessage::find($msg->id)->update(['status'=>$resData['message']]);
         }catch(\Exception $e){
             Log::debug($e->getMessage());
             $this->saveResult('Reject invalid servid', $this->request['to']);

@@ -10,6 +10,7 @@ use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 use Illuminate\Support\Facades\Queue;
 use App\Models\User;
+use Illuminate\Support\Facades\Bus;
 
 class ApiProviderTest extends TestCase
 {
@@ -48,11 +49,11 @@ class ApiProviderTest extends TestCase
 
     public function test_enjoymov_can_sending_long_number_sms()
     {
-        Queue::fake();
+        Bus::fake();
 
         // Do some things to set up date, call an endpoint, etc.
 
-        Queue::assertPushed(ProcessSmsApi::class, function ($job) {
+        Bus::assertDispatched(ProcessSmsApi::class, function ($job) {
             return $job->data['action'] === 'EMProvider';
         });
         $response = $this->get('/');
