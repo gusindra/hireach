@@ -14,15 +14,15 @@ class ProductLines extends Component
     public $selected_product_line;
     public $disabled;
 
-    public function mount($model, $data, $disabled=false)
+    public function mount($model, $data, $disabled = false)
     {
         $this->selected_product_line = '';
-        if($model=='product'){
+        if ($model == 'product') {
             $this->master = CommerceItem::find($data->id);
-        }elseif($model=='project'){
+        } elseif ($model == 'project') {
             $this->master = Project::find($data->id);
         }
-        if($this->master){
+        if ($this->master) {
             $line = ProductLine::find($this->master->product_line);
             $this->selected_product_line = $line ? $line->name : '';
         }
@@ -39,8 +39,7 @@ class ProductLines extends Component
     public function addProduct()
     {
         $line = ProductLine::create([
-            'name' => $this->product_line,
-            'user_id' => auth()->user()->id
+            'name' => $this->product_line
         ]);
 
         $this->master->update([
@@ -49,7 +48,6 @@ class ProductLines extends Component
 
         $this->selected_product_line = $this->product_line;
         $this->product_line = "";
-
     }
 
     public function selectProduct($id)
@@ -79,10 +77,10 @@ class ProductLines extends Component
     {
         $data = [];
 
-        if($this->product_line!=''){
+        if ($this->product_line != '') {
             $keyword =  $this->product_line;
-            $data['quick'] = ProductLine::where('user_id', auth()->user()->id)->where('name','LIKE',"%{$keyword}%")->get();
-        }else{
+            $data['quick'] = ProductLine::where('name', 'LIKE', "%{$keyword}%")->get();
+        } else {
             $data['quick'] = [];
         }
         return $data;

@@ -15,15 +15,19 @@ class AddProvider extends Component
     public $actionId;
     public $channel;
     public $providerId;
-    public $input;
     public $is_multidata;
     public $array_data;
+    public $providers;
+    public $channels = [];
     public $modalActionVisible = false;
     public $confirmingActionRemoval = false;
-
+    public $input = [
+        'channel' => ''
+    ];
     public function mount($user)
     {
-        $this->input['providerId'] = '';
+
+        $this->providerId = '';
         $this->user = $user;
         $this->userId = $this->user->id;
     }
@@ -37,6 +41,20 @@ class AddProvider extends Component
         ];
 
         return $data;
+    }
+
+
+    public function updatedProviderId($value)
+    {
+        $provider = Provider::find($value);
+
+        if ($provider && !empty($provider->channel)) {
+            $channelsString = $provider->channel;
+
+            $this->channels = explode(',', $channelsString);
+        } else {
+            $this->channels = [];
+        }
     }
 
     public function rules()
@@ -78,10 +96,9 @@ class AddProvider extends Component
 
     public function addProvider()
     {
-
         $action = ProviderUser::firstOrCreate([
-            'provider_id'   => $this->input['providerId'],
-            'channel'       => $this->input['channel'],
+            'provider_id'   => $this->providerId,
+            'channel'       => strtoupper($this->channel),
             'user_id'       => $this->userId
         ]);
 
@@ -144,6 +161,7 @@ class AddProvider extends Component
         $provider = ProviderUser::where('user_id', $this->userId)->get();
         return $provider;
     }
+
 
     public function updateShowModal($id)
     {

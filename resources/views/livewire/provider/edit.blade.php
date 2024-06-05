@@ -40,6 +40,19 @@
                 </div>
             </div>
 
+
+            <div class="col-span-6 grid grid-cols-2">
+                <!-- Provider Channel -->
+                <div class="col-span-12 sm:col-span-1">
+                    <x-jet-label for="channel" :value="__('Channel')" />
+                    <x-jet-input id="channel" type="text" class="mt-1 block w-full" wire:model="channel"
+                        wire:model.defer="channel" wire:model.debunce.800ms="channel" />
+                    <x-jet-input-error for="channel" class="mt-2" />
+                </div>
+            </div>
+
+
+
         </x-slot>
 
         <x-slot name="actions">

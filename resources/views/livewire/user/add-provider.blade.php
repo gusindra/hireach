@@ -99,10 +99,10 @@
 
             <div class="col-span-6 sm:col-span-4 p-3 space-y-3">
                 <div>
-                    <x-jet-label for="input.providerId" value="{{ __('Resource') }}" />
-                    <select name="input.providerId" id="input.providerId"
+                    <x-jet-label for="providerId" value="{{ __('Resource') }}" />
+                    <select name="providerId" id="providerId"
                         class="border-gray-300 dark:bg-slate-800 dark:text-slate-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 rounded-md shadow-sm mt-1 block w-full"
-                        wire:model.debunce.800ms="input.providerId">
+                        wire:model.debunce.800ms="providerId">
                         <option selected value="text">--Select provider--</option>
                         @if ($array_data)
                             @foreach ($array_data as $provider)
@@ -110,9 +110,26 @@
                             @endforeach
                         @endif
                     </select>
-                    <x-jet-input-error for="input.providerId" class="mt-2" />
+                    <x-jet-input-error for="providerId" class="mt-2" />
                 </div>
+
                 <div>
+                    <x-jet-label for="channel" value="{{ __('channel') }}" />
+                    <select name="channel" id="channel"
+                        class="border-gray-300 dark:bg-slate-800 dark:text-slate-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 rounded-md shadow-sm mt-1 block w-full"
+                        wire:model.debounce.800ms="channel">
+                        <option selected value="">--Select channel--</option>
+                        @foreach ($channels as $channel)
+                            <option value="{{ $channel }}">{{ $channel }}</option>
+                        @endforeach
+                    </select>
+                    <x-jet-input-error for="channel" class="mt-2" />
+                </div>
+
+
+
+
+                {{-- <div>
 
                     <x-jet-label for="input.channel" value="{{ __('input.Channel') }}" />
                     <select name="input.channel" id="input.channel"
@@ -136,7 +153,7 @@
                         @endif
                     </select>
                     <x-jet-input-error for="channel" class="mt-2" />
-                </div>
+                </div> --}}
             </div>
 
         </x-slot>
