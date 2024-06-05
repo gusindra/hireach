@@ -120,11 +120,11 @@
     </div>
     <x-jet-dialog-modal class="text-left" wire:model="modalDeleteVisible">
         <x-slot name="title">
-            {{ __('Delete Order') }}
+            {{ __('Delete Company') }}
         </x-slot>
 
         <x-slot name="content">
-            <p>{{ __('Are you sure you want to delete this Order?') }}</p>
+            <p>{{ __('Are you sure you want to delete this Company?') }}</p>
         </x-slot>
 
         <x-slot name="footer">

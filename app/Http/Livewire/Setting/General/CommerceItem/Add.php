@@ -61,8 +61,15 @@ class Add extends Component
         session()->flash('message', 'Commerce item added successfully.');
     }
 
+
+    public function read()
+    {
+        $this->productLine = ProductLine::all();
+    }
+
     public function render()
     {
-        return view('livewire.setting.general.commerce-item.add');
+
+        return view('livewire.setting.general.commerce-item.add', ['productLine' => $this->read()]);
     }
 }
