@@ -92,9 +92,10 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
         Route::get('/user/{user}/balance', [UserController::class, 'balance'])->name('user.show.balance');
         Route::get('/user/{user}/profile', [UserController::class, 'profile'])->name('user.show.profile');
         Route::get('/user/{user}/provider', [UserController::class, 'provider'])->name('user.show.provider');
-        Route::get('/user/{user}/order', [UserController::class, 'profile'])->name('user.show.order');
+        Route::get('/user/{user}/order', [UserController::class, 'order'])->name('user.show.order');
         Route::get('/user/{user}/client', [UserController::class, 'client'])->name('user.show.client');
         Route::get('/user/{user}/client/{client}', [UserController::class, 'clientUser'])->name('client.create.user');
+        Route::get('/user/{user}/request', [UserController::class, 'request'])->name('user.show.request');
 
         // Route::get('/settings/clear-cache', 'Backend\SettingController@clearCache')->name('settings.clear-cache');
         // Route::get('/settings/rebuild-cache', 'Backend\SettingController@rebuildCache')->name('settings.rebuild-cache');
@@ -145,6 +146,11 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
 
         Route::get('/setting/company', [SettingController::class, 'company'])->name('settings.company');
         Route::get('setting/company/{company}', [SettingController::class, 'companyShow'])->name('settings.company.show');
+
+
+
+        Route::get('setting/product-line/{productLine}', [SettingController::class, 'productLineShow'])->name('settings.productLine.show');
+        Route::get('setting/commerce-item/{commerceItem}', [SettingController::class, 'commerceItemShow'])->name('settings.commerceItem.show');
 
         Route::get('/project', [ProjectController::class, 'index'])->name('project');
         Route::get('/project/{project}', [ProjectController::class, 'show'])->name('project.show');

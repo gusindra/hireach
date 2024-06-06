@@ -10,9 +10,6 @@ info:
   version: 1.1.0
 servers:
   -
-    url: 'https://hireach.archeeshop.com/api'
-    description: 'HiReach API Staging'
-  -
     url: 'https://hireach.firmapps.ai/api'
     description: 'HiReach API Production'
 paths:

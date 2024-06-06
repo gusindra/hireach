@@ -24,7 +24,7 @@ class Add extends Component
 
     public function mount()
     {
-        $this->users = User::all();
+        $this->users = User::noadmin()->get();
     }
 
     public function rules()

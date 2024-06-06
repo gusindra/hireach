@@ -11,14 +11,17 @@ class Edit extends Component
     public $name;
     public $company;
     public $code;
+    public $channel;
     public $uuid;
     public $modalDeleteVisible = false;
     public function mount($uuid)
     {
+
         $this->provider = Provider::find($uuid);
         $this->name = $this->provider->name;
         $this->code = $this->provider->code;
         $this->company = $this->provider->company;
+        $this->channel = $this->provider->channel;
     }
 
     public function rules()
@@ -27,6 +30,7 @@ class Edit extends Component
             'code' => 'required',
             'name' => 'required',
             'company' => 'string',
+            'channel' => 'required'
         ];
     }
 
@@ -36,6 +40,7 @@ class Edit extends Component
             'name'           => $this->name,
             'code'           => $this->code,
             'company'        => $this->company,
+            'channel'        => $this->channel
         ];
     }
 
@@ -46,6 +51,7 @@ class Edit extends Component
      */
     public function update($id)
     {
+        dd($this->modelData());
         $this->validate();
         Provider::find($id)->update($this->modelData());
         $this->emit('saved');

@@ -3,6 +3,7 @@
 namespace App\Http\Livewire\Saldo;
 
 use App\Models\SaldoUser;
+use App\Models\User;
 use Livewire\Component;
 use Illuminate\Support\Facades\Auth;
 
@@ -26,6 +27,8 @@ class Topup extends Component
         if ($saldoUser) {
             $this->saldoUser = $saldoUser;
         }
+
+        $this->user = User::find($id);
     }
 
 

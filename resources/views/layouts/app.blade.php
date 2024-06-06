@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" x-cloak x-init="$watch('darkMode', (val) => localStorage.setItem('dark',val))" x-data="{darkMode: localStorage.getItem('dark')}" :class="darkMode==='true' || darkMode==true ? 'dark' : ''" :data-dark="darkMode">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" x-cloak x-init="$watch('darkMode', (val) => localStorage.setItem('dark',val))" x-data="{darkMode: localStorage.getItem('dark')}" :class="darkMode ? '' : ''" :data-dark="darkMode">
 
     <head>
         <meta charset="utf-8">
@@ -99,7 +99,7 @@
             });
 
             function switchMode(mode) {
-                if (localStorage.dark === 'true') {
+                if (localStorage.dark === 'true' || localStorage.dark==1) {
                     document.documentElement.classList.add('dark')
                 } else {
                     document.documentElement.classList.remove('dark')

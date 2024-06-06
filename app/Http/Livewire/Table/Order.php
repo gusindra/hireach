@@ -13,16 +13,19 @@ use Mediconesystems\LivewireDatatables\NumberColumn;
 class Order extends LivewireDatatable
 {
     public $model = ModelsOrder::class;
+    public $userId = 0;
 
     public function builder()
     {
         $auth = Auth::user();
         $query = ModelsOrder::query()->orderBy('created_at', 'desc');
 
-        if (auth()->user()->super && auth()->user()->super->first() && auth()->user()->super->first()->role == 'superadmin') {
-            $query;
-        } elseif (auth()->user()->activeRole && str_contains(auth()->user()->activeRole->role->name, "Admin")) {
-            $query;
+        if (auth()->user()->super && auth()->user()->super->first() && auth()->user()->super->first()->role == 'superadmin' || auth()->user()->activeRole && str_contains(auth()->user()->activeRole->role->name, "Admin")) {
+            if($this->userId != 0){
+                $query->where('customer_id', $this->userId)->where('status', '!=', 'draft');
+            }else{
+                $query;
+            }
         } else {
             $query->where('customer_id', $auth->id)->where('status', '!=', 'draft');
         }

@@ -16,7 +16,7 @@ class SmsBlastTable extends LivewireDatatable
 {
     public $model = Client::class;
     public $hideable = 'select';
-    public $userId;
+    public $userId = 0;
     public $month;
     public $year;
     public $export_name = 'SMS_REQUEST';
@@ -26,15 +26,6 @@ class SmsBlastTable extends LivewireDatatable
     {
         $query = BlastMessage::query();
 
-
-        if (auth()->user()->super && auth()->user()->super->first() && auth()->user()->super->first()->role == 'superadmin') {
-            $query->orderBy('created_at', 'desc');
-        } elseif (auth()->user()->activeRole && str_contains(auth()->user()->activeRole->role->name, "Admin")) {
-            $query->orderBy('created_at', 'desc');
-        } else {
-            $query->where('blast_messages.user_id', auth()->user()->currentTeam->user_id)->orderBy('created_at', 'desc');
-        }
-
         if (!$this->filterMonth) {
             $year = Carbon::now()->year;
             $month = Carbon::now()->month;
@@ -43,12 +34,28 @@ class SmsBlastTable extends LivewireDatatable
             $month = substr($this->filterMonth, 5, 2);
         }
 
-        $query->whereYear('created_at', $year)
+        if (auth()->user()->super && auth()->user()->super->first() && auth()->user()->super->first()->role == 'superadmin') {
+            if($this->userId != 0){
+                $query->where('blast_messages.user_id', $this->userId)->orderBy('created_at', 'desc');
+            }else{
+                $query->orderBy('created_at', 'desc');
+            }
+        } elseif (auth()->user()->activeRole && str_contains(auth()->user()->activeRole->role->name, "Admin")) {
+            $query->orderBy('created_at', 'desc');
+        } else {
+            $query->where('blast_messages.user_id', auth()->user()->currentTeam->user_id)->orderBy('created_at', 'desc');
+            $query->whereYear('created_at', $year)
             ->whereMonth('created_at', $month);
+        }
 
         return $query;
     }
 
+    /**
+     * clientTbl
+     *
+     * @return array
+     */
     private function clientTbl()
     {
         return [
@@ -71,6 +78,11 @@ class SmsBlastTable extends LivewireDatatable
         ];
     }
 
+    /**
+     * adminTbl
+     *
+     * @return array
+     */
     private function adminTbl()
     {
         return [
@@ -126,7 +138,7 @@ class SmsBlastTable extends LivewireDatatable
         //return $row->{'status'};
         $extra = '';
         if (str_contains(strtolower($row->{'status'}), 'invalid')) {
-            $extra = 'w-full';
+            $extra = 'w-1/4';
         }
         return 'px-2 text-xs ' . $extra;
     }
