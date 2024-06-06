@@ -27,7 +27,7 @@ class ProcessEmailApi implements ShouldQueue
      *
      * @return void
      */
-    public function __construct($request, $user, $log=null)
+    public function __construct($request, $user, $log = null)
     {
         $this->data = $request;
         $this->user = $user;
@@ -44,9 +44,9 @@ class ProcessEmailApi implements ShouldQueue
         //Log::debug($this->data);
         //Log::debug($this->log);
         //filter OTP & Non OTP
-        if($this->data['provider']=='provider1'){
+        if ($this->data['provider'] == 'provider1') {
             $this->FreeProvider($this->data);
-        }elseif($this->data['provider']=='provider2'){
+        } elseif ($this->data['provider'] == 'provider2') {
             $this->PaidProvider($this->data);
         }
     }
@@ -57,33 +57,37 @@ class ProcessEmailApi implements ShouldQueue
      * @param  mixed $request
      * @return void
      */
-    private function FreeProvider($request){
+    private function FreeProvider($request)
+    {
+
         $msg    = '';
         // if(array_key_exists('servid', $request)){
         //     $serve  = $request['servid'];
         // }
-        if(true){
+        if (true) {
             Log::debug('start job sending email');
 
             $response = '';
-            if($request['type']=="0"){
+            if ($request['type'] == "0") {
                 $curl = curl_init();
                 curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
                 curl_setopt($curl, CURLOPT_POST, 1);
                 curl_setopt($curl, CURLOPT_HTTPHEADER, array(
                     "Content-Type: application/json"
                 ));
-                curl_setopt($curl, CURLOPT_URL,
+                curl_setopt(
+                    $curl,
+                    CURLOPT_URL,
                     "https://api.smtp2go.com/v3/email/send"
                 );
                 curl_setopt($curl, CURLOPT_POSTFIELDS, json_encode(array(
                     "api_key" => "api-DC84566695C24F1E81D5B0EAAA0B1F50",
-                    "sender" => $request['from']=='' ? $request['from'] : "noreply@hireach.archeeshop.com",
+                    "sender" => $request['from'] == '' ? $request['from'] : "noreply@hireach.archeeshop.com",
                     "to" => array(
                         0 => $request['to']
                     ),
                     "subject" => $request['title'],
-                    "html_body" => "<h1>".$request['text']."</h1>",
+                    "html_body" => "<h1>" . $request['text'] . "</h1>",
                     "text_body" => $request['text']
                 )));
                 $result = curl_exec($curl);
@@ -93,13 +97,13 @@ class ProcessEmailApi implements ShouldQueue
             //Log::debug("MK Res:");
             // check response code
             Log::debug($result);
-            $response=json_decode($result, true);
+            $response = json_decode($result, true);
             // $response=$result['data']['succeeded'];
             // $failed=$result['data']['failed'];
 
-            if($response!='' && $response['data']['failed']==1){
+            if ($response != '' && $response['data']['failed'] == 1) {
                 $msg = $response['data']['failures'];
-            }else{
+            } else {
                 $balance = 0;
                 //check client && array
                 $modelData = [
@@ -119,40 +123,42 @@ class ProcessEmailApi implements ShouldQueue
                 ];
                 // Log::debug($modelData);
                 BlastMessage::create($modelData);
-
             }
             Log::debug("Respone MSG:");
             Log::debug($msg);
-            if($msg!=''){
+            if ($msg != '') {
                 $this->saveResult($msg);
             }
-        }else{
+        } else {
             $this->saveResult('Reject invalid servid');
         }
     }
 
-    private function PaidProvider($request){
+    private function PaidProvider($request)
+    {
         $msg = $this->saveResult('progress');
-        if(true){
+        if (true) {
             $response = '';
-            if($request['type']=="0"){
+            if ($request['type'] == "0") {
                 $curl = curl_init();
                 curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
                 curl_setopt($curl, CURLOPT_POST, 1);
                 curl_setopt($curl, CURLOPT_HTTPHEADER, array(
                     "Content-Type: application/json"
                 ));
-                curl_setopt($curl, CURLOPT_URL,
+                curl_setopt(
+                    $curl,
+                    CURLOPT_URL,
                     "https://api.smtp2go.com/v3/email/send"
                 );
                 curl_setopt($curl, CURLOPT_POSTFIELDS, json_encode(array(
                     "api_key" => "api-DC84566695C24F1E81D5B0EAAA0B1F50",
-                    "sender" => $request['from']=='' ? $request['from'] : "noreply@hireach.archeeshop.com",
+                    "sender" => $request['from'] == '' ? $request['from'] : "noreply@hireach.archeeshop.com",
                     "to" => array(
                         0 => $request['to']
                     ),
                     "subject" => $request['title'],
-                    "html_body" => "<div>".$request['text']."</div>",
+                    "html_body" => "<div>" . $request['text'] . "</div>",
                     "text_body" => $request['text']
                 )));
                 $result = curl_exec($curl);
@@ -163,12 +169,12 @@ class ProcessEmailApi implements ShouldQueue
             //Log::debug($result);
             $result = json_decode($result, true);
             // check response code
-            $success=$result['data']['succeeded'];
-            $failed=$result['data']['failed'];
+            $success = $result['data']['succeeded'];
+            $failed = $result['data']['failed'];
 
-            if($failed>=1){
+            if ($failed >= 1) {
                 $msg = $result['data']['failures'];
-            }else{
+            } else {
                 $balance = 0;
                 //check client && array
                 $modelData = [
@@ -188,14 +194,13 @@ class ProcessEmailApi implements ShouldQueue
                 ];
                 // Log::debug($modelData);
                 BlastMessage::create($modelData);
-
             }
             Log::debug("Respone MSG:");
             Log::debug($msg);
-            if($msg!=''){
+            if ($msg != '') {
                 $this->saveResult($msg);
             }
-        }else{
+        } else {
             $this->saveResult('Reject invalid servid');
         }
     }
@@ -206,7 +211,8 @@ class ProcessEmailApi implements ShouldQueue
      * @param  mixed $msg
      * @return object BlastMessage
      */
-    private function saveResult($msg){
+    private function saveResult($msg)
+    {
         $user_id = $this->user->id;
         $modelData = [
             'msg_id'            => 0,
@@ -232,9 +238,10 @@ class ProcessEmailApi implements ShouldQueue
      * @param  mixed $msisdn
      * @return sting uuid
      */
-    private function chechClient($status, $msisdn=null){
+    private function chechClient($status, $msisdn = null)
+    {
         $user_id = $this->user->id;
-        if($status=="200"){
+        if ($status == "200") {
             $client = Client::where('email', $msisdn)->where('user_id', $user_id)->firstOr(function () use ($msisdn, $user_id) {
                 return Client::create([
                     'email' => $msisdn,
@@ -242,8 +249,8 @@ class ProcessEmailApi implements ShouldQueue
                     'uuid' => Str::uuid()
                 ]);
             });
-        }else{
-            $phones = explode (",", $this->data['to']);
+        } else {
+            $phones = explode(",", $this->data['to']);
             $client = Client::where('email', $phones[0])->where('user_id', $user_id)->firstOr(function () use ($phones, $user_id) {
                 return Client::create([
                     'email' => $phones[0],
