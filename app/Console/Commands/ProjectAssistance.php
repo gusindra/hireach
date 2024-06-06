@@ -4,7 +4,7 @@ namespace App\Console\Commands;
 
 use App\Models\Billing;
 use App\Models\Contract;
-use App\Models\Notification;
+use App\Models\Notice;
 use App\Models\Order;
 use App\Models\Quotation;
 use Carbon\Carbon;
@@ -55,7 +55,7 @@ class ProjectAssistance extends Command
             foreach($next_contracts as $contract){
                 // $this->info($contract);
                 foreach ($contract->userApproval as $flow){
-                    $count = Notification::where('user_id', $flow->user_id)->where('status', 'unread')->where('model', 'Contract')->where('model_id', $contract->id)->count();
+                    $count = Notice::where('user_id', $flow->user_id)->where('status', 'unread')->where('model', 'Contract')->where('model_id', $contract->id)->count();
                     if($count==0){
                         $this->notice($contract, $flow->user_id, 'Contract : '.$contract->title. ' will expire in next 30 days.');
                     }
@@ -112,7 +112,7 @@ class ProjectAssistance extends Command
     }
 
     private function notice($model, $user_id, $message){
-        Notification::create([
+        Notice::create([
             'type' => 'app',
             'model' => class_basename($model),
             'model_id' => $model->id,

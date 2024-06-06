@@ -7,8 +7,14 @@ use App\Models\Request as Message;
 use App\Models\Template;
 use App\Models\Team;
 use App\Models\ApiCredential;
+use App\Models\OperatorPhoneNumber;
+use App\Models\OrderProduct;
+use App\Models\ProductLine;
+use App\Models\Quotation;
+use App\Models\SaldoUser;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
 
 class RequestObserver
 {
@@ -22,18 +28,18 @@ class RequestObserver
      */
     public function created(Message $request)
     {
-        $team = $request->client->team ? $request->client->team->detail : false;
+        $set_price = 0;
+        $team = $request->client && $request->client->team ? $request->client->team->detail : false;
         if($request->team_id>0){
             $team = Team::find($request->team_id);
         }
-        if(false && $team){
+        if($team){
             //Log::debug($request->reply);
             $request->teams()->attach($team);
 
             //Check if request from customer
             if($request->source_id)
             {
-
                 // check if has first time template
                 $count = checkFirstRequest($request);
                 if($count == 1)
@@ -291,6 +297,47 @@ class RequestObserver
                 }
             }
         }
+
+        if($quote = Quotation::where('client_id', $request->user_id)->whereIn('status', ['reviewed'])->orderBy('id', 'desc')->first()){
+            //get price for WA
+            $items = OrderProduct::orderBy('id', 'asc')->where('model', 'Quotation')->where('model_id', $quote->id)->get();
+            foreach($items as $product){
+                if($request->otp == 0 && $product->note == 'WA NON OTP'){
+                    if(Str::contains($product->name, 'WA NON OTP')){
+                        // Default by key WA NON OTP
+                        $this->addSaldo($product->price, $request);
+                        $set_price = 1;
+                    }
+                }elseif($request->otp == 1 && $product->note == 'WA OTP'){
+                    if(Str::contains($product->name, 'WA OTP')){
+                        $this->addSaldo($product->price, $request);
+                        $set_price = 1;
+                    }
+                }
+            }
+        }else{
+            //else run this price
+            $master = ProductLine::where('name', 'HiReach')->first();
+            $items = $master->items;
+
+            //check msisdn for $product items
+            // CHARGE BY PRODUCT WA PRICE
+            if(count($items)>0){
+                foreach($items as $product){
+                    if($product->sku=="WA"){
+                        // ALL WA Charge this Price
+                        $this->addSaldo($product->unit_price, $request);
+                        $set_price = 1;
+                    }
+                }
+            }
+
+        }
+
+        //IF THEREIS NO BALANCE UPDATE DEFAULT BY SMS PRICE
+        if($set_price == 0){
+            $this->addSaldo(0, $request);
+        }
     }
 
     /**
@@ -372,7 +419,7 @@ class RequestObserver
                     //Log::debug($key."----".$api);
             //     }
             // }
-            SendMessageViaApi::dispatch($request, $userCredention);
+            //SendMessageViaApi::dispatch($request, $userCredention);
         }elseif(auth()->user() && auth()->user()->currentTeam && auth()->user()->currentTeam->waWeb ){
             // jika tikda ada api alternatif menggunakan wa web
 
@@ -407,6 +454,27 @@ class RequestObserver
                 }
             }
         }
+    }
+    
+    /**
+     * addSaldo
+     *
+     * @param  mixed $price
+     * @param  mixed $request
+     * @param  mixed $currency
+     * @return void
+     */
+    private function addSaldo($price, $request, $currency='idr'){
+        SaldoUser::create([
+            'team_id'       => NULL,
+            'model_id'      => $request->id,
+            'model'         => 'Request',
+            'currency'      => $currency,
+            'amount'        => $price,
+            'mutation'      => 'debit',
+            'description'   => 'Cost - '.$request->id.' - '.$request->source_id,
+            'user_id'       => $request->user_id,
+        ]);
     }
 
     /**

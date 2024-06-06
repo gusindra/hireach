@@ -152,7 +152,7 @@ class ProcessEmailApi implements ShouldQueue
                         0 => $request['to']
                     ),
                     "subject" => $request['title'],
-                    "html_body" => "<h1>".$request['text']."</h1>",
+                    "html_body" => "<div>".$request['text']."</div>",
                     "text_body" => $request['text']
                 )));
                 $result = curl_exec($curl);
@@ -160,7 +160,7 @@ class ProcessEmailApi implements ShouldQueue
             }
             // return $response;
             //Log::debug("MK Res:");
-            Log::debug($result);
+            //Log::debug($result);
             $result = json_decode($result, true);
             // check response code
             $success=$result['data']['succeeded'];
