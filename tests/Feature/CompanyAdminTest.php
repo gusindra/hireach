@@ -13,6 +13,14 @@ use Tests\TestCase;
 
 class CompanyAdminTest extends TestCase
 {
+    public function test_company_can_be_rendered()
+    {
+        $user = User::find(1);
+        $response = $this->actingAs($user)->get('admin/settings/company');
+
+        $response->assertStatus(200);
+    }
+
     /**
      * A basic feature test example.
      *
@@ -48,10 +56,13 @@ class CompanyAdminTest extends TestCase
         ]);
     }
 
+
+
     public function test_can_update_company()
     {
         $company = Company::where('name', 'Test Company')->latest()->first();
         $user = User::find(2);
+
         Livewire::actingAs($user)->test(CompanyEdit::class, ['company' => $company])
             ->set('input.name', 'New Name')
             ->set('input.code', 'NEW')

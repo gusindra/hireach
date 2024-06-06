@@ -22,9 +22,10 @@ class ProviderTable extends LivewireDatatable
         return [
             Column::name('code')->label('code'),
             Column::name('name')->label('Name')->searchable(),
+            Column::name('channel')->label('channel'),
             NumberColumn::name('id')->label('Detail')->sortBy('id')->callback('id', function ($value) {
                 return view('datatables::link', [
-                    'href' => url('/admin/settings/providers/'). '/' . $value,
+                    'href' => url('/admin/settings/providers/') . '/' . $value,
                     'slot' => 'View'
                 ]);
             }),

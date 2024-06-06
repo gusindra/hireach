@@ -14,24 +14,33 @@ class AddProvider extends Component
     public $userId;
     public $actionId;
     public $channel;
-    public $providerId;
-    public $input;
+    public $provider_id;
     public $is_multidata;
     public $array_data;
+    public $providers;
+    public $provider = [];
+
+    public $channels = [];
     public $modalActionVisible = false;
     public $confirmingActionRemoval = false;
-
+    public $input = [
+        'provider_id' => '',
+        'channel' => ''
+    ];
     public function mount($user)
     {
-        $this->input['providerId'] = '';
+
+        $this->provider_id = '';
         $this->user = $user;
+        // $this->provider = ProviderUser::where('user_id', $user->id)->get();
+
         $this->userId = $this->user->id;
     }
 
     public function modelData()
     {
         $data = [
-            'provider_id'   => $this->providerId,
+            'provider_id'   => $this->provider_id,
             'channel'       => $this->channel,
             'user_id'       => $this->userId
         ];
@@ -39,10 +48,24 @@ class AddProvider extends Component
         return $data;
     }
 
+
+    public function updatedinputproviderid($value)
+    {
+        $provider = Provider::find($value);
+
+        if ($provider && !empty($provider->channel)) {
+            $channelsString = $provider->channel;
+
+            $this->channels = explode(',', $channelsString);
+        } else {
+            $this->channels = [];
+        }
+    }
+
     public function rules()
     {
         return [
-            'providerId'    => 'required',
+            'input.provider_id'    => 'required',
             'channel'       => 'required',
             'userId'        => 'required',
         ];
@@ -51,10 +74,10 @@ class AddProvider extends Component
     public function messages()
     {
         return [
-            'providerId.required'   => 'The Provider field is required.',
+            'provider_id.required'   => 'The Provider field is required.',
             'channel.required'   => 'The Channel field is required.',
             'userId.required' => 'The user field is required.',
-            'providerId.unique'   => 'The Provider has already been taken.',
+            'provider_id.unique'   => 'The Provider has already been taken.',
         ];
     }
 
@@ -78,10 +101,9 @@ class AddProvider extends Component
 
     public function addProvider()
     {
-
         $action = ProviderUser::firstOrCreate([
-            'provider_id'   => $this->input['providerId'],
-            'channel'       => $this->input['channel'],
+            'provider_id' => $this->input['provider_id'],
+            'channel'       => strtoupper($this->channel),
             'user_id'       => $this->userId
         ]);
 
@@ -123,7 +145,7 @@ class AddProvider extends Component
 
     public function resetForm()
     {
-        $this->providerId = null;
+        $this->provider_id = null;
     }
 
     public function actionShowModal()
@@ -141,9 +163,11 @@ class AddProvider extends Component
      */
     public function read()
     {
+
         $provider = ProviderUser::where('user_id', $this->userId)->get();
         return $provider;
     }
+
 
     public function updateShowModal($id)
     {
@@ -163,14 +187,14 @@ class AddProvider extends Component
     public function loadModel()
     {
         $data = ProviderUser::find($this->actionId);
-        $this->providerId = $data->provider_id;
+        $this->provider_id = $data->provider_id;
     }
 
     public function deleteShowModal($id)
     {
         $this->actionId = $id;
         $data = ProviderUser::find($this->actionId);
-        $this->providerId = $data->provider_id;
+        $this->provider_id = $data->provider_id;
         $this->confirmingActionRemoval = true;
     }
 

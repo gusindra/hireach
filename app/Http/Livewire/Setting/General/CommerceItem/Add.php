@@ -51,7 +51,7 @@ class Add extends Component
             'fs_price' => $this->fs_price,
             'unit_price' => $this->unit_price,
             'product_line' => $this->product_line,
-            'user_id' => Auth::id(), // Set the user_id to the currently authenticated user's ID
+            'user_id' => Auth::id(),
         ]);
 
         $this->reset();

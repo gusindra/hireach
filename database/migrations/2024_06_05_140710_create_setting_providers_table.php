@@ -13,16 +13,12 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('product_lines', function (Blueprint $table) {
+        Schema::create('setting_providers', function (Blueprint $table) {
             $table->id();
-            $table->string('name', 255);
-            $table->string('type', 255)->nullable()->comment('Item, Service');
-            $table->unsignedBigInteger('company_id');
+            $table->string('key');
+            $table->string('value');
+            $table->unsignedBigInteger('provider_id');
             $table->timestamps();
-            $table->softDeletes();
-
-            // Foreign key constraint
-            $table->foreign('company_id')->references('id')->on('users')->onDelete('cascade');
         });
     }
 
@@ -33,6 +29,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('product_lines');
+        Schema::dropIfExists('setting_providers');
     }
 };
