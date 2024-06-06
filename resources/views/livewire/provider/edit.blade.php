@@ -67,7 +67,8 @@
     </x-jet-form-section>
 
     <x-jet-section-border />
-
+    @livewire('provider.add-setting-provider', ['provider' => $provider])
+    <x-jet-section-border />
     <x-jet-form-section submit="actionShowDeleteModal">
         <x-slot name="title">
             {{ __('Delete Provider') }}

@@ -1,84 +1,84 @@
 <div>
     <!-- Manage List Action -->
-    <div class="my-4 mx-3">
-        <x-jet-action-section>
-            <x-slot name="title">
-                {{ __('Add Provider Setting') }}
-            </x-slot>
 
-            <x-slot name="description">
-                {{ __('Add a new setting for the provider to your profile.') }}
-            </x-slot>
+    <x-jet-action-section>
+        <x-slot name="title">
+            {{ __('Add Provider Setting') }}
+        </x-slot>
 
-            <!-- Action List -->
-            <x-slot name="content">
-                <div class="flex items-center justify-end text-right">
-                    <x-jet-action-message class="mr-3" on="added">
-                        {{ __('Action added.') }}
-                    </x-jet-action-message>
-                    <x-jet-action-message class="mr-3" on="saved">
-                        {{ __('Action saved.') }}
-                    </x-jet-action-message>
-                    <x-jet-action-message class="mr-3 text-red-500" on="exist">
-                        {{ __('Setting already exists.') }}
-                    </x-jet-action-message>
-                    <x-jet-button wire:click="actionShowModal">
-                        {{ __('Add Setting') }}
-                    </x-jet-button>
-                </div>
+        <x-slot name="description">
+            {{ __('Add a new setting for the provider to your profile.') }}
+        </x-slot>
 
-                <div class="space-y-6">
-                    <div class="flex flex-col">
-                        <div class="-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
-                            <div class="py-2 align-middle inline-block min-w-full sm:px-6 lg:px-8">
-                                @if ($data->count())
-                                    <div class="shadow overflow-hidden border-b border-gray-200 sm:rounded-lg">
-                                        <table class="min-w-full divide-y divide-gray-200 mt-2">
-                                            <thead>
+        <!-- Action List -->
+        <x-slot name="content">
+            <div class="flex items-center justify-end text-right">
+                <x-jet-action-message class="mr-3" on="added">
+                    {{ __('Action added.') }}
+                </x-jet-action-message>
+                <x-jet-action-message class="mr-3" on="saved">
+                    {{ __('Action saved.') }}
+                </x-jet-action-message>
+                <x-jet-action-message class="mr-3 text-red-500" on="exist">
+                    {{ __('Setting already exists.') }}
+                </x-jet-action-message>
+                <x-jet-button wire:click="actionShowModal">
+                    {{ __('Add Setting') }}
+                </x-jet-button>
+            </div>
+
+            <div class="space-y-6">
+                <div class="flex flex-col">
+                    <div class="-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
+                        <div class="py-2 align-middle inline-block min-w-full sm:px-6 lg:px-8">
+                            @if ($data->count())
+                                <div class="shadow overflow-hidden border-b border-gray-200 sm:rounded-lg">
+                                    <table class="min-w-full divide-y divide-gray-200 mt-2">
+                                        <thead>
+                                            <tr>
+                                                <th
+                                                    class="px-6 py-3 bg-gray-50 dark:bg-slate-800 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider w-1/2">
+                                                    Key
+                                                </th>
+                                                <th
+                                                    class="px-6 py-3 bg-gray-50 dark:bg-slate-800 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider w-1/2">
+                                                    Value
+                                                </th>
+                                                <th
+                                                    class="px-6 py-3 bg-gray-50 dark:bg-slate-800 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider w-1/4">
+                                                    Actions
+                                                </th>
+                                            </tr>
+                                        </thead>
+                                        <tbody class="bg-white dark:bg-slate-700 divide-y divide-gray-200">
+                                            @foreach ($data as $item)
                                                 <tr>
-                                                    <th
-                                                        class="px-6 py-3 bg-gray-50 dark:bg-slate-800 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider w-1/2">
-                                                        Key
-                                                    </th>
-                                                    <th
-                                                        class="px-6 py-3 bg-gray-50 dark:bg-slate-800 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider w-1/2">
-                                                        Value
-                                                    </th>
-                                                    <th
-                                                        class="px-6 py-3 bg-gray-50 dark:bg-slate-800 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider w-1/4">
-                                                        Actions
-                                                    </th>
+                                                    <td class="px-6 py-4 text-sm whitespace-no-wrap">
+                                                        {{ $item->key }}
+                                                    </td>
+                                                    <td class="px-6 py-4 text-sm whitespace-no-wrap">
+                                                        {{ $item->value }}
+                                                    </td>
+                                                    <td
+                                                        class="flex items-center justify-end px-4 py-3 text-right sm:px-6">
+                                                        <button class="cursor-pointer ml-6 text-sm text-red-500"
+                                                            wire:click="deleteShowModal('{{ $item->id }}')">
+                                                            {{ __('Delete') }}
+                                                        </button>
+                                                    </td>
                                                 </tr>
-                                            </thead>
-                                            <tbody class="bg-white dark:bg-slate-700 divide-y divide-gray-200">
-                                                @foreach ($data as $item)
-                                                    <tr>
-                                                        <td class="px-6 py-4 text-sm whitespace-no-wrap">
-                                                            {{ $item->key }}
-                                                        </td>
-                                                        <td class="px-6 py-4 text-sm whitespace-no-wrap">
-                                                            {{ $item->value }}
-                                                        </td>
-                                                        <td
-                                                            class="flex items-center justify-end px-4 py-3 text-right sm:px-6">
-                                                            <button class="cursor-pointer ml-6 text-sm text-red-500"
-                                                                wire:click="deleteShowModal('{{ $item->id }}')">
-                                                                {{ __('Delete') }}
-                                                            </button>
-                                                        </td>
-                                                    </tr>
-                                                @endforeach
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                @endif
-                            </div>
+                                            @endforeach
+                                        </tbody>
+                                    </table>
+                                </div>
+                            @endif
                         </div>
                     </div>
                 </div>
-            </x-slot>
-        </x-jet-action-section>
-    </div>
+            </div>
+        </x-slot>
+    </x-jet-action-section>
+
 
     <!-- Form Action Modal -->
     <x-jet-dialog-modal wire:model="modalActionVisible">
