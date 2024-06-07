@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Hash;
 use Laravel\Jetstream\Features;
 use Laravel\Jetstream\Http\Livewire\DeleteUserForm;
 use Livewire\Livewire;
@@ -19,13 +20,21 @@ class DeleteAccountTest extends TestCase
             return $this->markTestSkipped('Account deletion is not enabled.');
         }
 
-        $this->actingAs($user = User::factory()->create());
+        $this->actingAs($user = User::create([
+            'name' => 'User Delete',
+            'email' => 'usesr1@hireach.com',
+            'password' => Hash::make('12345678'),
+            'current_team_id' => 0
+        ]));
 
         $component = Livewire::test(DeleteUserForm::class)
-            ->set('password', 'password')
+            ->set('password', '12345678')
             ->call('deleteUser');
+        $this->assertSoftDeleted('users', [
+            'id' => $user->id,
+        ]);
 
-        $this->assertNull($user->fresh());
+        $user->forceDelete();
     }
 
     public function test_correct_password_must_be_provided_before_account_can_be_deleted()

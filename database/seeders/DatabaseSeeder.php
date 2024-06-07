@@ -17,13 +17,14 @@ class DatabaseSeeder extends Seeder
         $this->call([
             TeamsTableSeeder::class,
             UserTableSeeder::class,
+            TeamsUserTableSeeder::class,
             ClientSeeder::class,
             AudienceSeeder::class,
             RoleSeeder::class,
             RoleUserSeeder::class,
             PermissionSeeder::class,
             PermissionRoleSeeder::class,
-            TeamsUserTableSeeder::class,
+
             ProviderTableSeeder::class
 
         ]);

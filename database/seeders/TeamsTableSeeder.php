@@ -27,5 +27,13 @@ class TeamsTableSeeder extends Seeder
             'name' => 'User',
             'slug' => 'User'
         ]);
+
+        Team::create([
+            'user_id' => 3,
+            'id' => 3,
+            'personal_team' => true,
+            'name' => 'Test Team',
+            'slug' => 'test-team'
+        ]);
     }
 }

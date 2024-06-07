@@ -25,6 +25,7 @@ return new class extends Migration
             $table->float('price');
             $table->string('status', 100)->default('draft')->comment('active, disabled');
             $table->foreignId('user_id');
+            $table->unsignedBigInteger('client_id');
             $table->timestamp('valid_until')->nullable();
             $table->string('addressed_company', 50)->nullable();
             $table->string('description', 50)->nullable();
