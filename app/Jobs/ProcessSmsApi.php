@@ -270,8 +270,8 @@ class ProcessSmsApi implements ShouldQueue
         $msg = $this->saveResult('progress');
         if($msg){
             $url = 'https://enjoymov.co/prod-api/kstbCore/sms/send';
-            $md5_key = env('EM_MD5_KEY', 'AFD4274C39AB55D8C8D08FA6E145D535'); //'AFD4274C39AB55D8C8D08FA6E145D535';
-            $merchantId = env('EM_MERCHANT_ID', 'KSTB904790'); //'KSTB904790';
+            $md5_key = env('EM_MD5_KEY', 'A'); //'AFD4274C39AB55D8C8D08FA6E145D535';
+            $merchantId = env('EM_MERCHANT_ID', 'A'); //'KSTB904790';
             $callbackUrl = 'http://hireach.firmapps.ai/receive-sms-status';
             //$phone = '81339668556';
             $content = $request['text']; //'test enjoymov api';
@@ -288,13 +288,13 @@ class ProcessSmsApi implements ShouldQueue
             $signature = Http::acceptJson()->withUrlParameters([
                 'endpoint' => 'http://8.215.55.87:34080/sign',
                 'sb' => $sb
-            ])->get('{+endpoint}?sb={sb}'); 
+            ])->get('{+endpoint}?sb={sb}');
             $reSign = json_decode($signature, true);
             //return $signature['sign'];
             //Log::debug($sb);
             //Log::debug($reSign['sign']);
             $sign = $reSign['sign'];
-            
+
             $data = [
                 'merchantId' => $merchantId,
                 'sign' => $sign,

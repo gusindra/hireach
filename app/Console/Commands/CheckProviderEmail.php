@@ -42,7 +42,7 @@ class CheckProviderEmail extends Command
                 "https://api.smtp2go.com/v3/email/send"
             );
             curl_setopt($curl, CURLOPT_POSTFIELDS, json_encode(array(
-                "api_key" => "api-DC84566695C24F1E81D5B0EAAA0B1F50",
+                "api_key" => env('SMTP2GO_API_KEY', 'A'),
                 "sender" => "noreply@hireach.archeeshop.com",
                 "to" => array(
                     0 => $request['to']

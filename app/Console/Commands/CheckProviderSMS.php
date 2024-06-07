@@ -32,11 +32,11 @@ class CheckProviderSMS extends Command
         $request['title'] = 'testing sms';
         $request['text'] = 'testing sms';
 
-        if($this->argument('provider')=='enjoymov'){ 
+        if($this->argument('provider')=='enjoymov'){
             $url = 'https://enjoymov.co/prod-api/kstbCore/sms/send';
-            $md5_key = env('EM_MD5_KEY', 'AFD4274C39AB55D8C8D08FA6E145D535'); //'AFD4274C39AB55D8C8D08FA6E145D535';
-            $merchantId = env('EM_MERCHANT_ID', 'KSTB904790'); //'KSTB904790';
-            $callbackUrl = 'http://hireach.firmapps.ai/receive-sms-status'; 
+            $md5_key = env('EM_MD5_KEY', 'A'); //'AFD4274C39AB55D8C8D08FA6E145D535';
+            $merchantId = env('EM_MERCHANT_ID', 'A'); //'KSTB904790';
+            $callbackUrl = 'http://hireach.firmapps.ai/receive-sms-status';
             $content = $request['text'];
             $msgChannel = env('EM_CODE_LSMS', 5);
             $countryCode = '62';
@@ -45,14 +45,14 @@ class CheckProviderSMS extends Command
             $countryCode = $code[0];
             $phone = substr($request['to'], 2);
 
-            $sb = $md5_key . $merchantId . $phone . $content; 
+            $sb = $md5_key . $merchantId . $phone . $content;
             $signature = Http::acceptJson()->withUrlParameters([
                 'endpoint' => 'http://8.215.55.87:34080/sign',
                 'sb' => $sb
-            ])->get('{+endpoint}?sb={sb}'); 
-            $reSign = json_decode($signature, true); 
+            ])->get('{+endpoint}?sb={sb}');
+            $reSign = json_decode($signature, true);
             $sign = $reSign['sign'];
-            
+
             $data = [
                 'merchantId' => $merchantId,
                 'sign' => $sign,
@@ -63,7 +63,7 @@ class CheckProviderSMS extends Command
                 'countryCode' => $countryCode,
                 'msgChannel' => $msgChannel,
                 "msgId" => 0
-            ]; 
+            ];
             $response = Http::withBody(json_encode($data), 'application/json')->withOptions([ 'verify' => false, ])->post($url);
             $resData = json_decode($response, true);
             if($resData['message']=='Success'){
@@ -84,11 +84,11 @@ class CheckProviderSMS extends Command
 
             if(array_key_exists('servid', $request)){
                 $serve  = $request['servid'];
-            } 
+            }
 
-            $url = 'http://www.etracker.cc/bulksms/mesapi.aspx'; 
+            $url = 'http://www.etracker.cc/bulksms/mesapi.aspx';
             $response = '';
-            if($request['type']=="0"){ 
+            if($request['type']=="0"){
                 $response = Http::get($url, [
                     'user' => $user,
                     'pass' => $pass,
@@ -99,8 +99,8 @@ class CheckProviderSMS extends Command
                     'servid' => $serve,
                     'title' => $request['title'],
                     'detail' => 1,
-                ]); 
-            } 
+                ]);
+            }
             if($response=='400'){
                 $msg = "Missing parameter or invalid field type";
             }elseif($response=='401'){
@@ -153,9 +153,9 @@ class CheckProviderSMS extends Command
                 $msg = "Invalid Broadcast Title";
             }elseif($response=='500'){
                 $msg = "System Error";
-            }else{ 
+            }else{
                 $this->line("SMS is OK");
-            }   
+            }
         }
     }
 }
