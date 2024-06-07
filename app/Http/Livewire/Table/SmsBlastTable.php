@@ -121,7 +121,7 @@ class SmsBlastTable extends LivewireDatatable
                 }
                 return $text;
             })->label('OP')->hide()->filterable(),
-            BooleanColumn::name('otp')->hide()->label('OTP')
+            BooleanColumn::name('otp')->label('OTP')
         ];
     }
 
