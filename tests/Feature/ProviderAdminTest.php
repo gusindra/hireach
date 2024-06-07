@@ -70,7 +70,7 @@ class ProviderAdminTest extends TestCase
 
         Livewire::test(AddProvider::class, ['user' => $user])
             ->set('input.provider_id', $provider->id)
-            ->set('channel', 'email')
+            ->set('input.channel', 'email')
             ->call('addProvider')
             ->assertEmitted('added');
 

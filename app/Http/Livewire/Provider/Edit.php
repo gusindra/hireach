@@ -51,7 +51,7 @@ class Edit extends Component
      */
     public function update($id)
     {
-        dd($this->modelData());
+        // dd($this->modelData());
         $this->validate();
         Provider::find($id)->update($this->modelData());
         $this->emit('saved');

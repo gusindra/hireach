@@ -26,6 +26,17 @@ return new class extends Migration
             $table->string('status', 100)->default('draft')->comment('active, disabled');
             $table->foreignId('user_id');
             $table->timestamp('valid_until')->nullable();
+            $table->string('addressed_company', 50)->nullable();
+            $table->string('description', 50)->nullable();
+            $table->string('created_by', 50)->nullable();
+            $table->string('created_role', 50)->nullable();
+            $table->string('addressed_name', 50)->nullable();
+            $table->string('addressed_role', 50)->nullable();
+            $table->string('title', 50)->nullable();
+            $table->string('type', 50)->nullable();
+            $table->integer('valid_day')->nullable();
+            $table->date('date')->nullable();
+            $table->string('quote_no', 50)->nullable();
             $table->timestamps();
         });
     }

@@ -18,23 +18,23 @@ class Profile extends Component
 
     public function mount($user)
     {
-        //dd($user);
-        $this->user = Client::find(auth()->user()->id);
 
+        //dd($user);
+        $this->user = Client::find($user);
         $this->inputuser = [
-        'name'      => $this->user->name ?? '',
-        'nick'      => $this->user->nick ?? '',
-        'email'     => $this->user->email ?? '',
-        'phone'     => $this->user->phone ?? '',
-         'source'     => $this->user->source ?? '',
-        'title'     => $this->user->title ?? '',
-        'sender'    => $this->user->sender ?? '',
-        'identity'  => $this->user->identity ?? '',
-        'user_id'   => $this->user->user_id ?? '',
-        'note'      => $this->user->note ?? '',
-        'tag'       => $this->user->tag ?? '',
-        'address'   => $this->user->address ?? '',
-    ];
+            'name'      => $this->user->name ?? '',
+            'nick'      => $this->user->nick ?? '',
+            'email'     => $this->user->email ?? '',
+            'phone'     => $this->user->phone ?? '',
+            'source'     => $this->user->source ?? '',
+            'title'     => $this->user->title ?? '',
+            'sender'    => $this->user->sender ?? '',
+            'identity'  => $this->user->identity ?? '',
+            'user_id'   => $this->user->user_id ?? '',
+            'note'      => $this->user->note ?? '',
+            'tag'       => $this->user->tag ?? '',
+            'address'   => $this->user->address ?? '',
+        ];
         //dd($this->inputuser);
     }
 
@@ -48,24 +48,22 @@ class Profile extends Component
             ]);
         }
         $user->update([
-          'sender'    => $this->inputuser['sender'],
-        'name'      => $this->inputuser['name'],
-        'phone'     => $this->inputuser['phone'],
-        'identity'  => $this->inputuser['identity'],
-        'user_id'   => $this->inputuser['user_id'],
-        'note'      => $this->inputuser['note'],
-        'tag'       => $this->inputuser['tag'],
-        'source'       => $this->inputuser['source'],
-        'email'     => $this->inputuser['email'],
-        'address'   => $this->inputuser['address'],
-        'title'     => $this->inputuser['title'],
+            'sender'    => $this->inputuser['sender'],
+            'name'      => $this->inputuser['name'],
+            'phone'     => $this->inputuser['phone'],
+            'identity'  => $this->inputuser['identity'],
+            'user_id'   => $this->inputuser['user_id'],
+            'note'      => $this->inputuser['note'],
+            'tag'       => $this->inputuser['tag'],
+            'source'       => $this->inputuser['source'],
+            'email'     => $this->inputuser['email'],
+            'address'   => $this->inputuser['address'],
+            'title'     => $this->inputuser['title'],
 
         ]);
 
 
         $this->emit('user_saved');
-        
-
     }
 
     public function saveClient()

@@ -132,8 +132,9 @@
             <div class="col-span-6 sm:col-span-3">
                 <div class="col-span-12 sm:col-span-1">
                     <x-jet-label for="inputuser.source" value="{{ __('Source') }}" />
-                    <x-jet-input id="source" type="text" class="mt-1 block w-full" wire:model="inputuser.source"
-                        wire:model.defer="inputuser.source" wire:model.debunce.800ms="inputuser.source" />
+                    <x-jet-input id="source" type="text" class="mt-1 block w-full"
+                        wire:model="inputuser.source" wire:model.defer="inputuser.source"
+                        wire:model.debunce.800ms="inputuser.source" />
                     <x-jet-input-error for="inputuser.source" class="mt-2" />
                 </div>
             </div>

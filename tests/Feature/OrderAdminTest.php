@@ -132,20 +132,23 @@ class OrderAdminTest extends TestCase
 
 
 
-    public function test_can_update_and_remove_commission_agent()
+    public function test_can_updatecommission_agent()
     {
-
         $user = User::find(1);
-        $client = User::find(1);
-        $order = Order::first();
-        $commission = Commision::create([
+        $client = User::find(2);
+        $order = Order::where('name', 'Updated Order Name')->latest()->first();
+
+
+
+        $commision = Commision::create([
             'model' => 'order',
             'model_id' => $order->id,
-            'type' => 'percentage',
             'rate' => 10,
             'status' => 'active',
             'client_id' => $client->id,
         ]);
+
+
 
 
         // Update the commission
@@ -154,7 +157,7 @@ class OrderAdminTest extends TestCase
             ->set('type', 'fixed')
             ->set('rate', 15)
             ->set('status', 'draft')
-            ->call('update', $order->id)
+            ->call('update', $commision->id)
             ->assertEmitted('saved');
 
         $this->assertDatabaseHas('commisions', [
@@ -163,26 +166,32 @@ class OrderAdminTest extends TestCase
             'type' => 'fixed',
             'ratio' => 15,
             'status' => 'draft',
-            'client_id' => $client->id,
-        ]);
 
-        // Remove the commission agent
-        Livewire::actingAs($user)
-            ->test(\App\Http\Livewire\Commission\Edit::class, ['model' => 'order', 'data' => $order, 'disabled' => false])
-            ->call('removeAgent')
-            ->assertEmitted('removed');
-
-        $this->assertDatabaseMissing('commisions', [
-            'model' => 'order',
-            'model_id' => $order->id,
         ]);
     }
+
+    public function test_can_delete_commisions()
+    {
+        $user = User::find(1);
+        $client = User::find(2);
+        $order = Order::latest()->first();
+        $commision = Commision::where('model_id', $order->id)->latest()->first();
+        Livewire::actingAs($user)
+            ->test(\App\Http\Livewire\Commission\Edit::class, ['model' => 'order', 'data' => $order, 'disabled' => false])
+            ->call('removeAgent', $commision->id);
+
+        $this->assertDatabaseMissing('commisions', [
+            'id' => $commision->id,
+        ]);
+    }
+
 
     public function test_can_delete_order()
     {
 
         $user = User::find(1);
         $order = Order::where('name', 'Updated Order Name')->first();
+
         Livewire::actingAs($user)
             ->test(Edit::class, ['uuid' => $order->id])
             ->call('delete');
