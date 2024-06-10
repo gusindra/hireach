@@ -40,6 +40,7 @@ class SmsBlastTable extends LivewireDatatable
             }else{
                 $query->orderBy('created_at', 'desc');
             }
+            $query->withTrashed();
         } elseif (auth()->user()->activeRole && str_contains(auth()->user()->activeRole->role->name, "Admin")) {
             $query->orderBy('created_at', 'desc');
         } else {
@@ -96,7 +97,7 @@ class SmsBlastTable extends LivewireDatatable
             }),
             Column::name('user_id')->callback(['user_id'], function ($value) {
                 return view('datatables::link', [
-                    'href' => "/user/" . $value,
+                    'href' => "/admin/user/" . $value,
                     'slot' => $value
                 ]);
             })->label('User')->filterable()->exportCallback(function ($value) {

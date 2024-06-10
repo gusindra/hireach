@@ -255,7 +255,7 @@ class ProcessWaApi implements ShouldQueue
             $url = 'https://enjoymov.co/prod-api/kstbCore/sms/send';
             $md5_key = env('EM_MD5_KEY', 'AFD4274C39AB55D8C8D08FA6E145D535'); //'AFD4274C39AB55D8C8D08FA6E145D535';
             $merchantId = env('EM_MERCHANT_ID', 'KSTB904790'); //'KSTB904790';
-            $callbackUrl = 'http://hireach.firmapps.ai/receive-sms-status';
+            $callbackUrl = 'http://hireach.firmapps.ai/api/receive-sms-status';
             //$phone = '81339668556';
             $content = $request['text']; //'test enjoymov api';
             $msgChannel = env('EM_CODE_LWA', 80); //'WA'; //WA
@@ -267,15 +267,16 @@ class ProcessWaApi implements ShouldQueue
             $phone = substr($request['to'], 2);
 
             $sb = $md5_key . $merchantId . $phone . $content;
+            //Log::debug($sb);
             //$sign = md5($sb);
             //return $sign;
             $signature = Http::acceptJson()->withUrlParameters([
                 'endpoint' => 'http://8.215.55.87:34080/sign',
                 'sb' => $sb
-            ])->get('{+endpoint}?sb={sb}'); 
+            ])->get('{+endpoint}?sb={sb}');
             $reSign = json_decode($signature, true);
             //return $signature['sign'];
-            //Log::debug($sb);
+
             //Log::debug($reSign['sign']);
             $sign = $reSign['sign'];
 
@@ -291,12 +292,12 @@ class ProcessWaApi implements ShouldQueue
                 'msgChannel' => $msgChannel,
                 "msgId" => $msg->id
             ];
-            
+
             //Log::debug($data);
             $response = Http::withBody(json_encode($data), 'application/json')->withOptions([ 'verify' => false, ])->post($url);
             //Log::debug($response);
             $resData = json_decode($response, true);
-            BlastMessage::find($msg->id)->update(['status'=>$resData['message'], 'code'=>$resData['code']]);
+            BlastMessage::find($msg->id)->update(['status'=>$resData['message'], 'code'=>$resData['code'], 'sender_id'=>'WA_'.$msgChannel, 'provider'=>4]);
         }catch(\Exception $e){
             Log::debug($e->getMessage());
             $this->saveResult('Reject invalid servid', $this->request['to']);

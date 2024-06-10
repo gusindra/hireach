@@ -19,7 +19,7 @@ class Profile extends Component
     public function mount($user)
     {
         //dd($user);
-        $this->user = Client::find(auth()->user()->id);
+        $this->user = Client::find($user->id);
 
         $this->inputuser = [
         'name'      => $this->user->name ?? '',
@@ -64,7 +64,7 @@ class Profile extends Component
 
 
         $this->emit('user_saved');
-        
+
 
     }
 
