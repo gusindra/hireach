@@ -16,19 +16,15 @@ class LeaveTeamTest extends TestCase
 
     public function test_users_can_leave_teams()
     {
-        $user = User::find(3);
+        $user = User::factory()->create();
 
         $user->ownedTeams()->save($team = Team::factory()->make([
             'personal_team' => false,
         ]));
 
         $team->users()->attach(
-            $otherUser = User::create([
-                'name' => 'User Can Leave Teams',
-                'email' => 'hias@hireach.com',
-                'password' => Hash::make('12345678'),
+            $otherUser = User::factory()->create([
                 'current_team_id' => $team->id
-
             ]),
             ['role' => 'test-role']
         );
@@ -37,7 +33,7 @@ class LeaveTeamTest extends TestCase
 
         $component = Livewire::test(TeamMemberManager::class, ['team' => $team])
             ->call('leaveTeam');
-        dd(1);
+
         $otherUser->refresh();
         $this->assertCount(0, $user->currentTeam->fresh()->users);
     }

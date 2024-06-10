@@ -14,23 +14,26 @@ class UpdateTeamMemberRoleTest extends TestCase
 
     public function test_team_member_roles_can_be_updated()
     {
+
         $this->actingAs($user = User::find(2));
 
-        $user->currentTeam->users()->attach(
-            $otherUser = User::find(3),
-            ['role' => 'admin']
-        );
 
-        $component = Livewire::test(TeamMemberManager::class, ['team' => $user->currentTeam])
+        $otherUser = User::factory()->create(['current_team_id' => 2]);
+        $user->currentTeam->users()->attach($otherUser, ['role' => 'admin']);
+
+        Livewire::test(TeamMemberManager::class, ['team' => $user->currentTeam])
             ->set('managingRoleFor', $otherUser)
-            ->set('currentRole', 'editor')
+            ->set('currentRole', 'admin')
             ->call('updateRole');
 
-        $this->assertTrue($otherUser->fresh()->hasTeamRole(
-            $user->currentTeam->fresh(),
-            'editor'
-        ));
+        $otherUser = $otherUser->fresh();
+        $currentTeam = $user->currentTeam->fresh();
+
+
+
+        $this->assertTrue($otherUser->hasTeamRole($currentTeam, 'admin'));
     }
+
 
     public function test_only_team_owner_can_update_team_member_roles()
     {

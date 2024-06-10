@@ -22,6 +22,7 @@ class SmsBlastObserver
     public function created(BlastMessage $request)
     {
 
+
         if ($request->code == "200") {
             $set_price = 0;
             //check logic quotation for sms active here
