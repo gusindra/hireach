@@ -13,19 +13,19 @@ use App\Jobs\ProcessEmailApi;
 use App\Jobs\ProcessWaApi;
 use App\Models\ApiCredential;
 use App\Models\Client;
+use App\Models\ProviderUser;
 use Illuminate\Support\Str;
 
 class ApiOneWayController extends Controller
 {
+    public $cacheDuration = 1440;
     /**
-     * get all record sms
+     * This to get all record made from one way
      *
-     * @return void
+     * @return json App\Http\Resources\OneWayResource
      */
     public function index(Request $request)
     {
-        //return $request;
-        //$data = BlastMessage::where('user_id', '=', auth()->user()->id)->get();
         $skip = $request->page*$request->pageSize;
         $data = BlastMessage::skip($skip)->where('user_id', '=', auth()->user()->id)->take($request->pageSize);
         if($request->order=='id'){
@@ -48,7 +48,7 @@ class ApiOneWayController extends Controller
     }
 
     /**
-     * show record sms by phone number
+     * This to show record filter by phone number
      *
      * @param  mixed $phone
      * @return void
@@ -72,10 +72,10 @@ class ApiOneWayController extends Controller
     }
 
     /**
-     * post new sms
+     * This to post new request one way
      *
      * @param  mixed $request
-     * @return void
+     * @return json
      */
     public function post(Request $request)
     {
@@ -96,11 +96,6 @@ class ApiOneWayController extends Controller
             $validateArr['from'] = 'required';
         }
         $fields = $request->validate($validateArr);
-        // return response()->json([
-        //     'message' => "Successful",
-        //     'code' => 200
-        // ]);
-        //return $request->provider;
         try{
             //$userCredention = ApiCredential::where("user_id", auth()->user()->id)->where("client", "api_sms_mk")->where("is_enabled", 1)->first();
             //Log::channel('apilog')->info($request, [
@@ -108,71 +103,105 @@ class ApiOneWayController extends Controller
             //]);
             // ProcessSmsApi::dispatch($request->all(), auth()->user());
             //auto check otp / non otp type base on text
+            $provider = cache()->remember('provider-user-', $this->cacheDuration, function() use ($request) {
+                return ProviderUser::where('user_id', auth()->user()->id)->where('channel', $request->channel)->first();
+            });
 
-            $retriver = explode(",", $request->to);
-            $allretriver = $request->to;
-            $balance = (int)balance(auth()->user());
-            if($balance>500 && count($retriver)<$balance/1){
-                //CHECK OTP
-                if(strpos($request->channel, 'sms') !== false){
-                    $checkString = $request->text;
-                    $otpWord = ['Angka Rahasia', 'Authorisation', 'Authorise', 'Authorization', 'Authorized', 'Code', 'Harap masukkan', 'Kata Sandi', 'Kode',' Kode aktivasi', 'konfirmasi', 'otentikasi', 'Otorisasi', 'Rahasia', 'Sandi', 'trx', 'unik', 'Venfikasi', 'KodeOTP', 'NewOtp', 'One-Time Password', 'Otorisasi', 'OTP', 'Pass', 'Passcode', 'PassKey', 'Password', 'PIN', 'verifikasi', 'insert current code', 'Security', 'This code is valid', 'Token', 'Passcode', 'Valid OTP', 'verification','Verification', 'login code', 'registration code', 'secunty code'];
-                    if($request->otp){
-                        $request->merge([
-                            'otp' => 1
-                        ]);
-                    }elseif(Str::contains($checkString, $otpWord)){
-                        $request->merge([
-                            'otp' => 1
-                        ]);
+            if($provider){
+                $retriver = explode(",", $request->to);
+                $allretriver = $request->to;
+                $balance = (int)balance(auth()->user());
+                if($balance>500 && count($retriver)<$balance/1){
+                    //CHECK OTP
+                    if(strpos($request->channel, 'sms') !== false){
+                        $checkString = $request->text;
+                        $otpWord = ['Angka Rahasia', 'Authorisation', 'Authorise', 'Authorization', 'Authorized', 'Code', 'Harap masukkan', 'Kata Sandi', 'Kode',' Kode aktivasi', 'konfirmasi', 'otentikasi', 'Otorisasi', 'Rahasia', 'Sandi', 'trx', 'unik', 'Venfikasi', 'KodeOTP', 'NewOtp', 'One-Time Password', 'Otorisasi', 'OTP', 'Pass', 'Passcode', 'PassKey', 'Password', 'PIN', 'verifikasi', 'insert current code', 'Security', 'This code is valid', 'Token', 'Passcode', 'Valid OTP', 'verification','Verification', 'login code', 'registration code', 'secunty code'];
+                        if($request->otp){
+                            $request->merge([
+                                'otp' => 1
+                            ]);
+                        }elseif(Str::contains($checkString, $otpWord)){
+                            $request->merge([
+                                'otp' => 1
+                            ]);
+                        }else{
+                            $request->merge([
+                                'otp' => 0
+                            ]);
+                        }
+                    }
+
+                    if($request->channel=='wa'){
+                        $credential = null;
+                        foreach(auth()->user()->credential as $cre){
+                            if($cre->client=='api_wa_mk'){
+                                $credential = $cre;
+                            }
+                        }
+                    }
+                    //THIS WILL QUEUE SMS JOB
+                    //COUNT PHONE NUMBER REQUESTED
+                    $phones = $retriver;
+                    // GROUP RETRIVER
+
+                    if(count($phones)>1){
+                        //GROUP RETRIVER
+                        foreach($phones as $p){
+                            $data = array(
+                                'type' => $request->type,
+                                'to' => trim($p),
+                                'from' => $request->from,
+                                'text' => $request->text,
+                                'servid' => $request->servid,
+                                'title' => $request->title,
+                                'otp' => $request->otp,
+                                'provider' => $request->provider,
+                            );
+                            if($request->has('templateid')){
+                                $data['templateid'] = $request->templateid;
+                            }
+                            if($request->channel=='email'){
+                                //THIS WILL QUEUE EMAIL JOB
+                                //return $data;
+                                $reqArr = json_encode($request->all());
+                                ProcessEmailApi::dispatch($data, auth()->user(), $reqArr);
+                            }elseif(strpos($request->channel, 'sms') !== false){
+                                ProcessSmsApi::dispatch($data, auth()->user());
+                            }elseif($request->channel=='wa'){
+                                if($credential){
+                                    ProcessWaApi::dispatch($data, $credential);
+                                }else{
+                                    return response()->json([
+                                        'message' => "Invalid credential",
+                                        'code' => 401
+                                    ]);
+                                }
+                            }elseif($request->channel=='longwa'){
+                                $request->merge([
+                                    'provider' => 'provider2'
+                                ]);
+                                ProcessWaApi::dispatch($request->all(), auth()->user());
+                            }elseif($request->channel=='longsms'){
+                                $request->merge([
+                                    'provider' => 'provider2'
+                                ]);
+                                ProcessSmsApi::dispatch($request->all(), auth()->user());
+                            }
+                        }
                     }else{
-                        $request->merge([
-                            'otp' => 0
-                        ]);
-                    }
-                }
-
-                if($request->channel=='wa'){
-                    $credential = null;
-                    foreach(auth()->user()->credential as $cre){
-                        if($cre->client=='api_wa_mk'){
-                            $credential = $cre;
-                        }
-                    }
-                }
-                //THIS WILL QUEUE SMS JOB
-                //COUNT PHONE NUMBER REQUESTED
-                $phones = $retriver;
-                // GROUP RETRIVER
-                if(count($phones)>1){
-                    //GROUP RETRIVER
-                    foreach($phones as $p){
-                        $data = array(
-                            'type' => $request->type,
-                            'to' => trim($p),
-                            'from' => $request->from,
-                            'text' => $request->text,
-                            'servid' => $request->servid,
-                            'title' => $request->title,
-                            'otp' => $request->otp,
-                            'provider' => $request->provider,
-                        );
-                        if($request->has('templateid')){
-                            $data['templateid'] = $request->templateid;
-                        }
+                        //SINGLE RETRIVER
                         if($request->channel=='email'){
-                            //THIS WILL QUEUE EMAIL JOB
-                            //return $data;
                             $reqArr = json_encode($request->all());
-                            ProcessEmailApi::dispatch($data, auth()->user(), $reqArr);
+                            //THIS WILL QUEUE EMAIL JOB
+                            ProcessEmailApi::dispatch($request->all(), auth()->user(), $reqArr);
                         }elseif(strpos($request->channel, 'sms') !== false){
-                            ProcessSmsApi::dispatch($data, auth()->user());
+                            ProcessSmsApi::dispatch($request->all(), auth()->user());
                         }elseif($request->channel=='wa'){
                             if($credential){
-                                ProcessWaApi::dispatch($data, $credential);
+                                ProcessWaApi::dispatch($request->all(), $credential);
                             }else{
                                 return response()->json([
-                                    'message' => "Invalid credential",
+                                    'message' => "Invalid provider credential",
                                     'code' => 401
                                 ]);
                             }
@@ -185,45 +214,21 @@ class ApiOneWayController extends Controller
                             $request->merge([
                                 'provider' => 'provider2'
                             ]);
-                            ProcessSmsApi::dispatch($request->all(), auth()->user());
+                            ProcessWaApi::dispatch($request->all(), auth()->user());
                         }
                     }
                 }else{
-                    //SINGLE RETRIVER
-                    if($request->channel=='email'){
-                        $reqArr = json_encode($request->all());
-                        //THIS WILL QUEUE EMAIL JOB
-                        ProcessEmailApi::dispatch($request->all(), auth()->user(), $reqArr);
-                    }elseif(strpos($request->channel, 'sms') !== false){
-                        ProcessSmsApi::dispatch($request->all(), auth()->user());
-                    }elseif($request->channel=='wa'){
-                        if($credential){
-                            ProcessWaApi::dispatch($request->all(), $credential);
-                        }else{
-                            return response()->json([
-                                'message' => "Invalid provider credential",
-                                'code' => 401
-                            ]);
-                        }
-                    }elseif($request->channel=='longwa'){
-                        $request->merge([
-                            'provider' => 'provider2'
-                        ]);
-                        ProcessWaApi::dispatch($request->all(), auth()->user());
-                    }elseif($request->channel=='longsms'){
-                        $request->merge([
-                            'provider' => 'provider2'
-                        ]);
-                        ProcessWaApi::dispatch($request->all(), auth()->user());
-                    }
+                    return response()->json([
+                        'message' => "Insufficient Balance",
+                        'code' => 405
+                    ]);
                 }
             }else{
                 return response()->json([
-                    'message' => "Insufficient Balance",
+                    'message' => "Please check your provider or ask Administrator",
                     'code' => 405
                 ]);
             }
-
             //$this->sendSMS($request->all());
         }catch(\Exception $e){
             return response()->json([
@@ -238,19 +243,13 @@ class ApiOneWayController extends Controller
         ]);
     }
 
+    //
+    // Function below to testing in Controller
+    //
     /**
-     * send Bulk sms
-     *
-     * @param  mixed $request
-     * @return void
-     */
-    public function sendBulk(Request $request)
-    {
-        Log::channel('apilog')->info($request, [
-            'auth' => auth()->user()->name,
-        ]);
-        $totalPhone = 0;
-        try{
+     * This to send Bulk request
+send Bulk sms
+      try{
             foreach($request->all() as $sms){
                 $checkString = $sms->text;
                 $otpWord = ['Angka Rahasia', 'Authorisation', 'Authorise', 'Authorization', 'Authorized', 'Code', 'Harap masukkan', 'Kata Sandi', 'Kode',' Kode aktivasi', 'konfirmasi', 'otentikasi', 'Otorisasi', 'Rahasia', 'Sandi', 'trx', 'unik', 'Venfikasi', 'KodeOTP', 'NewOtp', 'One-Time Password', 'Otorisasi', 'OTP', 'Pass', 'Passcode', 'PassKey', 'Password', 'PIN', 'verifikasi', 'insert current code', 'Security', 'This code is valid', 'Token', 'Passcode', 'Valid OTP', 'verification','Verification', 'login code', 'registration code', 'secunty code'];
