@@ -26,9 +26,9 @@ class TemplateObserver
      */
     public function deleted(Template $request)
     {
+
         $team = auth()->user()->currentTeam;
+        // dd($team);
         $request->teams()->detach($team);
     }
 }
-
-

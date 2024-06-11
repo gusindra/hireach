@@ -47,7 +47,6 @@
                 @includeWhen(auth()->user(), 'menu.user-dashboard', [])
             </div>
 
-
             <div class="col-span-12 px-6 ml-24 mt-2">
                 <div class="bg-white dark:bg-slate-600 overflow-hidden sm:rounded-lg">
                     @livewire('user.balance', ['userId' => $userId])

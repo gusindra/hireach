@@ -56,6 +56,12 @@ class SendResourceUserTest extends TestCase
             ->set('text', 'alalalal.')
             ->call('sendResource');
 
+        // $this->assertDatabaseHas('blast_messages', [
+
+        //     'to' => 'imadeardanayatra0251@gmail.com',
+        //     'title' => 'Test Email',
+        // ]);
+
         Queue::assertPushed(ProcessEmailApi::class, function ($job) {
             return $job->data['to'] === 'imadeardanayatra0251@gmail.com' &&
                 $job->data['title'] === 'Test Email' &&

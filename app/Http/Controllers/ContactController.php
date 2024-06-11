@@ -9,6 +9,9 @@ use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Auth as FacadesAuth;
 use Vinkla\Hashids\Facades\Hashids;
 use Illuminate\Support\Str;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Imports\ImportContact;
+use App\Exports\ExportContact;
 
 class ContactController extends Controller
 {
@@ -157,52 +160,70 @@ class ContactController extends Controller
         return view('contact.import');
     }
 
+    /**
+     * This to import contact from file
+     *
+     * @param  mixed $request
+     * @return void
+     */
     public function import(Request $request)
     {
         $file = $request->file('file');
         $fileContents = file($file->getPathname());
-
-        foreach ($fileContents as $key => $line) {
-            if ($key > 0) {
-                $data = str_getcsv($line);
-
-                //dd($data);
-                $perData = explode(',', $data[0]);
-                // return $perData[1];
-                $exsist = Client::where('user_id', auth()->user()->id)->where('phone', $perData[1])->count();
-                if ($exsist == 0) {
-                    Client::create([
-                        'uuid'      => Str::uuid(),
-                        'name' => $perData[0],
-                        'phone' => $perData[1],
-                        'email' => $perData[2],
-                        'user_id' => auth()->user()->id,
-                        'created_at' => date('Y-m-d H:i:s')
-                        // Add more fields as needed
-                    ]);
+        if($file->getClientMimeType()=="text/csv"){
+            foreach ($fileContents as $key => $line) {
+                if ($key > 0) {
+                    $data = str_getcsv($line);
+                    //dd($data);
+                    $perData = explode(',', $data[0]);
+                    // return $perData[1];
+                    $exsist = Client::where('user_id', auth()->user()->id)->where('phone', $perData[1])->count();
+                    if ($exsist == 0) {
+                        Client::create([
+                            'uuid'      => Str::uuid(),
+                            'name' => $perData[0],
+                            'phone' => $perData[1],
+                            'email' => $perData[2],
+                            'user_id' => auth()->user()->id,
+                            'created_at' => date('Y-m-d H:i:s')
+                            // Add more fields as needed
+                        ]);
+                    }
                 }
             }
+        }else{
+            Excel::import(new ImportContact, $request->file('file')->store('files'));
         }
 
         return redirect()->back()->with('success', 'CSV file imported successfully.');
     }
 
+    /**
+     * This to export contact as csv file.
+     *
+     * @param  mixed $request
+     * @return void
+     */
     public function export(Request $request)
     {
-        $table = Client::where('user_id', auth()->user()->id)->get();
-        $filename = "tweets.csv";
-        $handle = fopen($filename, 'w+');
-        fputcsv($handle, array('name', 'phone', 'email', 'created_at'));
+        if($request->mime=="application"){
+            return Excel::download(new ExportContact, $request->name.'_client.xlsx');
+        }else{
+            $table = Client::where('user_id', auth()->user()->id)->get();
+            $filename = "tweets.csv";
+            $handle = fopen($filename, 'w+');
+            fputcsv($handle, array('name', 'phone', 'email', 'created_at'));
 
-        foreach ($table as $row) {
-            fputcsv($handle, array($row['name'], $row['phone'],$row['email'], $row['created_at']));
+            foreach ($table as $row) {
+                fputcsv($handle, array($row['name'], $row['phone'],$row['email'], $row['created_at']));
+            }
+
+            fclose($handle);
+
+            $headers = array(
+                'Content-Type' => 'text/csv',
+            );
+            return Response::download($filename, 'client.csv', $headers);
         }
-
-        fclose($handle);
-
-        $headers = array(
-            'Content-Type' => 'text/csv',
-        );
-        return Response::download($filename, 'client.csv', $headers);
     }
 }

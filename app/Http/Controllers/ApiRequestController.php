@@ -56,8 +56,8 @@ class ApiRequestController extends Controller
      */
     public function status(Request $request)
     {
-        return $request->url;
-        Log::debug($request->all());
+        //return $request->url;
+        //Log::debug($request->all());
         ProcessSmsStatus::dispatch($request->all());
 
         // BlastMessage::where("msg_id", $request->msgID)->where("msisdn", $request->msisdn)->first()->update([

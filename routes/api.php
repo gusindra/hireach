@@ -74,7 +74,7 @@ Route::put('/team-auth/{id}',  [ApiTeamWaController::class, 'put']);
 
 
 //MO & DN URL
-//Route::get('/receive-request-status',  [ApiRequestController::class, 'status']);
+Route::get('/receive-request-status',  [ApiRequestController::class, 'status']);
 //Route::get('/log-request-status',  [ApiRequestController::class, 'logStatus']);
 Route::post('/delivery-notification ',  [ApiBulkSmsController::class, 'status']);
 //Route::get('/log-request-status1',  [ApiBulkSmsController::class, 'logStatus']);

@@ -35,5 +35,7 @@
             UNDELIVERED
         </a>
     </x-modal>
+    @else
+        <p class="text-xs">No Action</p>
     @endif
 </div>

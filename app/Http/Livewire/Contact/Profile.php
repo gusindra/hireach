@@ -18,9 +18,8 @@ class Profile extends Component
 
     public function mount($user)
     {
-
         //dd($user);
-        $this->user = Client::find($user);
+        $this->user = Client::find($user->id);
         $this->inputuser = [
             'name'      => $this->user->name ?? '',
             'nick'      => $this->user->nick ?? '',
