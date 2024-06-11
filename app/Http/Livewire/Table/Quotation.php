@@ -35,12 +35,12 @@ class Quotation extends LivewireDatatable
     {
         return [
             Column::name('title')->label('Title'),
-            Column::name('model')->callback('model, model_id, project.name, company.name, client.name', function ($m, $mi, $pn, $com, $cn) {
+            Column::name('model')->callback('model, model_id, project.name, company.name, user.name', function ($m, $mi, $pn, $com, $cn) {
                 if ($m == 'PROJECT') {
                     return $m . ' : ' . $pn;
                 } elseif ($m == 'COMPANY') {
                     return $m . ' : ' . $com;
-                } elseif ($m == 'CLIENT') {
+                } elseif ($m == 'USER') {
                     return $m . ' : ' . $cn;
                 }
                 return $m;

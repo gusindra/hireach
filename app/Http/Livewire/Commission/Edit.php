@@ -24,9 +24,12 @@ class Edit extends Component
     public $status;
     public $total;
     public $commission;
+    public $commisionId;
+
 
     public function mount($model, $data, $disabled = false)
     {
+
         $this->model = $model;
         if ($model == 'order') {
             $this->master = Order::find($data->id);
@@ -74,8 +77,8 @@ class Edit extends Component
 
     public function removeAgent()
     {
-        // dd($this->commission);
-        $this->commission->delete();
+
+        Commision::destroy($this->commission->id);
         $this->rate = null;
         $this->clientId = null;
         $this->emit('removed');

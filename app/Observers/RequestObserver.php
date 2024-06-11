@@ -30,23 +30,21 @@ class RequestObserver
     {
         $set_price = 0;
         $team = $request->client && $request->client->team ? $request->client->team->detail : false;
-        if($request->team_id>0){
+        if ($request->team_id > 0) {
             $team = Team::find($request->team_id);
         }
-        if($team){
+        if ($team) {
             //Log::debug($request->reply);
             $request->teams()->attach($team);
 
             //Check if request from customer
-            if($request->source_id)
-            {
+            if ($request->source_id) {
                 // check if has first time template
                 $count = checkFirstRequest($request);
-                if($count == 1)
-                {
+                if ($count == 1) {
                     //send welcome
                     $template = Template::where('type', 'welcome')->where('user_id', $request->user_id)->with('teams')
-                        ->whereHas('teams', function ($query) use($request) {
+                        ->whereHas('teams', function ($query) use ($request) {
                             $query->where([
                                 'teams.id' => $request->team_id
                             ]);
@@ -54,10 +52,10 @@ class RequestObserver
                     // Log::debug('gelooo');
                     // Log::debug($template);
 
-                    if($template){
-                        foreach($template as $trigger){
-                            if($trigger->actions->count()>0){
-                                foreach($trigger->actions as $action){
+                    if ($template) {
+                        foreach ($template as $trigger) {
+                            if ($trigger->actions->count() > 0) {
+                                foreach ($trigger->actions as $action) {
                                     //if chat type text
                                     $this->addRespond($action, $request, $trigger, true);
                                 }
@@ -68,70 +66,68 @@ class RequestObserver
 
                 //check if any template sent before
                 $last = getPreviousRequest($request);
-                if($last && $last->id)
-                {
+                if ($last && $last->id) {
                     //check if template if question
-                    if($last->template_id)
-                    {
+                    if ($last->template_id) {
                         // check last template
                         $template = Template::find($last->template_id);
-                        if($template->type==='api'){
+                        if ($template->type === 'api') {
 
                             // call event job to request to API Partner
                             $url = $template->endpoint->endpoint;
-                            if($template->endpoint->request == 'post'){
+                            if ($template->endpoint->request == 'post') {
                                 // make request and input
                                 $data = '';
                                 $userInput = preg_split('/\r\n|\r|\n/', $request->reply);
                                 // var_dump($userInput);
-                                foreach($template->endpoint->inputs as $ki => $input){
-                                    if($ki > 0){
-                                        if (array_key_exists($ki,$userInput)){
-                                            $data = $data.'&'.$input->name.'='.$userInput[$ki];
-                                        }else{
-                                            $data = $data.'&'.$input->name.'=';
+                                foreach ($template->endpoint->inputs as $ki => $input) {
+                                    if ($ki > 0) {
+                                        if (array_key_exists($ki, $userInput)) {
+                                            $data = $data . '&' . $input->name . '=' . $userInput[$ki];
+                                        } else {
+                                            $data = $data . '&' . $input->name . '=';
                                         }
-                                    }else{
-                                        $data = $data.'?'.$input->name.'='.$userInput[0];
+                                    } else {
+                                        $data = $data . '?' . $input->name . '=' . $userInput[0];
                                     }
                                 }
-                                $url = $url.''.$data;
+                                $url = $url . '' . $data;
                                 $response = Http::asForm()->post($url);
-                            }elseif($template->endpoint->request == 'put'){
+                            } elseif ($template->endpoint->request == 'put') {
                                 $data = '';
                                 $userInput = preg_split('/\r\n|\r|\n/', $request->reply);
                                 // var_dump($userInput);
-                                foreach($template->endpoint->inputs as $ki => $input){
-                                    if($ki > 0){
-                                        if (array_key_exists($ki,$userInput)){
-                                            $data = $data.'&'.$input->name.'='.$userInput[$ki];
-                                        }else{
-                                            $data = $data.'&'.$input->name.'=';
+                                foreach ($template->endpoint->inputs as $ki => $input) {
+                                    if ($ki > 0) {
+                                        if (array_key_exists($ki, $userInput)) {
+                                            $data = $data . '&' . $input->name . '=' . $userInput[$ki];
+                                        } else {
+                                            $data = $data . '&' . $input->name . '=';
                                         }
-                                    }else{
-                                        $data = $data.'?'.$input->name.'='.$userInput[0];
+                                    } else {
+                                        $data = $data . '?' . $input->name . '=' . $userInput[0];
                                     }
                                 }
-                                $url = $url.''.$data;
+                                $url = $url . '' . $data;
                                 $response = Http::asForm()->put($url, $data);
-                            }else{
+                            } else {
                                 $data = '';
                                 $userInput = preg_split('/\r\n|\r|\n/', $request->reply);
                                 // var_dump($userInput);
-                                foreach($template->endpoint->inputs as $ki => $input){
-                                    if($input->value!=null){
-                                        $data = $data.'&'.$input->name.'='.$input->value;
-                                    }elseif($ki > 0){
-                                        if (array_key_exists($ki,$userInput)){
-                                            $data = $data.'&'.$input->name.'='.$userInput[$ki];
-                                        }else{
-                                            $data = $data.'&'.$input->name.'=';
+                                foreach ($template->endpoint->inputs as $ki => $input) {
+                                    if ($input->value != null) {
+                                        $data = $data . '&' . $input->name . '=' . $input->value;
+                                    } elseif ($ki > 0) {
+                                        if (array_key_exists($ki, $userInput)) {
+                                            $data = $data . '&' . $input->name . '=' . $userInput[$ki];
+                                        } else {
+                                            $data = $data . '&' . $input->name . '=';
                                         }
-                                    }else{
-                                        $data = $data.'?'.$input->name.'='.$userInput[0];
+                                    } else {
+                                        $data = $data . '?' . $input->name . '=' . $userInput[0];
                                     }
                                 }
-                                $url = $url.''.$data;
+                                $url = $url . '' . $data;
                                 // echo $url;
                                 $response = Http::asForm()->get($url);
                             }
@@ -139,26 +135,26 @@ class RequestObserver
                             Log::debug($url);
                             //Log::debug($response);
                             $trigger = Template::where('template_id', $template->id)->where('trigger', $response['code'])->first();
-                            if($trigger){
+                            if ($trigger) {
                                 foreach ($trigger->actions as $action) {
-                                    if(!$action->is_multidata){
+                                    if (!$action->is_multidata) {
                                         Log::debug("check single data");
                                         // return single data
                                         $data = [];
                                         $message = $action->message;
                                         foreach ($action->data as $word) {
                                             $strucure = explode(',', $word->value);
-                                            if(count($strucure)>0){
+                                            if (count($strucure) > 0) {
                                                 foreach ($strucure as $key => $st) {
-                                                    if($st){
-                                                        if($key==0){
+                                                    if ($st) {
+                                                        if ($key == 0) {
                                                             $data[$word->name] = $response[$st];
-                                                        }else{
+                                                        } else {
                                                             $data[$word->name] = $data[$word->name][$st];
                                                         }
                                                     }
                                                 }
-                                            }else{
+                                            } else {
                                                 $data[$word->name] = $response[$word->value];
                                             }
                                         }
@@ -167,7 +163,7 @@ class RequestObserver
                                         // echo $new;
                                         // echo $response['data']['month'].' '.$response['data']['year'];
                                         $this->sendRespondApi($new, $request, $trigger);
-                                    }else{
+                                    } else {
                                         Log::debug("check multi data");
                                         $new = [];
                                         $data = [];
@@ -175,33 +171,33 @@ class RequestObserver
 
                                         // find array data for looping
                                         $structureLoop = explode(',', $action->array_data);
-                                        if(count($structureLoop)>0){
+                                        if (count($structureLoop) > 0) {
                                             $dataLoop = [];
                                             foreach ($structureLoop as $ley => $loop) {
-                                                if($ley==0){
+                                                if ($ley == 0) {
                                                     $dataLoop = $response[$loop];
-                                                }else{
+                                                } else {
                                                     $dataLoop = $dataLoop[$loop];
                                                 }
                                             }
-                                        }else{
+                                        } else {
                                             $dataLoop = $response[$action->array_data];
                                         }
 
-                                        foreach($dataLoop as $i => $item){
+                                        foreach ($dataLoop as $i => $item) {
                                             foreach ($action->data as $word) {
                                                 $strucure = explode(',', $word->value);
-                                                if(count($strucure)>0){
-                                                    Log::debug("Name Word :".$word->name);
+                                                if (count($strucure) > 0) {
+                                                    Log::debug("Name Word :" . $word->name);
                                                     foreach ($strucure as $key => $st) {
-                                                        Log::debug("Strucure :".$st);
-                                                        if($key==0 && $word->name){
+                                                        Log::debug("Strucure :" . $st);
+                                                        if ($key == 0 && $word->name) {
                                                             $data[$word->name] = $item[$st];
-                                                        }else{
+                                                        } else {
                                                             $data[$word->name] = $data[$word->name][$st];
                                                         }
                                                     }
-                                                }else{
+                                                } else {
                                                     $data[$word->name] = $item[$word->value];
                                                 }
                                             }
@@ -211,55 +207,55 @@ class RequestObserver
                                         //kirim message
                                         //foreach by array new
                                         // var_dump($new);
-                                        if(count($new)>0){
+                                        if (count($new) > 0) {
                                             foreach ($new as $msg) {
                                                 $this->sendRespondApi($msg, $request, $trigger);
                                             }
-                                        }else{
+                                        } else {
                                             $msg = 'Empty data';
                                             $this->sendRespondApi($msg, $request, $trigger);
                                         }
                                     }
                                 }
-                            }else{
+                            } else {
                                 // check error
                                 $this->sendErrorRespond($request, $template);
                             }
-                        }elseif($template->type==='question' || $template->type==='error'){
+                        } elseif ($template->type === 'question' || $template->type === 'error') {
                             // check the awnser base on trigger
                             $trigger = Template::where('template_id', $last->template_id)->where('trigger', $request->reply)->first();
-                            if($trigger){
-                                if($trigger->actions->count()>0){
-                                    foreach($trigger->actions as $action){
+                            if ($trigger) {
+                                if ($trigger->actions->count() > 0) {
+                                    foreach ($trigger->actions as $action) {
                                         //if chat type text
                                         $this->addRespond($action, $request, $trigger);
                                     }
                                 }
-                            }else{
+                            } else {
                                 $this->sendErrorRespond($request, $template);
                             }
                         }
                     }
                 }
 
-                if(!$this->replyed){
+                if (!$this->replyed) {
                     //check if trigger contain reply if not a question
                     //Log::debug('trigger contain reply if not a question '.$request->reply);
                     $template = Template::where('is_enabled', 1)->whereNull('template_id')->where('trigger_condition', 'like', '%equal%')->where('trigger', $request->reply)->with('teams')
-                        ->whereHas('teams', function ($query) use($request) {
+                        ->whereHas('teams', function ($query) use ($request) {
                             $query->where([
                                 'teams.id' => $request->team_id
                             ]);
                         })->first();
                     // Log::debug($template);
-                    if(!$template){
-                        $contains = Template::where('is_enabled', 1)->whereNull('template_id')->where('trigger_condition', 'contain')->whereHas('teams', function ($query) use($request) {
+                    if (!$template) {
+                        $contains = Template::where('is_enabled', 1)->whereNull('template_id')->where('trigger_condition', 'contain')->whereHas('teams', function ($query) use ($request) {
                             $query->where([
                                 'teams.id' => $request->team_id
                             ]);
-                        })->pluck('trigger','id');
+                        })->pluck('trigger', 'id');
 
-                        foreach($contains as $key => $contain) {
+                        foreach ($contains as $key => $contain) {
                             Log::debug($contain);
                             $place = strpos($request->reply, $contain);
                             if (!empty($place)) {
@@ -276,66 +272,62 @@ class RequestObserver
 
                         Log::debug($template);
                     }
-                    if($template){
-                        if($template->actions->count()>0)
-                        {
-                            foreach($template->actions as $action){
+                    if ($template) {
+                        if ($template->actions->count() > 0) {
+                            foreach ($template->actions as $action) {
                                 //if chat type text
                                 $this->addRespond($action, $request, $template);
                             }
                         }
                         Log::debug('done sending template ');
-                    }else{
+                    } else {
                         Log::debug('no response template ');
                     }
                 }
-            }
-            else
-            {
-                if($request->template_id==null){
+            } else {
+                if ($request->template_id == null) {
                     $this->sendToWhatsapp($request);
                 }
             }
         }
 
-        if($quote = Quotation::where('client_id', $request->user_id)->whereIn('status', ['reviewed'])->orderBy('id', 'desc')->first()){
+        if ($quote = Quotation::where('client_id', $request->user_id)->whereIn('status', ['reviewed'])->orderBy('id', 'desc')->first()) {
             //get price for WA
             $items = OrderProduct::orderBy('id', 'asc')->where('model', 'Quotation')->where('model_id', $quote->id)->get();
-            foreach($items as $product){
-                if($request->otp == 0 && $product->note == 'WA NON OTP'){
-                    if(Str::contains($product->name, 'WA NON OTP')){
+            foreach ($items as $product) {
+                if ($request->otp == 0 && $product->note == 'WA NON OTP') {
+                    if (Str::contains($product->name, 'WA NON OTP')) {
                         // Default by key WA NON OTP
                         $this->addSaldo($product->price, $request);
                         $set_price = 1;
                     }
-                }elseif($request->otp == 1 && $product->note == 'WA OTP'){
-                    if(Str::contains($product->name, 'WA OTP')){
+                } elseif ($request->otp == 1 && $product->note == 'WA OTP') {
+                    if (Str::contains($product->name, 'WA OTP')) {
                         $this->addSaldo($product->price, $request);
                         $set_price = 1;
                     }
                 }
             }
-        }else{
+        } else {
             //else run this price
             $master = ProductLine::where('name', 'HiReach')->first();
             $items = $master->items;
 
             //check msisdn for $product items
             // CHARGE BY PRODUCT WA PRICE
-            if(count($items)>0){
-                foreach($items as $product){
-                    if($product->sku=="WA"){
+            if (count($items) > 0) {
+                foreach ($items as $product) {
+                    if ($product->sku == "WA") {
                         // ALL WA Charge this Price
                         $this->addSaldo($product->unit_price, $request);
                         $set_price = 1;
                     }
                 }
             }
-
         }
 
         //IF THEREIS NO BALANCE UPDATE DEFAULT BY SMS PRICE
-        if($set_price == 0){
+        if ($set_price == 0) {
             $this->addSaldo(0, $request);
         }
     }
@@ -348,11 +340,11 @@ class RequestObserver
      * @param  mixed $template
      * @return void
      */
-    private function addRespond($action, $request, $template, $welcome=false)
+    private function addRespond($action, $request, $template, $welcome = false)
     {
         // Create respond from template
         // text
-        if($action->type=='text'){
+        if ($action->type == 'text') {
             $request = Message::create([
                 'reply'         => $action->message,
                 'from'          => 'bot',
@@ -361,7 +353,7 @@ class RequestObserver
                 'template_id'   => $template->id,
                 'client_id'     => $request->client_id
             ]);
-        }else{
+        } else {
             $request = Message::create([
                 'reply'         => '',
                 'media'         => $action->message,
@@ -386,7 +378,7 @@ class RequestObserver
      * @param  mixed $template
      * @return void
      */
-    private function sendRespondApi($message, $request, $template, $welcome=false)
+    private function sendRespondApi($message, $request, $template, $welcome = false)
     {
         // Create respond from template
         $request = Message::create([
@@ -408,19 +400,20 @@ class RequestObserver
      *
      * @return void
      */
-    private function sendToWhatsapp($request){
+    private function sendToWhatsapp($request)
+    {
         $userCredention = ApiCredential::where("user_id", $request->user_id)->where("is_enabled", 1)->first();
         // check if has token apicredential
-        if($userCredention){
+        if ($userCredention) {
             // Log::debug("1 client". auth()->user()->currentTeam->apiCredential);
             // foreach($userCredention as $key => $api){
             //     if($api->is_enabled == 1){
-                    //Log::debug($request." ".$api);
-                    //Log::debug($key."----".$api);
+            //Log::debug($request." ".$api);
+            //Log::debug($key."----".$api);
             //     }
             // }
             //SendMessageViaApi::dispatch($request, $userCredention);
-        }elseif(auth()->user() && auth()->user()->currentTeam && auth()->user()->currentTeam->waWeb ){
+        } elseif (auth()->user() && auth()->user()->currentTeam && auth()->user()->currentTeam->waWeb) {
             // jika tikda ada api alternatif menggunakan wa web
 
         }
@@ -436,9 +429,9 @@ class RequestObserver
     private function sendErrorRespond($request, $template)
     {
         // send error template if avaiable
-        if($template->error){
-            if($template->error->actions->count()>0){
-                foreach($template->error->actions as $error){
+        if ($template->error) {
+            if ($template->error->actions->count() > 0) {
+                foreach ($template->error->actions as $error) {
                     //if chat type text
                     $this->addRespond($error, $request, $template->error);
                 }
@@ -446,16 +439,16 @@ class RequestObserver
         }
 
         //sent repet question
-        if($template->is_repeat_if_error == 1){
-            if($template->actions->count()>0){
-                foreach($template->actions as $action){
+        if ($template->is_repeat_if_error == 1) {
+            if ($template->actions->count() > 0) {
+                foreach ($template->actions as $action) {
                     //if chat type text
                     $this->addRespond($action, $request, $template);
                 }
             }
         }
     }
-    
+
     /**
      * addSaldo
      *
@@ -464,7 +457,8 @@ class RequestObserver
      * @param  mixed $currency
      * @return void
      */
-    private function addSaldo($price, $request, $currency='idr'){
+    private function addSaldo($price, $request, $currency = 'idr')
+    {
         SaldoUser::create([
             'team_id'       => NULL,
             'model_id'      => $request->id,
@@ -472,7 +466,7 @@ class RequestObserver
             'currency'      => $currency,
             'amount'        => $price,
             'mutation'      => 'debit',
-            'description'   => 'Cost - '.$request->id.' - '.$request->source_id,
+            'description'   => 'Cost - ' . $request->id . ' - ' . $request->source_id,
             'user_id'       => $request->user_id,
         ]);
     }

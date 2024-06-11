@@ -20,7 +20,7 @@ class ApiDocumentationTest extends TestCase
      *
      * @return void
      */
-    public function test_api_documentation_screen_can_be_rendered()
+    public function api_documentation_screen_can_be_rendered()
     {
         $response = $this->get('/api/documentation');
         $response->assertStatus(200);
@@ -31,7 +31,7 @@ class ApiDocumentationTest extends TestCase
      *
      * @return void
      */
-    public function test_api_token_permissions_can_be_created()
+    public function api_token_permissions_can_be_created()
     {
         $name = Str::random(10);
         $user = User::find(2);
@@ -56,7 +56,7 @@ class ApiDocumentationTest extends TestCase
      *
      * @return void
      */
-    public function test_api_one_way_can_be_posted()
+    public function api_one_way_can_be_posted()
     {
         $user = User::find(2);
         $token = $user->createToken(
@@ -76,13 +76,13 @@ class ApiDocumentationTest extends TestCase
             "otp" => 0,
         ];
         $newHeader = [
-            'Authorization'=>'Bearer '.$plainTextToken,
-            'accept'=>'application/json',
-            'Content-Type'=>'application/json',
-            'X-CSRF-TOKEN'=>'',
+            'Authorization' => 'Bearer ' . $plainTextToken,
+            'accept' => 'application/json',
+            'Content-Type' => 'application/json',
+            'X-CSRF-TOKEN' => '',
         ];
 
-        $response = $this->actingAs($user, 'api')->post('/api/one-way',$newData, $newHeader);
+        $response = $this->actingAs($user, 'api')->post('/api/one-way', $newData, $newHeader);
 
         $response->assertStatus(200);
     }
@@ -92,7 +92,7 @@ class ApiDocumentationTest extends TestCase
      *
      * @return void
      */
-    public function test_api_one_way_can_be_access_get_method()
+    public function api_one_way_can_be_access_get_method()
     {
         $user = User::find(2);
         $token = $user->createToken(
@@ -101,10 +101,10 @@ class ApiDocumentationTest extends TestCase
         );
         $plainTextToken = explode('|', $token->plainTextToken, 2)[1];
         $response = $this->actingAs($user, 'api')->get('/api/one-way?page=0&pageSize=10', [
-            'Authorization'=>'Bearer '.$plainTextToken,
-            'accept'=>'application/json',
-            'Content-Type'=>'application/json',
-            'X-CSRF-TOKEN'=>'',
+            'Authorization' => 'Bearer ' . $plainTextToken,
+            'accept' => 'application/json',
+            'Content-Type' => 'application/json',
+            'X-CSRF-TOKEN' => '',
         ]);
 
         $response->assertStatus(200);
@@ -147,7 +147,7 @@ class ApiDocumentationTest extends TestCase
      *
      * @return void
      */
-    public function test_api_two_way_can_be_access_get_method()
+    public function api_two_way_can_be_access_get_method()
     {
         $user = User::find(2);
         $token = $user->createToken(
@@ -156,11 +156,11 @@ class ApiDocumentationTest extends TestCase
         );
         $plainTextToken = explode('|', $token->plainTextToken, 2)[1];
 
-        $response = $this->actingAs($user, 'api')->get('/api/two-way?page=0&pageSize=10',[
-            'Authorization'=>'Bearer '.$plainTextToken,
-            'accept'=>'application/json',
-            'Content-Type'=>'application/json',
-            'X-CSRF-TOKEN'=>'',
+        $response = $this->actingAs($user, 'api')->get('/api/two-way?page=0&pageSize=10', [
+            'Authorization' => 'Bearer ' . $plainTextToken,
+            'accept' => 'application/json',
+            'Content-Type' => 'application/json',
+            'X-CSRF-TOKEN' => '',
         ]);
 
         $response->assertStatus(200);
@@ -171,7 +171,7 @@ class ApiDocumentationTest extends TestCase
      *
      * @return void
      */
-    public function test_api_token_permissions_can_be_deleted()
+    public function api_token_permissions_can_be_deleted()
     {
         $user = User::find(2);
         $token = $user->tokens()->create([

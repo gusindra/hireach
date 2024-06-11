@@ -17,7 +17,23 @@ class TeamsTableSeeder extends Seeder
     {
         Team::create([
             'user_id' => 1,
+            'id' => 1,
             'name' => 'Hireach',
+            'slug' => 'hireach'
+        ]);
+        Team::create([
+            'user_id' => 2,
+            'id' => 2,
+            'name' => 'User',
+            'slug' => 'User'
+        ]);
+
+        Team::create([
+            'user_id' => 3,
+            'id' => 3,
+            'personal_team' => true,
+            'name' => 'Test Team',
+            'slug' => 'test-team'
         ]);
     }
 }

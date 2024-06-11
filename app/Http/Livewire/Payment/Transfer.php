@@ -2,9 +2,9 @@
 
 namespace App\Http\Livewire\Payment;
 
-use App\Models\Notification;
 use Livewire\Component;
 use App\Jobs\ProcessEmail;
+use App\Models\Notice;
 
 class Transfer extends Component
 {
@@ -18,34 +18,36 @@ class Transfer extends Component
         $this->order = $order;
     }
 
-    public function checkPayment(){
-        if($this->order->notifications('unread')->count()==0){
+    public function checkPayment()
+    {
+        if ($this->order->notifications('unread')->count() == 0) {
             $this->emit('saved');
             $this->check = 0;
-            Notification::create([
+            Notice::create([
                 'type' => 'message',
                 'model' => 'Order',
                 'model_id' => $this->order->id,
-                'notification' => 'Konfirmasi pembayaran no '.$this->order->no. ' Total Rp'.number_format($this->order->total),
+                'notification' => 'Konfirmasi pembayaran no ' . $this->order->no . ' Total Rp' . number_format($this->order->total),
                 'user_id' => 0,
                 'status' => 'unread'
             ]);
-            
+
             //ProcessEmail::dispatch($this->order, 'payment_order');
-        }else{
+        } else {
             $this->emit('already');
         }
     }
 
-    public function uploadImage(){
+    public function uploadImage()
+    {
         dd('uploadImage');
     }
 
     public function actionShowModal($modal)
     {
-        if($modal=='detail'){
+        if ($modal == 'detail') {
             $this->modalDetail = true;
-        }elseif($modal=='upload'){
+        } elseif ($modal == 'upload') {
             $this->modalUpload = true;
         }
     }

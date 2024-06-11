@@ -20,9 +20,6 @@ return new class extends Migration
             $table->unsignedBigInteger('company_id');
             $table->timestamps();
             $table->softDeletes();
-
-            // Foreign key constraint
-            $table->foreign('company_id')->references('id')->on('users')->onDelete('cascade');
         });
     }
 

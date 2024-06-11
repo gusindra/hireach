@@ -14,6 +14,7 @@ class Commision extends Model
      *
      * @var array
      */
+
     protected $fillable = [
         'model',
         'model_id',
@@ -26,7 +27,7 @@ class Commision extends Model
 
     protected $guarded = [];
 
-     /**
+    /**
      * Get the flow that belongs to user.
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
@@ -59,7 +60,8 @@ class Commision extends Model
     /**
      * Get all of team.
      */
-    public function approval(){
-    	return $this->hasOne('App\Models\FlowProcess', 'model_id')->where('model', 'COMMISSION')->whereNull('status');
+    public function approval()
+    {
+        return $this->hasOne('App\Models\FlowProcess', 'model_id')->where('model', 'COMMISSION')->whereNull('status');
     }
 }

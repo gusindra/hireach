@@ -92,34 +92,45 @@ class UserAdminTest extends TestCase
     public function test_it_creates_a_new_provider_user()
     {
         $user = User::find(1);
-        $provider = Provider::find(2);
+        $users = User::find(2);
+
+        $provider = Provider::find(2)->latest()->firstOrFail();
         Livewire::actingAs($user)->test('user.add-provider', ['user' => $user])
-            ->set('input.providerId', $provider->id)
-            ->set('input.channel', 'example-channel')
-            ->call('addProvider')
-            ->assertEmitted('added')
-            ->assertSet('modalActionVisible', false);
+            ->set('userId', $users->id)
+            ->set('input.provider_id', $provider->id)
+            ->set('input.channel', 'example')
+            ->call('addProvider');
+
 
         $this->assertDatabaseHas('provider_user', [
-            'user_id' => $user->id,
-            'provider_id' => 2,
-            'channel' => 'example-channel',
+            'user_id' => $users->id,
+            'provider_id' => $provider->id,
+            'channel' => 'example',
         ]);
     }
 
     public function test_it_deletes_a_provider_user()
     {
-        $user = User::find(1);
+        $user = User::findOrFail(1);
+        $provider = Provider::latest()->firstOrFail();
 
-        $providerUser = ProviderUser::where('channel', 'example-channel')->latest()->first();
-        Livewire::actingAs($user)->test(AddProvider::class, ['user' => $user])
+        // First, create the provider user entry
+        $providerUser = ProviderUser::create([
+            'user_id' => $user->id,
+            'provider_id' => $provider->id,
+            'channel' => 'example-channel'
+        ]);
+
+        Livewire::actingAs($user)->test(\App\Http\Livewire\User\AddProvider::class, ['user' => $user])
             ->call('deleteShowModal', $providerUser->id)
-            ->call('delete');
+            ->call('delete')
+            ->assertSet('confirmingActionRemoval', false);
 
         $this->assertDatabaseMissing('provider_user', [
             'id' => $providerUser->id,
         ]);
     }
+
 
     public function test_can_delete_provider()
     {

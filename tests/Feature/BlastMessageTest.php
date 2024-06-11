@@ -16,7 +16,7 @@ class BlastMessageTest extends TestCase
      * A basic feature test example.
      *
      * @return void
-     */ 
+     */
 
     public function test_can_create_blast_message()
     {
@@ -24,22 +24,24 @@ class BlastMessageTest extends TestCase
 
         BlastMessage::create([
             'title'             => 'Testing',
-            'msg_id'            => 'TESTING'.$user->id,
+            'msg_id'            => 'TESTING' . $user->id,
             'user_id'           => $user->id,
-            'client_id'         => 'CLIENT'.$user->id,
-            'sender_id'         => 'SENDER'.$user->id,
+            'client_id'         => 'CLIENT' . $user->id,
+            'sender_id'         => 'SENDER' . $user->id,
             'type'              => 0,
+            'price'              => 200000,
+            'currency'          => 'IDR',
             'status'            => 'SUCCESS',
             'code'              => '200',
             'message_content'   => 'Testing',
             'balance'           => 0,
-            'msisdn'            => 'msisdn'.$user->id,
+            'msisdn'            => 'msisdn' . $user->id,
         ]);
 
         $this->assertDatabaseHas('blast_messages', [
-            'title'             => 'Testing', 
-            'user_id'           => $user->id, 
-        ])->expectsDatabaseQueryCount( 1);
+            'title'             => 'Testing',
+            'user_id'           => $user->id,
+        ])->expectsDatabaseQueryCount(1);
 
         BlastMessage::where('user_id', $user->id)->delete();
     }
@@ -49,9 +51,9 @@ class BlastMessageTest extends TestCase
         $user = User::find(2);
 
         $this->assertDatabaseHas('saldo_users', [
-            'mutation' => 'debit',  
+            'mutation' => 'debit',
             'user_id' => $user->id,
-        ])->expectsDatabaseQueryCount( 1);
+        ])->expectsDatabaseQueryCount(1);
 
         SaldoUser::where('user_id', $user->id)->delete();
     }

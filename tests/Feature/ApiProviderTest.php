@@ -19,7 +19,7 @@ class ApiProviderTest extends TestCase
      *
      * @return void
      */
-    public function test_mackrokiosk_can_send_sms_otp()
+    public function mackrokiosk_can_send_sms_otp()
     {
         $this->artisan('check:wa enjoymov')
             ->expectsOutput('SMS is OK')
@@ -27,7 +27,7 @@ class ApiProviderTest extends TestCase
             ->assertExitCode(0);
     }
 
-    public function test_mackrokiosk_can_send_sms_non_otp()
+    public function mackrokiosk_can_send_sms_non_otp()
     {
         $this->artisan('check:wa enjoymov')
             ->expectsOutput('SMS is OK')
@@ -35,7 +35,7 @@ class ApiProviderTest extends TestCase
             ->assertExitCode(0);
     }
 
-    public function test_mackrokiosk_can_send_whatsapp_non_otp()
+    public function mackrokiosk_can_send_whatsapp_non_otp()
     {
         $this->artisan('check:wa enjoymov')
             ->expectsOutput('WA is OK')
@@ -43,7 +43,7 @@ class ApiProviderTest extends TestCase
             ->assertExitCode(0);
     }
 
-    public function test_mackrokiosk_can_send_whatsapp_otp()
+    public function mackrokiosk_can_send_whatsapp_otp()
     {
         $this->artisan('check:wa enjoymov')
             ->expectsOutput('WA is OK')
@@ -51,7 +51,7 @@ class ApiProviderTest extends TestCase
             ->assertExitCode(0);
     }
 
-    public function test_enjoymov_can_sending_long_number_sms()
+    public function enjoymov_can_sending_long_number_sms()
     {
         $this->artisan('check:wa enjoymov')
             ->expectsOutput('SMS is OK')
@@ -59,7 +59,7 @@ class ApiProviderTest extends TestCase
             ->assertExitCode(0);
     }
 
-    public function test_enjoymov_can_sending_long_number_whatsapp()
+    public function enjoymov_can_sending_long_number_whatsapp()
     {
         $this->artisan('check:wa enjoymov')
             ->expectsOutput('WA is OK')
@@ -67,8 +67,8 @@ class ApiProviderTest extends TestCase
             ->assertExitCode(0);
     }
 
-    public function test_smtp2go_can_sending_email()
-    { 
+    public function smtp2go_can_sending_email()
+    {
         $this->artisan('check:email smtp2go')
             ->expectsOutput('EMAIL is OK')
             ->doesntExpectOutput('EMAIL is ERROR')
@@ -76,14 +76,14 @@ class ApiProviderTest extends TestCase
     }
 
     public function it_dispatches_to_request_process_email_api_job()
-	{ 
+    {
         $this->artisan('check:email email')
             ->expectsOutput('EMAIL is OK')
             ->doesntExpectOutput('EMAIL is ERROR')
             ->assertExitCode(0);
-	}
+    }
 
-    public function test_console_command()
+    public function console_command()
     {
         $this->artisan('check:user 1')->assertExitCode(0);
     }

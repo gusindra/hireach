@@ -2,6 +2,8 @@
 
 namespace Tests\Feature;
 
+use App\Models\Company;
+use App\Models\ProductLine;
 use App\Models\Request;
 use App\Models\SaldoUser;
 use App\Models\User;
@@ -20,19 +22,27 @@ class RequestMessageTest extends TestCase
     {
         $user = User::find(2);
 
+        $company = Company::factory()->create();
+        ProductLine::create([
+            'name' => 'HiReach',
+            'type' => 'for testing',
+            'company_id' => $company->id
+        ]);
+
+
         Request::create([
-            'source_id'         => 'Testing', 
+            'source_id'         => 'Testing',
             'user_id'           => $user->id,
-            'client_id'         => 'CLIENT'.$user->id,
-            'from'              => 'SENDER'.$user->id,
+            'client_id'         => 'CLIENT' . $user->id,
+            'from'              => 'SENDER' . $user->id,
             'type'              => 0,
-            'status'            => 'SUCCESS', 
-            'reply'             => 'Testing', 
+            'status'            => 'SUCCESS',
+            'reply'             => 'Testing',
         ]);
 
         $this->assertDatabaseHas('requests', [
-            'user_id'           => $user->id, 
-        ])->expectsDatabaseQueryCount( 1);
+            'user_id'           => $user->id,
+        ])->expectsDatabaseQueryCount(1);
 
         Request::where('user_id', $user->id)->delete();
     }
@@ -42,9 +52,9 @@ class RequestMessageTest extends TestCase
         $user = User::find(2);
 
         $this->assertDatabaseHas('saldo_users', [
-            'mutation' => 'debit',  
+            'mutation' => 'debit',
             'user_id' => $user->id,
-        ])->expectsDatabaseQueryCount( 1);
+        ])->expectsDatabaseQueryCount(1);
 
         SaldoUser::where('user_id', $user->id)->delete();
     }

@@ -32,8 +32,8 @@ class TopupUser extends Component
     {
         $data = [
             'date'              => date("Y-m-d H:i:s"),
-            'name'              => 'Request Topup from '.Auth::user()->name,
-            'no'                => 'HAPP'.date("YmdHis"),
+            'name'              => 'Request Topup from ' . Auth::user()->name,
+            'no'                => 'HAPP' . date("YmdHis"),
             'type'              => 'selling',
             'entity_party'      => '1',
             'total'             => 0,
@@ -44,7 +44,8 @@ class TopupUser extends Component
         return $data;
     }
 
-    private function chechClient(){
+    private function chechClient()
+    {
         $client = Auth::user();
         try {
             $customer = Client::where('email', $client->email)->where('user_id', 0)->firstOr(function () use ($client) {
@@ -63,7 +64,6 @@ class TopupUser extends Component
             dd($th);
         }
         return $customer->uuid;
-
     }
 
     public function create()
@@ -72,7 +72,7 @@ class TopupUser extends Component
         $this->validate();
         try {
             $order = Order::create($this->dataOrder());
-            if($order){
+            if ($order) {
                 OrderProduct::create([
                     'model'             => 'Order',
                     'model_id'          => $order->id,
@@ -89,15 +89,15 @@ class TopupUser extends Component
                     'qty'               => '1',
                     'unit'              => '1',
                     'name'              => 'Tax',
-                    'price'             => ''.$this->nominal*(11/100),
+                    'price'             => '' . $this->nominal * (11 / 100),
                     'note'              => 'VAT/PPN @ 11%',
                     'user_id'           => 0,
                 ]);
             }
-            
+
             //ProcessEmail::dispatch($order, 'create_order');
-            
-            return redirect()->to('/payment/invoice/'.$order->id);
+
+            return redirect()->to('/payment/invoice/' . $order->id);
         } catch (\Throwable $th) {
             //throw $th;
             dd($th);

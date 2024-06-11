@@ -2,7 +2,7 @@
 
 namespace App\Http\Livewire;
 
-use App\Models\Notification;
+use App\Models\Notice;
 use Livewire\Component;
 use Mediconesystems\LivewireDatatables\Http\Livewire\LivewireDatatable;
 
@@ -15,12 +15,12 @@ class DeleteNotification extends Component
     public function mount($id)
     {
 
-        $this->notification = Notification::withTrashed()->find($id);
+        $this->notification = Notice::withTrashed()->find($id);
     }
 
     public function delete($id)
     {
-        $notification = Notification::findOrFail($id);
+        $notification = Notice::findOrFail($id);
         $notification->delete();
         $notification->update(['status' => 'deleted']);
         $this->emit('LivewireDatatable');

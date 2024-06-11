@@ -117,7 +117,7 @@
                     <x-jet-label for="channel" value="{{ __('channel') }}" />
                     <select name="channel" id="channel"
                         class="border-gray-300 dark:bg-slate-800 dark:text-slate-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 rounded-md shadow-sm mt-1 block w-full"
-                        wire:model.debounce.800ms="channel">
+                        wire:model.debounce.800ms="input.channel">
                         <option selected value="">--Select channel--</option>
                         @foreach ($channels as $channel)
                             <option value="{{ $channel }}">{{ $channel }}</option>

@@ -99,9 +99,9 @@ class Order extends Model
     public function notifications($status = null)
     {
         if (!is_null($status)) {
-            return $this->hasMany('App\Models\Notification', 'model_id')->where('model', 'Order')->where('status', $status);
+            return $this->hasMany('App\Models\Notice', 'model_id')->where('model', 'Order')->where('status', $status);
         }
-        return $this->hasMany('App\Models\Notification', 'model_id')->where('model', 'Order');
+        return $this->hasMany('App\Models\Notice', 'model_id')->where('model', 'Order');
     }
 
     /**
