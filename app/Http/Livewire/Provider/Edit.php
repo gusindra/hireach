@@ -14,6 +14,13 @@ class Edit extends Component
     public $channel;
     public $uuid;
     public $modalDeleteVisible = false;
+
+    /**
+     * mount
+     *
+     * @param  mixed $uuid
+     * @return void
+     */
     public function mount($uuid)
     {
 
@@ -24,6 +31,11 @@ class Edit extends Component
         $this->channel = $this->provider->channel;
     }
 
+    /**
+     * rules
+     *
+     * @return void
+     */
     public function rules()
     {
         return [
@@ -34,6 +46,11 @@ class Edit extends Component
         ];
     }
 
+    /**
+     * modelData
+     *
+     * @return void
+     */
     public function modelData()
     {
         return [
@@ -44,23 +61,35 @@ class Edit extends Component
         ];
     }
 
+
     /**
-     * Update Template
+     * update
      *
+     * @param  mixed $id
      * @return void
      */
     public function update($id)
     {
-        // dd($this->modelData());
         $this->validate();
         Provider::find($id)->update($this->modelData());
         $this->emit('saved');
     }
 
+    /**
+     * actionShowDeleteModal
+     *
+     * @return void
+     */
     public function actionShowDeleteModal()
     {
         $this->modalDeleteVisible = true;
     }
+
+    /**
+     * delete
+     *
+     * @return void
+     */
     public function delete()
     {
         if ($this->provider) {
@@ -71,7 +100,11 @@ class Edit extends Component
     }
 
 
-
+    /**
+     * render
+     *
+     * @return void
+     */
     public function render()
     {
         return view('livewire.provider.edit');
