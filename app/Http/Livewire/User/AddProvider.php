@@ -4,6 +4,7 @@ namespace App\Http\Livewire\User;
 
 use App\Models\Provider;
 use App\Models\ProviderUser;
+use Illuminate\Support\Facades\Cache;
 use Livewire\Component;
 
 class AddProvider extends Component
@@ -102,7 +103,7 @@ class AddProvider extends Component
     public function addProvider()
     {
         $action = ProviderUser::firstOrCreate([
-            'provider_id' => $this->input['provider_id'],
+            'provider_id'   => $this->input['provider_id'],
             'channel'       => strtoupper($this->input['channel']),
             'user_id'       => $this->userId
         ]);
@@ -117,6 +118,8 @@ class AddProvider extends Component
 
         $this->emit('addArrayData', $action->id);
         $this->actionId = null;
+        Cache::forget('provider-user-'.$this->userId);
+
     }
 
     public function dehydrate()
@@ -136,6 +139,7 @@ class AddProvider extends Component
         $userClient = ProviderUser::findOrFail($this->actionId);
         $userClient->delete();
         $this->confirmingActionRemoval = false;
+        Cache::forget('provider-user-'.$this->userId);
 
         $this->dispatchBrowserEvent('event-notification', [
             'eventName' => 'Deleted Page',

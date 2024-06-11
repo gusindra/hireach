@@ -255,28 +255,22 @@ class ProcessWaApi implements ShouldQueue
             $url = 'https://enjoymov.co/prod-api/kstbCore/sms/send';
             $md5_key = env('EM_MD5_KEY', 'A'); //'AFD4274C39AB55D8C8D08FA6E145D535';
             $merchantId = env('EM_MERCHANT_ID', 'A'); //'KSTB904790';
-            $callbackUrl = 'http://hireach.firmapps.ai/receive-sms-status';
-            //$phone = '81339668556';
-            $content = $request['text']; //'test enjoymov api';
-            $msgChannel = env('EM_CODE_LWA', 80); //'WA'; //WA
-            //$countryCode = '62';
+            $callbackUrl = 'http://hireach.firmapps.ai/api/receive-sms-status';
 
+            $content = $request['text'];
+            $msgChannel = env('EM_CODE_LWA', 80);
 
             $code = str_split($request['to'], 2);
             $countryCode = $code[0];
             $phone = substr($request['to'], 2);
 
             $sb = $md5_key . $merchantId . $phone . $content;
-            //$sign = md5($sb);
-            //return $sign;
             $signature = Http::acceptJson()->withUrlParameters([
                 'endpoint' => 'http://8.215.55.87:34080/sign',
                 'sb' => $sb
             ])->get('{+endpoint}?sb={sb}');
             $reSign = json_decode($signature, true);
-            //return $signature['sign'];
-            //Log::debug($sb);
-            //Log::debug($reSign['sign']);
+
             $sign = $reSign['sign'];
 
             $msg = $this->saveResult('progress');
@@ -291,12 +285,11 @@ class ProcessWaApi implements ShouldQueue
                 'msgChannel' => $msgChannel,
                 "msgId" => $msg->id
             ];
-
-            //Log::debug($data);
+            Log::debug($data);
             $response = Http::withBody(json_encode($data), 'application/json')->withOptions([ 'verify' => false, ])->post($url);
-            //Log::debug($response);
             $resData = json_decode($response, true);
-            BlastMessage::find($msg->id)->update(['status'=>$resData['message'], 'code'=>$resData['code']]);
+            Log::debug($resData);
+            BlastMessage::find($msg->id)->update(['status'=>$resData['message'], 'code'=>$resData['code'], 'sender_id'=>'WA_LONG_'.$msgChannel, 'provider'=>4]);
         }catch(\Exception $e){
             Log::debug($e->getMessage());
             $this->saveResult('Reject invalid servid', $this->request['to']);
@@ -305,7 +298,7 @@ class ProcessWaApi implements ShouldQueue
     }
 
     /**
-     * saveResult
+     * This to save result of Job Queue
      *
      * @param  mixed $msg
      * @return object $mms
@@ -330,7 +323,7 @@ class ProcessWaApi implements ShouldQueue
     }
 
     /**
-     * chechClient
+     * This to check and get client, if not found will create new
      *
      * @param  mixed $status
      * @param  mixed $msisdn

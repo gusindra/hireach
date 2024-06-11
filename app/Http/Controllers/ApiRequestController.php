@@ -11,6 +11,12 @@ use Illuminate\Support\Facades\Log;
 
 class ApiRequestController extends Controller
 {
+    /**
+     * API post
+     *
+     * @param  mixed $request
+     * @return void
+     */
     public function post(Request $request)
     {
         return $request->url;
@@ -24,7 +30,7 @@ class ApiRequestController extends Controller
             'title' => 'required|string',
             'detail' => 'string',
         ]);
-        
+
         try{
             Log::debug($request->all());
             //$userCredention = ApiCredential::where("user_id", auth()->user()->id)->where("client", "api_sms_mk")->where("is_enabled", 1)->first();
@@ -42,12 +48,18 @@ class ApiRequestController extends Controller
         ]);
     }
 
+    /**
+     * status
+     *
+     * @param  mixed $request
+     * @return void
+     */
     public function status(Request $request)
     {
         return $request->url;
         Log::debug($request->all());
         ProcessSmsStatus::dispatch($request->all());
-        
+
         // BlastMessage::where("msg_id", $request->msgID)->where("msisdn", $request->msisdn)->first()->update([
         //     'status' => $request->status
         // ]);
@@ -57,13 +69,19 @@ class ApiRequestController extends Controller
             'Status' => 200
         ]);
     }
-    
+
+    /**
+     * logStatus
+     *
+     * @param  mixed $request
+     * @return void
+     */
     public function logStatus(Request $request)
     {
         return $request->url;
         Log::debug($request->all());
         ProcessSmsStatus::dispatch($request->all());
-        
+
         // BlastMessage::where("msg_id", $request->msgID)->where("msisdn", $request->msisdn)->first()->update([
         //     'status' => $request->status
         // ]);
