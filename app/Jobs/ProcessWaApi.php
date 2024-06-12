@@ -252,10 +252,12 @@ class ProcessWaApi implements ShouldQueue
      */
     private function EMProvider($request){
         try{
+            $msg = $this->saveResult('progress');
+
             $url = 'https://enjoymov.co/prod-api/kstbCore/sms/send';
             $md5_key = env('EM_MD5_KEY', 'A'); //'AFD4274C39AB55D8C8D08FA6E145D535';
             $merchantId = env('EM_MERCHANT_ID', 'A'); //'KSTB904790';
-            $callbackUrl = 'http://hireach.firmapps.ai/api/receive-sms-status';
+            $callbackUrl = 'http://hireach.firmapps.ai/api/callback-status/blast/'.$msg->id;
 
             $content = $request['text'];
             $msgChannel = env('EM_CODE_LWA', 80);
@@ -273,7 +275,7 @@ class ProcessWaApi implements ShouldQueue
 
             $sign = $reSign['sign'];
 
-            $msg = $this->saveResult('progress');
+
             $data = [
                 'merchantId' => $merchantId,
                 'sign' => $sign,
@@ -289,7 +291,7 @@ class ProcessWaApi implements ShouldQueue
             $response = Http::withBody(json_encode($data), 'application/json')->withOptions([ 'verify' => false, ])->post($url);
             $resData = json_decode($response, true);
             Log::debug($resData);
-            BlastMessage::find($msg->id)->update(['status'=>$resData['message'], 'code'=>$resData['code'], 'sender_id'=>'WA_LONG_'.$msgChannel, 'provider'=>4]);
+            BlastMessage::find($msg->id)->update(['status'=>$resData['message'], 'code'=>$resData['code'], 'sender_id'=>'WA_LONG', 'type'=>$msgChannel, 'provider'=>4]);
         }catch(\Exception $e){
             Log::debug($e->getMessage());
             $this->saveResult('Reject invalid servid', $this->request['to']);

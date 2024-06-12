@@ -272,7 +272,8 @@ class ProcessSmsApi implements ShouldQueue
             $url = 'https://enjoymov.co/prod-api/kstbCore/sms/send';
             $md5_key = env('EM_MD5_KEY', 'A'); //'AFD4274C39AB55D8C8D08FA6E145D535';
             $merchantId = env('EM_MERCHANT_ID', 'A'); //'KSTB904790';
-            $callbackUrl = 'http://hireach.firmapps.ai/api/receive-sms-status';
+            $callbackUrl = 'http://hireach.firmapps.ai/api/callback-status/blast/'.$msg->id;
+
 
             $content = $request['text'];
             $msgChannel = env('EM_CODE_LSMS', 5);
@@ -307,7 +308,7 @@ class ProcessSmsApi implements ShouldQueue
             $response = Http::withBody(json_encode($data), 'application/json')->withOptions([ 'verify' => false, ])->post($url);
             //Log::debug($response);
             $resData = json_decode($response, true);
-            BlastMessage::find($msg->id)->update(['status'=>$resData['message'], 'code'=>$resData['code'], 'sender_id'=>'SMS_LONG_'.$msgChannel, 'provider'=>4]);
+            BlastMessage::find($msg->id)->update(['status'=>$resData['message'], 'code'=>$resData['code'], 'sender_id'=>'SMS_LONG', 'type'=>$msgChannel, 'provider'=>4]);
         }
     }
 

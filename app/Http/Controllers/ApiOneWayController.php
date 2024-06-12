@@ -246,67 +246,6 @@ class ApiOneWayController extends Controller
     //
     // Function below to testing in Controller
     //
-    /**
-     * This to send Bulk request
-send Bulk sms
-      try{
-            foreach($request->all() as $sms){
-                $checkString = $sms->text;
-                $otpWord = ['Angka Rahasia', 'Authorisation', 'Authorise', 'Authorization', 'Authorized', 'Code', 'Harap masukkan', 'Kata Sandi', 'Kode',' Kode aktivasi', 'konfirmasi', 'otentikasi', 'Otorisasi', 'Rahasia', 'Sandi', 'trx', 'unik', 'Venfikasi', 'KodeOTP', 'NewOtp', 'One-Time Password', 'Otorisasi', 'OTP', 'Pass', 'Passcode', 'PassKey', 'Password', 'PIN', 'verifikasi', 'insert current code', 'Security', 'This code is valid', 'Token', 'Passcode', 'Valid OTP', 'verification','Verification', 'login code', 'registration code', 'secunty code'];
-                if($request->otp == 1){
-                    $request->merge([
-                        'otp' => 1
-                    ]);
-                }elseif(Str::contains($checkString, $otpWord)){
-                    $request->merge([
-                        'otp' => 1
-                    ]);
-                }else{
-                    $request->merge([
-                        'otp' => 0
-                    ]);
-                }
-
-                $phones = explode(",", $sms->to);
-                $balance = (int)balance(auth()->user());
-                if($balance>500 && count($phones)<$balance/520){
-                    if(count($phones)>1){
-                        foreach($phones as $p){
-                            $data = array(
-                                'type' => $sms->type,
-                                'to' => trim($p),
-                                'from' => $sms->from,
-                                'text' => $sms->text,
-                                'servid' => $sms->servid,
-                                'title' => $sms->title,
-                                'otp' => $sms->otp,
-                            );
-                            ProcessSmsApi::dispatch($data, auth()->user());
-                            $totalPhone += 1;
-                        }
-                    }else{
-                        ProcessSmsApi::dispatch($sms, auth()->user());
-                        $totalPhone += 1;
-                    }
-                }else{
-                    return response()->json([
-                        'message' => "Insufficient Balance",
-                        'code' => 405
-                    ]);
-                }
-            }
-        }catch(\Exception $e){
-            return response()->json([
-                'message' => $e->getMessage(),
-                'code' => 400
-            ]);
-        }
-        // show result on progress
-        return response()->json([
-            'message' => "Successful, prepare sending ".count($sms)." text to ".$totalPhone." msisdn.",
-            'code' => 200
-        ]);
-    }
 
     private function sendSMS($request)
     {
