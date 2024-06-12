@@ -6,8 +6,8 @@
     </x-slot>
     <div class="grid grid-cols-12">
         @includeWhen(auth()->user(), 'menu.user-engagement', [])
-        
-        <div class="col-span-12 px-2 ml-24 mt-2"> 
+
+        <div class="col-span-12 px-2 ml-24 mt-2">
             @livewire('contact.profile', ['user' => $user])
         </div>
     </div>

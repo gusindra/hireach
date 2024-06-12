@@ -48,6 +48,7 @@ class AddResource extends Component
      */
     public function mount($uuid, $modal = false)
     {
+
         $user = Auth::user();
         $this->resource = $uuid;
         $this->template = Template::with('question')->where('uuid', $uuid)->first();
@@ -132,6 +133,7 @@ class AddResource extends Component
      */
     public function sendResource()
     {
+
         $this->validate();
         if ($this->selectTo === 'manual') {
             $to = $this->to;
@@ -147,7 +149,7 @@ class AddResource extends Component
                 $to = Client::whereIn('uuid', $clientIds)->pluck('phone')->implode(',');
             }
         }
-
+        $to = $this->to;
         $credential = null;
         $channel = $this->channel;
         $type = $this->type;
@@ -157,6 +159,8 @@ class AddResource extends Component
         $from = $this->from;
         $provider = $this->provider;
         $otp = $this->is_enabled;
+
+
 
         //SET PROVIDER BASE ON THE SETTING OR AUTO SELECT DEFAULT PROVIDER
         $provider = $this->provider = auth()->user()->provider;
@@ -246,6 +250,7 @@ class AddResource extends Component
         if ($this->channel == 'email') {
             //THIS WILL QUEUE EMAIL JOB
             $reqArr = json_encode($data);
+
             ProcessEmailApi::dispatch($data, auth()->user(), $reqArr);
         } elseif (strpos($this->channel, 'sms') !== false) {
             ProcessSmsApi::dispatch($data, auth()->user());

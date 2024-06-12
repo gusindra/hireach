@@ -4,6 +4,7 @@ namespace App\Http\Livewire\Table;
 
 use App\Models\Request;
 use Carbon\Carbon;
+use Mediconesystems\LivewireDatatables\BooleanColumn;
 use Mediconesystems\LivewireDatatables\Http\Livewire\LivewireDatatable;
 use Mediconesystems\LivewireDatatables\Column;
 use Mediconesystems\LivewireDatatables\NumberColumn;
@@ -92,7 +93,7 @@ class OutBoundTable extends LivewireDatatable
             Column::callback(['type'], function ($y) {
                 return view('label.type', ['type' => $y]);
             })->label('Type'),
-            Column::name('created_at')->label('Creation Date'),
+            Column::name('created_at')->label('Creation Date')
         ];
     }
 

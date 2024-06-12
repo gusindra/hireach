@@ -4,7 +4,7 @@ namespace Tests\Feature;
 
 use App\Http\Livewire\DeleteNotification;
 use App\Http\Livewire\Setting\Notification\Add;
-use App\Models\Notification;
+use App\Models\Notice;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
@@ -43,7 +43,7 @@ class NotificationTest extends TestCase
             ])
             ->call('sendAction');
 
-        $this->assertDatabaseHas('notifications', [
+        $this->assertDatabaseHas('notices', [
             'user_id' => $recipient->id,
             'notification' => 'Test message',
         ]);
@@ -52,12 +52,19 @@ class NotificationTest extends TestCase
 
     public function test_it_deletes_the_notification()
     {
-        $notification = Notification::where('notification', 'Test message')->latest()->first();
+        $notification = Notice::create([
+            'type' => 'app',
+            'model_id' => 2,
+            'model' => 'USER',
+            'notification' => 'Test',
+            'user_id' => 1,
+            'status' => 'unread',
+        ]);
         $user = User::find(1);
         Livewire::actingAs($user)->test(DeleteNotification::class, ['id' => $notification->id])
             ->call('delete', $notification->id);
 
-        $this->assertSoftDeleted('notifications', ['id' => $notification->id]);
+        $this->assertSoftDeleted('notices', ['id' => $notification->id]);
         $notification->forceDelete();
     }
 }

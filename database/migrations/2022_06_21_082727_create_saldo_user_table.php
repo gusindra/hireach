@@ -17,6 +17,9 @@ return new class extends Migration
             $table->id();
             $table->foreignId('user_id');
             $table->string('team_id', 50)->nullable();
+            $table->string('model', 50)->nullable();
+            $table->unsignedBigInteger('model_id')->nullable();
+
             $table->enum('mutation', ['debit', 'credit']);
             $table->string('description', 100);
             $table->string('currency')->comment('for amount');

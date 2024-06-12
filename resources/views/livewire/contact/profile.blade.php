@@ -113,15 +113,6 @@
             <!-- Nick -->
             <div class="col-span-6 sm:col-span-3">
                 <div class="col-span-12 sm:col-span-1">
-                    <x-jet-label for="inputuser.note" value="{{ __('Note') }}" />
-                    <x-jet-input id="note" type="text" class="mt-1 block w-full" wire:model="inputuser.note"
-                        wire:model.defer="inputuser.note" wire:model.debunce.800ms="inputuser.note" />
-                    <x-jet-input-error for="inputuser.note" class="mt-2" />
-                </div>
-            </div>
-            <!-- Nick -->
-            <div class="col-span-6 sm:col-span-3">
-                <div class="col-span-12 sm:col-span-1">
                     <x-jet-label for="inputuser.tag" value="{{ __('Tag') }}" />
                     <x-jet-input id="tag" type="text" class="mt-1 block w-full" wire:model="inputuser.tag"
                         wire:model.defer="inputuser.tag" wire:model.debunce.800ms="inputuser.tag" />
@@ -132,12 +123,14 @@
             <div class="col-span-6 sm:col-span-3">
                 <div class="col-span-12 sm:col-span-1">
                     <x-jet-label for="inputuser.source" value="{{ __('Source') }}" />
-                    <x-jet-input id="source" type="text" class="mt-1 block w-full" wire:model="inputuser.source"
-                        wire:model.defer="inputuser.source" wire:model.debunce.800ms="inputuser.source" />
+                    <x-jet-input id="source" type="text" class="mt-1 block w-full"
+                        wire:model="inputuser.source" wire:model.defer="inputuser.source"
+                        wire:model.debunce.800ms="inputuser.source" />
                     <x-jet-input-error for="inputuser.source" class="mt-2" />
                 </div>
             </div>
-            <div class="col-span-6 sm:col-span-3">
+
+            <div class="col-span-6 sm:col-span-6">
                 <div class="col-span-12 sm:col-span-1">
                     <x-jet-label for="inputuser.address" value="{{ __('Address') }}" />
                     <x-jet-input id="address" type="text" class="mt-1 block w-full"
@@ -146,7 +139,15 @@
                     <x-jet-input-error for="inputclient.address" class="mt-2" />
                 </div>
             </div>
-
+            <!-- Nick -->
+            <div class="col-span-6   sm:col-span-6">
+                <div class="col-span-12 sm:col-span-1">
+                    <x-jet-label for="inputuser.note" value="{{ __('Notes') }}" />
+                    <x-jet-input id="note" type="text" class="mt-1 block w-full" wire:model="inputuser.note"
+                        wire:model.defer="inputuser.note" wire:model.debunce.800ms="inputuser.note" />
+                    <x-jet-input-error for="inputuser.note" class="mt-2" />
+                </div>
+            </div>
         </x-slot>
         <x-slot name="actions">
             <x-jet-action-message class="mr-3" on="client_saved">

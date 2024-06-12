@@ -11,12 +11,15 @@ use Illuminate\Support\Facades\Log;
 use App\Jobs\ProcessChatApi;
 use App\Models\ApiCredential;
 use App\Models\Client;
+use App\Models\ProviderUser;
 use App\Models\Request as ModelsRequest;
 use Illuminate\Support\Str;
 use Vinkla\Hashids\Facades\Hashids;
 
 class ApiTwoWayController extends Controller
 {
+    public $cacheDuration = 1440;
+
     /**
      * get all record sms
      *
@@ -98,52 +101,63 @@ class ApiTwoWayController extends Controller
         //]);
         //return $request;
         try{
-            //$userCredention = ApiCredential::where("user_id", auth()->user()->id)->where("client", "api_sms_mk")->where("is_enabled", 1)->first();
-            //Log::channel('apilog')->info($request, [
-            //    'auth' => auth()->user()->name,
-            //]);
-            // ProcessSmsApi::dispatch($request->all(), auth()->user());
-            $credential = '';
-            if($request->channel=='wa'){
-                foreach(auth()->user()->credential as $cre){
-                    if($cre->client=='api_wa_mk'){
-                        $credential = $cre;
+            $provider = cache()->remember('provider-user-', $this->cacheDuration, function() use ($request) {
+                return ProviderUser::where('user_id', auth()->user()->id)->where('channel', $request->channel)->first();
+            });
+
+            if($provider){
+                //$userCredention = ApiCredential::where("user_id", auth()->user()->id)->where("client", "api_sms_mk")->where("is_enabled", 1)->first();
+                //Log::channel('apilog')->info($request, [
+                //    'auth' => auth()->user()->name,
+                //]);
+                // ProcessSmsApi::dispatch($request->all(), auth()->user());
+                $credential = '';
+                if($request->channel=='wa'){
+                    foreach(auth()->user()->credential as $cre){
+                        if($cre->client=='api_wa_mk'){
+                            $credential = $cre;
+                        }
                     }
                 }
-            }
-            //return $credential;
-            
-            if($credential==''){
-                return response()->json([
-                    'message' => 'Invalid Credential',
-                    'code' => 400
-                ]);
-            }
-                
-            //auto check otp / non otp type base on text
-            $checkString = $request->text;
-            $otpWord = ['Angka Rahasia', 'Authorisation', 'Authorise', 'Authorization', 'Authorized', 'Code', 'Harap masukkan', 'Kata Sandi', 'Kode',' Kode aktivasi', 'konfirmasi', 'otentikasi', 'Otorisasi', 'Rahasia', 'Sandi', 'trx', 'unik', 'Venfikasi', 'KodeOTP', 'NewOtp', 'One-Time Password', 'Otorisasi', 'OTP', 'Pass', 'Passcode', 'PassKey', 'Password', 'PIN', 'verifikasi', 'insert current code', 'Security', 'This code is valid', 'Token', 'Passcode', 'Valid OTP', 'verification','Verification', 'login code', 'registration code', 'secunty code'];
-            
-            $allphone = $request->to;
-            $phones = explode(",", $request->to);
-            $balance = (int)balance(auth()->user());
-            if($balance>500 && count($phones)<$balance/1){
-                $data = array(
-                    'type' => $request->type,
-                    'to' => $request->to,
-                    'from' => $request->from,
-                    'text' => $request->text, 
-                    'title' => $request->title,
-                );
-                $chat = $this->saveResult(null, $data);
-                ProcessChatApi::dispatch($request->all(), $credential, $chat);
+                //return $credential;
+
+                if($credential==''){
+                    return response()->json([
+                        'message' => 'Invalid Credential',
+                        'code' => 400
+                    ]);
+                }
+
+                //auto check otp / non otp type base on text
+                $checkString = $request->text;
+                $otpWord = ['Angka Rahasia', 'Authorisation', 'Authorise', 'Authorization', 'Authorized', 'Code', 'Harap masukkan', 'Kata Sandi', 'Kode',' Kode aktivasi', 'konfirmasi', 'otentikasi', 'Otorisasi', 'Rahasia', 'Sandi', 'trx', 'unik', 'Venfikasi', 'KodeOTP', 'NewOtp', 'One-Time Password', 'Otorisasi', 'OTP', 'Pass', 'Passcode', 'PassKey', 'Password', 'PIN', 'verifikasi', 'insert current code', 'Security', 'This code is valid', 'Token', 'Passcode', 'Valid OTP', 'verification','Verification', 'login code', 'registration code', 'secunty code'];
+
+                $allphone = $request->to;
+                $phones = explode(",", $request->to);
+                $balance = (int)balance(auth()->user());
+                if($balance>500 && count($phones)<$balance/1){
+                    $data = array(
+                        'type' => $request->type,
+                        'to' => $request->to,
+                        'from' => $request->from,
+                        'text' => $request->text,
+                        'title' => $request->title,
+                    );
+                    $chat = $this->saveResult(null, $data);
+                    ProcessChatApi::dispatch($request->all(), $credential, $chat);
+                }else{
+                    return response()->json([
+                        'message' => "Insufficient Balance",
+                        'code' => 405
+                    ]);
+                }
+                //$this->sendSMS($request->all());
             }else{
                 return response()->json([
-                    'message' => "Insufficient Balance",
+                    'message' => "Please check your provider or ask Administrator",
                     'code' => 405
                 ]);
             }
-            //$this->sendSMS($request->all());
         }catch(\Exception $e){
             return response()->json([
                 'message' => $e->getMessage(),
@@ -336,14 +350,14 @@ class ApiTwoWayController extends Controller
     }
 
     private function chechClient($status, $request=null){
-        $user_id = auth()->user()->id; 
+        $user_id = auth()->user()->id;
         $client = Client::where('phone', $request['to'])->where('user_id', $user_id)->firstOr(function () use ($request, $user_id) {
             return Client::create([
                 'phone' => $request['to'],
                 'user_id' => $user_id,
                 'uuid' => Str::uuid()
             ]);
-        }); 
+        });
         return $client;
     }
 }

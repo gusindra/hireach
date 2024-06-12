@@ -26,7 +26,8 @@ class InviteTeamMember implements InvitesTeamMembers
      */
     public function invite($user, $team, string $email, string $role = null)
     {
-        if($user->team->role != 'admin' ){
+        dd($user->team);
+        if ($user->team->role != 'admin') {
             Gate::forUser($user)->authorize('addTeamMember', $team);
         }
 
@@ -41,8 +42,6 @@ class InviteTeamMember implements InvitesTeamMembers
 
 
         Mail::to($email)->send(new MailTeamInvitation($invitation));
-
-
     }
 
     /**
@@ -78,8 +77,8 @@ class InviteTeamMember implements InvitesTeamMembers
                 $query->where('team_id', $team->id);
             })],
             'role' => Jetstream::hasRoles()
-                            ? ['required', 'string', new Role]
-                            : null,
+                ? ['required', 'string', new Role]
+                : null,
         ]);
     }
 

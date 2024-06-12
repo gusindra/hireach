@@ -2,7 +2,7 @@
 
 namespace App\Http\Livewire\User;
 
-use App\Models\Notification as ModelsNotification;
+use App\Models\Notice as ModelsNotification;
 use App\Models\SaldoUser;
 use Livewire\Component;
 
@@ -19,14 +19,14 @@ class Balance extends Component
 
         $saldoUser = SaldoUser::where('id', $userId)->first();
 
-        if($saldoUser){
+        if ($saldoUser) {
 
-          $this->saldoUser = $saldoUser;
+            $this->saldoUser = $saldoUser;
 
-          if ($this->saldoUser && $this->saldoUser->balance <= 10000) {
-              //$notificationMessage = 'Balance Alert. Your current balance remaining Rp' . number_format($this->saldoUser->balance);
-              //$this->createNotification($userId, $notificationMessage);
-          }
+            if ($this->saldoUser && $this->saldoUser->balance <= 10000) {
+                //$notificationMessage = 'Balance Alert. Your current balance remaining Rp' . number_format($this->saldoUser->balance);
+                //$this->createNotification($userId, $notificationMessage);
+            }
         }
     }
 

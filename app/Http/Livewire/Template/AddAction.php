@@ -23,6 +23,7 @@ class AddAction extends Component
 
     public function mount($template)
     {
+
         $this->template = $template;
         $this->templateId = $this->template->id;
         $this->type = false;

@@ -103,7 +103,7 @@ class AddProvider extends Component
     {
         $action = ProviderUser::firstOrCreate([
             'provider_id' => $this->input['provider_id'],
-            'channel'       => strtoupper($this->channel),
+            'channel'       => strtoupper($this->input['channel']),
             'user_id'       => $this->userId
         ]);
 
