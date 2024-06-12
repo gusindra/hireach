@@ -255,7 +255,7 @@ class ProcessWaApi implements ShouldQueue
             $url = 'https://enjoymov.co/prod-api/kstbCore/sms/send';
             $md5_key = env('EM_MD5_KEY', 'A'); //'AFD4274C39AB55D8C8D08FA6E145D535';
             $merchantId = env('EM_MERCHANT_ID', 'A'); //'KSTB904790';
-            $callbackUrl = 'http://hireach.firmapps.ai/api/receive-sms-status';
+            $callbackUrl = 'http://hireach.firmapps.ai/api/receive-request-status';
 
             $content = $request['text'];
             $msgChannel = env('EM_CODE_LWA', 80);
