@@ -54,7 +54,7 @@ class SendResourceUserTest extends TestCase
             ->set('from', 'noreply@hireach.archeeshop.com')
             ->set('to', 'imadeardanayatra0251@gmail.com')
             ->set('title', 'Test Email')
-            ->set('type', 0)
+            ->set('type', 'EMAIL')
             ->set('text', 'FROM PHP ARTISAN TEST.')
             ->call('sendResource');
 

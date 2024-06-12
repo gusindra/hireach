@@ -41,53 +41,46 @@ class ProcessEmailApi implements ShouldQueue
      */
     public function handle()
     {
-        // Log::debug($this->data);
+        //Log::debug($this->data);
         //Log::debug($this->log);
         //filter OTP & Non OTP
 
-        if (app()->environment(['local', 'testing'])) {
-            Log::debug("Local environment: Testing email job.");
-            $this->logDummyEmail();
-            $this->saveDummyResult();
-        } elseif (('APP_ENV') == 'production') {
-            if ($this->data['provider'] == 'provider1') {
-                $this->FreeProvider($this->data);
-            } elseif ($this->data['provider'] == 'provider2') {
-                $this->PaidProvider($this->data);
-            }
+        if ($this->data['provider'] == 'provider1') {
+            $this->FreeProvider($this->data);
+        } elseif ($this->data['provider'] == 'provider2') {
+            $this->PaidProvider($this->data);
         }
     }
 
-
-
-    private function logDummyEmail()
+    private function sendEmail($request)
     {
-        Log::debug(json_encode($this->data));
-        if ($this->log) {
-            Log::debug($this->log);
+        if ($request['type'] == "0") {
+            $curl = curl_init();
+            curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
+            curl_setopt($curl, CURLOPT_POST, 1);
+            curl_setopt($curl, CURLOPT_HTTPHEADER, array(
+                "Content-Type: application/json"
+            ));
+            curl_setopt(
+                $curl,
+                CURLOPT_URL,
+                "https://api.smtp2go.com/v3/email/send"
+            );
+            curl_setopt($curl, CURLOPT_POSTFIELDS, json_encode(array(
+                "api_key" => env('SMTP2GO_API_KEY', 'A'), //"api-DC84566695C24F1E81D5B0EAAA0B1F50",
+                "sender" => $request['from'] == '' ? $request['from'] : "noreply@hireach.archeeshop.com",
+                "to" => array(
+                    0 => $request['to']
+                ),
+                "subject" => $request['title'],
+                "html_body" => "<h1>" . $request['text'] . "</h1>",
+                "text_body" => $request['text']
+            )));
+            $result = curl_exec($curl);
+            return $result;
+            //echo $result;
         }
     }
-
-    private function saveDummyResult()
-    {
-        $modelData = [
-            'msg_id'    => Str::uuid(),
-            'user_id'   => $this->user->id,
-            'client_id' => $this->chechClient("200", $this->data['to']),
-            'sender_id' => $this->data['from'],
-            'type'      => $this->data['type'],
-            'otp'       => $this->data['otp'],
-            'status'    => "SUCCESS",
-            'code'      => 200,
-            'message_content'  => $this->data['text'],
-            'currency'  => 'IDR',
-            'price'     => 0,
-            'balance'   => 0,
-            'msisdn'    => $this->data['to'],
-        ];
-        BlastMessage::create($modelData);
-    }
-
     /**
      * FreeProvider
      *
@@ -103,36 +96,22 @@ class ProcessEmailApi implements ShouldQueue
         // }
         if (true) {
             Log::debug('start job sending email');
-
+            // Log::debug($request);
             $response = '';
-            if ($request['type'] == "0") {
-                $curl = curl_init();
-                curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
-                curl_setopt($curl, CURLOPT_POST, 1);
-                curl_setopt($curl, CURLOPT_HTTPHEADER, array(
-                    "Content-Type: application/json"
-                ));
-                curl_setopt(
-                    $curl,
-                    CURLOPT_URL,
-                    "https://api.smtp2go.com/v3/email/send"
-                );
-                curl_setopt($curl, CURLOPT_POSTFIELDS, json_encode(array(
-                    "api_key" => env('SMTP2GO_API_KEY', 'A'), //"api-DC84566695C24F1E81D5B0EAAA0B1F50",
-                    "sender" => $request['from'] == '' ? $request['from'] : "noreply@hireach.archeeshop.com",
-                    "to" => array(
-                        0 => $request['to']
-                    ),
-                    "subject" => $request['title'],
-                    "html_body" => "<h1>" . $request['text'] . "</h1>",
-                    "text_body" => $request['text']
-                )));
-                $result = curl_exec($curl);
-                //echo $result;
-            }
+
             // return $response;
             //Log::debug("MK Res:");
             // check response code
+            if (env('APP_ENV') === 'production') {
+                Log::debug('This PRODUCTION');
+                $result = $this->sendEmail($request);
+            } elseif (in_array(env('APP_ENV'), ['local', 'testing'])) {
+                Log::debug('THIS TESTING');
+                $response = Http::get(url('http://hireach.test/api/dummy-json'))
+                    or Http::get(url('http://127.0.0.1:8000/api/dummy-json'));
+                $result = $response->getBody()->getContents();
+            }
+
             Log::debug($result);
             $response = json_decode($result, true);
             // $response=$result['data']['succeeded'];
@@ -176,31 +155,18 @@ class ProcessEmailApi implements ShouldQueue
         $msg = $this->saveResult('progress');
         if (true) {
             $response = '';
-            if ($request['type'] == "0") {
-                $curl = curl_init();
-                curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
-                curl_setopt($curl, CURLOPT_POST, 1);
-                curl_setopt($curl, CURLOPT_HTTPHEADER, array(
-                    "Content-Type: application/json"
-                ));
-                curl_setopt(
-                    $curl,
-                    CURLOPT_URL,
-                    "https://api.smtp2go.com/v3/email/send"
-                );
-                curl_setopt($curl, CURLOPT_POSTFIELDS, json_encode(array(
-                    "api_key" => "api-DC84566695C24F1E81D5B0EAAA0B1F50",
-                    "sender" => $request['from'] == '' ? $request['from'] : "noreply@hireach.archeeshop.com",
-                    "to" => array(
-                        0 => $request['to']
-                    ),
-                    "subject" => $request['title'],
-                    "html_body" => "<div>" . $request['text'] . "</div>",
-                    "text_body" => $request['text']
-                )));
-                $result = curl_exec($curl);
-                //echo $result;
+
+
+            if (env('APP_ENV') === 'production') {
+                Log::debug('This PRODUCTION');
+                $result = $this->sendEmail($request);
+            } elseif (in_array(env('APP_ENV'), ['local', 'testing'])) {
+                Log::debug('THIS TESTING');
+                $response = Http::get(url('http://hireach.test/api/dummy-json'))
+                    or Http::get(url('http://127.0.0.1:8000/api/dummy-json'));
+                $result = $response;
             }
+
             // return $response;
             //Log::debug("MK Res:");
             //Log::debug($result);
