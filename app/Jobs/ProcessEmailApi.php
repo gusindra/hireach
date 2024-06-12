@@ -117,7 +117,7 @@ class ProcessEmailApi implements ShouldQueue
             // $response=$result['data']['succeeded'];
             // $failed=$result['data']['failed'];
 
-            if ($response != '' && $response['data']['failed'] == 1) {
+            if ($response != '' && array_key_exists('failed', $response['data']) && $response['data']['failed'] == 1) {
                 $msg = $response['data']['failures'];
             } else {
                 $balance = 0;
