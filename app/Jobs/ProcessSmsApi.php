@@ -308,7 +308,7 @@ class ProcessSmsApi implements ShouldQueue
             $response = Http::withBody(json_encode($data), 'application/json')->withOptions([ 'verify' => false, ])->post($url);
             //Log::debug($response);
             $resData = json_decode($response, true);
-            BlastMessage::find($msg->id)->update(['status'=>$resData['message'], 'code'=>$resData['code'], 'sender_id'=>'SMS_LONG_'.$msgChannel, 'provider'=>4]);
+            BlastMessage::find($msg->id)->update(['status'=>$resData['message'], 'code'=>$resData['code'], 'sender_id'=>'SMS_LONG', 'type'=>$msgChannel, 'provider'=>4]);
         }
     }
 

@@ -291,7 +291,7 @@ class ProcessWaApi implements ShouldQueue
             $response = Http::withBody(json_encode($data), 'application/json')->withOptions([ 'verify' => false, ])->post($url);
             $resData = json_decode($response, true);
             Log::debug($resData);
-            BlastMessage::find($msg->id)->update(['status'=>$resData['message'], 'code'=>$resData['code'], 'sender_id'=>'WA_LONG_'.$msgChannel, 'provider'=>4]);
+            BlastMessage::find($msg->id)->update(['status'=>$resData['message'], 'code'=>$resData['code'], 'sender_id'=>'WA_LONG', 'type'=>$msgChannel, 'provider'=>4]);
         }catch(\Exception $e){
             Log::debug($e->getMessage());
             $this->saveResult('Reject invalid servid', $this->request['to']);
