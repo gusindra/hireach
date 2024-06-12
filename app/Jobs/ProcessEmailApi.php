@@ -49,14 +49,16 @@ class ProcessEmailApi implements ShouldQueue
             Log::debug("Local environment: Testing email job.");
             $this->logDummyEmail();
             $this->saveDummyResult();
+        } elseif (('APP_ENV') == 'production') {
+            if ($this->data['provider'] == 'provider1') {
+                $this->FreeProvider($this->data);
+            } elseif ($this->data['provider'] == 'provider2') {
+                $this->PaidProvider($this->data);
+            }
         }
-
-        // if ($this->data['provider'] == 'provider1') {
-        //     $this->FreeProvider($this->data);
-        // } elseif ($this->data['provider'] == 'provider2') {
-        //     $this->PaidProvider($this->data);
-        // }
     }
+
+
 
     private function logDummyEmail()
     {
