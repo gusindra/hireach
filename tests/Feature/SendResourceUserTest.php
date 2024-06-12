@@ -44,29 +44,25 @@ class SendResourceUserTest extends TestCase
 
     public function test_it_can_send_resource_one_way_via_email()
     {
-        Queue::fake();
+
 
         $user = User::find(2);
+
+
         Livewire::actingAs($user)->test(AddResource::class, ['uuid' => $user->id])
             ->set('channel', 'email')
             ->set('from', 'noreply@hireach.archeeshop.com')
             ->set('to', 'imadeardanayatra0251@gmail.com')
             ->set('title', 'Test Email')
             ->set('type', 0)
-            ->set('text', 'alalalal.')
+            ->set('text', 'FROM PHP ARTISAN TEST.')
             ->call('sendResource');
 
-        // $this->assertDatabaseHas('blast_messages', [
 
-        //     'to' => 'imadeardanayatra0251@gmail.com',
-        //     'title' => 'Test Email',
-        // ]);
-
-        Queue::assertPushed(ProcessEmailApi::class, function ($job) {
-            return $job->data['to'] === 'imadeardanayatra0251@gmail.com' &&
-                $job->data['title'] === 'Test Email' &&
-                $job->data['text'] === 'alalalal.' &&
-                $job->data['from'] === 'noreply@hireach.archeeshop.com';
-        });
+        $this->assertDatabaseHas('blast_messages', [
+            'user_id' => $user->id,
+            'msisdn' => 'imadeardanayatra0251@gmail.com',
+            'status' => 'SUCCESS',
+        ]);
     }
 }

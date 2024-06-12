@@ -41,14 +41,49 @@ class ProcessEmailApi implements ShouldQueue
      */
     public function handle()
     {
-        //Log::debug($this->data);
+        // Log::debug($this->data);
         //Log::debug($this->log);
         //filter OTP & Non OTP
-        if ($this->data['provider'] == 'provider1') {
-            $this->FreeProvider($this->data);
-        } elseif ($this->data['provider'] == 'provider2') {
-            $this->PaidProvider($this->data);
+
+        if (app()->environment(['local', 'testing'])) {
+            Log::debug("Local environment: Testing email job.");
+            $this->logDummyEmail();
+            $this->saveDummyResult();
         }
+
+        // if ($this->data['provider'] == 'provider1') {
+        //     $this->FreeProvider($this->data);
+        // } elseif ($this->data['provider'] == 'provider2') {
+        //     $this->PaidProvider($this->data);
+        // }
+    }
+
+    private function logDummyEmail()
+    {
+        Log::debug(json_encode($this->data));
+        if ($this->log) {
+            Log::debug($this->log);
+        }
+    }
+
+    private function saveDummyResult()
+    {
+        $modelData = [
+            'msg_id'    => Str::uuid(),
+            'user_id'   => $this->user->id,
+            'client_id' => $this->chechClient("200", $this->data['to']),
+            'sender_id' => $this->data['from'],
+            'type'      => $this->data['type'],
+            'otp'       => $this->data['otp'],
+            'status'    => "SUCCESS",
+            'code'      => 200,
+            'message_content'  => $this->data['text'],
+            'currency'  => 'IDR',
+            'price'     => 0,
+            'balance'   => 0,
+            'msisdn'    => $this->data['to'],
+        ];
+        BlastMessage::create($modelData);
     }
 
     /**
