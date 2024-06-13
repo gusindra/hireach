@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use App\Models\User;
+use CURLFile;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Http;
 
@@ -37,6 +38,8 @@ class CheckProviderWA extends Command
             $this->enjoymov($request);
         }elseif($this->argument('provider')=='macrokiosk'){
             $this->macrokiosk($request);
+        }elseif($this->argument('provider')=='wetalkid'){
+            $this->wetalkid($request);
         }
     }
 
@@ -150,6 +153,32 @@ class CheckProviderWA extends Command
      * @return void
      */
     private function wetalkid($request){
+        $curl = curl_init();
+
+        curl_setopt_array($curl, array(
+            CURLOPT_URL => 'https://45.118.134.84:6005/api/campaign/create',
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_ENCODING => '',
+            CURLOPT_MAXREDIRS => 10,
+            CURLOPT_TIMEOUT => 0,
+            CURLOPT_FOLLOWLOCATION => true,
+            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+            CURLOPT_CUSTOMREQUEST => 'POST',
+            CURLOPT_POSTFIELDS => array(
+                'campaign_name' => 'Testing API from POSTM',
+                'campaign_text' => 'Hallo dsd asd adas',
+                'campaign_receiver'=> new CURLFile('lIXi7jWIM/template_contact (4).xlsx')
+            ),
+            CURLOPT_HTTPHEADER => array(
+                'Client-Key: MDgzMTUyNDU1NTU1NA==',
+                'Client-Secret: MDgzMTUyNDU1NTU1NHwyMDI0LTA1LTI5IDA4OjMwOjQ1'
+            ),
+        ));
+
+        $response = curl_exec($curl);
+
+        curl_close($curl);
+        echo $response;
 
     }
 }

@@ -53,6 +53,8 @@ use Carbon\Carbon;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -170,9 +172,10 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
      */
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
-    // Route::get('/resources', function () {
-    //     return view('resource.index');
-    // })->name('resources.index');
+    Route::get('/campaign', function () {
+        return view('campaign.index');
+    })->name('campaign.index');
+
     Route::get('/resources', [ResourceController::class, 'index'])->name('resources.index');
     Route::get('/resources/create', [ResourceController::class, 'show'])->name('show.resource');
 
@@ -384,16 +387,18 @@ Route::get('/saveAlarm', [ApiViGuardController::class, 'index']);
 //
 Route::get('/test', [WebhookController::class, 'index']);
 Route::get('/testing', function () {
+    return Storage::download('app/1_client.xlsx');
+    $path = storage_path('app/1_client.xlsx');
     // return 1;
-    $lastError = SaldoUser::find(63);
-    $errors = SaldoUser::where('balance', '<', 0)->where('user_id', '=', 1)->orderBy('id', 'asc')->get();
+    // $lastError = SaldoUser::find(63);
+    // $errors = SaldoUser::where('balance', '<', 0)->where('user_id', '=', 1)->orderBy('id', 'asc')->get();
 
-    foreach ($errors as $er) {
-        $lastError = SaldoUser::find($er->id - 1);
-        SaldoUser::find($er->id)->update([
-            "balance" => $lastError->balance - $er->amount
-        ]);
-    }
+    // foreach ($errors as $er) {
+    //     $lastError = SaldoUser::find($er->id - 1);
+    //     SaldoUser::find($er->id)->update([
+    //         "balance" => $lastError->balance - $er->amount
+    //     ]);
+    // }
 
     return "done";
     // $phoneNo = '6281339668556';

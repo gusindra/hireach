@@ -13,12 +13,11 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('stocks', function (Blueprint $table) {
+        Schema::create('campaign_models', function (Blueprint $table) {
             $table->id();
-            $table->string('type', 50);
-            $table->bigInteger('stock');
-            $table->foreignId('product_id');
-            $table->foreignId('warehouse_id')->nullable();
+            $table->foreignId('campaign_id')->comment('own of table');
+            $table->string('model', 50)->comment('blast_message, request');
+            $table->bigInteger('model_id');
             $table->timestamps();
         });
     }
@@ -30,6 +29,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('stocks');
+        Schema::dropIfExists('campaign_models');
     }
 };

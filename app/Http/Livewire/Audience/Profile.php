@@ -6,7 +6,6 @@ use App\Models\Audience;
 use App\Models\BillingUser;
 use App\Models\Client;
 use App\Models\Team;
-use App\Models\User;
 use Livewire\Component;
 use Illuminate\Support\Str;
 
@@ -17,21 +16,27 @@ class Profile extends Component
     public $inputuser;
     public $inputclient;
 
+    /**
+     * mount
+     *
+     * @param  mixed $user
+     * @return void
+     */
     public function mount($user)
     {
-        //dd($user);
-        // $this->user = Audience::find($user->id);
-
         $this->inputuser['name'] = $this->user->name ?? '';
         $this->inputuser['description'] = $this->user->description ?? '';
-        // dd($this->inputuser);
     }
 
+    /**
+     * saveUser
+     *
+     * @param  mixed $id
+     * @return void
+     */
     public function saveUser($id)
     {
-        // dd($id);
         $user = Audience::find($id);
-        // dd($user);
         $user->update([
             'name'      => $this->inputuser['name'],
             'description'  => $this->inputuser['description'],
@@ -39,6 +44,11 @@ class Profile extends Component
         $this->emit('user_saved');
     }
 
+    /**
+     * saveClient
+     *
+     * @return void
+     */
     public function saveClient()
     {
         if ($this->user->isClient) {
@@ -95,16 +105,6 @@ class Profile extends Component
             }
         }
         $this->emit('client_saved');
-    }
-
-    public function delete()
-    {
-        dd(1);
-    }
-
-    public function deleteUser()
-    {
-        dd(2);
     }
 
     public function render()

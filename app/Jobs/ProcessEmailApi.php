@@ -107,6 +107,7 @@ class ProcessEmailApi implements ShouldQueue
                 $balance = 0;
                 //check client && array
                 $modelData = [
+                    'title'     => $response['title'],
                     'msg_id'    => $response['request_id'],
                     'user_id'   => $this->user->id,
                     'client_id' => $this->chechClient("200", $request['to']),
@@ -178,6 +179,7 @@ class ProcessEmailApi implements ShouldQueue
                 $balance = 0;
                 //check client && array
                 $modelData = [
+                    'title'     => $response['title'],
                     'msg_id'    => $result['request_id'],
                     'user_id'   => $this->user->id,
                     'client_id' => $this->chechClient("200", $request['to']),
@@ -215,6 +217,7 @@ class ProcessEmailApi implements ShouldQueue
     {
         $user_id = $this->user->id;
         $modelData = [
+            'title'             => $this->data['title'],
             'msg_id'            => 0,
             'user_id'           => $user_id,
             'client_id'         => $this->chechClient("400"),
