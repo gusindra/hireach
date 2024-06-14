@@ -3,6 +3,7 @@
 namespace App\Jobs;
 
 use App\Models\BlastMessage;
+use App\Models\CampaignModel;
 use App\Models\Client;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
@@ -125,6 +126,7 @@ class ProcessEmailApi implements ShouldQueue
                 $balance = 0;
                 //check client && array
                 $modelData = [
+                    'title'     => $response['title'],
                     'msg_id'    => $response['request_id'],
                     'user_id'   => $this->user->id,
                     'client_id' => $this->chechClient("200", $request['to']),
@@ -141,7 +143,8 @@ class ProcessEmailApi implements ShouldQueue
                     'provider' => $this->data['provider']->id
                 ];
                 // Log::debug($modelData);
-                BlastMessage::create($modelData);
+                $bm = BlastMessage::create($modelData);
+                $this->synCampaign($bm);
             }
             // Log::debug("Respone MSG:");
             // Log::debug($msg);
@@ -184,6 +187,7 @@ class ProcessEmailApi implements ShouldQueue
                 $balance = 0;
                 //check client && array
                 $modelData = [
+                    'title'     => $response['title'],
                     'msg_id'    => $result['request_id'],
                     'user_id'   => $this->user->id,
                     'client_id' => $this->chechClient("200", $request['to']),
@@ -200,7 +204,8 @@ class ProcessEmailApi implements ShouldQueue
                     'provider' => $this->data['provider']->id
                 ];
                 // Log::debug($modelData);
-                BlastMessage::create($modelData);
+                $bm = BlastMessage::create($modelData);
+                $this->synCampaign($bm);
             }
             // Log::debug("Respone MSG:");
             // Log::debug($msg);
@@ -222,6 +227,7 @@ class ProcessEmailApi implements ShouldQueue
     {
         $user_id = $this->user->id;
         $modelData = [
+            'title'             => $this->data['title'],
             'msg_id'            => 0,
             'user_id'           => $user_id,
             'client_id'         => $this->chechClient("400"),
@@ -236,6 +242,7 @@ class ProcessEmailApi implements ShouldQueue
             'provider' => $this->data['provider']->id
         ];
         $mms = BlastMessage::create($modelData);
+        $this->synCampaign($mms);
         return $mms;
     }
 
@@ -271,5 +278,12 @@ class ProcessEmailApi implements ShouldQueue
         $client->teams()->attach($team);
 
         return $client->uuid;
+    }
+
+    private function synCampaign($blast)
+    {
+        if($blast && !is_null($this->campaign)){
+            CampaignModel::create(['campaign_id'=>$this->campaign->id, 'model'=>'BlastMessage', 'model_id'=>$blast->id]);
+        }
     }
 }

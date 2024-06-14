@@ -57,6 +57,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     //API for 1Way
     Route::get('/one-way',  [ApiOneWayController::class, 'index']);
     Route::post('/one-way',  [ApiOneWayController::class, 'post']);
+    Route::get('/one-way/campaign',  [ApiOneWayController::class, 'show']);
     //API for 2Way
     Route::get('/two-way',  [ApiTwoWayController::class, 'index']);
     Route::post('/two-way',  [ApiTwoWayController::class, 'post']);
@@ -85,6 +86,13 @@ Route::post('/delivery-notification ',  [ApiBulkSmsController::class, 'status'])
 //Route::get('/log-request-status1',  [ApiBulkSmsController::class, 'logStatus']);
 Route::post('/inbound-messages',  [ApiWaController::class, 'retriveNewMessage']);
 
+
+Route::post('/get/saveAlarm', [ApiViGuardController::class, 'index']);
+Route::post('/saveAlarm', [ApiViGuardController::class, 'post']);
+
+//
+// TESTING ROUTE
+//
 Route::get('/sample/message', function (Request $request) {
     if ($request->has('status')) {
         if ($request->status == 'accepted') {

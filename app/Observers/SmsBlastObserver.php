@@ -3,6 +3,7 @@
 namespace App\Observers;
 
 use App\Models\BlastMessage;
+use App\Models\CampaignModel;
 use App\Models\OperatorPhoneNumber;
 use App\Models\OrderProduct;
 use App\Models\ProductLine;
@@ -94,6 +95,8 @@ class SmsBlastObserver
                 $this->addSaldo($request->price, $request, $request->currency);
             }
         }
+
+        //PUSH to Campaign
     }
 
     private function addSaldo($price, $request, $currency = 'idr')

@@ -39,14 +39,12 @@ class Add extends Component
 
     public function create()
     {
-        // dd(1);
         $this->validate();
-        $customer =  Client::create([
+        Client::create([
             'title'     => $this->input['title'],
             'name'      => $this->input['name'],
             'phone'     => $this->input['phone'],
             'email'     => $this->input['email'],
-
             'user_id'   => auth()->user()->id,
             'uuid'      => Str::uuid()
         ]);

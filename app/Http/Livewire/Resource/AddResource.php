@@ -127,7 +127,7 @@ class AddResource extends Component
     }
 
     /**
-     * sendResource
+     * This to send message Resource using panel form
      *
      * @return void
      */

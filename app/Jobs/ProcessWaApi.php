@@ -3,6 +3,7 @@
 namespace App\Jobs;
 
 use App\Models\BlastMessage;
+use App\Models\CampaignModel;
 use App\Models\Client;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
@@ -230,7 +231,9 @@ class ProcessWaApi implements ShouldQueue
                     'msisdn'    => preg_replace('/\s+/', '', $msg_msis[0]),
                 ];
                 // Log::debug($modelData);
-                BlastMessage::create($modelData);
+                $mms = BlastMessage::create($modelData);
+                $this->synCampaign($mms);
+
             } else {
                 Log::debug("failed msis format: ");
                 Log::debug($msg_msis);
@@ -280,6 +283,69 @@ class ProcessWaApi implements ShouldQueue
 
             $sign = $reSign['sign'];
 
+            $data = [
+                'merchantId' => $merchantId,
+                'sign' => $sign,
+                'type' => $request['otp']==1?2:1,
+                'phone' => $phone,
+                'content' => $request['text'],
+                "callbackUrl" => $callbackUrl,
+                'countryCode' => $countryCode,
+                'msgChannel' => $msgChannel,
+                "msgId" => $msg->id
+            ];
+            $environment = config('app.env');
+            if ($environment === 'local' || $environment === 'testing') {
+                Log::debug("THIS LOCAL");
+                Log::debug($resData = Http::get(url('http://hireach.test/api/dummy-array')));
+                $msgChannel = '123TESTING';
+                $response = Http::get(url('http://hireach.test/api/dummy-array'));
+                $resData = $response->json();
+                Log::debug($resData);
+            } else {
+                // Production environment: make the actual API call
+                $response = Http::withBody(json_encode($data), 'application/json')->withOptions(['verify' => false])->post($url);
+                $resData = json_decode($response, true);
+                Log::debug($resData);
+            }
+            $bm = BlastMessage::find($msg->id)->update(['status'=>$resData['message'], 'code'=>$resData['code'], 'sender_id'=>'WA_LONG', 'type'=>$msgChannel, 'provider'=>4]);
+            $this->synCampaign($bm);
+        }else {
+            $this->saveResult('Reject invalid servid');
+        }
+    }
+
+    /**
+     * This function is execure the job WT Provider
+     *
+     * @param  mixed $request
+     * @return void
+     */
+    private function WTProvider($request){
+        $msg = $this->saveResult('progress');
+        if ($msg) {
+            $msg = $this->saveResult('progress');
+
+            $url = 'https://enjoymov.co/prod-api/kstbCore/sms/send';
+            $md5_key = env('EM_MD5_KEY', 'A'); //'AFD4274C39AB55D8C8D08FA6E145D535';
+            $merchantId = env('EM_MERCHANT_ID', 'A'); //'KSTB904790';
+            $callbackUrl = 'http://hireach.firmapps.ai/api/callback-status/blast/'.$msg->id;
+
+            $content = $request['text'];
+            $msgChannel = env('EM_CODE_LWA', 80);
+
+            $code = str_split($request['to'], 2);
+            $countryCode = $code[0];
+            $phone = substr($request['to'], 2);
+
+            $sb = $md5_key . $merchantId . $phone . $content;
+            $signature = Http::acceptJson()->withUrlParameters([
+                'endpoint' => 'http://8.215.55.87:34080/sign',
+                'sb' => $sb
+            ])->get('{+endpoint}?sb={sb}');
+            $reSign = json_decode($signature, true);
+
+            $sign = $reSign['sign'];
 
             $data = [
                 'merchantId' => $merchantId,
@@ -309,8 +375,10 @@ class ProcessWaApi implements ShouldQueue
                 Log::debug($resData);
             }
 
-            BlastMessage::find($msg->id)->update(['status' => $resData['message'], 'code' => $resData['code'], 'sender_id' => 'WA_LONG', 'type' => $msgChannel, 'provider' => $provider = $this->request['provider']->id]);
-        } else {
+            $bm = BlastMessage::find($msg->id)->update(['status' => $resData['message'], 'code' => $resData['code'], 'sender_id' => 'WA_LONG', 'type' => $msgChannel, 'provider' => $provider = $this->request['provider']->id]);
+            $this->synCampaign($bm);
+
+        }else {
             $this->saveResult('Reject invalid servid');
         }
     }
@@ -340,6 +408,7 @@ class ProcessWaApi implements ShouldQueue
             'msisdn'            => $this->request['to'],
         ];
         $mms = BlastMessage::create($modelData);
+        $this->synCampaign($mms);
         return $mms;
     }
 
@@ -364,5 +433,12 @@ class ProcessWaApi implements ShouldQueue
         $client->teams()->attach($team);
 
         return $client->uuid;
+    }
+
+    private function synCampaign($blast)
+    {
+        if($blast && !is_null($this->campaign)){
+            CampaignModel::create(['campaign_id'=>$this->campaign->id, 'model'=>'BlastMessage', 'model_id'=>$blast->id]);
+        }
     }
 }
