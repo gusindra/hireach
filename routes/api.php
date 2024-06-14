@@ -57,7 +57,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     //API for 1Way
     Route::get('/one-way',  [ApiOneWayController::class, 'index']);
     Route::post('/one-way',  [ApiOneWayController::class, 'post']);
-    Route::get('/one-way/campaign',  [ApiOneWayController::class, 'show']); 
+    Route::get('/one-way/campaign',  [ApiOneWayController::class, 'show']);
     //API for 2Way
     Route::get('/two-way',  [ApiTwoWayController::class, 'index']);
     Route::post('/two-way',  [ApiTwoWayController::class, 'post']);
@@ -94,8 +94,8 @@ Route::post('/saveAlarm', [ApiViGuardController::class, 'post']);
 // TESTING ROUTE
 //
 Route::get('/sample/message', function (Request $request) {
-    if($request->has('status')){
-        if($request->status=='accepted'){
+    if ($request->has('status')) {
+        if ($request->status == 'accepted') {
             return response()->json([
                 'message_status' => [
                     'message_id' => '100000000050',
@@ -104,7 +104,7 @@ Route::get('/sample/message', function (Request $request) {
                 ]
             ]);
         }
-        if($request->status=='read'){
+        if ($request->status == 'read') {
             return response()->json([
                 'message_status' => [
                     'message_id' => '100000000050',
@@ -113,7 +113,7 @@ Route::get('/sample/message', function (Request $request) {
                 ]
             ]);
         }
-        if($request->status=='delete'){
+        if ($request->status == 'delete') {
             return response()->json([
                 'message_status' => [
                     'message_id' => '100000000050',
@@ -122,7 +122,7 @@ Route::get('/sample/message', function (Request $request) {
                 ]
             ]);
         }
-        if($request->status=='undelivered'){
+        if ($request->status == 'undelivered') {
             return response()->json([
                 'message_status' => [
                     'message_id' => '100000000050',
@@ -131,7 +131,7 @@ Route::get('/sample/message', function (Request $request) {
                 ]
             ]);
         }
-        if($request->status=='accepted'){
+        if ($request->status == 'accepted') {
             return response()->json([
                 'message_status' => [
                     'message_id' => '100000000050',
@@ -142,44 +142,79 @@ Route::get('/sample/message', function (Request $request) {
         }
     }
     return response()->json([
-                'Msg' => "Failed",
-                'Status' => 400
-            ]);
+        'Msg' => "Failed",
+        'Status' => 400
+    ]);
 });
 
-Route::get('/sent/sample', function(Request $request){
-    if($request->channel){
-        if(false){
+Route::get('/sent/sample', function (Request $request) {
+    if ($request->channel) {
+        if (false) {
             $curl = curl_init();
             curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
             curl_setopt($curl, CURLOPT_POST, 1);
             curl_setopt($curl, CURLOPT_HTTPHEADER, array(
-              "Content-Type: application/json"
+                "Content-Type: application/json"
             ));
-            curl_setopt($curl, CURLOPT_URL,
-              "https://api.smtp2go.com/v3/email/send"
+            curl_setopt(
+                $curl,
+                CURLOPT_URL,
+                "https://api.smtp2go.com/v3/email/send"
             );
             curl_setopt($curl, CURLOPT_POSTFIELDS, json_encode(array(
-              "api_key" => "api-DC84566695C24F1E81D5B0EAAA0B1F50",
-              "sender" => "norply@hireach.archeeshop.com",
-              "to" => array(
-                0 => "saritune@gmail.com"
-              ),
-              "subject" => "testing api email hi",
-              "html_body" => "<h1>hello this is testing number 2 from sandbox hireach</h1>",
-              "text_body" => "hello this is testing number 2 from sandbox hireach"
+                "api_key" => "api-DC84566695C24F1E81D5B0EAAA0B1F50",
+                "sender" => "norply@hireach.archeeshop.com",
+                "to" => array(
+                    0 => "saritune@gmail.com"
+                ),
+                "subject" => "testing api email hi",
+                "html_body" => "<h1>hello this is testing number 2 from sandbox hireach</h1>",
+                "text_body" => "hello this is testing number 2 from sandbox hireach"
             )));
             $result = curl_exec($curl);
             echo $result;
-        }else{
-            Mail::raw('Text to e-mail', function($message)
-            {
+        } else {
+            Mail::raw('Text to e-mail', function ($message) {
                 $message->from('saritune@gmail.com', 'Laravel');
                 $message->to('gusin44@yahoo.com');
             });
         }
-        return 'success sending '.$request->channel;
-    }else{
-        return 'comming soon we add '.$request->channel;
+        return 'success sending ' . $request->channel;
+    } else {
+        return 'comming soon we add ' . $request->channel;
     }
+});
+
+
+Route::post('/get/saveAlarm', [ApiViGuardController::class, 'index']);
+Route::post('/saveAlarm', [ApiViGuardController::class, 'post']);
+
+
+Route::get('/dummy-json', function () {
+    return response()->json([
+        "request_id" => "75cfd9e2-12a0-11ef-b9d5-f23c9216ceac",
+        "data" => [
+            "succeeded" => 1,
+            "failed" => 0,
+            "failures" => [],
+            "email_id" => "1s7BGm-4o5NDgrqRFC-t8WB"
+        ]
+    ]);
+});
+
+
+Route::get("/dummy-array", function () {
+    $resData = [
+        'code' => 200,
+        'message' => 'Success',
+        'data' => true,
+    ];
+
+    return response()->json($resData);
+});
+
+
+Route::get("/dummy-string", function () {
+
+    return '6281339668556,118888000,200,IDR,350|6281999222185,118888001,200,IDR,350';
 });

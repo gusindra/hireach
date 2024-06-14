@@ -21,17 +21,19 @@ class ProcessEmailApi implements ShouldQueue
     public $data;
     public $user;
     public $log;
+    public $campaign;
 
     /**
      * Create a new job instance.
      *
      * @return void
      */
-    public function __construct($request, $user, $log = null)
+    public function __construct($request, $user, $log = null, $campaign = null)
     {
         $this->data = $request;
         $this->user = $user;
         $this->log = $log;
+        $this->campaign = $campaign;
     }
 
     /**
@@ -41,16 +43,46 @@ class ProcessEmailApi implements ShouldQueue
      */
     public function handle()
     {
-        //Log::debug($this->data);
-        //Log::debug($this->log);
+        // Log::debug($this->data);
+        // Log::debug($this->user);
         //filter OTP & Non OTP
-        if ($this->data['provider'] == 'provider1') {
+        $provider = $this->data['provider'];
+        if ($provider->code == 'provider1') {
             $this->FreeProvider($this->data);
-        } elseif ($this->data['provider'] == 'provider2') {
+        } elseif ($provider->code == 'provider2') {
             $this->PaidProvider($this->data);
         }
     }
 
+    private function sendEmail($request)
+    {
+        if ($request['type'] == "0") {
+            $curl = curl_init();
+            curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
+            curl_setopt($curl, CURLOPT_POST, 1);
+            curl_setopt($curl, CURLOPT_HTTPHEADER, array(
+                "Content-Type: application/json"
+            ));
+            curl_setopt(
+                $curl,
+                CURLOPT_URL,
+                "https://api.smtp2go.com/v3/email/send"
+            );
+            curl_setopt($curl, CURLOPT_POSTFIELDS, json_encode(array(
+                "api_key" => env('SMTP2GO_API_KEY', 'A'), //"api-DC84566695C24F1E81D5B0EAAA0B1F50",
+                "sender" => $request['from'] == '' ? $request['from'] : "noreply@hireach.archeeshop.com",
+                "to" => array(
+                    0 => $request['to']
+                ),
+                "subject" => $request['title'],
+                "html_body" => "<h1>" . $request['text'] . "</h1>",
+                "text_body" => $request['text']
+            )));
+            $result = curl_exec($curl);
+            return $result;
+            //echo $result;
+        }
+    }
     /**
      * FreeProvider
      *
@@ -66,42 +98,28 @@ class ProcessEmailApi implements ShouldQueue
         // }
         if (true) {
             Log::debug('start job sending email');
-
+            // Log::debug($request);
             $response = '';
-            if ($request['type'] == "0") {
-                $curl = curl_init();
-                curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
-                curl_setopt($curl, CURLOPT_POST, 1);
-                curl_setopt($curl, CURLOPT_HTTPHEADER, array(
-                    "Content-Type: application/json"
-                ));
-                curl_setopt(
-                    $curl,
-                    CURLOPT_URL,
-                    "https://api.smtp2go.com/v3/email/send"
-                );
-                curl_setopt($curl, CURLOPT_POSTFIELDS, json_encode(array(
-                    "api_key" => env('SMTP2GO_API_KEY', 'A'), //"api-DC84566695C24F1E81D5B0EAAA0B1F50",
-                    "sender" => $request['from'] == '' ? $request['from'] : "noreply@hireach.archeeshop.com",
-                    "to" => array(
-                        0 => $request['to']
-                    ),
-                    "subject" => $request['title'],
-                    "html_body" => "<h1>" . $request['text'] . "</h1>",
-                    "text_body" => $request['text']
-                )));
-                $result = curl_exec($curl);
-                //echo $result;
-            }
+
             // return $response;
             //Log::debug("MK Res:");
             // check response code
+            if (env('APP_ENV') === 'production') {
+                $result = $this->sendEmail($request);
+            } elseif (in_array(env('APP_ENV'), ['local', 'testing'])) {
+
+                $response = Http::get(url('http://hireach.test/api/dummy-json'))
+                    or Http::get(url('http://127.0.0.1:8000/api/dummy-json'));
+                $result = $response->getBody()->getContents();
+            }
+
             Log::debug($result);
             $response = json_decode($result, true);
+            // Log::debug($response);
             // $response=$result['data']['succeeded'];
             // $failed=$result['data']['failed'];
 
-            if ($response != '' && $response['data']['failed'] == 1) {
+            if ($response != '' && array_key_exists('failed', $response['data']) && $response['data']['failed'] == 1) {
                 $msg = $response['data']['failures'];
             } else {
                 $balance = 0;
@@ -121,12 +139,13 @@ class ProcessEmailApi implements ShouldQueue
                     'price'     => 0,
                     'balance'   => $balance,
                     'msisdn'    => $request['to'],
+                    'provider' => $this->data['provider']->id
                 ];
                 // Log::debug($modelData);
                 BlastMessage::create($modelData);
             }
-            Log::debug("Respone MSG:");
-            Log::debug($msg);
+            // Log::debug("Respone MSG:");
+            // Log::debug($msg);
             if ($msg != '') {
                 $this->saveResult($msg);
             }
@@ -140,31 +159,18 @@ class ProcessEmailApi implements ShouldQueue
         $msg = $this->saveResult('progress');
         if (true) {
             $response = '';
-            if ($request['type'] == "0") {
-                $curl = curl_init();
-                curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
-                curl_setopt($curl, CURLOPT_POST, 1);
-                curl_setopt($curl, CURLOPT_HTTPHEADER, array(
-                    "Content-Type: application/json"
-                ));
-                curl_setopt(
-                    $curl,
-                    CURLOPT_URL,
-                    "https://api.smtp2go.com/v3/email/send"
-                );
-                curl_setopt($curl, CURLOPT_POSTFIELDS, json_encode(array(
-                    "api_key" => "api-DC84566695C24F1E81D5B0EAAA0B1F50",
-                    "sender" => $request['from'] == '' ? $request['from'] : "noreply@hireach.archeeshop.com",
-                    "to" => array(
-                        0 => $request['to']
-                    ),
-                    "subject" => $request['title'],
-                    "html_body" => "<div>" . $request['text'] . "</div>",
-                    "text_body" => $request['text']
-                )));
-                $result = curl_exec($curl);
-                //echo $result;
+
+
+            if (env('APP_ENV') === 'production') {
+
+                $result = $this->sendEmail($request);
+            } elseif (in_array(env('APP_ENV'), ['local', 'testing'])) {
+
+                $response = Http::get(url('http://hireach.test/api/dummy-json'))
+                    or Http::get(url('http://127.0.0.1:8000/api/dummy-json'));
+                $result = $response;
             }
+
             // return $response;
             //Log::debug("MK Res:");
             //Log::debug($result);
@@ -193,12 +199,13 @@ class ProcessEmailApi implements ShouldQueue
                     'price'     => 0,
                     'balance'   => $balance,
                     'msisdn'    => $request['to'],
+                    'provider' => $this->data['provider']->id
                 ];
                 // Log::debug($modelData);
                 BlastMessage::create($modelData);
             }
-            Log::debug("Respone MSG:");
-            Log::debug($msg);
+            // Log::debug("Respone MSG:");
+            // Log::debug($msg);
             if ($msg != '') {
                 $this->saveResult($msg);
             }
@@ -229,6 +236,7 @@ class ProcessEmailApi implements ShouldQueue
             'price'             => 0,
             'balance'           => 0,
             'msisdn'            => $this->data['to'],
+            'provider' => $this->data['provider']->id
         ];
         $mms = BlastMessage::create($modelData);
         return $mms;
