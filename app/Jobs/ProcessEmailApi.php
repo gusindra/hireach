@@ -41,13 +41,13 @@ class ProcessEmailApi implements ShouldQueue
      */
     public function handle()
     {
-        //Log::debug($this->data);
-        //Log::debug($this->log);
+        // Log::debug($this->data);
+        // Log::debug($this->user);
         //filter OTP & Non OTP
-
-        if ($this->data['provider'] == 'provider1') {
+        $provider = $this->data['provider'];
+        if ($provider->code == 'provider1') {
             $this->FreeProvider($this->data);
-        } elseif ($this->data['provider'] == 'provider2') {
+        } elseif ($provider->code == 'provider2') {
             $this->PaidProvider($this->data);
         }
     }
@@ -103,10 +103,10 @@ class ProcessEmailApi implements ShouldQueue
             //Log::debug("MK Res:");
             // check response code
             if (env('APP_ENV') === 'production') {
-                Log::debug('This PRODUCTION');
+
                 $result = $this->sendEmail($request);
             } elseif (in_array(env('APP_ENV'), ['local', 'testing'])) {
-                Log::debug('THIS TESTING');
+
                 $response = Http::get(url('http://hireach.test/api/dummy-json'))
                     or Http::get(url('http://127.0.0.1:8000/api/dummy-json'));
                 $result = $response->getBody()->getContents();
@@ -114,6 +114,7 @@ class ProcessEmailApi implements ShouldQueue
 
             Log::debug($result);
             $response = json_decode($result, true);
+            // Log::debug($response);
             // $response=$result['data']['succeeded'];
             // $failed=$result['data']['failed'];
 
@@ -136,12 +137,13 @@ class ProcessEmailApi implements ShouldQueue
                     'price'     => 0,
                     'balance'   => $balance,
                     'msisdn'    => $request['to'],
+                    'provider' => $this->data['provider']->id
                 ];
                 // Log::debug($modelData);
                 BlastMessage::create($modelData);
             }
-            Log::debug("Respone MSG:");
-            Log::debug($msg);
+            // Log::debug("Respone MSG:");
+            // Log::debug($msg);
             if ($msg != '') {
                 $this->saveResult($msg);
             }
@@ -158,10 +160,10 @@ class ProcessEmailApi implements ShouldQueue
 
 
             if (env('APP_ENV') === 'production') {
-                Log::debug('This PRODUCTION');
+
                 $result = $this->sendEmail($request);
             } elseif (in_array(env('APP_ENV'), ['local', 'testing'])) {
-                Log::debug('THIS TESTING');
+
                 $response = Http::get(url('http://hireach.test/api/dummy-json'))
                     or Http::get(url('http://127.0.0.1:8000/api/dummy-json'));
                 $result = $response;
@@ -194,12 +196,13 @@ class ProcessEmailApi implements ShouldQueue
                     'price'     => 0,
                     'balance'   => $balance,
                     'msisdn'    => $request['to'],
+                    'provider' => $this->data['provider']->id
                 ];
                 // Log::debug($modelData);
                 BlastMessage::create($modelData);
             }
-            Log::debug("Respone MSG:");
-            Log::debug($msg);
+            // Log::debug("Respone MSG:");
+            // Log::debug($msg);
             if ($msg != '') {
                 $this->saveResult($msg);
             }
@@ -229,6 +232,7 @@ class ProcessEmailApi implements ShouldQueue
             'price'             => 0,
             'balance'           => 0,
             'msisdn'            => $this->data['to'],
+            'provider' => $this->data['provider']->id
         ];
         $mms = BlastMessage::create($modelData);
         return $mms;

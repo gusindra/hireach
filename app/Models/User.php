@@ -283,4 +283,11 @@ class User extends Authenticatable
     {
         return $this->hasMany('App\Models\ApiCredential', 'user_id');
     }
+
+
+
+    public function providerUser()
+    {
+        return $this->hasMany('App\Models\ProviderUser', 'user_id');
+    }
 }

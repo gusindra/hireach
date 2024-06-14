@@ -39,11 +39,13 @@ class ProcessSmsApi implements ShouldQueue
      */
     public function handle()
     {
-        //Log::debug($this->service);
+        // Log::debug($this->request);
         //filter OTP & Non OTP
-        if($this->request['provider']=='provider1' || $this->request['otp']){
+        $provider = $this->request['provider'];
+        if ($provider->code == 'provider1' || $this->request['otp']) {
+
             $this->MKProvider($this->request);
-        }elseif($this->request['provider']=='provider2'){
+        } elseif ($provider->code == 'provider2') {
             $this->EMProvider($this->request);
         }
     }
@@ -54,26 +56,27 @@ class ProcessSmsApi implements ShouldQueue
      * @param  mixed $request
      * @return void
      */
-    private function MKProvider($request){
-        if($request['otp']==false){
+    private function MKProvider($request)
+    {
+        if ($request['otp'] == false) {
             $user   = env('MK_NON_OTP_USER');
             $pass   = env('MK_NON_OTP_PSW');
             $serve  = env('MK_NON_OTP_SERVICE');
-        }else{
+        } else {
             $user   = env('MK_OTP_USER');
             $pass   = env('MK_OTP_PSW');
             $serve  = env('MK_OTP_SERVICE');
         }
         $msg    = '';
-        if(array_key_exists('servid', $request)){
+        if (array_key_exists('servid', $request)) {
             $serve  = $request['servid'];
         }
-        try{
+        try {
             $url = 'http://www.etracker.cc/bulksms/mesapi.aspx';
             //$url = 'http://telixcel.com/api/send/smsbulk';
             //$url = 'http://telixnet.test/api/send/smsbulk';
             $response = '';
-            if($request['type']=="0"){
+            if ($request['type'] == "0") {
                 // $response = Http::asForm()->accept('application/xml')->post($url, [
                 //     'user' => $user,
                 //     'pass' => $pass,
@@ -86,17 +89,28 @@ class ProcessSmsApi implements ShouldQueue
                 //     'detail' => 1,
                 // ]);
                 // accept('application/json')->
-                $response = Http::get($url, [
-                    'user' => $user,
-                    'pass' => $pass,
-                    'type' => $request['type'],
-                    'to' => $request['to'],
-                    'from' => $request['from'],
-                    'text' => $request['text'],
-                    'servid' => $serve,
-                    'title' => $request['title'],
-                    'detail' => 1,
-                ]);
+
+
+                $environment = config('app.env');
+                if ($environment === 'local' || $environment === 'testing') {
+                    Log::debug('masuk ke lokal');
+
+                    $response = Http::get(url('http://hireach.test/api/dummy-string'));
+                } else {
+                    $response = Http::get($url, [
+                        'user' => $user,
+                        'pass' => $pass,
+                        'type' => $request['type'],
+                        'to' => $request['to'],
+                        'from' => $request['from'],
+                        'text' => $request['text'],
+                        'servid' => $serve,
+                        'title' => $request['title'],
+                        'detail' => 1,
+                        'provider' => $this->request['provider']->id
+                    ]);
+                }
+
                 // $response = Http::get($url, [
                 //     'user' => $user,
                 //     'pass' => $pass,
@@ -110,62 +124,62 @@ class ProcessSmsApi implements ShouldQueue
                 // ]);
             }
             // return $response;
-            Log::debug("MK Res:");
-            Log::debug($response);
+            // Log::debug("MK Res:");
+            // Log::debug($response);
             // check response code
-            if($response=='400'){
+            if ($response == '400') {
                 $msg = "Missing parameter or invalid field type";
-            }elseif($response=='401'){
+            } elseif ($response == '401') {
                 $msg = "Invalid username, password or ServID";
-            }elseif($response=='402'){
+            } elseif ($response == '402') {
                 $msg = "Invalid Account Type (when call using postpaid client’s account)";
-            }elseif($response=='403'){
+            } elseif ($response == '403') {
                 $msg = "Invalid Account, Your IP address is not allowed";
-            }elseif($response=='404'){
+            } elseif ($response == '404') {
                 $msg = "Invalid Account, Value for parameter “From” is too long";
-            }elseif($response=='405'){
+            } elseif ($response == '405') {
                 $msg = "Invalid Parameter, Value for parameter “Type” is not within the options";
-            }elseif($response=='406'){
+            } elseif ($response == '406') {
                 $msg = "Invalid Parameter, MSISDN given is either too long or too short";
-            }elseif($response=='408'){
+            } elseif ($response == '408') {
                 $msg = "System Error, Message Queue path retrieval failed";
-            }elseif($response=='409'){
+            } elseif ($response == '409') {
                 $msg = "System Error, Unable to send message";
-            }elseif($response=='411'){
+            } elseif ($response == '411') {
                 $msg = "Blacklisted, Recipient has Opted-Out from receive bulk promo message";
-            }elseif($response=='412'){
+            } elseif ($response == '412') {
                 $msg = "Invalid Account, Account suspended/terminated.";
-            }elseif($response=='413'){
+            } elseif ($response == '413') {
                 $msg = "Invalid Broadcast Time";
-            }elseif($response=='414'){
+            } elseif ($response == '414') {
                 $msg = "Invalid Account, nactive Account.";
-            }elseif($response=='415'){
+            } elseif ($response == '415') {
                 $msg = "Invalid Account, You not subscribe to Bulk SMS service";
-            }elseif($response=='416'){
+            } elseif ($response == '416') {
                 $msg = "Invalid Account, You not subscribe to this coverage";
-            }elseif($response=='417'){
+            } elseif ($response == '417') {
                 $msg = "Invalid Account, No route has been configured for this coverage";
-            }elseif($response=='418'){
+            } elseif ($response == '418') {
                 $msg = "Invalid Account, There is no available route for this broadcast";
-            }elseif($response=='419'){
+            } elseif ($response == '419') {
                 $msg = "Invalid Account, The Service ID is invalid";
-            }elseif($response=='420'){
+            } elseif ($response == '420') {
                 $msg = "System Error, System is unable to process the text message";
-            }elseif($response=='421'){
+            } elseif ($response == '421') {
                 $msg = "System Error, No coverage price has been set for this broadcast";
-            }elseif($response=='422'){
+            } elseif ($response == '422') {
                 $msg = "Invalid Account, No wallet.";
-            }elseif($response=='423'){
+            } elseif ($response == '423') {
                 $msg = "Invalid Account, Insufficient credit in wallet.";
-            }elseif($response=='424'){
+            } elseif ($response == '424') {
                 $msg = "Invalid Account, You not subscribe to this coverage";
-            }elseif($response=='425'){
+            } elseif ($response == '425') {
                 $msg = "System Error, No setting configuration for this route";
-            }elseif($response=='427'){
+            } elseif ($response == '427') {
                 $msg = "Invalid Broadcast Title";
-            }elseif($response=='500'){
+            } elseif ($response == '500') {
                 $msg = "System Error";
-            }else{
+            } else {
                 // if (isJSON($response)) {
                 //     // JSON is valid
                 //     $array_res = json_decode(json_encode(simplexml_load_string($response->getBody()->getContents())), true);
@@ -174,53 +188,53 @@ class ProcessSmsApi implements ShouldQueue
                 // }
 
                 $array_res = [];
-                $res = explode ("|", $response);
+                $res = explode("|", $response);
                 $balance = 0;
-                if(count($res)>0 && strpos($response, '=') !== false){
-                    foreach($res as $k1 => $data){
-                        $data_res = explode (",", $data);
-                        foreach($data_res as $k2 => $data){
-                            if(count($res)==$k1+1){
+                if (count($res) > 0 && strpos($response, '=') !== false) {
+                    foreach ($res as $k1 => $data) {
+                        $data_res = explode(",", $data);
+                        foreach ($data_res as $k2 => $data) {
+                            if (count($res) == $k1 + 1) {
                                 $balance = $data;
-                            }else{
+                            } else {
                                 $array_res[$k1][$k2] = $data;
                             }
                         }
                     }
-                }else{
-                    foreach($res as $k1 => $data){
+                } else {
+                    foreach ($res as $k1 => $data) {
                         $data_res = explode(",", $data);
-                        foreach($data_res as $k2 => $singleData){
+                        foreach ($data_res as $k2 => $singleData) {
                             $array_res[$k1][$k2] = $singleData;
                         }
                     }
                 }
 
                 //foreach ($array_res as $msg_msis){
-                    //check client
-                    // if(is_array($msg_msis)){
-                    //     $modelData = [
-                    //         'msg_id'    => preg_replace('/\s+/', '', $msg_msis[1]),
-                    //         'user_id'   => $this->user->id,
-                    //         'client_id' => $this->chechClient("200", $msg_msis[0]),
-                    //         'sender_id' => $request['from'],
-                    //         'type'      => $request['type'],
-                    //         'otp'       => $request['otp'],
-                    //         'status'    => "PROCESSED",
-                    //         'code'      => $msg_msis[2],
-                    //         'message_content'  => $request['text'],
-                    //         'currency'  => $msg_msis[3],
-                    //         'price'     => $msg_msis[4],
-                    //         'balance'   => $balance,
-                    //         'msisdn'    => preg_replace('/\s+/', '', $msg_msis[0]),
-                    //     ];
-                    //     // Log::debug($modelData);
-                    //     BlastMessage::create($modelData);
-                    // }
-                foreach ($array_res as $msg_msis){
+                //check client
+                // if(is_array($msg_msis)){
+                //     $modelData = [
+                //         'msg_id'    => preg_replace('/\s+/', '', $msg_msis[1]),
+                //         'user_id'   => $this->user->id,
+                //         'client_id' => $this->chechClient("200", $msg_msis[0]),
+                //         'sender_id' => $request['from'],
+                //         'type'      => $request['type'],
+                //         'otp'       => $request['otp'],
+                //         'status'    => "PROCESSED",
+                //         'code'      => $msg_msis[2],
+                //         'message_content'  => $request['text'],
+                //         'currency'  => $msg_msis[3],
+                //         'price'     => $msg_msis[4],
+                //         'balance'   => $balance,
+                //         'msisdn'    => preg_replace('/\s+/', '', $msg_msis[0]),
+                //     ];
+                //     // Log::debug($modelData);
+                //     BlastMessage::create($modelData);
+                // }
+                foreach ($array_res as $msg_msis) {
                     //check client && array
-                    if(is_array($msg_msis)){
-                        if (array_key_exists("1",$msg_msis) && array_key_exists("0",$msg_msis) && array_key_exists("2",$msg_msis) && array_key_exists("3",$msg_msis) && array_key_exists("4",$msg_msis)){
+                    if (is_array($msg_msis)) {
+                        if (array_key_exists("1", $msg_msis) && array_key_exists("0", $msg_msis) && array_key_exists("2", $msg_msis) && array_key_exists("3", $msg_msis) && array_key_exists("4", $msg_msis)) {
                             $modelData = [
                                 'msg_id'    => preg_replace('/\s+/', '', $msg_msis[1]),
                                 'user_id'   => $this->user->id,
@@ -228,6 +242,7 @@ class ProcessSmsApi implements ShouldQueue
                                 'sender_id' => $request['from'],
                                 'type'      => $request['type'],
                                 'otp'       => $request['otp'],
+                                'provider' => $request['provider']->id,
                                 'status'    => "PROCESSED",
                                 'code'      => $msg_msis[2],
                                 'message_content'  => $request['text'],
@@ -238,7 +253,7 @@ class ProcessSmsApi implements ShouldQueue
                             ];
                             // Log::debug($modelData);
                             BlastMessage::create($modelData);
-                        }else{
+                        } else {
                             Log::debug("failed msis format: ");
                             Log::debug($msg_msis);
                         }
@@ -247,10 +262,10 @@ class ProcessSmsApi implements ShouldQueue
             }
             Log::debug("Respone MSG:");
             Log::debug($msg);
-            if($msg!=''){
+            if ($msg != '') {
                 $this->saveResult($msg);
             }
-        }catch(\Exception $e){
+        } catch (\Exception $e) {
             Log::debug($e->getMessage());
             $this->saveResult('Reject invalid servid');
             Log::debug('Reject invalid servid');
@@ -266,48 +281,62 @@ class ProcessSmsApi implements ShouldQueue
      * @param  mixed $request
      * @return void
      */
-    private function EMProvider($request){
+    private function EMProvider($request)
+    {
         $msg = $this->saveResult('progress');
-        if($msg){
-            $url = 'https://enjoymov.co/prod-api/kstbCore/sms/send';
-            $md5_key = env('EM_MD5_KEY', 'A'); //'AFD4274C39AB55D8C8D08FA6E145D535';
-            $merchantId = env('EM_MERCHANT_ID', 'A'); //'KSTB904790';
-            $callbackUrl = 'http://hireach.firmapps.ai/api/receive-sms-status';
+        if ($msg) {
 
-            $content = $request['text'];
-            $msgChannel = env('EM_CODE_LSMS', 5);
+            $environment = config('app.env');
+            if ($environment === 'local' || $environment === 'testing') {
+                Log::debug("masuk ke Testing ENV");
+                $msgChannel = 99;
+                Log::debug($resData = Http::get(url('http://hireach.test/api/dummy-array')));
+                $response = Http::get(url('http://hireach.test/api/dummy-array'));
+            } else {
+                $url = 'https://enjoymov.co/prod-api/kstbCore/sms/send';
+                $md5_key = env('EM_MD5_KEY', 'A'); //'AFD4274C39AB55D8C8D08FA6E145D535';
+                $merchantId = env('EM_MERCHANT_ID', 'A'); //'KSTB904790';
+                $callbackUrl = 'http://hireach.firmapps.ai/api/receive-sms-status';
 
-            $code = str_split($request['to'], 2);
-            $countryCode = $code[0];
-            $phone = substr($request['to'], 2);
+                $content = $request['text'];
+                $msgChannel = env('EM_CODE_LSMS', 5);
 
-            $sb = $md5_key . $merchantId . $phone . $content;
-            $signature = Http::acceptJson()->withUrlParameters([
-                'endpoint' => 'http://8.215.55.87:34080/sign',
-                'sb' => $sb
-            ])->get('{+endpoint}?sb={sb}');
-            $reSign = json_decode($signature, true);
-            //return $signature['sign'];
-            //Log::debug($sb);
-            //Log::debug($reSign['sign']);
-            $sign = $reSign['sign'];
+                $code = str_split($request['to'], 2);
+                $countryCode = $code[0];
+                $phone = substr($request['to'], 2);
 
-            $data = [
-                'merchantId' => $merchantId,
-                'sign' => $sign,
-                'type' => $request['otp']==1?2:1,
-                'phone' => $phone,
-                'content' => $request['text'],
-                "callbackUrl" => $callbackUrl,
-                'countryCode' => $countryCode,
-                'msgChannel' => $msgChannel,
-                "msgId" => $msg->id
-            ];
+                $sb = $md5_key . $merchantId . $phone . $content;
+                $signature = Http::acceptJson()->withUrlParameters([
+                    'endpoint' => 'http://8.215.55.87:34080/sign',
+                    'sb' => $sb
+                ])->get('{+endpoint}?sb={sb}');
+                $reSign = json_decode($signature, true);
+                //return $signature['sign'];
+                //Log::debug($sb);
+                //Log::debug($reSign['sign']);
+                $sign = $reSign['sign'];
+
+                $data = [
+                    'merchantId' => $merchantId,
+                    'sign' => $sign,
+                    'type' => $request['otp'] == 1 ? 2 : 1,
+                    'phone' => $phone,
+                    'content' => $request['text'],
+                    "callbackUrl" => $callbackUrl,
+                    'countryCode' => $countryCode,
+                    'msgChannel' => $msgChannel,
+                    "msgId" => $msg->id
+                ];
+
+                $response = Http::withBody(json_encode($data), 'application/json')->withOptions(['verify' => false,])->post($url);
+            }
+
             //Log::debug($data);
-            $response = Http::withBody(json_encode($data), 'application/json')->withOptions([ 'verify' => false, ])->post($url);
+
             //Log::debug($response);
             $resData = json_decode($response, true);
-            BlastMessage::find($msg->id)->update(['status'=>$resData['message'], 'code'=>$resData['code'], 'sender_id'=>'SMS_LONG_'.$msgChannel, 'provider'=>4]);
+            Log::debug($resData);
+            BlastMessage::find($msg->id)->update(['status' => $resData['message'], 'code' => $resData['code'], 'sender_id' => 'SMS_LONG_' . $msgChannel, 'provider' => 4]);
         }
     }
 
@@ -317,7 +346,8 @@ class ProcessSmsApi implements ShouldQueue
      * @param  mixed $msg
      * @return object $mms
      */
-    private function saveResult($msg){
+    private function saveResult($msg)
+    {
         $user_id = $this->user->id;
         $modelData = [
             'msg_id'            => 0,
@@ -330,6 +360,7 @@ class ProcessSmsApi implements ShouldQueue
             'message_content'   => $this->request['text'],
             'price'             => 0,
             'balance'           => 0,
+            'provider' => $this->request['provider']->id,
             'msisdn'            => $this->request['to'],
         ];
         $mms = BlastMessage::create($modelData);
@@ -343,9 +374,10 @@ class ProcessSmsApi implements ShouldQueue
      * @param  mixed $msisdn
      * @return string uuid
      */
-    private function chechClient($status, $msisdn=null){
+    private function chechClient($status, $msisdn = null)
+    {
         $user_id = $this->user->id;
-        if($status=="200"){
+        if ($status == "200") {
             $client = Client::where('phone', $msisdn)->where('user_id', $user_id)->firstOr(function () use ($msisdn, $user_id) {
                 return Client::create([
                     'phone' => $msisdn,
@@ -353,8 +385,8 @@ class ProcessSmsApi implements ShouldQueue
                     'uuid' => Str::uuid()
                 ]);
             });
-        }else{
-            $phones = explode (",", $this->request['to']);
+        } else {
+            $phones = explode(",", $this->request['to']);
             $client = Client::where('phone', $phones[0])->where('user_id', $user_id)->firstOr(function () use ($phones, $user_id) {
                 return Client::create([
                     'phone' => $phones[0],

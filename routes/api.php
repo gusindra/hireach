@@ -188,3 +188,20 @@ Route::get('/dummy-json', function () {
         ]
     ]);
 });
+
+
+Route::get("/dummy-array", function () {
+    $resData = [
+        'code' => 200,
+        'message' => 'Success',
+        'data' => true,
+    ];
+
+    return response()->json($resData);
+});
+
+
+Route::get("/dummy-string", function () {
+
+    return '6281339668556,118888000,200,IDR,350|6281999222185,118888001,200,IDR,350';
+});
