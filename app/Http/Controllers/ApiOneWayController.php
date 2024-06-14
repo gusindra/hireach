@@ -64,10 +64,10 @@ class ApiOneWayController extends Controller
     public function show(Request $request)
     {
         if(is_numeric($request->value)){
-            $customer = Client::where('phone', $request->value)->where('user_id', auth()->user()->id)->first(); 
+            $customer = Client::where('phone', $request->value)->where('user_id', auth()->user()->id)->first();
             if($customer){
                 $data = BlastMessage::where('user_id', '=', auth()->user()->id)->where('client_id', $customer->uuid)->get();
-    
+
                 return response()->json([
                     'code' => 200,
                     'message' => "Successful",
@@ -78,11 +78,11 @@ class ApiOneWayController extends Controller
                 'code' => 404,
                 'message' => "Client not found"
             ]);
-        }elseif(strpos($request->value, '@')){ 
+        }elseif(strpos($request->value, '@')){
             $customer = Client::where('email', $request->value)->where('user_id', auth()->user()->id)->first();
             if($customer){
                 $data = BlastMessage::where('user_id', '=', auth()->user()->id)->where('client_id', $customer->uuid)->get();
-    
+
                 return response()->json([
                     'code' => 200,
                     'message' => "Successful",
@@ -306,6 +306,7 @@ class ApiOneWayController extends Controller
             'text'          => $request->text,
             'is_otp'        => $request->otp,
             'request_type'  => 'api',
+            'status'        => 'starting',
             'way_type'      => 1,
             'type'          => $request->type,
             'template_id'   => $request->templateid,

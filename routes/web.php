@@ -387,9 +387,7 @@ Route::get('/saveAlarm', [ApiViGuardController::class, 'index']);
 //
 Route::get('/test', [WebhookController::class, 'index']);
 Route::get('/testing', function () {
-    return Storage::download('app/1_client.xlsx');
-    $path = storage_path('app/1_client.xlsx');
-    // return 1;
+    return 1;
     // $lastError = SaldoUser::find(63);
     // $errors = SaldoUser::where('balance', '<', 0)->where('user_id', '=', 1)->orderBy('id', 'asc')->get();
 
