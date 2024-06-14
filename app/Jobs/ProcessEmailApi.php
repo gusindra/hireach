@@ -21,17 +21,19 @@ class ProcessEmailApi implements ShouldQueue
     public $data;
     public $user;
     public $log;
+    public $campaign;
 
     /**
      * Create a new job instance.
      *
      * @return void
      */
-    public function __construct($request, $user, $log = null)
+    public function __construct($request, $user, $log = null, $campaign = null)
     {
         $this->data = $request;
         $this->user = $user;
         $this->log = $log;
+        $this->campaign = $campaign;
     }
 
     /**

@@ -21,16 +21,18 @@ class ProcessWaApi implements ShouldQueue
 
     public $request;
     public $user;
+    public $campaign;
 
     /**
      * Create a new job instance.
      *
      * @return void
      */
-    public function __construct($request, $user)
+    public function __construct($request, $user,  $campaign = null)
     {
         $this->request = $request;
         $this->user = $user;
+        $this->campaign = $campaign;
     }
 
     /**
