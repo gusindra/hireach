@@ -3,6 +3,7 @@
 namespace App\Jobs;
 
 use App\Models\BlastMessage;
+use App\Models\CampaignModel;
 use App\Models\Client;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
@@ -230,7 +231,9 @@ class ProcessWaApi implements ShouldQueue
                     'msisdn'    => preg_replace('/\s+/', '', $msg_msis[0]),
                 ];
                 // Log::debug($modelData);
-                BlastMessage::create($modelData);
+                $mms = BlastMessage::create($modelData);
+                $this->synCampaign($mms);
+
             } else {
                 Log::debug("failed msis format: ");
                 Log::debug($msg_msis);
@@ -291,15 +294,24 @@ class ProcessWaApi implements ShouldQueue
                 'msgChannel' => $msgChannel,
                 "msgId" => $msg->id
             ];
-            Log::debug($data);
-            $response = Http::withBody(json_encode($data), 'application/json')->withOptions([ 'verify' => false, ])->post($url);
-            $resData = json_decode($response, true);
-            Log::debug($resData);
-            BlastMessage::find($msg->id)->update(['status'=>$resData['message'], 'code'=>$resData['code'], 'sender_id'=>'WA_LONG', 'type'=>$msgChannel, 'provider'=>4]);
-        }catch(\Exception $e){
-            Log::debug($e->getMessage());
-            $this->saveResult('Reject invalid servid', $this->request['to']);
-            Log::debug('Reject invalid servid');
+            $environment = config('app.env');
+            if ($environment === 'local' || $environment === 'testing') {
+                Log::debug("THIS LOCAL");
+                Log::debug($resData = Http::get(url('http://hireach.test/api/dummy-array')));
+                $msgChannel = '123TESTING';
+                $response = Http::get(url('http://hireach.test/api/dummy-array'));
+                $resData = $response->json();
+                Log::debug($resData);
+            } else {
+                // Production environment: make the actual API call
+                $response = Http::withBody(json_encode($data), 'application/json')->withOptions(['verify' => false])->post($url);
+                $resData = json_decode($response, true);
+                Log::debug($resData);
+            }
+            $bm = BlastMessage::find($msg->id)->update(['status'=>$resData['message'], 'code'=>$resData['code'], 'sender_id'=>'WA_LONG', 'type'=>$msgChannel, 'provider'=>4]);
+            $this->synCampaign($bm);
+        }else {
+            $this->saveResult('Reject invalid servid');
         }
     }
 
@@ -310,7 +322,8 @@ class ProcessWaApi implements ShouldQueue
      * @return void
      */
     private function WTProvider($request){
-        try{
+        $msg = $this->saveResult('progress');
+        if ($msg) {
             $msg = $this->saveResult('progress');
 
             $url = 'https://enjoymov.co/prod-api/kstbCore/sms/send';
@@ -362,8 +375,10 @@ class ProcessWaApi implements ShouldQueue
                 Log::debug($resData);
             }
 
-            BlastMessage::find($msg->id)->update(['status' => $resData['message'], 'code' => $resData['code'], 'sender_id' => 'WA_LONG', 'type' => $msgChannel, 'provider' => $provider = $this->request['provider']->id]);
-        } else {
+            $bm = BlastMessage::find($msg->id)->update(['status' => $resData['message'], 'code' => $resData['code'], 'sender_id' => 'WA_LONG', 'type' => $msgChannel, 'provider' => $provider = $this->request['provider']->id]);
+            $this->synCampaign($bm);
+
+        }else {
             $this->saveResult('Reject invalid servid');
         }
     }
@@ -393,6 +408,7 @@ class ProcessWaApi implements ShouldQueue
             'msisdn'            => $this->request['to'],
         ];
         $mms = BlastMessage::create($modelData);
+        $this->synCampaign($mms);
         return $mms;
     }
 
@@ -417,5 +433,12 @@ class ProcessWaApi implements ShouldQueue
         $client->teams()->attach($team);
 
         return $client->uuid;
+    }
+
+    private function synCampaign($blast)
+    {
+        if($blast && !is_null($this->campaign)){
+            CampaignModel::create(['campaign_id'=>$this->campaign->id, 'model'=>'BlastMessage', 'model_id'=>$blast->id]);
+        }
     }
 }

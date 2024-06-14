@@ -3,6 +3,7 @@
 namespace App\Jobs;
 
 use App\Models\BlastMessage;
+use App\Models\CampaignModel;
 use App\Models\Client;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
@@ -254,7 +255,9 @@ class ProcessSmsApi implements ShouldQueue
                                 'msisdn'    => preg_replace('/\s+/', '', $msg_msis[0]),
                             ];
                             // Log::debug($modelData);
-                            BlastMessage::create($modelData);
+                            $mms = BlastMessage::create($modelData);
+                            $this->synCampaign($mms);
+
                         } else {
                             Log::debug("failed msis format: ");
                             Log::debug($msg_msis);
@@ -365,6 +368,8 @@ class ProcessSmsApi implements ShouldQueue
             'msisdn'            => $this->request['to'],
         ];
         $mms = BlastMessage::create($modelData);
+        $this->synCampaign($mms);
+
         return $mms;
     }
 
@@ -400,5 +405,12 @@ class ProcessSmsApi implements ShouldQueue
         $client->teams()->attach($team);
 
         return $client->uuid;
+    }
+
+    private function synCampaign($blast)
+    {
+        if($blast && !is_null($this->campaign)){
+            CampaignModel::create(['campaign_id'=>$this->campaign->id, 'model'=>'BlastMessage', 'model_id'=>$blast->id]);
+        }
     }
 }
