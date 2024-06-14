@@ -75,6 +75,11 @@ Route::put('/team-auth/{id}',  [ApiTeamWaController::class, 'put']);
 
 //MO & DN URL
 Route::get('/receive-request-status',  [ApiRequestController::class, 'status']);
+Route::get('/receive-update-status/{id}',  [ApiRequestController::class, 'status']);
+Route::get('/callback-status',  [ApiRequestController::class, 'callBack']);
+Route::post('/callback-status',  [ApiRequestController::class, 'callBack']);
+Route::get('/callback-status/{model}/{id}',  [ApiRequestController::class, 'callBackStatus']);
+Route::post('/callback-status/{model}/{id}',  [ApiRequestController::class, 'callBackStatus']);
 //Route::get('/log-request-status',  [ApiRequestController::class, 'logStatus']);
 Route::post('/delivery-notification ',  [ApiBulkSmsController::class, 'status']);
 //Route::get('/log-request-status1',  [ApiBulkSmsController::class, 'logStatus']);

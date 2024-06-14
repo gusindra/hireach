@@ -20,6 +20,8 @@ class CheckProviderEmail extends Command
      */
     protected $description = 'Command to check provider email status';
 
+    protected $api_key = 'A';
+
     /**
      * Execute the console command.
      *
@@ -30,6 +32,10 @@ class CheckProviderEmail extends Command
         $request['to'] = 'archeeshop1@gmail.com';
         $request['title'] = 'testing email';
         $request['text'] = 'testing email';
+
+        if(env("APP_ENV")=='production'){
+            $this->api_key = env('SMTP2GO_API_KEY', 'A');
+        }
 
         if($this->argument('provider')=='smtp2go'){
             $curl = curl_init();
@@ -42,7 +48,7 @@ class CheckProviderEmail extends Command
                 "https://api.smtp2go.com/v3/email/send"
             );
             curl_setopt($curl, CURLOPT_POSTFIELDS, json_encode(array(
-                "api_key" => env('SMTP2GO_API_KEY', 'A'),
+                "api_key" => $this->api_key,
                 "sender" => "noreply@hireach.archeeshop.com",
                 "to" => array(
                     0 => $request['to']
@@ -53,11 +59,18 @@ class CheckProviderEmail extends Command
             )));
             $result = curl_exec($curl);
             $rs = json_decode($result, true);
-            if($rs['data']['succeeded']){
+            if($rs['data'] && array_key_exists("succeeded", $rs['data'])){
                 $this->line("EMAIL is OK");
             }else{
                 $this->line("EMAIL is ERROR");
             }
+            $this->line("EMAIL CHECK is DONE");
+        }else{
+            $this->line("NO Provider EMAIL is CHECKED");
         }
+    }
+
+    private function smtp2go(){
+        
     }
 }

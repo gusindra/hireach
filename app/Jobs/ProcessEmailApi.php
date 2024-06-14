@@ -103,7 +103,6 @@ class ProcessEmailApi implements ShouldQueue
             //Log::debug("MK Res:");
             // check response code
             if (env('APP_ENV') === 'production') {
-
                 $result = $this->sendEmail($request);
             } elseif (in_array(env('APP_ENV'), ['local', 'testing'])) {
 
