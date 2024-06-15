@@ -3,6 +3,7 @@
 namespace App\Jobs;
 
 use App\Models\BlastMessage;
+use App\Models\CampaignModel;
 use App\Models\Client;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
@@ -10,8 +11,10 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Str;
 
 class ProcessWaApi implements ShouldQueue
@@ -20,16 +23,18 @@ class ProcessWaApi implements ShouldQueue
 
     public $request;
     public $user;
+    public $campaign;
 
     /**
      * Create a new job instance.
      *
      * @return void
      */
-    public function __construct($request, $user)
+    public function __construct($request, $user,  $campaign = null)
     {
         $this->request = $request;
         $this->user = $user;
+        $this->campaign = $campaign;
     }
 
     /**
@@ -39,11 +44,14 @@ class ProcessWaApi implements ShouldQueue
      */
     public function handle()
     {
-        //Log::debug($this->service);
+
+        // Log::debug($this->request);
         //filter OTP & Non OTP
-        if($this->request['provider']=='provider1' || $this->request['otp']){
+        $provider = $this->request['provider'];
+
+        if ($provider->code == 'provider1' || $this->request['otp']) {
             $this->MKProvider($this->request);
-        }elseif($this->request['provider']=='provider2'){
+        } elseif ($provider->code == 'provider2') {
             $this->EMProvider($this->request);
         }
     }
@@ -54,24 +62,25 @@ class ProcessWaApi implements ShouldQueue
      * @param  mixed $request
      * @return void
      */
-    private function MKProvider($request){
+    private function MKProvider($request)
+    {
         $msg    = '';
-        try{
-            //$url = 'http://www.etracker.cc/bulksms/mesapi.aspx';
+        try {
+            $url = 'http://www.etracker.cc/bulksms/mesapi.aspx';
             $url = 'https://www.etracker.cc/OTT/api/Send';
-            $sid    = $this->user->api_key;//"AC6c598c40bbbb22a9c3cb76fd7baa67b8";
-            $token  = $this->user->server_key;//"500107131bbdb25dee1992053e93409f";
+            $sid    = $this->user->api_key; //"AC6c598c40bbbb22a9c3cb76fd7baa67b8";
+            $token  = $this->user->server_key; //"500107131bbdb25dee1992053e93409f";
             $send_to =  $this->request['to']; //"6281339668556"
 
             $username = $this->user->credential;
             $password = $this->user->api_key;
 
-            if($this->request['type']==1){
-                if($this->request['text'] && !$this->request['templateid']){
+            if ($this->request['type'] == 1) {
+                if ($this->request['text'] && !$this->request['templateid']) {
                     $str = $this->request->reply;
                     $pattern = "/(http)/i";
                     $status_url = false;
-                    if(preg_match($pattern, $str)){
+                    if (preg_match($pattern, $str)) {
                         $status_url = true;
                     }
                     $response = Http::withBasicAuth($this->service->credential, $password)->accept('application/xml')->post($url, [
@@ -84,30 +93,30 @@ class ProcessWaApi implements ShouldQueue
                         ],
                         'preview_url' => $status_url
                     ]);
-                }else{
+                } else {
                     $response = Http::withBasicAuth($username, $password)->accept('application/xml')->post($url, [
                         'channel' => 'whatsapp',
                         'from' =>  $this->service->user->name,
                         'recipient' => $this->request->client->phone,
                         'type' => 'template',
-                        "template"=> [
-                            "name"=> "welcome",
-                            "ttl"=> 3,
-                            "language_code"=> "EN",
-                            "template_params"=> [
+                        "template" => [
+                            "name" => "welcome",
+                            "ttl" => 3,
+                            "language_code" => "EN",
+                            "template_params" => [
                                 [
-                                    "value"=> $this->request->client->name
+                                    "value" => $this->request->client->name
                                 ],
                             ]
                         ]
                     ]);
                 }
-            }else{
-                if($this->request['templateid']){
+            } else {
+                if ($this->request['templateid']) {
                     $str = $this->request['text'];
                     $pattern = "/(http)/i";
                     $status_url = false;
-                    if(preg_match($pattern, $str)){
+                    if (preg_match($pattern, $str)) {
                         $status_url = true;
                     }
                     $response = Http::withBasicAuth($username, $password)->accept('application/xml')->post($url, [
@@ -115,27 +124,27 @@ class ProcessWaApi implements ShouldQueue
                         'from' => 'Macrokiosk2', //$this->service->server_key,
                         'recipient' => $send_to,
                         'type' => 'template',
-                        'template'=> [
-                            'name'=> 'reminder',
-                            'language_code'=> 'EN',
-                            'template_params'=> [
+                        'template' => [
+                            'name' => 'reminder',
+                            'language_code' => 'EN',
+                            'template_params' => [
                                 [
-                                    'value'=> 'David'
+                                    'value' => 'David'
                                 ],
                                 [
-                                    'value'=> 'TN12399512'
+                                    'value' => 'TN12399512'
                                 ],
                                 [
-                                    'value'=>'2020-06-28'
+                                    'value' => '2020-06-28'
                                 ]
                             ]
                         ]
                     ]);
-                }elseif($this->request->type=='text'){
+                } elseif ($this->request->type == 'text') {
                     $str = $this->request->reply;
                     $pattern = "/(http)/i";
                     $status_url = false;
-                    if(preg_match($pattern, $str)){
+                    if (preg_match($pattern, $str)) {
                         $status_url = true;
                     }
                     $response = Http::withBasicAuth($this->service->credential, $password)->accept('application/xml')->post($url, [
@@ -148,7 +157,7 @@ class ProcessWaApi implements ShouldQueue
                         ],
                         'preview_url' => $status_url
                     ]);
-                }elseif($this->request->type=='image'){
+                } elseif ($this->request->type == 'image') {
                     $response = Http::withBasicAuth($this->service->credential, $password)->accept('application/xml')->post($url, [
                         'channel' => 'whatsapp',
                         'from' =>  $this->service->server_key,
@@ -159,7 +168,7 @@ class ProcessWaApi implements ShouldQueue
                             "caption" => $this->request->reply
                         ]
                     ]);
-                }elseif($this->request->type=='audio'){
+                } elseif ($this->request->type == 'audio') {
                     $response = Http::withBasicAuth($this->service->credential, $password)->accept('application/xml')->post($url, [
                         'channel' => 'whatsapp',
                         'from' =>  $this->service->server_key,
@@ -169,7 +178,7 @@ class ProcessWaApi implements ShouldQueue
                             "link" => $this->request->media
                         ]
                     ]);
-                }elseif($this->request->type=='video'){
+                } elseif ($this->request->type == 'video') {
                     $response = Http::withBasicAuth($this->service->credential, $password)->accept('application/xml')->post($url, [
                         'channel' => 'whatsapp',
                         'from' =>  $this->service->server_key,
@@ -180,7 +189,7 @@ class ProcessWaApi implements ShouldQueue
                             "caption" => $this->request->reply
                         ]
                     ]);
-                }elseif($this->request->type=='document'){
+                } elseif ($this->request->type == 'document') {
                     $response = Http::withBasicAuth($this->service->credential, $password)->accept('application/xml')->post($url, [
                         'channel' => 'whatsapp',
                         'from' =>  $this->service->server_key,
@@ -191,9 +200,7 @@ class ProcessWaApi implements ShouldQueue
                             "filename" => preg_replace('/[^A-Za-z0-9-]+/', '-', $this->request->reply)
                         ]
                     ]);
-                }
-                else{
-
+                } else {
                 }
             }
 
@@ -208,7 +215,7 @@ class ProcessWaApi implements ShouldQueue
             }*/
 
             // check response code
-            if ($response['message_id']){
+            if ($response['message_id']) {
                 $modelData = [
                     'msg_id'    => $response['message_id'],
                     'user_id'   => $this->user->user_id,
@@ -225,19 +232,19 @@ class ProcessWaApi implements ShouldQueue
                     'msisdn'    => preg_replace('/\s+/', '', $msg_msis[0]),
                 ];
                 // Log::debug($modelData);
-                BlastMessage::create($modelData);
-            }else{
+                $mms = BlastMessage::create($modelData);
+                $this->synCampaign($mms);
+            } else {
                 Log::debug("failed msis format: ");
                 Log::debug($msg_msis);
             }
 
             Log::debug("Respone MSG:");
             Log::debug($msg);
-            if($msg!=''){
+            if ($msg != '') {
                 $this->saveResult($msg);
             }
-        }
-        catch(\Exception $e){
+        } catch (\Exception $e) {
             Log::debug($e->getMessage());
             $this->saveResult('Reject invalid servid');
             Log::debug('Reject invalid servid');
@@ -250,14 +257,15 @@ class ProcessWaApi implements ShouldQueue
      * @param  mixed $request
      * @return void
      */
-    private function EMProvider($request){
-        try{
-            $msg = $this->saveResult('progress');
+    private function EMProvider($request)
+    {
+        $msg = $this->saveResult('progress');
 
+        if ($msg) {
             $url = 'https://enjoymov.co/prod-api/kstbCore/sms/send';
             $md5_key = env('EM_MD5_KEY', 'A'); //'AFD4274C39AB55D8C8D08FA6E145D535';
             $merchantId = env('EM_MERCHANT_ID', 'A'); //'KSTB904790';
-            $callbackUrl = 'http://hireach.firmapps.ai/api/callback-status/blast/'.$msg->id;
+            $callbackUrl = 'http://hireach.firmapps.ai/api/callback-status/blast/' . $msg->id;
 
             $content = $request['text'];
             $msgChannel = env('EM_CODE_LWA', 80);
@@ -275,11 +283,10 @@ class ProcessWaApi implements ShouldQueue
 
             $sign = $reSign['sign'];
 
-
             $data = [
                 'merchantId' => $merchantId,
                 'sign' => $sign,
-                'type' => $request['otp']==1?2:1,
+                'type' => $request['otp'] == 1 ? 2 : 1,
                 'phone' => $phone,
                 'content' => $request['text'],
                 "callbackUrl" => $callbackUrl,
@@ -287,17 +294,95 @@ class ProcessWaApi implements ShouldQueue
                 'msgChannel' => $msgChannel,
                 "msgId" => $msg->id
             ];
-            Log::debug($data);
-            $response = Http::withBody(json_encode($data), 'application/json')->withOptions([ 'verify' => false, ])->post($url);
-            $resData = json_decode($response, true);
-            Log::debug($resData);
-            BlastMessage::find($msg->id)->update(['status'=>$resData['message'], 'code'=>$resData['code'], 'sender_id'=>'WA_LONG', 'type'=>$msgChannel, 'provider'=>4]);
-        }catch(\Exception $e){
-            Log::debug($e->getMessage());
-            $this->saveResult('Reject invalid servid', $this->request['to']);
-            Log::debug('Reject invalid servid');
+
+
+            if (App::environment(['local', 'testing'])) {
+                $msgChannel = '123TESTING';
+                $response = Http::get(url('http://hireach.test/api/dummy-array'));
+                $resData = $response->json();
+            } elseif (App::environment('development')) {
+                $msgChannel = '123DEV';
+                $response = Http::get('https://hireach.archeeshop.com/api/dummy-array');
+                $resData = $response->json();
+            } else {
+                $response = Http::withBody(json_encode($data), 'application/json')->withOptions(['verify' => false])->post($url);
+                $resData = json_decode($response->body(), true);
+            }
+            $bm = BlastMessage::find($msg->id)->update(['status' => $resData['message'], 'code' => $resData['code'], 'sender_id' => 'WA_LONG', 'type' => $msgChannel, 'provider' => 4]);
+            $this->synCampaign($bm);
+        } else {
+            $this->saveResult('Reject invalid servid');
         }
     }
+
+    /**
+     * This function is execure the job WT Provider
+     *
+     * @param  mixed $request
+     * @return void
+     */
+    private function WTProvider($request)
+    {
+        $msg = $this->saveResult('progress');
+        if ($msg) {
+            $msg = $this->saveResult('progress');
+
+            $url = 'https://enjoymov.co/prod-api/kstbCore/sms/send';
+            $md5_key = env('EM_MD5_KEY', 'A'); //'AFD4274C39AB55D8C8D08FA6E145D535';
+            $merchantId = env('EM_MERCHANT_ID', 'A'); //'KSTB904790';
+            $callbackUrl = 'http://hireach.firmapps.ai/api/callback-status/blast/' . $msg->id;
+
+            $content = $request['text'];
+            $msgChannel = env('EM_CODE_LWA', 80);
+
+            $code = str_split($request['to'], 2);
+            $countryCode = $code[0];
+            $phone = substr($request['to'], 2);
+
+            $sb = $md5_key . $merchantId . $phone . $content;
+            $signature = Http::acceptJson()->withUrlParameters([
+                'endpoint' => 'http://8.215.55.87:34080/sign',
+                'sb' => $sb
+            ])->get('{+endpoint}?sb={sb}');
+            $reSign = json_decode($signature, true);
+
+            $sign = $reSign['sign'];
+
+            $data = [
+                'merchantId' => $merchantId,
+                'sign' => $sign,
+                'type' => $request['otp'] == 1 ? 2 : 1,
+                'phone' => $phone,
+                'content' => $request['text'],
+                "callbackUrl" => $callbackUrl,
+                'countryCode' => $countryCode,
+                'msgChannel' => $msgChannel,
+                "msgId" => $msg->id
+            ];
+            // Log::debug($data);
+
+            $environment = config('app.env');
+            if ($environment === 'local' || $environment === 'testing') {
+                Log::debug("THIS LOCAL");
+                Log::debug($resData = Http::get(url('http://hireach.test/api/dummy-array')));
+                $msgChannel = '123TESTING';
+                $response = Http::get(url('http://hireach.test/api/dummy-array'));
+                $resData = $response->json();
+                Log::debug($resData);
+            } else {
+                // Production environment: make the actual API call
+                $response = Http::withBody(json_encode($data), 'application/json')->withOptions(['verify' => false])->post($url);
+                $resData = json_decode($response, true);
+                Log::debug($resData);
+            }
+
+            $bm = BlastMessage::find($msg->id)->update(['status' => $resData['message'], 'code' => $resData['code'], 'sender_id' => 'WA_LONG', 'type' => $msgChannel, 'provider' => $provider = $this->request['provider']->id]);
+            $this->synCampaign($bm);
+        } else {
+            $this->saveResult('Reject invalid servid');
+        }
+    }
+
 
     /**
      * This to save result of Job Queue
@@ -305,8 +390,9 @@ class ProcessWaApi implements ShouldQueue
      * @param  mixed $msg
      * @return object $mms
      */
-    private function saveResult($msg){
-        $user_id = $this->user->id;
+    private function saveResult($msg)
+    {
+        $user_id = $this->user->is_enabled ? $this->user->user_id : $this->user->id;
         $modelData = [
             'msg_id'            => 0,
             'user_id'           => $user_id,
@@ -316,11 +402,13 @@ class ProcessWaApi implements ShouldQueue
             'status'            => $msg,
             'code'              => "400",
             'message_content'   => $this->request['text'],
+            'provider'          => $this->request['provider']->id,
             'price'             => 0,
             'balance'           => 0,
             'msisdn'            => $this->request['to'],
         ];
         $mms = BlastMessage::create($modelData);
+        $this->synCampaign($mms);
         return $mms;
     }
 
@@ -331,7 +419,8 @@ class ProcessWaApi implements ShouldQueue
      * @param  mixed $msisdn
      * @return string uuid
      */
-    private function chechClient($status, $msisdn=null){
+    private function chechClient($status, $msisdn = null)
+    {
         $user_id = $this->user->id;
         $client = Client::where('phone', $msisdn)->where('user_id', $user_id)->firstOr(function () use ($msisdn, $user_id) {
             return Client::create([
@@ -344,5 +433,12 @@ class ProcessWaApi implements ShouldQueue
         $client->teams()->attach($team);
 
         return $client->uuid;
+    }
+
+    private function synCampaign($blast)
+    {
+        if ($blast && !is_null($this->campaign)) {
+            CampaignModel::create(['campaign_id' => $this->campaign->id, 'model' => 'BlastMessage', 'model_id' => $blast->id]);
+        }
     }
 }

@@ -7,7 +7,7 @@ info:
   license:
     name: 'Apache 2.0'
     url: 'http://www.apache.org/licenses/LICENSE-2.0.html'
-  version: 1.1.0
+  version: 1.1.2
 servers:
   -
     url: 'http://hireach.test/api'
@@ -67,6 +67,42 @@ paths:
             application/xml:
               schema:
                 $ref: '#/components/schemas/SingleSms'
+        '400':
+          description: 'Invalid supplied'
+        '404':
+          description: 'Record not found'
+      security:
+        - bearerAuth: []
+  /one-way/campaign:
+    get:
+      tags:
+        - One Way
+      summary: 'Get campaign has been create using one way resource'
+      operationId: getOneWayCampaign
+      parameters:
+        -
+          name: value
+          in: query
+          required: true
+          schema:
+            type: string
+        -
+          name: request
+          in: query
+          required: false
+          schema:
+            type: boolean
+            enum: [true, false]
+      responses:
+        '200':
+          description: 'successful operation'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetCampaign'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/GetCampaign'
         '400':
           description: 'Invalid supplied'
         '404':
@@ -503,6 +539,58 @@ components:
       type: object
       xml:
         name: InvalidInputChat
+    GetCampaign:
+      title: 'Get Campaign Status'
+      description: 'Get Campaign Data'
+      required:
+        - value
+        - request
+      properties:
+        id:
+          title: UUID
+          description: UUID
+          type: string
+        type:
+          title: 'Type'
+          description: 'Character type for text'
+          type: integer
+          format: int64
+        title:
+          title: 'Title'
+          description: 'Broadcast Title'
+          type: string
+        provider:
+          title: 'Provider'
+          description: 'Provoder'
+          type: string
+        channel:
+          title: 'Channel'
+          description: 'Channel'
+          type: string
+        text:
+          title: 'Text'
+          description: 'Message Content'
+          type: string
+        to:
+          title: 'To'
+          description: 'Sending request to (email or phone or id). Phone number must have the country code (without the “+” sign)'
+          type: string
+        status:
+          title: 'Status'
+          description: 'Broadcast status'
+          type: string
+        date:
+          title: 'Date'
+          description: 'Broadcast date'
+          type: string
+          format: date-time
+        otp:
+          title: 'OTP'
+          description: 'SMS Type OTP or NON OTP'
+          type: boolean
+      type: object
+      xml:
+        name: SingleSms
   requestBodies:
     Pet:
       description: 'Pet object that needs to be added to the store'

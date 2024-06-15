@@ -127,7 +127,7 @@ class AddResource extends Component
     }
 
     /**
-     * sendResource
+     * This to send message Resource using panel form
      *
      * @return void
      */
@@ -163,17 +163,22 @@ class AddResource extends Component
 
 
         //SET PROVIDER BASE ON THE SETTING OR AUTO SELECT DEFAULT PROVIDER
-        $provider = $this->provider = auth()->user()->provider;
-        $provider = $this->provider = 'provider1';
-        if ($this->channel == 'wa' || $this->channel == 'sm' || $this->channel == 'pl' || $this->channel == 'waba' || $this->channel == 'wc') {
-            $provider = $this->provider = 'provider2';
+        $provider = $this->provider = auth()->user()->providerUser->where('channel', strtoupper($this->channel))->first()->provider;
+
+        if ($provider->code == 'provider2') {
+            $this->provider = 'provider2';
+        } elseif ($provider->code == 'provider1') {
+            $this->provider = 'provider2';
         }
+
+
         $contact = explode(',', $to);
         //SENDING RESOURCE
         if ($templateid) {
             //set text using template
             $template = Template::find($templateid);
             foreach ($template->actions as $key => $action) {
+
                 // send request using template prt action
                 $data[$key] = [
                     'channel' => $channel,
@@ -202,7 +207,7 @@ class AddResource extends Component
         }
         //dd($data);
 
-        if ($this->channel == 'wa') {
+        if (strpos($this->channel, 'wa') !== false && $provider->code == 'provider1') {
             foreach (auth()->user()->credential as $cre) {
                 if ($cre->client == 'api_wa_mk') {
                     $credential = $cre;
@@ -254,11 +259,12 @@ class AddResource extends Component
             ProcessEmailApi::dispatch($data, auth()->user(), $reqArr);
         } elseif (strpos($this->channel, 'sms') !== false) {
             ProcessSmsApi::dispatch($data, auth()->user());
-        } elseif ($this->channel == 'wa') {
+        } elseif (strpos(strtolower($this->channel), 'wa') !== false) {
+
             if ($credential) {
                 ProcessWaApi::dispatch($data, $credential);
             } else {
-                $this->emit('invalid_credential');
+                ProcessWaApi::dispatch($data, auth()->user());
             }
         } elseif ($this->channel == 'wa') {
             //ProcessChatApi::dispatch($request->all(), auth()->user());
@@ -322,14 +328,23 @@ class AddResource extends Component
         $this->reset('to');
         $this->reset('selectTo');
         $this->reset('selectedAudience');
+        $this->fromList[1] = auth()->user()->phone_no;
         if ($this->channel == 'email') {
             $this->fromList[0] = 'noreply@hireach.archeeshop.com';
             $this->fromList[1] = auth()->user()->email;
             $this->from = 'noreply@hireach.archeeshop.com';
-        } elseif ($this->channel == 'wa' || $this->channel == 'sm' || $this->channel == 'pl' || $this->channel == 'waba' || $this->channel == 'wc') {
+        } elseif (
+            strpos(strtolower($this->channel), 'long_wa') !== false ||
+            strtolower($this->channel) == 'sm' ||
+            strtolower($this->channel) == 'pl' ||
+            strtolower($this->channel) == 'waba' ||
+            strtolower($this->channel) == 'wc'
+        ) {
+
             $this->fromList[0] = 'Auto';
-            if (auth()->user()->phone_no)
+            if (auth()->user()->phone_no) {
                 $this->fromList[1] = auth()->user()->phone_no;
+            }
             $this->from = 'Auto';
         }
     }

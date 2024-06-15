@@ -22,9 +22,15 @@
                     <x-jet-action-message class="mr-3 text-red-500" on="exist">
                         {{ __('Contact Already Exist.') }}
                     </x-jet-action-message>
-                    <x-jet-button wire:click="actionShowModal">
+                    <!-- <x-link-button wire:click="actionShowModal">
+                        {{ __('Import Contact') }}
+                    </x-link-button> -->
+                    <x-link-button wire:click="exportContact">
+                        {{ __('Export Contact') }}
+                    </x-link-button>
+                    <x-add-button wire:click="actionShowModal">
                         {{ __('Add New Contact') }}
-                    </x-jet-button>
+                    </x-add-button>
                 </div>
 
                 <div class="space-y-6">
