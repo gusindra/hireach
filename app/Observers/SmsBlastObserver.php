@@ -64,28 +64,28 @@ class SmsBlastObserver
                 $items = $master->items;
 
                 //check msisdn for $product items
-                // CHARGE BY PRODUCT SMS PRICE
+                // CHARGE BY PRODUCT PRICE
                 if (count($items) > 0) {
                     foreach ($items as $product) {
-                        if ($product->sku == "SMS") {
-                            // ALL SMS Charge this Price
+                        if (str_contains($request->sender_id, $product->sku)) {
                             $this->addSaldo($product->unit_price, $request);
                             $set_price = 1;
-                        } else {
-                            // CHECK SMS BY PHONE NUMBER
-                            $b = explode(",", $product->spec);
-                            $p = $request->msisdn;
-                            if (count($b) > 0) {
-                                foreach ($b as $bs) {
-                                    if (strpos($p, $bs) !== false) {
-                                        // Log::debug($product);
-                                        // Log::debug($bs);
-                                        $this->addSaldo($product->unit_price, $request);
-                                        $set_price = 1;
-                                    }
-                                }
-                            }
                         }
+                        //}else{
+                        // CHECK SMS BY PHONE NUMBER
+                        //$b = explode(",",$product->spec);
+                        //$p = $request->msisdn;
+                        //if(count($b)>0){
+                        //    foreach($b as $bs){
+                        //        if (strpos($p, $bs) !== false) {
+                        // Log::debug($product);
+                        // Log::debug($bs);
+                        //            $this->addSaldo($product->unit_price, $request);
+                        //            $set_price = 1;
+                        //        }
+                        //   }
+                        //}
+                        //}
                     }
                 }
             }
@@ -162,7 +162,7 @@ class SmsBlastObserver
                     $items = $master->items;
 
                     //check msisdn for $product items
-                    // CHARGE BY PRODUCT SMS PRICE
+                    // CHARGE BY PRODUCT PRICE
                     if (count($items) > 0) {
                         foreach ($items as $product) {
                             if (str_contains($request->sender_id, $product->sku)) {

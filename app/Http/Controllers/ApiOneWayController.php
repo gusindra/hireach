@@ -128,9 +128,9 @@ class ApiOneWayController extends Controller
             'detail'    => 'string',
             'otp'       => 'boolean'
         ];
-        if(strpos( $request->channel, 'sms' ) !== false){
+        if(strpos( strtolower($request->channel), 'sms' ) !== false){
             $validateArr['from'] = 'alpha_num|required_if:channel,sms_otp_sid|required_if:channel,sms_notp_sid';
-        }elseif($request->channel == 'email'){
+        }elseif(strpos( strtolower($request->channel), 'email' ) !== false){
             $validateArr['from'] = 'required';
         }
         $request->validate($validateArr);
@@ -141,8 +141,12 @@ class ApiOneWayController extends Controller
             //    'auth' => auth()->user()->name,
             //]);
             $provider = cache()->remember('provider-user-', $this->cacheDuration, function() use ($request) {
-                return ProviderUser::where('user_id', auth()->user()->id)->where('channel', $request->channel)->first();
+                return auth()->user()->providerUser->where('channel', strtoupper($request->channel))->first()->provider;
             });
+
+            $request->merge([
+                'provider' => $provider
+            ]);
 
             if($provider){
                 $retriver = explode(",", $request->to);
@@ -151,7 +155,7 @@ class ApiOneWayController extends Controller
                 if($balance>500 && count($retriver)<$balance/1){
                     //CHECK OTP
                     //auto check otp / non otp type base on text
-                    if(strpos($request->channel, 'sms') !== false){
+                    if(strpos(strtolower($request->channel), 'sms') !== false){
                         $checkString = $request->text;
                         $otpWord = ['Angka Rahasia', 'Authorisation', 'Authorise', 'Authorization', 'Authorized', 'Code', 'Harap masukkan', 'Kata Sandi', 'Kode',' Kode aktivasi', 'konfirmasi', 'otentikasi', 'Otorisasi', 'Rahasia', 'Sandi', 'trx', 'unik', 'Venfikasi', 'KodeOTP', 'NewOtp', 'One-Time Password', 'Otorisasi', 'OTP', 'Pass', 'Passcode', 'PassKey', 'Password', 'PIN', 'verifikasi', 'insert current code', 'Security', 'This code is valid', 'Token', 'Passcode', 'Valid OTP', 'verification','Verification', 'login code', 'registration code', 'secunty code'];
                         if($request->otp){
@@ -169,7 +173,7 @@ class ApiOneWayController extends Controller
                         }
                     }
                     //GET CREDENTIAL MK
-                    if($request->channel=='wa'){
+                    if(strtolower($request->channel)=='wa'){
                         $credential = null;
                         foreach(auth()->user()->credential as $cre){
                             if($cre->client=='api_wa_mk'){
@@ -194,19 +198,19 @@ class ApiOneWayController extends Controller
                                 'servid' => $request->servid,
                                 'title' => $request->title,
                                 'otp' => $request->otp,
-                                'provider' => $request->provider,
+                                'provider' => $provider,
                             );
                             if($request->has('templateid')){
                                 $data['templateid'] = $request->templateid;
                             }
-                            if($request->channel=='email'){
+                            if(strtolower($request->channel)=='email'){
                                 //THIS WILL QUEUE EMAIL JOB
                                 //return $data;
                                 $reqArr = json_encode($request->all());
                                 ProcessEmailApi::dispatch($data, auth()->user(), $reqArr);
-                            }elseif(strpos($request->channel, 'sms') !== false){
+                            }elseif(strpos(strtolower($request->channel), 'sms') !== false){
                                 ProcessSmsApi::dispatch($data, auth()->user());
-                            }elseif($request->channel=='wa'){
+                            }elseif(strtolower($request->channel)=='wa'){
                                 if($credential){
                                     ProcessWaApi::dispatch($data, $credential);
                                 }else{
@@ -216,31 +220,31 @@ class ApiOneWayController extends Controller
                                         'message'       => "Campaign successful create, but invalid credential",
                                     ]);
                                 }
-                            }elseif($request->channel=='longwa'){
+                            }elseif(strtolower($request->channel)=='long_wa'){
                                 $request->merge([
-                                    'provider' => 'provider2'
+                                    'provider' => $provider
                                 ]);
                                 ProcessWaApi::dispatch($request->all(), auth()->user());
-                            }elseif($request->channel=='longsms'){
+                            }elseif(strtolower($request->channel)=='long_sms'){
                                 $request->merge([
-                                    'provider' => 'provider2'
+                                    'provider' => $provider
                                 ]);
                                 ProcessSmsApi::dispatch($request->all(), auth()->user());
                             }
                         }
                     }else{
                         //SINGLE RETRIVER
-                        if($request->channel=='email'){
+                        if(strtolower($request->channel)=='email'){
                             $reqArr = json_encode($request->all());
                             //THIS WILL QUEUE EMAIL JOB
-                            ProcessEmailApi::dispatch($request->all(), auth()->user(), $reqArr);
-                        }elseif(strpos($request->channel, 'sms') !== false){
+                            ProcessEmailApi::dispatch($request->all(), auth()->user(), $reqArr, $campaign);
+                        }elseif(strpos(strtolower($request->channel), 'sms') !== false){
                             //THIS WILL QUEUE SMS JOB
-                            ProcessSmsApi::dispatch($request->all(), auth()->user());
-                        }elseif($request->channel=='wa'){
+                            ProcessSmsApi::dispatch($request->all(), auth()->user(),$campaign);
+                        }elseif(strtolower($request->channel)=='wa'){
                             if($credential){
                                 //THIS WILL QUEUE WA JOB
-                                ProcessWaApi::dispatch($request->all(), $credential);
+                                ProcessWaApi::dispatch($request->all(), $credential,$campaign);
                             }else{
                                 return response()->json([
                                     'code'          => 401,
@@ -248,15 +252,15 @@ class ApiOneWayController extends Controller
                                     'message'       => "Campaign successful create, but invalid provider credential!"
                                 ]);
                             }
-                        }elseif($request->channel=='longwa'){
+                        }elseif($request->channel=='long_wa'){
                             $request->merge([
-                                'provider' => 'provider2'
+                                'provider' => $provider
                             ]);
                             //THIS WILL QUEUE WALN JOB
                             ProcessWaApi::dispatch($request->all(), auth()->user());
-                        }elseif($request->channel=='longsms'){
+                        }elseif(strtolower($request->channel)=='long_sms'){
                             $request->merge([
-                                'provider' => 'provider2'
+                                'provider' => $provider
                             ]);
                             //THIS WILL QUEUE SMSLN JOB
                             ProcessSmsApi::dispatch($request->all(), auth()->user());
@@ -299,7 +303,7 @@ class ApiOneWayController extends Controller
     private function campaignAdd($request){
         return Campaign::create([
             'title'         => $request->title,
-            'channel'       => $request->channel,
+            'channel'       => strtoupper($request->channel),
             'provider'      => $request->provider,
             'from'          => $request->from,
             'to'            => $request->to,

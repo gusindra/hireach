@@ -3,6 +3,7 @@
 namespace App\Jobs;
 
 use App\Models\BlastMessage;
+use App\Models\Campaign;
 use App\Models\CampaignModel;
 use App\Models\Client;
 use Illuminate\Bus\Queueable;
@@ -58,7 +59,7 @@ class ProcessEmailApi implements ShouldQueue
 
     private function sendEmail($request)
     {
-        if ($request['type'] == "0") {
+        if ($request['type'] >= "0") {
             $curl = curl_init();
             curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
             curl_setopt($curl, CURLOPT_POST, 1);
@@ -129,9 +130,10 @@ class ProcessEmailApi implements ShouldQueue
             // $response=$result['data']['succeeded'];
             // $failed=$result['data']['failed'];
 
-            if ($response != '' && array_key_exists('failed', $response['data']) && $response['data']['failed'] == 1) {
+            if (is_array( $response) && array_key_exists('failed', $response['data']) && $response['data']['failed'] == 1) {
                 $msg = $response['data']['failures'];
-            } else {
+                Campaign::find($this->campaign->id)->update(['status'=>'failed']);
+            } elseif(is_array( $response) && array_key_exists('request_id', $response)) {
                 $balance = 0;
                 //check client && array
                 $modelData = [
@@ -157,7 +159,7 @@ class ProcessEmailApi implements ShouldQueue
             }
             // Log::debug("Respone MSG:");
             // Log::debug($msg);
-            if ($msg != '') {
+            if ($msg != '' || is_null( $response)) {
                 $this->saveResult($msg);
             }
         } else {
@@ -197,6 +199,7 @@ class ProcessEmailApi implements ShouldQueue
 
             if ($failed >= 1) {
                 $msg = $result['data']['failures'];
+                Campaign::find($this->campaign->id)->update(['status'=>'failed']);
             } else {
                 $balance = 0;
                 //check client && array
