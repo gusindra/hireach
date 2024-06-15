@@ -22,9 +22,9 @@
                     <x-jet-action-message class="mr-3 text-red-500" on="exist">
                         {{ __('provider Already Exist.') }}
                     </x-jet-action-message>
-                    <x-jet-button wire:click="actionShowModal">
+                    <x-add-button wire:click="actionShowModal">
                         {{ __('Add provider') }}
-                    </x-jet-button>
+                    </x-add-button>
                 </div>
 
                 <div class="space-y-6">
