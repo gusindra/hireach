@@ -14,6 +14,7 @@ use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Str;
 
 class ProcessWaApi implements ShouldQueue
@@ -233,7 +234,6 @@ class ProcessWaApi implements ShouldQueue
                 // Log::debug($modelData);
                 $mms = BlastMessage::create($modelData);
                 $this->synCampaign($mms);
-
             } else {
                 Log::debug("failed msis format: ");
                 Log::debug($msg_msis);
@@ -286,7 +286,7 @@ class ProcessWaApi implements ShouldQueue
             $data = [
                 'merchantId' => $merchantId,
                 'sign' => $sign,
-                'type' => $request['otp']==1?2:1,
+                'type' => $request['otp'] == 1 ? 2 : 1,
                 'phone' => $phone,
                 'content' => $request['text'],
                 "callbackUrl" => $callbackUrl,
@@ -294,23 +294,23 @@ class ProcessWaApi implements ShouldQueue
                 'msgChannel' => $msgChannel,
                 "msgId" => $msg->id
             ];
-            $environment = config('app.env');
-            if ($environment === 'local' || $environment === 'testing') {
-                Log::debug("THIS LOCAL");
-                Log::debug($resData = Http::get(url('http://hireach.test/api/dummy-array')));
+
+
+            if (App::environment(['local', 'testing'])) {
                 $msgChannel = '123TESTING';
                 $response = Http::get(url('http://hireach.test/api/dummy-array'));
                 $resData = $response->json();
-                Log::debug($resData);
+            } elseif (App::environment('development')) {
+                $msgChannel = '123DEV';
+                $response = Http::get('https://hireach.archeeshop.com/api/dummy-array');
+                $resData = $response->json();
             } else {
-                // Production environment: make the actual API call
                 $response = Http::withBody(json_encode($data), 'application/json')->withOptions(['verify' => false])->post($url);
-                $resData = json_decode($response, true);
-                Log::debug($resData);
+                $resData = json_decode($response->body(), true);
             }
-            $bm = BlastMessage::find($msg->id)->update(['status'=>$resData['message'], 'code'=>$resData['code'], 'sender_id'=>'WA_LONG', 'type'=>$msgChannel, 'provider'=>4]);
+            $bm = BlastMessage::find($msg->id)->update(['status' => $resData['message'], 'code' => $resData['code'], 'sender_id' => 'WA_LONG', 'type' => $msgChannel, 'provider' => 4]);
             $this->synCampaign($bm);
-        }else {
+        } else {
             $this->saveResult('Reject invalid servid');
         }
     }
@@ -321,7 +321,8 @@ class ProcessWaApi implements ShouldQueue
      * @param  mixed $request
      * @return void
      */
-    private function WTProvider($request){
+    private function WTProvider($request)
+    {
         $msg = $this->saveResult('progress');
         if ($msg) {
             $msg = $this->saveResult('progress');
@@ -329,7 +330,7 @@ class ProcessWaApi implements ShouldQueue
             $url = 'https://enjoymov.co/prod-api/kstbCore/sms/send';
             $md5_key = env('EM_MD5_KEY', 'A'); //'AFD4274C39AB55D8C8D08FA6E145D535';
             $merchantId = env('EM_MERCHANT_ID', 'A'); //'KSTB904790';
-            $callbackUrl = 'http://hireach.firmapps.ai/api/callback-status/blast/'.$msg->id;
+            $callbackUrl = 'http://hireach.firmapps.ai/api/callback-status/blast/' . $msg->id;
 
             $content = $request['text'];
             $msgChannel = env('EM_CODE_LWA', 80);
@@ -377,8 +378,7 @@ class ProcessWaApi implements ShouldQueue
 
             $bm = BlastMessage::find($msg->id)->update(['status' => $resData['message'], 'code' => $resData['code'], 'sender_id' => 'WA_LONG', 'type' => $msgChannel, 'provider' => $provider = $this->request['provider']->id]);
             $this->synCampaign($bm);
-
-        }else {
+        } else {
             $this->saveResult('Reject invalid servid');
         }
     }
@@ -437,8 +437,8 @@ class ProcessWaApi implements ShouldQueue
 
     private function synCampaign($blast)
     {
-        if($blast && !is_null($this->campaign)){
-            CampaignModel::create(['campaign_id'=>$this->campaign->id, 'model'=>'BlastMessage', 'model_id'=>$blast->id]);
+        if ($blast && !is_null($this->campaign)) {
+            CampaignModel::create(['campaign_id' => $this->campaign->id, 'model' => 'BlastMessage', 'model_id' => $blast->id]);
         }
     }
 }

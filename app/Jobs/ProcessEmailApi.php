@@ -11,6 +11,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
@@ -104,15 +105,23 @@ class ProcessEmailApi implements ShouldQueue
 
             // return $response;
             //Log::debug("MK Res:");
-            // check response code
-            if (env('APP_ENV') === 'production') {
-                $result = $this->sendEmail($request);
-            } elseif (in_array(env('APP_ENV'), ['local', 'testing'])) {
 
-                $response = Http::get(url('http://hireach.test/api/dummy-json'))
-                    or Http::get(url('http://127.0.0.1:8000/api/dummy-json'));
-                $result = $response->getBody()->getContents();
+            if (App::environment('production')) {
+                $result = $this->sendEmail($request);
+            } elseif (App::environment(['local', 'testing'])) {
+                // Attempt to get the response from the first URL
+                $response = Http::get(url('http://hireach.test/api/dummy-json'));
+
+                if (!$response->successful()) {
+                    $response = Http::get(url('http://127.0.0.1:8000/api/dummy-json'));
+                }
+                $result = $response->body();
+            } elseif (App::environment('development')) {
+                $response = Http::get('https://hireach.archeeshop.com/dummy-json');
+                $result = $response->body();
             }
+
+
 
             Log::debug($result);
             $response = json_decode($result, true);
@@ -126,7 +135,7 @@ class ProcessEmailApi implements ShouldQueue
                 $balance = 0;
                 //check client && array
                 $modelData = [
-                    'title'     => $response['title'],
+                    'title'     => $request['title'],
                     'msg_id'    => $response['request_id'],
                     'user_id'   => $this->user->id,
                     'client_id' => $this->chechClient("200", $request['to']),
@@ -163,14 +172,19 @@ class ProcessEmailApi implements ShouldQueue
             $response = '';
 
 
-            if (env('APP_ENV') === 'production') {
-
+            if (App::environment('production')) {
                 $result = $this->sendEmail($request);
-            } elseif (in_array(env('APP_ENV'), ['local', 'testing'])) {
+            } elseif (App::environment(['local', 'testing'])) {
+                // Attempt to get the response from the first URL
+                $response = Http::get(url('http://hireach.test/api/dummy-json'));
 
-                $response = Http::get(url('http://hireach.test/api/dummy-json'))
-                    or Http::get(url('http://127.0.0.1:8000/api/dummy-json'));
-                $result = $response;
+                if (!$response->successful()) {
+                    $response = Http::get(url('http://127.0.0.1:8000/api/dummy-json'));
+                }
+                $result = $response->body();
+            } elseif (App::environment('development')) {
+                $response = Http::get('https://hireach.archeeshop.com/dummy-json');
+                $result = $response->body();
             }
 
             // return $response;
@@ -187,7 +201,7 @@ class ProcessEmailApi implements ShouldQueue
                 $balance = 0;
                 //check client && array
                 $modelData = [
-                    'title'     => $response['title'],
+                    'title'     => $request['title'],
                     'msg_id'    => $result['request_id'],
                     'user_id'   => $this->user->id,
                     'client_id' => $this->chechClient("200", $request['to']),
@@ -282,8 +296,8 @@ class ProcessEmailApi implements ShouldQueue
 
     private function synCampaign($blast)
     {
-        if($blast && !is_null($this->campaign)){
-            CampaignModel::create(['campaign_id'=>$this->campaign->id, 'model'=>'BlastMessage', 'model_id'=>$blast->id]);
+        if ($blast && !is_null($this->campaign)) {
+            CampaignModel::create(['campaign_id' => $this->campaign->id, 'model' => 'BlastMessage', 'model_id' => $blast->id]);
         }
     }
 }

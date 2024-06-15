@@ -14,6 +14,7 @@ use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\App;
 
 class ProcessSmsApi implements ShouldQueue
 {
@@ -46,7 +47,6 @@ class ProcessSmsApi implements ShouldQueue
         //filter OTP & Non OTP
         $provider = $this->request['provider'];
         if ($provider->code == 'provider1' || $this->request['otp']) {
-
             $this->MKProvider($this->request);
         } elseif ($provider->code == 'provider2') {
             $this->EMProvider($this->request);
@@ -94,11 +94,12 @@ class ProcessSmsApi implements ShouldQueue
                 // accept('application/json')->
 
 
-                $environment = config('app.env');
-                if ($environment === 'local' || $environment === 'testing') {
-                    Log::debug('masuk ke lokal');
+                $environment = App::environment();
 
+                if (App::environment(['local', 'testing'])) {
                     $response = Http::get(url('http://hireach.test/api/dummy-string'));
+                } elseif (App::environment('development')) {
+                    $response = Http::get('https://hireach.archeeshop.com/api/dummy-string');
                 } else {
                     $response = Http::get($url, [
                         'user' => $user,
@@ -257,7 +258,6 @@ class ProcessSmsApi implements ShouldQueue
                             // Log::debug($modelData);
                             $mms = BlastMessage::create($modelData);
                             $this->synCampaign($mms);
-
                         } else {
                             Log::debug("failed msis format: ");
                             Log::debug($msg_msis);
@@ -291,12 +291,13 @@ class ProcessSmsApi implements ShouldQueue
         $msg = $this->saveResult('progress');
         if ($msg) {
 
-            $environment = config('app.env');
-            if ($environment === 'local' || $environment === 'testing') {
-                Log::debug("masuk ke Testing ENV");
+            if (App::environment(['local', 'testing'])) {
                 $msgChannel = 99;
                 Log::debug($resData = Http::get(url('http://hireach.test/api/dummy-array')));
                 $response = Http::get(url('http://hireach.test/api/dummy-array'));
+            } elseif (App::environment('development')) {
+                $msgChannel = 99;
+                $response = Http::get('https://hireach.archeeshop.com/api/dummy-array');
             } else {
                 $url = 'https://enjoymov.co/prod-api/kstbCore/sms/send';
                 $md5_key = env('EM_MD5_KEY', 'A'); //'AFD4274C39AB55D8C8D08FA6E145D535';
@@ -409,8 +410,8 @@ class ProcessSmsApi implements ShouldQueue
 
     private function synCampaign($blast)
     {
-        if($blast && !is_null($this->campaign)){
-            CampaignModel::create(['campaign_id'=>$this->campaign->id, 'model'=>'BlastMessage', 'model_id'=>$blast->id]);
+        if ($blast && !is_null($this->campaign)) {
+            CampaignModel::create(['campaign_id' => $this->campaign->id, 'model' => 'BlastMessage', 'model_id' => $blast->id]);
         }
     }
 }
