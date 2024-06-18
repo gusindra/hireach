@@ -98,7 +98,7 @@ class Edit extends Component
         ];
     }
 
-    public function updateStatus($id, $formName = 'basic')
+    public function updateStatus($id, $formName = '')
 
     {
         $this->formName = $formName;

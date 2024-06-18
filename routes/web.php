@@ -10,6 +10,7 @@ use App\Http\Controllers\ApiWaController;
 use App\Http\Controllers\ChatController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BillingController;
+use App\Http\Controllers\CampaignController;
 use App\Http\Controllers\ChannelController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\RoleController;
@@ -175,6 +176,8 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
     Route::get('/campaign', function () {
         return view('campaign.index');
     })->name('campaign.index');
+    Route::get('/campaign/{campaign}', [CampaignController::class, 'show'])->name('campaign.show');
+
 
     Route::get('/resources', [ResourceController::class, 'index'])->name('resources.index');
     Route::get('/resources/create', [ResourceController::class, 'show'])->name('show.resource');
