@@ -34,10 +34,6 @@ class Edit extends Component
     public $formName;
     public $hasSchedule = false;
 
-
-
-
-
     public function mount($campaign)
     {
         $campaign = Campaign::where('id', $campaign)->where('user_id', Auth::id())->firstOrFail();
@@ -70,6 +66,10 @@ class Edit extends Component
         $this->templates = Template::with('question')->find(auth()->user()->id)->get();
 
         $this->hasSchedule = CampaignSchedule::where('campaign_id', $this->campaign_id)->exists();
+
+        if ($this->selectTo === 'audience') {
+            $this->loadAudienceContacts();
+        }
     }
 
     public function checkSchedule()
@@ -77,38 +77,61 @@ class Edit extends Component
         $this->hasSchedule = CampaignSchedule::where('campaign_id', $this->campaign_id)->exists();
     }
 
+    public function loadAudienceContacts()
+    {
+        if ($this->audience_id) {
+            $audience = Audience::with('audienceClients.client')->find($this->audience_id);
+
+            if ($audience) {
+                if ($this->channel === 'EMAIL') {
+                    $contacts = $audience->audienceClients->pluck('client.email')->toArray();
+                } else {
+                    $contacts = $audience->audienceClients->pluck('client.phone')->toArray();
+                }
+                $this->to = !empty($contacts) ? implode(',', $contacts) : '';
+            } else {
+                $this->to = '';
+            }
+        } else {
+            $this->to = '';
+        }
+    }
+
+    public function updatedAudienceId($value)
+    {
+        $this->audience_id = $value;
+        $this->loadAudienceContacts();
+    }
+
+    public function updatedProvider($providerCode)
+    {
+        $selectedProvider = $this->userProvider->firstWhere('provider.code', $providerCode);
+        $this->channel = $selectedProvider ? $selectedProvider->channel : '';
+        $this->loadAudienceContacts();
+    }
+
     public function rules()
     {
-
-
         $data = [
             'title' => 'required',
             'type' => 'required',
             'way_type' => 'required',
             'budget' => 'required',
-
-
         ];
+
         if ($this->formName == 'provider') {
             $data = [
                 'provider' => 'required',
                 'channel' => 'required',
-
             ];
         } elseif ($this->formName == 'content') {
             $data = [
-
-
                 'text' => 'required',
-
             ];
         } elseif ($this->formName == 'fromTo') {
             $data = [
-
                 'from' => 'required',
                 'to' => 'required',
-
-
             ];
         }
 
@@ -127,7 +150,6 @@ class Edit extends Component
             'text' => 'required',
             'from' => 'required',
             'to' => 'required',
-
         ]);
 
         if (!$this->hasSchedule) {
@@ -145,11 +167,8 @@ class Edit extends Component
         $this->campaign->save();
     }
 
-
-
     public function update($id, $formName = 'basic')
     {
-
         $this->formName = $formName;
         $this->validate();
 
@@ -175,7 +194,7 @@ class Edit extends Component
         } elseif ($formName == 'content') {
             $this->emit('savedContent');
         } elseif ($formName == 'fromTo') {
-            $this->emit('savedFroTo');
+            $this->emit('savedFromTo');
         } else {
             $this->emit('saved');
         }
@@ -193,17 +212,8 @@ class Edit extends Component
         $template = Template::with('actions')->find($value);
         foreach ($template->actions as $action) {
             $this->text = $this->text . '<div class="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 my-4 rounded-lg shadow-md">
-                <p class="font-semibold">' . $action->message . '</p>
-            </div>';
+                <p class="font-semibold">' . $action->message . '</p>';
         }
-    }
-
-
-
-    public function updatedProvider($providerCode)
-    {
-        $selectedProvider = $this->userProvider->firstWhere('provider.code', $providerCode);
-        $this->channel = $selectedProvider ? $selectedProvider->channel : '';
     }
 
     public function read()
@@ -213,7 +223,6 @@ class Edit extends Component
 
     public function render()
     {
-
-        return view('livewire.campaign.edit', ['hasSchedule' => $this->read()]);
+        return view('livewire.campaign.edit', ['hasSchedule' => $this->checkSchedule()]);
     }
 }
