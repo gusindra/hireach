@@ -311,6 +311,7 @@ class ProcessSmsApi implements ShouldQueue
                 $countryCode = $code[0];
                 $phone = substr($request['to'], 2);
 
+
                 $sb = $md5_key . $merchantId . $phone . $content;
                 $signature = Http::acceptJson()->withUrlParameters([
                     'endpoint' => 'http://8.215.55.87:34080/sign',

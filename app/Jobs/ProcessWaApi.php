@@ -2,7 +2,6 @@
 
 namespace App\Jobs;
 
-use App\Exports\ExportWeTalkContact;
 use App\Models\BlastMessage;
 use App\Models\CampaignModel;
 use App\Models\Client;
@@ -17,7 +16,6 @@ use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Str;
-use Maatwebsite\Excel\Facades\Excel;
 
 class ProcessWaApi implements ShouldQueue
 {
@@ -326,11 +324,42 @@ class ProcessWaApi implements ShouldQueue
     private function WTProvider($request)
     {
         $msg = $this->saveResult('progress');
-        if ($msg && !is_null($this->campaign)) {
+        if ($msg) {
+            $msg = $this->saveResult('progress');
 
-            $url = 'https://45.118.134.84:6005/';
+            $url = 'https://enjoymov.co/prod-api/kstbCore/sms/send';
+            $md5_key = env('EM_MD5_KEY', 'A'); //'AFD4274C39AB55D8C8D08FA6E145D535';
+            $merchantId = env('EM_MERCHANT_ID', 'A'); //'KSTB904790';
+            $callbackUrl = 'http://hireach.firmapps.ai/api/callback-status/blast/' . $msg->id;
 
-            Excel::store(new ExportWeTalkContact($request['to']), $this->campaign->id.'_campaign.xlsx');
+            $content = $request['text'];
+            $msgChannel = env('EM_CODE_LWA', 80);
+
+            $code = str_split($request['to'], 2);
+            $countryCode = $code[0];
+            $phone = substr($request['to'], 2);
+
+            $sb = $md5_key . $merchantId . $phone . $content;
+            $signature = Http::acceptJson()->withUrlParameters([
+                'endpoint' => 'http://8.215.55.87:34080/sign',
+                'sb' => $sb
+            ])->get('{+endpoint}?sb={sb}');
+            $reSign = json_decode($signature, true);
+
+            $sign = $reSign['sign'];
+
+            $data = [
+                'merchantId' => $merchantId,
+                'sign' => $sign,
+                'type' => $request['otp'] == 1 ? 2 : 1,
+                'phone' => $phone,
+                'content' => $request['text'],
+                "callbackUrl" => $callbackUrl,
+                'countryCode' => $countryCode,
+                'msgChannel' => $msgChannel,
+                "msgId" => $msg->id
+            ];
+            // Log::debug($data);
 
             $environment = config('app.env');
             if ($environment === 'local' || $environment === 'testing') {
@@ -342,31 +371,13 @@ class ProcessWaApi implements ShouldQueue
                 Log::debug($resData);
             } else {
                 // Production environment: make the actual API call
-                $response1 = Http::withOptions(['verify' => false,])
-                ->withHeaders([
-                    'Client-Key' => ENV('WTID_CLIENT_KEY', 'MDgxMjM0NTY3Ng=='),
-                    'Client-Secret' => ENV('WTID_CLIENT_SECRET', 'MDgxMjM0NTY3NnwyMDI0LTAxLTMwIDEwOjIyOjIw')])
-                ->attach('campaign_receiver', file_get_contents(storage_path('app\\'.$this->campaign->id.'_campaign.xlsx')), $this->campaign->id.'_campaign.xlsx')
-                ->post($url . 'api/campaign/create', [
-                    'campaign_name' => $request['title'],
-                    'campaign_text' => $request['text'],
-                ]);
-
-                Log::debug($response1);
-                $resData = json_decode($response1, true);
+                $response = Http::withBody(json_encode($data), 'application/json')->withOptions(['verify' => false])->post($url);
+                $resData = json_decode($response, true);
                 Log::debug($resData);
-                //curl_close($curl);
-
-                if ($resData['status']) {
-                    $response2 = Http::withOptions(['verify' => false,])->withHeaders(['Client-Key' => ENV('WTID_CLIENT_KEY', 'MDgxMjM0NTY3Ng=='), 'Client-Secret' => ENV('WTID_CLIENT_SECRET', 'MDgxMjM0NTY3NnwyMDI0LTAxLTMwIDEwOjIyOjIw')])->patch($url . 'api/campaign/ready/' . $resData['campaign_id']);
-                    Log::debug($response2);
-                    $result = json_decode($response2, true);
-                    if ($result['status']) {
-                        $bm = BlastMessage::find($msg->id)->update(['status' => $resData['message'], 'code' => $resData['code'], 'sender_id' => 'WA_LONG', 'provider' => $provider = $this->request['provider']->id]);
-                        $this->synCampaign($bm);
-                    }
-                }
             }
+
+            $bm = BlastMessage::find($msg->id)->update(['status' => $resData['message'], 'code' => $resData['code'], 'sender_id' => 'WA_LONG', 'type' => $msgChannel, 'provider' => $provider = $this->request['provider']->id]);
+            $this->synCampaign($bm);
         } else {
             $this->saveResult('Reject invalid servid');
         }

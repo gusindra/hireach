@@ -140,7 +140,7 @@ class ApiOneWayController extends Controller
             //Log::channel('apilog')->info($request, [
             //    'auth' => auth()->user()->name,
             //]);
-            $provider = cache()->remember('provider-user-', $this->cacheDuration, function() use ($request) {
+            $provider = cache()->remember('provider-user-'.auth()->user()->id.'-'.$request->channel, $this->cacheDuration, function() use ($request) {
                 return auth()->user()->providerUser->where('channel', strtoupper($request->channel))->first()->provider;
             });
 
@@ -240,7 +240,7 @@ class ApiOneWayController extends Controller
                             ProcessEmailApi::dispatch($request->all(), auth()->user(), $reqArr, $campaign);
                         }elseif(strpos(strtolower($request->channel), 'sms') !== false){
                             //THIS WILL QUEUE SMS JOB
-                            ProcessSmsApi::dispatch($request->all(), auth()->user(),$campaign);
+                            ProcessSmsApi::dispatch($request->all(), auth()->user(), $campaign);
                         }elseif(strtolower($request->channel)=='wa'){
                             if($credential){
                                 //THIS WILL QUEUE WA JOB
@@ -257,13 +257,13 @@ class ApiOneWayController extends Controller
                                 'provider' => $provider
                             ]);
                             //THIS WILL QUEUE WALN JOB
-                            ProcessWaApi::dispatch($request->all(), auth()->user());
+                            ProcessWaApi::dispatch($request->all(), auth()->user(), $campaign);
                         }elseif(strtolower($request->channel)=='long_sms'){
                             $request->merge([
                                 'provider' => $provider
                             ]);
                             //THIS WILL QUEUE SMSLN JOB
-                            ProcessSmsApi::dispatch($request->all(), auth()->user());
+                            ProcessSmsApi::dispatch($request->all(), auth()->user(), $campaign);
                         }
                     }
 
