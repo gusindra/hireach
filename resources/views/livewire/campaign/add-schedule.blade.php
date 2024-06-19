@@ -33,15 +33,19 @@
                         @foreach ($days as $day => $selected)
                             <tr>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                    <x-jet-checkbox id="days_{{ $day }}"
-                                        wire:model="days.{{ $day }}" />
+
+                                    <input id="days_{{ $day }}" wire:poll.4000ms="getCampaign"
+                                        wire:model="days.{{ $day }}" type="checkbox"
+                                        class="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300 rounded"
+                                        @if ($campaign->status == 'started') disabled @endif>
                                 </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                                <td class="px-6 py-4 whitespace-nowrap text-center text-sm font-medium text-gray-900">
                                     {{ ucfirst($day) }}
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                                     <x-jet-input id="times_{{ $day }}" type="time" class="block w-full"
-                                        wire:model="times.{{ $day }}" />
+                                        wire:model="times.{{ $day }}"
+                                        disabled="{{ disableInput($campaign->status == 'pause' || $campaign->status == 'pending') }}" />
                                 </td>
                             </tr>
                         @endforeach
@@ -54,10 +58,11 @@
             <x-jet-action-message class="mr-3" on="saved">
                 {{ __('Schedule generated successfully.') }}
             </x-jet-action-message>
-
-            <x-jet-button>
-                {{ __('Save Schedule') }}
-            </x-jet-button>
+            @if ($campaign->status == 'pending' || $campaign->status == 'pause')
+                <x-jet-button>
+                    {{ __('Save Schedule') }}
+                </x-jet-button>
+            @endif
         </x-slot>
     </x-jet-form-section>
 </div>

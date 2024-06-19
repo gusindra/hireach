@@ -33,6 +33,7 @@ class Edit extends Component
     public $template_id;
     public $formName;
     public $hasSchedule = false;
+    public $showModal = false;
 
     public function mount($campaign)
     {
@@ -140,26 +141,36 @@ class Edit extends Component
 
     public function startCampaign()
     {
-        $this->validate([
-            'title' => 'required',
-            'type' => 'required',
-            'way_type' => 'required',
-            'budget' => 'required',
-            'provider' => 'required',
-            'channel' => 'required',
-            'text' => 'required',
-            'from' => 'required',
-            'to' => 'required',
-        ]);
+        try {
+            // Validate the input data
+            $this->validate([
+                'title' => 'required',
+                'type' => 'required',
+                'way_type' => 'required',
+                'budget' => 'required',
+                'provider' => 'required',
+                'channel' => 'required',
+                'text' => 'required',
+                'from' => 'required',
+                'to' => 'required',
+            ]);
 
-        if (!$this->hasSchedule) {
-            session()->flash('error', 'Campaign must have at least one schedule.');
-            return;
+            if (!$this->hasSchedule) {
+                session()->flash('error', 'Campaign must have at least one schedule.');
+                $this->showModal = false;
+                return;
+            }
+
+
+            $this->campaign->status = 'started';
+            $this->campaign->save();
+            $this->showModal = false;
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            $this->showModal = false;
+            throw $e;
         }
-
-        $this->campaign->status = 'started';
-        $this->campaign->save();
     }
+
 
     public function pauseCampaign()
     {
@@ -216,13 +227,10 @@ class Edit extends Component
         }
     }
 
-    public function read()
-    {
-        return CampaignSchedule::where('campaign_id', $this->campaign_id)->exists();
-    }
+
 
     public function render()
     {
-        return view('livewire.campaign.edit', ['hasSchedule' => $this->checkSchedule()]);
+        return view('livewire.campaign.edit');
     }
 }

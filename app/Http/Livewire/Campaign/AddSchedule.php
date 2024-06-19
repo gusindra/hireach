@@ -2,6 +2,7 @@
 
 namespace App\Http\Livewire\Campaign;
 
+use App\Models\Campaign;
 use App\Models\CampaignSchedule;
 use Livewire\Component;
 
@@ -34,9 +35,16 @@ class AddSchedule extends Component
         $this->loadExistingSchedules();
     }
 
+    public function getCampaign()
+    {
+        $campaign = Campaign::find($this->campaign_id);
+        return $campaign;
+    }
+
     public function render()
     {
-        return view('livewire.campaign.add-schedule');
+
+        return view('livewire.campaign.add-schedule', ['campaign' => $this->getCampaign()]);
     }
 
     public function loadExistingSchedules()
@@ -49,6 +57,7 @@ class AddSchedule extends Component
             $this->times[$day] = $schedule->time;
         }
     }
+
 
     public function generateSchedule()
     {
