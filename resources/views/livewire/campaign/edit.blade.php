@@ -276,6 +276,12 @@
                     <x-jet-input-error for="audience_id" class="mt-2" />
                 </div>
             @endif
+            <div class="col-span-6 sm:col-span-4">
+                <x-jet-input id="to"
+                    class="form-textarea mt-1 block w-full rounded-md shadow-sm border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+                    wire:model.defer="to" readonly></x-jet-input>
+            </div>
+
 
         </x-slot>
 
