@@ -20,7 +20,7 @@ class ApiDocumentationTest extends TestCase
      *
      * @return void
      */
-    public function api_documentation_screen_can_be_rendered()
+    public function test_api_documentation_screen_can_be_rendered()
     {
         $response = $this->get('/api/documentation');
         $response->assertStatus(200);
@@ -31,7 +31,7 @@ class ApiDocumentationTest extends TestCase
      *
      * @return void
      */
-    public function api_token_permissions_can_be_created()
+    public function test_api_token_permissions_can_be_created()
     {
         $name = Str::random(10);
         $user = User::find(2);
@@ -56,7 +56,7 @@ class ApiDocumentationTest extends TestCase
      *
      * @return void
      */
-    public function api_one_way_can_be_posted()
+    public function test_api_one_way_can_be_posted()
     {
         $user = User::find(2);
         $token = $user->createToken(
@@ -92,7 +92,7 @@ class ApiDocumentationTest extends TestCase
      *
      * @return void
      */
-    public function api_one_way_can_be_access_get_method()
+    public function test_api_one_way_can_be_access_get_method()
     {
         $user = User::find(2);
         $token = $user->createToken(
@@ -147,7 +147,7 @@ class ApiDocumentationTest extends TestCase
      *
      * @return void
      */
-    public function api_two_way_can_be_access_get_method()
+    public function test_api_two_way_can_be_access_get_method()
     {
         $user = User::find(2);
         $token = $user->createToken(
@@ -171,7 +171,7 @@ class ApiDocumentationTest extends TestCase
      *
      * @return void
      */
-    public function api_token_permissions_can_be_deleted()
+    public function test_api_token_permissions_can_be_deleted()
     {
         $user = User::find(2);
         $token = $user->tokens()->create([
