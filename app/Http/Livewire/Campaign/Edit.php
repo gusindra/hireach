@@ -32,8 +32,10 @@ class Edit extends Component
     public $templates;
     public $template_id;
     public $formName;
+    public $fromList;
     public $hasSchedule = false;
     public $showModal = false;
+
 
     public function mount($campaign)
     {
@@ -71,12 +73,40 @@ class Edit extends Component
         if ($this->selectTo === 'audience') {
             $this->loadAudienceContacts();
         }
+        $this->fromList[1] = auth()->user()->phone_no;
+        if ($this->channel == 'EMAIL') {
+            $this->fromList[0] = 'noreply@hireach.archeeshop.com';
+            $this->fromList[1] = auth()->user()->email;
+            $this->from = 'noreply@hireach.archeeshop.com';
+        } else {
+
+            $this->fromList[0] = 'Auto';
+            if (auth()->user()->phone_no) {
+                $this->fromList[1] = auth()->user()->phone_no;
+            }
+            $this->from = 'Auto';
+        }
     }
 
     public function checkSchedule()
     {
         $this->hasSchedule = CampaignSchedule::where('campaign_id', $this->campaign_id)->exists();
     }
+
+    public function updatedSelectTo()
+    {
+        if ($this->selectTo === 'manual') {
+            $this->campaign->audience_id = null;
+            $this->campaign->save();
+
+            $this->audience_id = null;
+            $this->to = '';
+        } else {
+
+            $this->to = '';
+        }
+    }
+
 
     public function loadAudienceContacts()
     {
@@ -106,11 +136,29 @@ class Edit extends Component
 
     public function updatedProvider($providerCode)
     {
+
         $selectedProvider = $this->userProvider->firstWhere('provider.code', $providerCode);
         $this->channel = $selectedProvider ? $selectedProvider->channel : '';
         $this->loadAudienceContacts();
+        $this->getFrom();
     }
 
+    public function getFrom()
+    {
+        $this->fromList[1] = auth()->user()->phone_no;
+        if ($this->channel == 'EMAIL') {
+            $this->fromList[0] = 'noreply@hireach.archeeshop.com';
+            $this->fromList[1] = auth()->user()->email;
+            $this->from = 'noreply@hireach.archeeshop.com';
+        } else {
+
+            $this->fromList[0] = 'Auto';
+            if (auth()->user()->phone_no) {
+                $this->fromList[1] = auth()->user()->phone_no;
+            }
+            $this->from = 'Auto';
+        }
+    }
     public function rules()
     {
         $data = [
@@ -222,8 +270,11 @@ class Edit extends Component
 
         $template = Template::with('actions')->find($value);
         foreach ($template->actions as $action) {
-            $this->text = $this->text . '<div class="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 my-4 rounded-lg shadow-md">
-                <p class="font-semibold">' . $action->message . '</p>';
+            $this->text .= <<<HTML
+            <div class="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 my-4 rounded-lg shadow-md">
+                <p class="font-semibold">{$action->message}</p>
+            </div>
+            HTML;
         }
     }
 

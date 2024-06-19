@@ -236,9 +236,12 @@
         <x-slot name="form">
             <div class="col-span-6 sm:col-span-4">
                 <x-jet-label for="from" value="{{ __('From') }}" />
-                <x-jet-input id="from"
-                    disabled="{{ disableInput($campaign->status == 'pause' || $campaign->status == 'pending') }}"
-                    type="text" class="mt-1 block w-full" wire:model.defer="from" />
+                <select wire:model="from" id="from" @if ($campaign->status == 'started') disabled @endif
+                    class="form-select block w-full mt-1 rounded-md shadow-sm border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
+                    @foreach ($fromList as $froml)
+                        <option value="{{ $froml }}">{{ $froml }}</option>
+                    @endforeach
+                </select>
                 <x-jet-input-error for="from" class="mt-2" />
             </div>
 
@@ -276,13 +279,19 @@
                     <x-jet-input-error for="audience_id" class="mt-2" />
                 </div>
             @endif
-            @if ($campaign->to)
+            @if ($to && $selectTo === 'audience')
                 <div class="col-span-6 sm:col-span-4">
-                    <x-jet-input id="to"
-                        class="form-textarea mt-1 block w-full rounded-md shadow-sm border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
-                        wire:model.defer="to" readonly></x-jet-input>
+                    <label class="block font-medium text-sm text-gray-700 dark:text-slate-300">Audience
+                        Clients</label>
+                    <div class="overflow-x-auto">
+                        <div class="border border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 rounded-md shadow-sm dark:bg-slate-800 dark:text-slate-300 mt-1 block w-full p-3"
+                            wire:model="to">
+                            {{ $to }}
+                        </div>
+                    </div>
                 </div>
             @endif
+
 
 
 
