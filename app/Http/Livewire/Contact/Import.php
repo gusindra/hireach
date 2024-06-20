@@ -19,10 +19,9 @@ class Import extends Component
     public $source;
     public $showClients = false;
     public $is_modal = true;
-
-    public function mount($model=null)
+    public function mount($model = null)
     {
-        if($model!=null){
+        if ($model != null) {
             $this->showClients = true;
         }
     }
@@ -97,7 +96,7 @@ class Import extends Component
 
     public function render()
     {
-        if($this->is_modal==false){
+        if ($this->is_modal == false) {
             return view('livewire.contact.form-add');
         }
         return view('livewire.contact.import');

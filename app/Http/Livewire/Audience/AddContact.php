@@ -139,9 +139,10 @@ class AddContact extends Component
      */
     public function actionShowModal()
     {
-        $this->array_data = Client::where('user_id', auth()->user()->currentTeam->user_id)->get();
+        // $this->array_data = Client::where('user_id', auth()->user()->currentTeam->user_id)->get();
         $this->modalActionVisible = true;
         $this->resetForm();
+        $this->emit('refreshLivewireDatatable');
         $this->actionId = null;
     }
 
@@ -152,8 +153,8 @@ class AddContact extends Component
      */
     public function exportContact()
     {
-        Excel::store(new ExportAudienceContact($this->audience->id), $this->audience->id.'_client.xlsx');
-        return Excel::download(new ExportAudienceContact($this->audience->id), $this->audience->name.'_client.xlsx');
+        Excel::store(new ExportAudienceContact($this->audience->id), $this->audience->id . '_client.xlsx');
+        return Excel::download(new ExportAudienceContact($this->audience->id), $this->audience->name . '_client.xlsx');
     }
 
     /**
@@ -164,6 +165,7 @@ class AddContact extends Component
     public function read()
     {
         return AudienceClient::where('audience_id', $this->audienceId)->get();
+        $this->emit('refreshLivewireDatatable');
     }
 
     /**
