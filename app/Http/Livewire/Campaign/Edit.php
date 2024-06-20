@@ -66,7 +66,12 @@ class Edit extends Component
 
         $this->selectedProviderCode = $this->provider;
 
-        $this->templates = Template::with('question')->find(auth()->user()->id)->get();
+        $userTemplates = Template::with('question')
+            ->where('user_id', auth()->user()->id)
+            ->get();
+
+        $this->templates = $userTemplates->isEmpty() ? collect() : $userTemplates;
+
 
         $this->hasSchedule = CampaignSchedule::where('campaign_id', $this->campaign_id)->exists();
 
