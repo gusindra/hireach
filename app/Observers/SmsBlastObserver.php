@@ -99,13 +99,13 @@ class SmsBlastObserver
         //PUSH to Campaign
     }
 
-    private function addSaldo($price, $request, $currency = 'idr')
+    private function addSaldo($price, $request, $currency = 'IDR')
     {
         SaldoUser::create([
             'team_id'       => NULL,
             'model_id'      => $request->id,
             'model'         => 'BlastMessage',
-            'currency'      => $currency,
+            'currency'      => "IDR",
             'amount'        => $price,
             'mutation'      => 'debit',
             'description'   => 'Cost - ' . $request->id . ' - ' . $request->msg_id,

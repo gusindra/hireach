@@ -26,8 +26,7 @@ class InviteTeamMember implements InvitesTeamMembers
      */
     public function invite($user, $team, string $email, string $role = null)
     {
-        dd($user->team);
-        if ($user->team->role != 'admin') {
+        if ($user->team && $user->team->role != 'admin') {
             Gate::forUser($user)->authorize('addTeamMember', $team);
         }
 
@@ -39,7 +38,6 @@ class InviteTeamMember implements InvitesTeamMembers
             'email' => $email,
             'role' => $role,
         ]);
-
 
         Mail::to($email)->send(new MailTeamInvitation($invitation));
     }

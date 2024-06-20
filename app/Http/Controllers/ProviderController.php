@@ -8,6 +8,17 @@ use Illuminate\Support\Facades\Auth;
 
 class ProviderController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware(function ($request, $next) {
+            // Your auth here
+            if (auth()->user()->isSuper || (auth()->user()->team && auth()->user()->team->role == 'superadmin')) {
+                return $next($request);
+            }
+            abort(404);
+        });
+    }
+
     public function index()
     {
 
