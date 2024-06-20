@@ -26,7 +26,11 @@ class ProcessSmsApi implements ShouldQueue
 
     /**
      * Create a new job instance.
+     * __construct
      *
+     * @param  mixed $request
+     * @param  mixed $user
+     * @param  mixed $campaign
      * @return void
      */
     public function __construct($request, $user, $campaign = null)
@@ -310,6 +314,7 @@ class ProcessSmsApi implements ShouldQueue
                 $code = str_split($request['to'], 2);
                 $countryCode = $code[0];
                 $phone = substr($request['to'], 2);
+
 
                 $sb = $md5_key . $merchantId . $phone . $content;
                 $signature = Http::acceptJson()->withUrlParameters([

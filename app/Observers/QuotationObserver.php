@@ -44,7 +44,7 @@ class QuotationObserver
                     'task'      => $value->description,
                 ]);
             }
-            Log::debug('create flow '. $flow);
+            //Log::debug('create flow '. $flow);
         }
 
         // foreach($flow as $key => $value){

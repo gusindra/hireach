@@ -133,8 +133,8 @@ class AddResource extends Component
      */
     public function sendResource()
     {
-
         $this->validate();
+        
         if ($this->selectTo === 'manual') {
             $to = $this->to;
         } elseif ($this->selectTo === 'from_contact') {
@@ -335,6 +335,7 @@ class AddResource extends Component
             $this->from = 'noreply@hireach.archeeshop.com';
         } elseif (
             strpos(strtolower($this->channel), 'long_wa') !== false ||
+            strpos(strtolower($this->channel), 'long_sms') !== false ||
             strtolower($this->channel) == 'sm' ||
             strtolower($this->channel) == 'pl' ||
             strtolower($this->channel) == 'waba' ||

@@ -22,4 +22,34 @@ class Campaign extends Model
     public function request(){
         return $this->hasMany('App\Models\CampaignModel', 'campaign_id');
     }
+
+    /**
+     * Get the flow that belongs to user.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function user()
+    {
+        return $this->belongsTo('App\Models\User', 'user_id');
+    }
+
+    /**
+     * Get the flow that belongs to user.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function audience()
+    {
+        return $this->belongsTo('App\Models\Audience', 'audience_id');
+    }
+
+    /**
+     * Get the flow that belongs to user.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function template()
+    {
+        return $this->belongsTo('App\Models\Template', 'template_id');
+    }
 }

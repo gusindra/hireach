@@ -4,12 +4,11 @@
             {{ __('Edit Template') }}
         </h2>
     </x-slot>
-
     <div class="grid grid-cols-12">
         @includeWhen(auth()->user(), 'menu.user-engagement', [])
 
         <div class="col-span-12 px-3 ml-24 mt-2">
-            @livewire('template.edit-template', ['uuid'=>$uuid])
+            @livewire('campaign.edit', ['campaign' => $campaign->id])
         </div>
     </div>
 </x-app-layout>

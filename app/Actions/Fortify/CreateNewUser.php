@@ -62,7 +62,7 @@ class CreateNewUser implements CreatesNewUsers
             if($newInvitation && $newInvitation->team_id){
                 $team = Team::find($newInvitation->team_id);
             }else{
-                $team = Team::find(1);
+                $team = Team::find(4);
             }
             $team->users()->attach(
                 $newTeamMember, ['role' => $role]

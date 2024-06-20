@@ -24,9 +24,6 @@
                                     <div class="col-span-12 sm:col-span-1">
 
 
-
-
-
                                         <!-- Fonts -->
                                         <link rel="stylesheet"
                                             href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap">

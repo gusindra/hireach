@@ -36,7 +36,7 @@ class TeamInvitation extends Mailable
         $url = URL::signedRoute('team.invitations.accept', [
             'invitation' => $this->invitation,
         ]);
-
+        Log::debug($url);
         return $this->markdown('mail.team-invitation', [
             'acceptUrl' => $url
         ])->subject(__('Team Invitation'));

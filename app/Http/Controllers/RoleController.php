@@ -12,8 +12,7 @@ class RoleController extends Controller
     {
         $this->middleware(function ($request, $next) {
             // Your auth here
-            $this->user_info = Auth::user()->super->first();
-            if ($this->user_info && $this->user_info->role == 'superadmin') {
+            if (auth()->user()->isSuper || (auth()->user()->team && auth()->user()->team->role == 'superadmin')) {
                 return $next($request);
             }
             abort(404);

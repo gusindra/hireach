@@ -26,7 +26,7 @@ class SmsBlastObserver
         if ($request->code == "200") {
             $set_price = 0;
             //check logic quotation for sms active here
-            if ($quote = Quotation::where('client_id', $request->user_id)->whereIn('status', ['reviewed'])->orderBy('id', 'desc')->first()) {
+            if ($quote = Quotation::where('model', 'USER')->where('model_id', $request->user_id)->whereIn('status', ['reviewed','active'])->orderBy('id', 'desc')->first()) {
                 //get price for sms
                 $items = OrderProduct::orderBy('id', 'asc')->where('model', 'Quotation')->where('model_id', $quote->id)->get();
                 //FIND WAY TO FILTER BY PHONE NUMBER BASE ON OPERATOR
@@ -34,27 +34,58 @@ class SmsBlastObserver
                 $phoneNo = substr($phoneNo, 0, 5);
                 $opn = OperatorPhoneNumber::where('code', $phoneNo)->first();
                 foreach ($items as $product) {
-                    if ($request->otp == 0 && $product->note == 'SMS NON OTP') {
+                    // IF NON OTP
+                    if ($request->otp == 0) {
                         if ($opn && $opn->operator == $product->name) {
-                            $this->addSaldo($product->price, $request);
+                            $this->addSaldo($product, $request);
                             $set_price = 1;
                             // Log::debug('hit non otp single operator');
-                        } elseif (Str::contains($product->name, 'SMS NON OTP')) {
+                        } elseif (Str::contains($product->name, 'SMS NON OTP') || Str::contains($product->name, 'HR-NSO')) {
                             // Default by key SMS NON OTP
-                            $this->addSaldo($product->price, $request);
+                            $this->addSaldo($product, $request);
+                            $set_price = 1;
+                            // Log::debug('hit non otp all operator');
+                        } elseif (Str::contains($product->name, 'HR-SLC')) {
+                            // Default by key SMS NON OTP
+                            $this->addSaldo($product, $request);
+                            $set_price = 1;
+                            // Log::debug('hit non otp all operator');
+                        } elseif (Str::contains($product->name, 'HR-WLC')) {
+                            // Default by key SMS NON OTP
+                            $this->addSaldo($product, $request);
+                            $set_price = 1;
+                            // Log::debug('hit non otp all operator');
+                        } elseif (Str::contains($product->name, 'HR-EML1')) {
+                            // Default by key SMS NON OTP
+                            $this->addSaldo($product, $request);
+                            $set_price = 1;
+                            // Log::debug('hit non otp all operator');
+                        } elseif (Str::contains($product->name, 'HR-EMLO')) {
+                            // Default by key SMS NON OTP
+                            $this->addSaldo($product, $request);
                             $set_price = 1;
                             // Log::debug('hit non otp all operator');
                         }
-                    } elseif ($request->otp == 1 && $product->note == 'SMS OTP') {
+                    } elseif ($request->otp == 1) {
                         //FIND WAY TO FILTER BY PHONE NUMBER BASE ON OPERATOR
                         if ($opn && $opn->operator == $product->name) {
-                            $this->addSaldo($product->price, $request);
+                            $this->addSaldo($product, $request);
                             $set_price = 1;
                             // Log::debug('hit otp single operator');
-                        } elseif (Str::contains($product->name, 'SMS OTP')) {
-                            $this->addSaldo($product->price, $request);
+                        } elseif (Str::contains($product->name, 'SMS OTP') || Str::contains($product->name, 'HR-SO')) {
+                            $this->addSaldo($product, $request);
                             $set_price = 1;
                             // Log::debug('hit otp single operator');
+                        } elseif (Str::contains($product->name, 'HR-EML1')) {
+                            // Default by key SMS NON OTP
+                            $this->addSaldo($product, $request);
+                            $set_price = 1;
+                            // Log::debug('hit non otp all operator');
+                        } elseif (Str::contains($product->name, 'HR-EMLO')) {
+                            // Default by key SMS NON OTP
+                            $this->addSaldo($product, $request);
+                            $set_price = 1;
+                            // Log::debug('hit non otp all operator');
                         }
                     }
                 }
@@ -64,51 +95,51 @@ class SmsBlastObserver
                 $items = $master->items;
 
                 //check msisdn for $product items
-                // CHARGE BY PRODUCT SMS PRICE
+                // CHARGE BY PRODUCT PRICE
                 if (count($items) > 0) {
                     foreach ($items as $product) {
-                        if ($product->sku == "SMS") {
-                            // ALL SMS Charge this Price
-                            $this->addSaldo($product->unit_price, $request);
+                        if (str_contains($request->sender_id, $product->sku)) {
+                            $this->addSaldo($product, $request);
                             $set_price = 1;
-                        } else {
-                            // CHECK SMS BY PHONE NUMBER
-                            $b = explode(",", $product->spec);
-                            $p = $request->msisdn;
-                            if (count($b) > 0) {
-                                foreach ($b as $bs) {
-                                    if (strpos($p, $bs) !== false) {
-                                        // Log::debug($product);
-                                        // Log::debug($bs);
-                                        $this->addSaldo($product->unit_price, $request);
-                                        $set_price = 1;
-                                    }
-                                }
-                            }
                         }
+                        //}else{
+                        // CHECK SMS BY PHONE NUMBER
+                        //$b = explode(",",$product->spec);
+                        //$p = $request->msisdn;
+                        //if(count($b)>0){
+                        //    foreach($b as $bs){
+                        //        if (strpos($p, $bs) !== false) {
+                        // Log::debug($product);
+                        // Log::debug($bs);
+                        //            $this->addSaldo($product, $request);
+                        //            $set_price = 1;
+                        //        }
+                        //   }
+                        //}
+                        //}
                     }
                 }
             }
 
             //IF THEREIS NO BALANCE UPDATE DEFAULT BY SMS PRICE
             if ($set_price == 0) {
-                $this->addSaldo($request->price, $request, $request->currency);
+                $this->addSaldo($request, $request, $request->currency);
             }
         }
 
         //PUSH to Campaign
     }
 
-    private function addSaldo($price, $request, $currency = 'idr')
+    private function addSaldo($product, $request, $currency = 'IDR')
     {
         SaldoUser::create([
             'team_id'       => NULL,
             'model_id'      => $request->id,
             'model'         => 'BlastMessage',
-            'currency'      => $currency,
-            'amount'        => $price,
+            'currency'      => "IDR",
+            'amount'        => $product->price,
             'mutation'      => 'debit',
-            'description'   => 'Cost - ' . $request->id . ' - ' . $request->msg_id,
+            'description'   => 'Cost: '.$product->name. ' - Msg:' . $request->id . ' - ' . $request->msg_id,
             'user_id'       => $request->user_id,
         ]);
     }
@@ -121,10 +152,13 @@ class SmsBlastObserver
     public function updated(BlastMessage $request)
     {
         if ($request->code == "200") {
-            if ($request->status == 'ACCEPTED' || $request->status == 'Success') {
+            Log::debug('in to 200');
+            if (strtolower($request->status) == 'accepted' || strtolower($request->status) == 'success') {
                 $set_price = 0;
                 //check logic quotation for sms active here
-                if ($quote = Quotation::where('client_id', $request->user_id)->whereIn('status', ['reviewed'])->orderBy('id', 'desc')->first()) {
+                if ($quote = Quotation::where('model', 'USER')->where('model_id', $request->user_id)->whereIn('status', ['reviewed','active'])->orderBy('id', 'desc')->first()) {
+                    Log::debug('in to quotation price');
+
                     //get price for sms
                     $items = OrderProduct::orderBy('id', 'asc')->where('model', 'Quotation')->where('model_id', $quote->id)->get();
                     //FIND WAY TO FILTER BY PHONE NUMBER BASE ON OPERATOR
@@ -132,37 +166,73 @@ class SmsBlastObserver
                     $phoneNo = substr($phoneNo, 0, 5);
                     $opn = OperatorPhoneNumber::where('code', $phoneNo)->first();
                     foreach ($items as $product) {
-                        if ($request->otp == 0 && $product->note == 'SMS NON OTP') {
+                        Log::debug($product);
+
+                        // IF NON OTP
+                        if ($request->otp == 0) {
+                            Log::debug('in to non otp price');
                             if ($opn && $opn->operator == $product->name) {
-                                $this->addSaldo($product->price, $request);
+                                $this->addSaldo($product, $request);
                                 $set_price = 1;
                                 // Log::debug('hit non otp single operator');
-                            } elseif (Str::contains($product->name, 'SMS NON OTP')) {
+                            } elseif (Str::contains($product->name, 'SMS NON OTP') || Str::contains($product->name, 'HR-NSO')) {
                                 // Default by key SMS NON OTP
-                                $this->addSaldo($product->price, $request);
+                                $this->addSaldo($product, $request);
+                                $set_price = 1;
+                                // Log::debug('hit non otp all operator');
+                            } elseif (Str::contains($product->name, 'HR-SLC')) {
+                                // Default by key SMS NON OTP
+                                $this->addSaldo($product, $request);
+                                $set_price = 1;
+                                // Log::debug('hit non otp all operator');
+                            } elseif (Str::contains($product->name, 'HR-WLC')) {
+                                // Default by key SMS NON OTP
+                                $this->addSaldo($product, $request);
+                                $set_price = 1;
+                                // Log::debug('hit non otp all operator');
+                            } elseif (Str::contains($product->name, 'HR-EML1')) {
+                                // Default by key SMS NON OTP
+                                $this->addSaldo($product, $request);
+                                $set_price = 1;
+                                // Log::debug('hit non otp all operator');
+                            } elseif (Str::contains($product->name, 'HR-EMLO')) {
+                                // Default by key SMS NON OTP
+                                $this->addSaldo($product, $request);
                                 $set_price = 1;
                                 // Log::debug('hit non otp all operator');
                             }
-                        } elseif ($request->otp == 1 && $product->note == 'SMS OTP') {
+                        } elseif ($request->otp == 1) {
+                            Log::debug('in to otp price');
                             //FIND WAY TO FILTER BY PHONE NUMBER BASE ON OPERATOR
                             if ($opn && $opn->operator == $product->name) {
-                                $this->addSaldo($product->price, $request);
+                                $this->addSaldo($product, $request);
                                 $set_price = 1;
                                 // Log::debug('hit otp single operator');
-                            } elseif (Str::contains($product->name, 'SMS OTP')) {
-                                $this->addSaldo($product->price, $request);
+                            } elseif (Str::contains($product->name, 'SMS OTP') || Str::contains($product->name, 'HR-SO')) {
+                                $this->addSaldo($product, $request);
                                 $set_price = 1;
                                 // Log::debug('hit otp single operator');
+                            } elseif (Str::contains($product->name, 'HR-EML1')) {
+                                // Default by key SMS NON OTP
+                                $this->addSaldo($product, $request);
+                                $set_price = 1;
+                                // Log::debug('hit non otp all operator');
+                            } elseif (Str::contains($product->name, 'HR-EMLO')) {
+                                // Default by key SMS NON OTP
+                                $this->addSaldo($product, $request);
+                                $set_price = 1;
+                                // Log::debug('hit non otp all operator');
                             }
                         }
                     }
                 } else {
+                    Log::debug('in to product line price');
                     //else run this price
                     $master = ProductLine::where('name', 'HiReach')->first();
                     $items = $master->items;
 
                     //check msisdn for $product items
-                    // CHARGE BY PRODUCT SMS PRICE
+                    // CHARGE BY PRODUCT PRICE
                     if (count($items) > 0) {
                         foreach ($items as $product) {
                             if (str_contains($request->sender_id, $product->sku)) {
@@ -190,7 +260,7 @@ class SmsBlastObserver
 
                 //IF THEREIS NO BALANCE UPDATE DEFAULT BY SMS PRICE
                 if ($set_price == 0) {
-                    $this->addSaldo($request->price, $request, $request->currency);
+                    $this->addSaldo($request, $request, $request->currency);
                 }
             }
         }
