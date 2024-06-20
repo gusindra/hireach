@@ -22,7 +22,7 @@ class CampaignResource extends JsonResource
             'uuid'          => $this->uuid,
             'type'          => $this->type,
             'channel'       => $this->channel,
-            'provider'      => $this->provider,
+            'provider'      => $this->provider->code,
             'title'         => $this->title,
             'text'          => $this->text,
             'way_type'      => $this->way_type,

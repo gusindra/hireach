@@ -10,7 +10,7 @@ class CampaignController extends Controller
     public function show($campaign)
     {
 
-        $cmp = Campaign::find($campaign);
+        $cmp = Campaign::where('uuid', $campaign)->first();
         return view('campaign.show', ['campaign' => $cmp]);
     }
 }

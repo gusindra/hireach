@@ -2,6 +2,9 @@
 
 namespace App\Http\Livewire\Campaign;
 
+use App\Jobs\ProcessEmailApi;
+use App\Jobs\ProcessSmsApi;
+use App\Jobs\ProcessWaApi;
 use App\Models\Audience;
 use App\Models\Campaign;
 use App\Models\CampaignSchedule;
@@ -9,6 +12,8 @@ use App\Models\ProviderUser;
 use App\Models\Template;
 use Livewire\Component;
 use Illuminate\Support\Facades\Auth;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Exports\ExportAudienceContact;
 
 class Edit extends Component
 {
@@ -26,7 +31,7 @@ class Edit extends Component
     public $to;
     public $audience_id;
     public $audience;
-    public $selectTo = 'manual';
+    public $selectTo = 'audience';
     public $userProvider;
     public $selectedProviderCode;
     public $templates;
@@ -35,7 +40,7 @@ class Edit extends Component
     public $fromList;
     public $hasSchedule = false;
     public $showModal = false;
-
+    protected $cacheDuration = 3600;
 
     public function mount($campaign)
     {
@@ -54,12 +59,13 @@ class Edit extends Component
         $this->from = $campaign->from;
         $this->to = $campaign->to;
         $this->audience_id = $campaign->audience_id;
-        $this->selectTo = $campaign->audience_id ? 'audience' : 'manual';
+        // $this->selectTo = $campaign->audience_id ? 'audience' : 'manual';
+        $this->selectTo = 'audience';
 
         $this->audience = Audience::withCount('audienceClients')->get();
 
         $this->userProvider = ProviderUser::with('provider')
-            ->where('user_id', Auth::id())
+            ->where('user_id', auth()->user()->id)
             ->get();
 
         $this->userProvider->firstWhere('provider.code', $this->provider);
@@ -112,7 +118,6 @@ class Edit extends Component
         }
     }
 
-
     public function loadAudienceContacts()
     {
         if ($this->audience_id) {
@@ -164,6 +169,7 @@ class Edit extends Component
             $this->from = 'Auto';
         }
     }
+
     public function rules()
     {
         $data = [
@@ -208,22 +214,47 @@ class Edit extends Component
                 'to' => 'required',
             ]);
 
-            if (!$this->hasSchedule) {
-                session()->flash('error', 'Campaign must have at least one schedule.');
-                $this->showModal = false;
-                return;
-            }
-
+            // if (!$this->hasSchedule) {
+            //     session()->flash('error', 'Campaign must have at least one schedule.');
+            //     $this->showModal = false;
+            //     return;
+            // }
 
             $this->campaign->status = 'started';
             $this->campaign->save();
             $this->showModal = false;
+
+            $channel = $this->campaign->channel;
+            $provider = cache()->remember('provider-user-'.auth()->user()->id.'-'.$channel, $this->cacheDuration, function() use ($channel) {
+                return auth()->user()->providerUser->where('channel', strtoupper($channel))->first()->provider;
+            });
+            // START TO HIT CREATE CAMPAIGN API
+            if($provider->code=='provider3'){
+                //EXPORT FILE EXCEL AUDIENCE
+                Excel::store(new ExportAudienceContact($this->audience_id), $this->campaign_id.'_campaign.xlsx');
+                //RUN JOB CAMPAIGN API
+            }
+            $audience = Audience::find($this->audience_id);
+            // ADD BLAST DATA TO HIREACH
+            foreach($audience->audienceClients as $client){
+                $data = [
+                    'provider' => $provider,
+                    'to' => $this->campaign->channel == 'email' ? $client->client->email:$client->client->phone,
+                    'type' => $this->campaign->type,
+                    'otp' => $this->campaign->is_otp,
+                    'text' => 'Campaign No:'.$this->campaign->id,
+                ];
+                $this->callJobResource($data);
+            }
+            // ALL OK START THE CAMPAIGN API
+            if($provider->code=='provider3'){
+
+            }
         } catch (\Illuminate\Validation\ValidationException $e) {
             $this->showModal = false;
             throw $e;
         }
     }
-
 
     public function pauseCampaign()
     {
@@ -283,7 +314,31 @@ class Edit extends Component
         }
     }
 
-
+    /**
+     * callJobResource
+     *
+     * @param  mixed $data
+     * @param  mixed $credential
+     * @return json
+     */
+    public function callJobResource($data, $credential = null)
+    {
+        if ($this->campaign->channel == 'email') {
+            //THIS WILL QUEUE EMAIL JOB
+            $reqArr = json_encode($data);
+            ProcessEmailApi::dispatch($data, auth()->user(), $reqArr, $this->campaign);
+        } elseif (strpos($this->campaign->channel, 'sms') !== false) {
+            ProcessSmsApi::dispatch($data, auth()->user(), $this->campaign);
+        } elseif (strpos(strtolower($this->campaign->channel), 'wa') !== false) {
+            if (!is_null($credential)) {
+                ProcessWaApi::dispatch($data, $credential, $this->campaign);
+            } else {
+                ProcessWaApi::dispatch($data, auth()->user(), $this->campaign);
+            }
+        } elseif ($this->campaign->channel == 'wa') {
+            //ProcessChatApi::dispatch($request->all(), auth()->user());
+        }
+    }
 
     public function render()
     {
