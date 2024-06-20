@@ -53,6 +53,8 @@ class ProcessWaApi implements ShouldQueue
             $this->MKProvider($this->request);
         } elseif ($provider->code == 'provider2') {
             $this->EMProvider($this->request);
+        } elseif ($provider->code == 'provider3') {
+            $this->WTProvider($this->request);
         }
     }
 
@@ -327,39 +329,27 @@ class ProcessWaApi implements ShouldQueue
         if ($msg) {
             $msg = $this->saveResult('progress');
 
-            $url = 'https://enjoymov.co/prod-api/kstbCore/sms/send';
-            $md5_key = env('EM_MD5_KEY', 'A'); //'AFD4274C39AB55D8C8D08FA6E145D535';
-            $merchantId = env('EM_MERCHANT_ID', 'A'); //'KSTB904790';
-            $callbackUrl = 'http://hireach.firmapps.ai/api/callback-status/blast/' . $msg->id;
+            $url = 'https://45.118.134.84:6005/';
 
-            $content = $request['text'];
-            $msgChannel = env('EM_CODE_LWA', 80);
 
-            $code = str_split($request['to'], 2);
-            $countryCode = $code[0];
-            $phone = substr($request['to'], 2);
 
-            $sb = $md5_key . $merchantId . $phone . $content;
-            $signature = Http::acceptJson()->withUrlParameters([
-                'endpoint' => 'http://8.215.55.87:34080/sign',
-                'sb' => $sb
-            ])->get('{+endpoint}?sb={sb}');
-            $reSign = json_decode($signature, true);
+            Log::debug($response);
+            $resData = json_decode($response, true);
+            Log::debug($resData);
+            //curl_close($curl);
 
-            $sign = $reSign['sign'];
-
-            $data = [
-                'merchantId' => $merchantId,
-                'sign' => $sign,
-                'type' => $request['otp'] == 1 ? 2 : 1,
-                'phone' => $phone,
-                'content' => $request['text'],
-                "callbackUrl" => $callbackUrl,
-                'countryCode' => $countryCode,
-                'msgChannel' => $msgChannel,
-                "msgId" => $msg->id
-            ];
-            // Log::debug($data);
+            if ($resData['status']) {
+                $response = Http::withOptions(['verify' => false,])->withHeaders(['Client-Key' => ENV('WTID_CLIENT_KEY', 'MDgxMjM0NTY3Ng=='), 'Client-Secret' => ENV('WTID_CLIENT_SECRET', 'MDgxMjM0NTY3NnwyMDI0LTAxLTMwIDEwOjIyOjIw')])->patch($url . 'api/campaign/ready/' . $resData['campaign_id']);
+                Log::debug($response);
+                $result = json_decode($response, true);
+                if ($result['status']) {
+                    $this->line("WA is OK");
+                } else {
+                    $this->line("WA is ERROR: " . $result['message']);
+                }
+            } else {
+                $this->line("Campaign WA is FAILED: " . $resData['message']);
+            }
 
             $environment = config('app.env');
             if ($environment === 'local' || $environment === 'testing') {
@@ -371,7 +361,16 @@ class ProcessWaApi implements ShouldQueue
                 Log::debug($resData);
             } else {
                 // Production environment: make the actual API call
-                $response = Http::withBody(json_encode($data), 'application/json')->withOptions(['verify' => false])->post($url);
+                $response = Http::withOptions(['verify' => false,])
+                ->withHeaders([
+                    'Client-Key' => ENV('WTID_CLIENT_KEY', 'MDgxMjM0NTY3Ng=='),
+                    'Client-Secret' => ENV('WTID_CLIENT_SECRET', 'MDgxMjM0NTY3NnwyMDI0LTAxLTMwIDEwOjIyOjIw')])
+                ->attach('campaign_receiver', file_get_contents(storage_path('app\template_contact_wetalk.xlsx')), 'template_contact_wetalk.xlsx')
+                ->post($url . 'api/campaign/create', [
+                    'campaign_name' => 'Testing API from HiReach',
+                    'campaign_text' => 'Hallo testing 1',
+                    // 'campaign_receiver' => new CURLFile(storage_path('app\template_contact_wetalk.xlsx'))
+                ]);
                 $resData = json_decode($response, true);
                 Log::debug($resData);
             }
