@@ -133,11 +133,10 @@ class ContactController extends Controller
 
     public function audienceShow(Request $request, $audience)
     {
-        $data = Audience::find($audience);
-
-        return view('resource.show-audience', ['user' => $data]);
-        // return redirect('user');
+        $data = Audience::findOrFail($audience);
+        return view('resource.show-audience', ['audience' => $data]);
     }
+
 
     public function profile(Client $client)
     {
@@ -170,7 +169,7 @@ class ContactController extends Controller
     {
         $file = $request->file('file');
         $fileContents = file($file->getPathname());
-        if($file->getClientMimeType()=="text/csv"){
+        if ($file->getClientMimeType() == "text/csv") {
             foreach ($fileContents as $key => $line) {
                 if ($key > 0) {
                     $data = str_getcsv($line);
@@ -191,7 +190,7 @@ class ContactController extends Controller
                     }
                 }
             }
-        }else{
+        } else {
             Excel::import(new ImportContact, $request->file('file')->store('files'));
         }
 
@@ -206,16 +205,16 @@ class ContactController extends Controller
      */
     public function export(Request $request)
     {
-        if($request->mime=="application"){
-            return Excel::download(new ExportContact, $request->name.'_client.xlsx');
-        }else{
+        if ($request->mime == "application") {
+            return Excel::download(new ExportContact, $request->name . '_client.xlsx');
+        } else {
             $table = Client::where('user_id', auth()->user()->id)->get();
             $filename = "tweets.csv";
             $handle = fopen($filename, 'w+');
             fputcsv($handle, array('name', 'phone', 'email', 'created_at'));
 
             foreach ($table as $row) {
-                fputcsv($handle, array($row['name'], $row['phone'],$row['email'], $row['created_at']));
+                fputcsv($handle, array($row['name'], $row['phone'], $row['email'], $row['created_at']));
             }
 
             fclose($handle);

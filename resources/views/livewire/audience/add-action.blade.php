@@ -22,9 +22,10 @@
                     <x-jet-action-message class="mr-3 text-red-500" on="exist">
                         {{ __('Contact Already Exist.') }}
                     </x-jet-action-message>
-                    <!-- <x-link-button wire:click="actionShowModal">
-                        {{ __('Import Contact') }}
-                    </x-link-button> -->
+                    <livewire:audience.import-contact :audience="$audience" />
+
+
+
                     <x-link-button wire:click="exportContact">
                         {{ __('Export Contact') }}
                     </x-link-button>
@@ -39,49 +40,7 @@
                             <div class="py-2 align-middle inline-block min-w-full sm:px-6 lg:px-8">
                                 @if ($data->count())
                                     <div class="shadow overflow-hidden border-b border-gray-200 sm:rounded-lg">
-                                        <table class="min-w-full divide-y divide-gray-200 mt-2">
-                                            <thead>
-                                                <tr>
-                                                    <th
-                                                        class="px-6 py-3 bg-gray-50 dark:bg-slate-800 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider w-1/2">
-                                                        Contact</th>
-                                                    <th
-                                                        class="px-6 py-3 bg-gray-50 dark:bg-slate-800 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider w-1/4">
-                                                    </th>
-                                                </tr>
-                                            </thead>
-                                            <tbody class="bg-white dark:bg-slate-700 divide-y divide-gray-200">
-                                                @foreach ($data as $item)
-                                                    <tr>
-                                                        <td class="px-6 py-4 text-sm whitespace-no-wrap">
-                                                            <div class="">
-                                                                <div class="flex justify-between">
-                                                                    <span>
-                                                                        {{ $item->client->name }}
-                                                                    </span>
-                                                                    <span>
-                                                                        {{ $item->client->email }}
-                                                                    </span>
-                                                                    <span>
-                                                                        {{ $item->client->phone }}
-                                                                    </span>
-
-                                                                </div>
-                                                            </div>
-                                                        </td>
-                                                        <td
-                                                            class="flex items-center justify-end px-4 py-3 text-right sm:px-6">
-                                                            <div class="flex items-center">
-                                                                <button class="cursor-pointer ml-6 text-sm text-red-500"
-                                                                    wire:click="deleteShowModal('{{ $item->id }}')">
-                                                                    {{ __('Delete') }}
-                                                                </button>
-                                                            </div>
-                                                        </td>
-                                                    </tr>
-                                                @endforeach
-                                            </tbody>
-                                        </table>
+                                        @livewire('table.audience-contact-table')
                                     </div>
                                 @endif
                             </div>
@@ -102,8 +61,8 @@
         <x-slot name="content">
 
             <div class="col-span-6 sm:col-span-4 p-3">
-                <x-jet-label for="contactId" value="{{ __('List Contact') }}" />
-                <select name="contactId" id="contactId"
+
+                {{-- <select name="contactId" id="contactId"
                     class="border-gray-300 dark:bg-slate-800 dark:text-slate-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 rounded-md shadow-sm mt-1 block w-full"
                     wire:model.debunce.800ms="contactId">
                     <option selected value="text">--Select Contact--</option>
@@ -112,7 +71,10 @@
                             <option value="{{ $contact->uuid }}">{{ $contact->name }}</option>
                         @endforeach
                     @endif
-                </select>
+                </select> --}}
+                <livewire:table.list-contact-add :audience="$audience" :hide-pagination="true" />
+
+                {{-- @livewire('table.list-contact-add', ['audience' => $audience->id]) --}}
                 <x-jet-input-error for="contactId" class="mt-2" />
             </div>
 
@@ -122,15 +84,7 @@
             <x-jet-secondary-button wire:click="$toggle('modalActionVisible')" wire:loading.attr="disabled">
                 {{ __('Cancel') }}
             </x-jet-secondary-button>
-            @if ($actionId)
-                <x-jet-button class="ml-2" wire:click="update" wire:loading.attr="disabled">
-                    {{ __('Save') }}
-                </x-jet-button>
-            @else
-                <x-jet-button class="ml-2" wire:click="create" wire:loading.attr="disabled">
-                    {{ __('Add') }}
-                </x-jet-button>
-            @endif
+
         </x-slot>
     </x-jet-dialog-modal>
 

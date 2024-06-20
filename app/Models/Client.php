@@ -34,8 +34,9 @@ class Client extends Model
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-    public function requests(){
-    	return $this->hasMany(Request::class, 'from')->whereNotNull('source_id');
+    public function requests()
+    {
+        return $this->hasMany(Request::class, 'from')->whereNotNull('source_id');
     }
 
     /**
@@ -43,8 +44,9 @@ class Client extends Model
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-    public function lastestRequest(){
-    	return $this->hasOne('App\Models\Request', 'from')->whereNotNull('source_id')->orderBy('created_at', 'desc');
+    public function lastestRequest()
+    {
+        return $this->hasOne('App\Models\Request', 'from')->whereNotNull('source_id')->orderBy('created_at', 'desc');
     }
 
     /**
@@ -52,8 +54,9 @@ class Client extends Model
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-    public function newestRequest(){
-    	return $this->hasOne('App\Models\Request', 'client_id', 'uuid')->orderBy('id', 'desc');
+    public function newestRequest()
+    {
+        return $this->hasOne('App\Models\Request', 'client_id', 'uuid')->orderBy('id', 'desc');
     }
 
     /**
@@ -61,8 +64,9 @@ class Client extends Model
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-    public function notice(){
-    	return $this->hasOne('App\Models\Request', 'client_id', 'uuid')->orderBy('id', 'desc');
+    public function notice()
+    {
+        return $this->hasOne('App\Models\Request', 'client_id', 'uuid')->orderBy('id', 'desc');
     }
 
     /**
@@ -72,7 +76,7 @@ class Client extends Model
      */
     public function getDateAttribute()
     {
-        if($this->lastestRequest){
+        if ($this->lastestRequest) {
             return $this->lastestRequest->created_at;
         }
         return $this->created_at;
@@ -86,8 +90,8 @@ class Client extends Model
 
     public function getActiveAttribute()
     {
-        if($this->notice){
-            if($this->notice->source_id!==NULL){
+        if ($this->notice) {
+            if ($this->notice->source_id !== NULL) {
                 return $this->notice;
             }
         }
@@ -121,7 +125,13 @@ class Client extends Model
     /**
      * Get the own of the data.
      */
-    public function theUser(){
-    	return $this->belongsTo('App\Models\User', 'user_id');
+    public function theUser()
+    {
+        return $this->belongsTo('App\Models\User', 'user_id');
+    }
+
+    public function audienceClients()
+    {
+        return $this->hasMany(AudienceClient::class, 'client_id', 'uuid');
     }
 }
