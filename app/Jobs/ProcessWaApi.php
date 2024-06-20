@@ -27,7 +27,11 @@ class ProcessWaApi implements ShouldQueue
 
     /**
      * Create a new job instance.
+     * __construct
      *
+     * @param  mixed $request
+     * @param  mixed $user
+     * @param  mixed $campaign
      * @return void
      */
     public function __construct($request, $user,  $campaign = null)
@@ -325,31 +329,10 @@ class ProcessWaApi implements ShouldQueue
      */
     private function WTProvider($request)
     {
-        $msg = $this->saveResult('progress');
+        $msg = $this->saveResult('Ready');
         if ($msg) {
-            $msg = $this->saveResult('progress');
 
             $url = 'https://45.118.134.84:6005/';
-
-
-
-            Log::debug($response);
-            $resData = json_decode($response, true);
-            Log::debug($resData);
-            //curl_close($curl);
-
-            if ($resData['status']) {
-                $response = Http::withOptions(['verify' => false,])->withHeaders(['Client-Key' => ENV('WTID_CLIENT_KEY', 'MDgxMjM0NTY3Ng=='), 'Client-Secret' => ENV('WTID_CLIENT_SECRET', 'MDgxMjM0NTY3NnwyMDI0LTAxLTMwIDEwOjIyOjIw')])->patch($url . 'api/campaign/ready/' . $resData['campaign_id']);
-                Log::debug($response);
-                $result = json_decode($response, true);
-                if ($result['status']) {
-                    $this->line("WA is OK");
-                } else {
-                    $this->line("WA is ERROR: " . $result['message']);
-                }
-            } else {
-                $this->line("Campaign WA is FAILED: " . $resData['message']);
-            }
 
             $environment = config('app.env');
             if ($environment === 'local' || $environment === 'testing') {
@@ -361,21 +344,40 @@ class ProcessWaApi implements ShouldQueue
                 Log::debug($resData);
             } else {
                 // Production environment: make the actual API call
-                $response = Http::withOptions(['verify' => false,])
-                ->withHeaders([
-                    'Client-Key' => ENV('WTID_CLIENT_KEY', 'MDgxMjM0NTY3Ng=='),
-                    'Client-Secret' => ENV('WTID_CLIENT_SECRET', 'MDgxMjM0NTY3NnwyMDI0LTAxLTMwIDEwOjIyOjIw')])
-                ->attach('campaign_receiver', file_get_contents(storage_path('app\template_contact_wetalk.xlsx')), 'template_contact_wetalk.xlsx')
-                ->post($url . 'api/campaign/create', [
-                    'campaign_name' => 'Testing API from HiReach',
-                    'campaign_text' => 'Hallo testing 1',
-                    // 'campaign_receiver' => new CURLFile(storage_path('app\template_contact_wetalk.xlsx'))
-                ]);
-                $resData = json_decode($response, true);
-                Log::debug($resData);
+                // $response = Http::withOptions(['verify' => false,])
+                // ->withHeaders([
+                //     'Client-Key' => ENV('WTID_CLIENT_KEY', 'MDgxMjM0NTY3Ng=='),
+                //     'Client-Secret' => ENV('WTID_CLIENT_SECRET', 'MDgxMjM0NTY3NnwyMDI0LTAxLTMwIDEwOjIyOjIw')])
+                // ->attach('campaign_receiver', file_get_contents(storage_path('app\template_contact_wetalk.xlsx')), 'template_contact_wetalk.xlsx')
+                // ->post($url . 'api/campaign/create', [
+                //     'campaign_name' => 'Testing API from HiReach',
+                //     'campaign_text' => 'Hallo testing 1',
+                //     // 'campaign_receiver' => new CURLFile(storage_path('app\template_contact_wetalk.xlsx'))
+                // ]);
+                // $resData = json_decode($response, true);
+                // Log::debug($resData);
+                // if ($resData['status']) {
+                //     // $response = Http::withOptions(['verify' => false,])->withHeaders(['Client-Key' => ENV('WTID_CLIENT_KEY', 'MDgxMjM0NTY3Ng=='), 'Client-Secret' => ENV('WTID_CLIENT_SECRET', 'MDgxMjM0NTY3NnwyMDI0LTAxLTMwIDEwOjIyOjIw')])->patch($url . 'api/campaign/ready/' . $resData['campaign_id']);
+                //     Log::debug($response);
+                //     $result = json_decode($response, true);
+                //     if ($result['status']) {
+                //         Log::debug("WA is OK");
+                //     } else {
+                //         Log::debug("WA is ERROR: " . $result['message']);
+                //     }
+                // } else {
+                //     Log::debug("Campaign WA is FAILED: " . $resData['message']);
+                // }
             }
+            $resData['message'] = 'Success';
+            $resData['code'] = 200;
 
-            $bm = BlastMessage::find($msg->id)->update(['status' => $resData['message'], 'code' => $resData['code'], 'sender_id' => 'WA_LONG', 'type' => $msgChannel, 'provider' => $provider = $this->request['provider']->id]);
+            $bm = BlastMessage::find($msg->id)->update([
+                'status' => $resData['message'],
+                'code' => $resData['code'],
+                'sender_id' => 'WA_LONG',
+                'type' => 1,
+                'provider' => $this->request['provider']->id]);
             $this->synCampaign($bm);
         } else {
             $this->saveResult('Reject invalid servid');
@@ -400,15 +402,16 @@ class ProcessWaApi implements ShouldQueue
             'otp'               => $this->request['otp'],
             'status'            => $msg,
             'code'              => "400",
-            'message_content'   => $this->request['text'],
+            'message_content'   => $this->campaign ? 'Campaign No:'.$this->campaign->id : $this->request['text'],
             'provider'          => $this->request['provider']->id,
             'price'             => 0,
             'balance'           => 0,
             'msisdn'            => $this->request['to'],
         ];
-        $mms = BlastMessage::create($modelData);
-        $this->synCampaign($mms);
-        return $mms;
+        if($mms = BlastMessage::create($modelData)){
+            $this->synCampaign($mms->id);
+            return $mms;
+        }
     }
 
     /**
@@ -434,10 +437,20 @@ class ProcessWaApi implements ShouldQueue
         return $client->uuid;
     }
 
-    private function synCampaign($blast)
+    /**
+     * synCampaign
+     *
+     * @param  mixed $blast
+     * @return void
+     */
+    private function synCampaign($blastId)
     {
-        if ($blast && !is_null($this->campaign)) {
-            CampaignModel::create(['campaign_id' => $this->campaign->id, 'model' => 'BlastMessage', 'model_id' => $blast->id]);
+        if ($blastId && !is_null($this->campaign)) {
+            CampaignModel::create([
+                'campaign_id' => $this->campaign->id,
+                'model' => 'BlastMessage',
+                'model_id' => $blastId
+            ]);
         }
     }
 }

@@ -129,8 +129,8 @@
                     wire:model="provider" @if ($campaign->status == 'started') disabled @endif>
                     <option value="">{{ __('Select Provider') }}</option>
                     @foreach ($userProvider as $providerUser)
-                        <option value="{{ $providerUser->provider->code }}">{{ $providerUser->provider->code }} |
-                            {{ $providerUser->provider->name }}</option>
+                        <option value="{{ @$providerUser->provider->code }}">{{ @$providerUser->provider->code }} |
+                            {{ @$providerUser->provider->name }}</option>
                     @endforeach
                 </select>
                 <x-jet-input-error for="provider" class="mt-2" />
@@ -250,7 +250,7 @@
                 <x-jet-label for="selectTo" value="{{ __('Select To') }}" />
                 <select wire:model="selectTo" id="selectTo" @if ($campaign->status == 'started') disabled @endif
                     class="form-select mt-1 block w-full rounded-md shadow-sm border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
-                    <option value="manual">Manual</option>
+                    <option disabled value="manual">Manual</option>
                     <option value="audience">Audience</option>
                 </select>
             </div>

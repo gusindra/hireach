@@ -26,7 +26,11 @@ class ProcessSmsApi implements ShouldQueue
 
     /**
      * Create a new job instance.
+     * __construct
      *
+     * @param  mixed $request
+     * @param  mixed $user
+     * @param  mixed $campaign
      * @return void
      */
     public function __construct($request, $user, $campaign = null)

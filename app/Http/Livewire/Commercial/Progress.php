@@ -82,9 +82,7 @@ class Progress extends Component
             'addressed_role',
         ];
 
-
         $this->errorMessage = '';
-
 
         foreach ($fields as $field) {
 
@@ -99,9 +97,7 @@ class Progress extends Component
             'status' => 'submit'
         ]);
 
-
         $this->emit('saved');
-
 
         return redirect(request()->header('Referer'));
     }
@@ -109,7 +105,9 @@ class Progress extends Component
     public function next($status = '')
     {
         $update_status = $status;
-        $flow = FlowProcess::create([$this->model->approval]);
+        // dd($this->model->approval);
+        $flow = FlowProcess::create(['model'=>$this->model_type, $this->model->approval]);
+        //dd($flow);
 
         $flow->model_id = $this->model->id;
         $setting = FlowSetting::where('description', $flow->task)->where('role_id', $flow->role_id)->first();
@@ -165,11 +163,11 @@ class Progress extends Component
 
     public function render()
     {
-        if ($this->theme == 1) {
-            return view('livewire.commercial.theme.progress', [
-                'approvals' => $this->read()
-            ]);
-        }
+        // if ($this->theme == 1) {
+        //     return view('livewire.commercial.theme.progress', [
+        //         'approvals' => $this->read()
+        //     ]);
+        // }
         return view('livewire.commercial.progress', [
             'approvals' => $this->read()
         ]);

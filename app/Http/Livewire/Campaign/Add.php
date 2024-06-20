@@ -12,6 +12,7 @@ class Add extends Component
     public $modalActionVisible = false;
     public $title;
     public $way_type;
+    PUBLIC $cacheDuration = 3600;
 
     protected $rules = [
         'title' => 'required|string|max:255',
@@ -22,15 +23,21 @@ class Add extends Component
     {
         $this->validate();
 
-        Campaign::create([
-            'title' => $this->title,
-            'way_type' => $this->way_type,
-            'user_id' => Auth::id(),
-            'uuid' => Str::uuid(),
-            'type' => 0
-        ]);
+        $provider = cache()->remember('provider-user-'.auth()->user()->id, $this->cacheDuration, function() {
+            return auth()->user()->providerUser->first()->provider;
+        });
 
-        $this->modalActionVisible = false;
+        if(!empty($provider)){
+            Campaign::create([
+                'title' => $this->title,
+                'way_type' => $this->way_type,
+                'user_id' => Auth::id(),
+                'uuid' => Str::uuid(),
+                'type' => 0
+            ]);
+            $this->modalActionVisible = false;
+        }
+
         $this->resetForm();
         $this->emit('refreshLivewireDatatable');
     }

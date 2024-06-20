@@ -1,6 +1,6 @@
 <div wire:poll>
     @if ($model->status == 'draft' || ($model->status == 'unpaid' && $model_type == 'commission'))
-        @if (auth()->user()->super->first() && auth()->user()->super->first()->role == 'superadmin')
+        @if (auth()->user()->isSuper || (auth()->user()->team && auth()->user()->team->role == 'superadmin'))
             <div class="px-4 py-5 bg-white dark:bg-slate-600 sm:p-6 shadow sm:rounded-md">
 
                 <div class="sm:px-0">
@@ -18,9 +18,7 @@
                 @endif
             </div>
             <br>
-
         @endif
-
     @endif
 
     @if ($approvals->count() > 0)
@@ -93,6 +91,7 @@
                             @endif
                         </li>
                     @endforeach
+
                     @if ($approval->status != null)
                         <li class="ml-5 mb-6">
                             <div
@@ -120,9 +119,10 @@
         </div>
 
         <!-- The offcanvas component -->
-        <div class="{{ auth()->user()->super->first() && auth()->user()->super->first()->role == 'superadmin' ? 'block' : '' }} block sm:hidden"
+         <!-- FOR MOBILE USAGE DESIGN -->
+        <div class="{{ auth()->user()->isSuper || (auth()->user()->team && auth()->user()->team->role == 'superadmin') ? 'block' : '' }} block sm:hidden"
             x-data="{ offcanvas: false }">
-            @if (auth()->user()->super->first() && auth()->user()->super->first()->role == 'superadmin')
+            @if (auth()->user()->isSuper || (auth()->user()->team && auth()->user()->team->role == 'superadmin'))
                 <button class="fixed top-52 right-0 bg-blue-100 p-1 text-sm text-gray-400"
                     @click="offycanvas = true">Approval</button>
             @endif
@@ -185,6 +185,7 @@
                                                         </svg>
                                                     </div>
                                                 @endif
+
                                                 <div class="flex gap-2">
                                                     <h3
                                                         class="mt-0 text-sm font-semibold text-gray-900 dark:text-white">
@@ -194,6 +195,7 @@
                                                         class="mt-0 text-sm font-semibolde text-gray-900 dark:text-gray-500 capitalize">
                                                         {{ $approval->status }}</p>
                                                 </div>
+
                                                 @if ($approval->status != null)
                                                     <div class="flex justify-end">
                                                         @if ($approval->user_id)
@@ -219,25 +221,23 @@
                                                 @endif
                                             </li>
                                         @endforeach
+
                                         @if ($approval->status != null)
                                             <li class="ml-5 mb-6">
-                                                <div
-                                                    class="absolute w-6 h-6 {{ $approval->status == 'approved' ? 'bg-blue-600' : 'bg-gray-300' }} rounded-full -left-3 border border-white dark:border-blue-900 dark:bg-blue-700">
+                                                <div class="absolute w-6 h-6 {{ $approval->status == 'approved' ? 'bg-blue-600' : 'bg-gray-300' }} rounded-full -left-3 border border-white dark:border-blue-900 dark:bg-blue-700">
                                                     <svg xmlns="http://www.w3.org/2000/svg"
                                                         class="m-auto mt-1 h-3 w-3 text-white" viewBox="0 0 20 20"
                                                         fill="currentColor">
-                                                        <path
-                                                            d="M10 2a6 6 0 00-6 6v3.586l-.707.707A1 1 0 004 14h12a1 1 0 00.707-1.707L16 11.586V8a6 6 0 00-6-6zM10 18a3 3 0 01-3-3h6a3 3 0 01-3 3z" />
+                                                        <path d="M10 2a6 6 0 00-6 6v3.586l-.707.707A1 1 0 004 14h12a1 1 0 00.707-1.707L16 11.586V8a6 6 0 00-6-6zM10 18a3 3 0 01-3-3h6a3 3 0 01-3 3z" />
                                                     </svg>
                                                 </div>
                                                 <div>
-                                                    <h3 class="text-sm font-semibold text-gray-900 dark:text-white">
-                                                        Notified</h3>
+                                                    <h3 class="text-sm font-semibold text-gray-900 dark:text-white">Notified</h3>
                                                     <ul class="text-left">
                                                         @foreach ($approvals->groupBy('user_id') as $approval)
-                                                            <li
-                                                                class="mb-2 mt-1 text-xs font-normal leading-none text-gray-400 dark:text-gray-300 capitalize">
-                                                                {{ $approval[0]->user->name }}</li>
+                                                            <li class="mb-2 mt-1 text-xs font-normal leading-none text-gray-400 dark:text-gray-300 capitalize">
+                                                                {{ $approval[0]->user->name }}
+                                                            </li>
                                                         @endforeach
                                                     </ul>
                                                 </div>
@@ -252,8 +252,8 @@
             </section>
         </div>
     @endif
-    @if (auth()->user()->super->first() &&
-            auth()->user()->super->first()->role == 'superadmin' &&
+
+    @if (auth()->user()->isSuper || (auth()->user()->team && auth()->user()->team->role == 'superadmin') &&
             $model->status == 'approved')
         <div
             class="px-4 py-5 bg-white text-center dark:bg-slate-600 sm:p-6 shadow sm:rounded-tl-md sm:rounded-tr-md mt-4">
@@ -263,9 +263,9 @@
         </div>
     @endif
 
-
     @if ($model->status != 'draft' && $approval && $model->approval && empty($approval->status))
-        @if ($model->status == 'submit')
+        @if ($model->status == 'submit' || $model->status == 'submit' )
+            <!--  -->
             <div class="px-4 py-5 bg-white dark:bg-slate-600 sm:p-6 shadow sm:rounded-tl-md sm:rounded-tr-md mt-4">
                 <div class="sm:px-0">
                     <h3 class="text-base font-medium text-gray-900 dark:text-slate-300">
