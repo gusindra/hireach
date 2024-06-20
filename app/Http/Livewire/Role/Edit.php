@@ -16,6 +16,7 @@ class Edit extends Component
     public $type;
     public $role_for;
     public $uuid;
+    public $roleId;
 
     public function mount($uuid)
     {

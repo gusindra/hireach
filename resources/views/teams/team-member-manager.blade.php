@@ -73,7 +73,7 @@
             </x-jet-form-section>
         </div>
     @endif
-    
+
     @if ($team->teamInvitations->isNotEmpty() && (Gate::check('addTeamMember', $team) || ($this->user->team && $this->user->team->role == 'admin')))
         <x-jet-section-border />
 
@@ -144,7 +144,7 @@
                                         </button>
                                     @elseif (Laravel\Jetstream\Jetstream::hasRoles())
                                         <div class="ml-2 text-sm text-gray-400 dark:text-slate-300">
-                                            {{ Laravel\Jetstream\Jetstream::findRole($user->membership->role)->name }}
+                                            {{ Laravel\Jetstream\Jetstream::findRole($user->membership->role) ? Laravel\Jetstream\Jetstream::findRole($user->membership->role)->name : '' }}
                                         </div>
                                     @endif
 
