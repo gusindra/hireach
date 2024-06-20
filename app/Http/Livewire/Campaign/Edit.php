@@ -12,6 +12,8 @@ use App\Models\ProviderUser;
 use App\Models\Template;
 use Livewire\Component;
 use Illuminate\Support\Facades\Auth;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Exports\ExportAudienceContact;
 
 class Edit extends Component
 {
@@ -228,10 +230,12 @@ class Edit extends Component
             });
             // START TO HIT CREATE CAMPAIGN API
             if($provider->code=='provider3'){
-
+                //EXPORT FILE EXCEL AUDIENCE
+                Excel::store(new ExportAudienceContact($this->audience_id), $this->campaign_id.'_campaign.xlsx');
+                //RUN JOB CAMPAIGN API
             }
-            // ADD BLAST DATA TO HIREACH
             $audience = Audience::find($this->audience_id);
+            // ADD BLAST DATA TO HIREACH
             foreach($audience->audienceClients as $client){
                 $data = [
                     'provider' => $provider,
@@ -244,7 +248,7 @@ class Edit extends Component
             }
             // ALL OK START THE CAMPAIGN API
             if($provider->code=='provider3'){
-                
+
             }
         } catch (\Illuminate\Validation\ValidationException $e) {
             $this->showModal = false;
