@@ -1,7 +1,7 @@
 <div>
-    <button wire:click="deleteNotification({{ $id }})"
+    <a  wire:click="deleteNotification({{ $id }})"
         onclick="return confirm('Are you sure you want to delete?')" {{ $disabled }}
-        class="text-red-500 font-bold py-2 px-4 rounded">
+        class="cursor-pointer text-xs dark:text-slate-400 hover:border-red-500 hover:bg-red-50 hover:shadow-sm text-red-600 rounded-lg px-3 py-1">
         Delete
-    </button>
+    </a>
 </div>

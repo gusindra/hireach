@@ -35,24 +35,24 @@ class RoleInvitationController extends Controller
                     }
                 }
             }
-            
+
             $roleUser = RoleUser::where('user_id', $newTeamMember->id)->get();
             if($roleUser){
                 RoleUser::where('user_id', $newTeamMember->id)->update(['active'=>NULL]);
             }
-            
+
             RoleUser::create([
                 'user_id' => $newTeamMember->id,
                 'role_id' => $invitation->role_id,
                 'team_id' => $invitation->team_id
             ]);
-            
+
             $teamUser = TeamUser::firstOrCreate(
                 ['user_id' =>  $newTeamMember->id],
                 ['team_id' => $invitation->team_id],
                 ['role' => 'member']
             );
-            
+
             // TeamUser::create([
             //     'user_id'   => $newTeamMember->id,
             //     'role'      => 'member',
@@ -64,7 +64,7 @@ class RoleInvitationController extends Controller
             $newTeamMember->update(['current_team_id'=>$invitation->team_id]);
 
             return redirect('login')->banner(
-                __('Great! You have accepted the invitation to join Telixcel team.')
+                __('Great! You have accepted the invitation to join HiReach team.')
             );
         }
         return redirect('register?email='.$invitation->email)->banner(

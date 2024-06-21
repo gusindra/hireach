@@ -281,7 +281,7 @@ function balance($user, $team_id=0, $type='total')
 }
 
 function estimationSaldo(){
-    $master = ProductLine::where('name', 'Telixcel')->first();
+    $master = ProductLine::where('name', 'HiReach')->first();
     if($master)
         return $master->items;
     return array();
@@ -379,12 +379,12 @@ function addLog($data, $before){
     }
 }
 
-function checkContentOtp($content){ 
+function checkContentOtp($content){
     $checkString = $content;
     $otpWord = ['Angka Rahasia', 'Authorisation', 'Authorise', 'Authorization', 'Authorized', 'Code', 'Harap masukkan', 'Kata Sandi', 'Kode',' Kode aktivasi', 'konfirmasi', 'otentikasi', 'Otorisasi', 'Rahasia', 'Sandi', 'trx', 'unik', 'Venfikasi', 'KodeOTP', 'NewOtp', 'One-Time Password', 'Otorisasi', 'OTP', 'Pass', 'Passcode', 'PassKey', 'Password', 'PIN', 'verifikasi', 'insert current code', 'Security', 'This code is valid', 'Token', 'Passcode', 'Valid OTP', 'verification','Verification', 'login code', 'registration code', 'secunty code'];
     if(Str::contains($checkString, $otpWord)){
         return 1;
     }else{
         return 0;
-    } 
+    }
 }

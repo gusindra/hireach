@@ -5,7 +5,7 @@
     <title>HiReach - We Reach to All Channel</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <meta name="description" content="Telixcel by MGI" />
+    <meta name="description" content="HiReach by FirmApps" />
     <meta name="keywords" content="Chat Templating CMS" />
     <meta name="author" content="Gusindra - FirmApps.AI" />
     <!-- <link rel="icon" type="image/png" href="{{url('frontend/images/favicon.png')}}"> -->

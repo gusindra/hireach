@@ -28,9 +28,9 @@ class AudienceContactTable extends LivewireDatatable
     {
         return [
 
-            Column::name('client.name')->label('Name')->searchable(),
+            Column::name('client.name')->label('Name'),
             Column::name('client.phone')->label('Phone')->searchable(),
-            Column::name('client.email')->label('Email')->searchable(),
+            Column::name('client.email')->label('Email'),
 
             // Column::callback(['id'], function ($id) {
             //     return view('tables.delete-audience-contact', ['id' => $id]);
