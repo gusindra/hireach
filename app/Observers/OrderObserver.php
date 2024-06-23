@@ -8,6 +8,7 @@ use App\Models\Commision;
 use App\Models\FlowProcess;
 use App\Models\FlowSetting;
 use App\Models\Notice;
+use App\Models\SaldoUser;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Log;
@@ -82,6 +83,21 @@ class OrderObserver
             //         'status'    => 'unpaid'
             //     ]);
             // }
+
+
+            $currentSaldo = SaldoUser::find($request->id);
+
+            SaldoUser::create([
+                'user_id' => 2,
+                'team_id' => 2,
+                'model_id' => $request->id,
+                'model' => 'Order',
+                'mutation' => 'credit',
+                'description' => 'Topup Successfully',
+                'currency' => 'IDR',
+                'amount' => $request->total,
+                'balance' => $currentSaldo->amount ?? 0 + $request->total
+            ]);
         } elseif ($request->status == 'submit') {
             FlowProcess::create([
                 'model'     => 'ORDER',

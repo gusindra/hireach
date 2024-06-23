@@ -4,17 +4,29 @@ namespace App\Http\Livewire\Table;
 
 use App\Models\AudienceClient;
 use Mediconesystems\LivewireDatatables\Column;
-use Mediconesystems\LivewireDatatables\NumberColumn;
 use Mediconesystems\LivewireDatatables\Http\Livewire\LivewireDatatable;
 
 class AudienceContactTable extends LivewireDatatable
 {
-
     public $model = AudienceClient::class;
 
     public function builder()
     {
-        return AudienceClient::query()->with('client');
+
+        $query = AudienceClient::query()
+            ->join('clients', 'clients.uuid', '=', 'audience_clients.client_id')
+            ->select('audience_clients.*', 'clients.name', 'clients.phone', 'clients.email');
+
+
+        if ($this->search) {
+            $query->where(function ($query) {
+                $query->where('clients.name', 'like', '%' . $this->search . '%')
+                    ->orWhere('clients.phone', 'like', '%' . $this->search . '%')
+                    ->orWhere('clients.email', 'like', '%' . $this->search . '%');
+            });
+        }
+
+        return $query;
     }
 
     public function delete($id)
@@ -23,24 +35,25 @@ class AudienceContactTable extends LivewireDatatable
         $this->emit('refreshLivewireDatatable');
     }
 
-
     public function columns()
     {
         return [
-
-            Column::name('client.name')->label('Name')->searchable(),
-            Column::name('client.phone')->label('Phone')->searchable(),
-            Column::name('client.email')->label('Email')->searchable(),
-
-            // Column::callback(['id'], function ($id) {
-            //     return view('tables.delete-audience-contact', ['id' => $id]);
-            // })->label('Actions'),
+            Column::name('clients.name')->label('Name')->searchable(),
+            Column::name('clients.phone')->label('Phone')->searchable(),
+            Column::name('clients.email')->label('Email')->searchable(),
 
             Column::callback(['id'], function ($id) {
                 return view('tables.delete-audience-clientv2', ['id' => $id]);
             })->unsortable()->label('Actions')
+        ];
+    }
 
-
+    public function searchColumns()
+    {
+        return [
+            'clients.name',
+            'clients.phone',
+            'clients.email'
         ];
     }
 }
