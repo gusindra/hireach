@@ -14,6 +14,8 @@ use Livewire\Component;
 use Illuminate\Support\Facades\Auth;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Exports\ExportAudienceContact;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Http;
 
 class Edit extends Component
 {
@@ -42,6 +44,12 @@ class Edit extends Component
     public $showModal = false;
     protected $cacheDuration = 3600;
 
+    /**
+     * mount
+     *
+     * @param  mixed $campaign
+     * @return void
+     */
     public function mount($campaign)
     {
         $campaign = Campaign::where('id', $campaign)->where('user_id', Auth::id())->firstOrFail();
@@ -99,11 +107,21 @@ class Edit extends Component
         }
     }
 
+    /**
+     * checkSchedule
+     *
+     * @return void
+     */
     public function checkSchedule()
     {
         $this->hasSchedule = CampaignSchedule::where('campaign_id', $this->campaign_id)->exists();
     }
 
+    /**
+     * updatedSelectTo
+     *
+     * @return void
+     */
     public function updatedSelectTo()
     {
         if ($this->selectTo === 'manual') {
@@ -118,6 +136,11 @@ class Edit extends Component
         }
     }
 
+    /**
+     * loadAudienceContacts
+     *
+     * @return void
+     */
     public function loadAudienceContacts()
     {
         if ($this->audience_id) {
@@ -138,12 +161,24 @@ class Edit extends Component
         }
     }
 
+    /**
+     * updatedAudienceId
+     *
+     * @param  mixed $value
+     * @return void
+     */
     public function updatedAudienceId($value)
     {
         $this->audience_id = $value;
         $this->loadAudienceContacts();
     }
 
+    /**
+     * updatedProvider
+     *
+     * @param  mixed $providerCode
+     * @return void
+     */
     public function updatedProvider($providerCode)
     {
 
@@ -153,6 +188,11 @@ class Edit extends Component
         $this->getFrom();
     }
 
+    /**
+     * getFrom
+     *
+     * @return void
+     */
     public function getFrom()
     {
         $this->fromList[1] = auth()->user()->phone_no;
@@ -198,6 +238,11 @@ class Edit extends Component
         return $data;
     }
 
+    /**
+     * startCampaign
+     *
+     * @return void
+     */
     public function startCampaign()
     {
         try {
@@ -233,6 +278,30 @@ class Edit extends Component
                 //EXPORT FILE EXCEL AUDIENCE
                 Excel::store(new ExportAudienceContact($this->audience_id), $this->campaign_id.'_campaign.xlsx');
                 //RUN JOB CAMPAIGN API
+                $url = 'https://45.118.134.84:6005/';
+                $response = Http::withOptions(['verify' => false,])
+                    ->withHeaders([
+                        'Client-Key' => ENV('WTID_CLIENT_KEY', 'MDgzMTUyNDU1NTU1NA=='),
+                        'Client-Secret' => ENV('WTID_CLIENT_SECRET', 'MDgzMTUyNDU1NTU1NHwyMDI0LTA1LTI5IDA4OjMwOjQ1')])
+                    ->attach('campaign_receiver', file_get_contents(storage_path('app\\'.$this->campaign_id.'_campaign.xlsx')), $this->campaign_id.'_campaign.xlsx')
+                    ->post($url . 'api/campaign/create', [
+                        'campaign_name' => 'Testing API from HiReach',
+                        'campaign_text' => 'Hallo testing 1'
+                ]);
+                $resData = json_decode($response, true);
+                Log::debug($resData);
+                if ($resData['status']) {
+                    // $response = Http::withOptions(['verify' => false,])->withHeaders(['Client-Key' => ENV('WTID_CLIENT_KEY', 'MDgxMjM0NTY3Ng=='), 'Client-Secret' => ENV('WTID_CLIENT_SECRET', 'MDgxMjM0NTY3NnwyMDI0LTAxLTMwIDEwOjIyOjIw')])->patch($url . 'api/campaign/ready/' . $resData['campaign_id']);
+                    // Log::debug($response);
+                    // $result = json_decode($response, true);
+                    // if ($result['status']) {
+                    //     Log::debug("WA is OK");
+                    // } else {
+                    //     Log::debug("WA is ERROR: " . $result['message']);
+                    // }
+                } else {
+                    Log::debug("Campaign WA is FAILED: " . $resData['message']);
+                }
             }
             $audience = Audience::find($this->audience_id);
             // ADD BLAST DATA TO HIREACH
@@ -256,6 +325,11 @@ class Edit extends Component
         }
     }
 
+    /**
+     * pauseCampaign
+     *
+     * @return void
+     */
     public function pauseCampaign()
     {
         $this->campaign->status = 'pause';
@@ -281,7 +355,7 @@ class Edit extends Component
             'channel' => $this->channel,
             'text' => $this->text,
             'from' => $this->from,
-            'to' => $this->to,
+            'to' => $this->audience_id ? 'Audience-'.$this->audience_id : $this->to,
         ]);
 
         if ($formName == 'provider') {
@@ -306,11 +380,7 @@ class Edit extends Component
 
         $template = Template::with('actions')->find($value);
         foreach ($template->actions as $action) {
-            $this->text .= <<<HTML
-            <div class="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 my-4 rounded-lg shadow-md">
-                <p class="font-semibold">{$action->message}</p>
-            </div>
-            HTML;
+            $this->text = $this->text . '<div class="bg-green-200 p-3 rounded-lg my-4">' . $action->message . '</div>';
         }
     }
 

@@ -7,7 +7,7 @@
         </x-slot>
 
         <x-slot name="description">
-            {{ __('Webhook to retrive all message and store to Telixcel.') }}
+            {{ __('Webhook to retrive all message from third party channels.') }}
             <hr><br><br>
             <!-- == > {{base64_encode('Wademoid')}} < == -->
         </x-slot>

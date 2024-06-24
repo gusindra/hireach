@@ -84,22 +84,20 @@ class ProcessCampaignApi implements ShouldQueue
                 // 'campaign_receiver' => new CURLFile(storage_path('app\template_contact_wetalk.xlsx'))
             ]);
             $resData = json_decode($response, true);
-            // Log::debug($resData);
+            Log::debug($resData);
             if ($resData['status']) {
                 // $response = Http::withOptions(['verify' => false,])->withHeaders(['Client-Key' => ENV('WTID_CLIENT_KEY', 'MDgxMjM0NTY3Ng=='), 'Client-Secret' => ENV('WTID_CLIENT_SECRET', 'MDgxMjM0NTY3NnwyMDI0LTAxLTMwIDEwOjIyOjIw')])->patch($url . 'api/campaign/ready/' . $resData['campaign_id']);
-                Log::debug($response);
-                $result = json_decode($response, true);
-                if ($result['status']) {
-                    Log::debug("WA is OK");
-                } else {
-                    Log::debug("WA is ERROR: " . $result['message']);
-                }
+                // Log::debug($response);
+                // $result = json_decode($response, true);
+                // if ($result['status']) {
+                //     Log::debug("WA is OK");
+                // } else {
+                //     Log::debug("WA is ERROR: " . $result['message']);
+                // }
             } else {
                 Log::debug("Campaign WA is FAILED: " . $resData['message']);
             }
         }
-        $resData['message'] = 'Ready';
-        $resData['code'] = 200;
     }
 
     /**
