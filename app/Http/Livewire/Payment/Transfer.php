@@ -28,7 +28,7 @@ class Transfer extends Component
                 'model' => 'Order',
                 'model_id' => $this->order->id,
                 'notification' => 'Konfirmasi pembayaran no ' . $this->order->no . ' Total Rp' . number_format($this->order->total),
-                'user_id' => 0,
+                'user_id' => 1,
                 'status' => 'unread'
             ]);
 

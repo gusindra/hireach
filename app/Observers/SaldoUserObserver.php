@@ -36,7 +36,7 @@ class SaldoUserObserver
                     'type'          => 'email',
                     'model_id'      => $request->id,
                     'model'         => 'Balance',
-                    'notification'  => 'Balance Alert. Your current balance remaining Rp' . number_format($request->balance),
+                    'notification'  => 'Balance Alert. Your current balance remaining '.$request->currency.'.'. number_format($request->balance),
                     'user_id'       => $request->user_id,
                     'status'        => 'unread',
                 ]);
@@ -56,7 +56,7 @@ class SaldoUserObserver
                 'type' => 'Top Up',
                 'model_id' => $request->id,
                 'model' => 'Balance',
-                'notification' => 'Top Up Successed your balnce now Rp.' . number_format($request->balance),
+                'notification' => 'Top Up Successed your balance now '.$request->currency.'.'. number_format($request->balance),
                 'user_id' =>  $request->user_id,
                 'status' => 'unread'
             ]);

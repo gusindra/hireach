@@ -32,11 +32,7 @@
         </x-jet-dialog-modal>
     @endif
 
-    @if (
-        ($order->status == 'draft' || $order->status == 'unpaid' || $order->status == 'paid') &&
-            @Auth::user()->role &&
-            Auth::user()->super->first() &&
-            @Auth::user()->super->first()->role == 'superadmin')
+    @if ($order->status == 'draft' || $order->status == 'unpaid' || $order->status == 'paid')
         <x-jet-form-section submit="updateStatus({{ $order->id }})">
             <x-slot name="title">
                 {{ __('Status') }}
