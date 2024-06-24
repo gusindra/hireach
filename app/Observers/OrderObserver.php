@@ -87,7 +87,7 @@ class OrderObserver
 
             $user = User::where('email', $request->customer->email)->first();
             if ($user) {
-                $currentSaldo = SaldoUser::where('user_id', $user->id)->orderBy('id', 'desc')->first();
+                $currentSaldo = SaldoUser::where('user_id', $user->id)->latest()->first();
 
                 SaldoUser::create([
                     'user_id' => $user->id,
@@ -95,7 +95,7 @@ class OrderObserver
                     'model_id' => $request->id,
                     'model' => 'Order',
                     'mutation' => 'credit',
-                    'description' => 'Topup Successfully',
+                    'description' => 'Auto Topup from Order Successfully',
                     'currency' => 'IDR',
                     'amount' => $request->total,
                     'balance' => $currentSaldo && $currentSaldo->amount ? $currentSaldo->amount + $request->total : $request->total

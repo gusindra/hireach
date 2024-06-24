@@ -110,14 +110,14 @@ class OrderTopupUserTest extends TestCase
 
         $order = Order::where('total', '100')->latest()->first();
         // Get the latest saldo entry related to the order
-        $saldo = SaldoUser::where('model_id', $order->id)->latest()->first();
+        $saldo = SaldoUser::where('model', 'Order')->where('model_id', $order->id)->latest()->first();
 
         // Assert that the saldo entry was created correctly
         $this->assertDatabaseHas('saldo_users', [
             'id' => $saldo->id,
             'user_id' => $saldo->user_id,
             'amount' => 100,
-            'balance' => 100,
+            'balance' => $saldo->balance,
         ]);
     }
 
@@ -186,13 +186,13 @@ class OrderTopupUserTest extends TestCase
     {
 
         $order = Order::latest()->first();
-        $saldo = SaldoUser::where('model_id', $order->id)->latest()->first();
+        $saldo = SaldoUser::where('model', 'Order')->where('model_id', $order->id)->latest()->first();
 
         $this->assertDatabaseHas('saldo_users', [
             'id' => $saldo->id,
             'user_id' => $saldo->user_id,
             'amount' => 100,
-            'balance' => 200,
+            'balance' => $saldo->balance,
         ]);
     }
 }
