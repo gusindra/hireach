@@ -3,12 +3,16 @@
 namespace Tests\Feature;
 
 use App\Http\Livewire\Audience\AddContact;
+use App\Http\Livewire\Audience\ImportContact;
+use App\Jobs\importAudienceContact;
 use App\Models\Audience;
 use App\Models\AudienceClient;
 use App\Models\Client;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Queue;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -123,5 +127,24 @@ class AudienceTest extends TestCase
             ->call('delete');
 
         $this->assertDatabaseMissing('audience_clients', ['id' => $audienceClient->id]);
+    }
+
+    public function test_it_dispatches_the_import_job()
+    {
+
+        $audience = Audience::create([
+            'name' => 'test audience 2',
+            'description' => 'desc test audience 2',
+            'user_id' => 2
+        ]);
+
+        $csv = "name,phone,email\nJohn Doe,1234567890,john@example.com\nJane Doe,0987654321,jane@example.com";
+        $file = UploadedFile::fake()->createWithContent('contacts.csv', $csv);
+
+
+        Livewire::actingAs(User::find(2))->test(ImportContact::class, ['audience' => $audience])
+            ->set('file', $file)
+            ->call('import')
+            ->assertEmitted('refreshLivewireDatatable');
     }
 }
