@@ -86,7 +86,7 @@ class OrderObserver
             // }
 
             $user = User::where('email', $request->customer->email)->first();
-            if($user){
+            if ($user) {
                 $currentSaldo = SaldoUser::where('user_id', $user->id)->orderBy('id', 'desc')->first();
 
                 SaldoUser::create([
@@ -98,7 +98,7 @@ class OrderObserver
                     'description' => 'Topup Successfully',
                     'currency' => 'IDR',
                     'amount' => $request->total,
-                    'balance' => $currentSaldo && $currentSaldo->amount ? $currentSaldo->amount+$request->total : $request->total
+                    'balance' => $currentSaldo && $currentSaldo->amount ? $currentSaldo->amount + $request->total : $request->total
                 ]);
             }
         } elseif ($request->status == 'submit') {
