@@ -5,6 +5,7 @@ namespace App\Observers;
 use App\Jobs\ProcessEmail;
 use App\Models\Notice;
 use App\Models\SaldoUser;
+use Illuminate\Support\Facades\Log;
 
 class SaldoUserObserver
 {
@@ -16,9 +17,9 @@ class SaldoUserObserver
      */
     public function created(SaldoUser $request)
     {
-
+        Log::debug($request);
         $last = SaldoUser::where('id', '!=', $request->id)->where('user_id', $request->user_id)->where('team_id', $request->team_id)->orderBy('id', 'desc')->first();
-
+        Log::debug($last);
         if ($last) {
             $amount = $last->balance + $request->amount;
             if ($request->mutation == 'debit') {

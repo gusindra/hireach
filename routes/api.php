@@ -61,6 +61,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     //API for 2Way
     Route::get('/two-way',  [ApiTwoWayController::class, 'index']);
     Route::post('/two-way',  [ApiTwoWayController::class, 'post']);
+    Route::get('/two-way/campaign',  [ApiTwoWayController::class, 'show']);
 });
 
 //Route::get('/test',  [TestApiController::class, 'get']);

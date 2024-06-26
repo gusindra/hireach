@@ -414,6 +414,13 @@ class ApiOneWayController extends Controller
         }
     }
 
+    /**
+     * saveResult
+     *
+     * @param  mixed $msg
+     * @param  mixed $request
+     * @return void
+     */
     private function saveResult($msg, $request)
     {
         $user_id = auth()->user()->id;
@@ -432,6 +439,14 @@ class ApiOneWayController extends Controller
         BlastMessage::create($modelData);
     }
 
+    /**
+     * chechClient
+     *
+     * @param  mixed $status
+     * @param  mixed $msisdn
+     * @param  mixed $request
+     * @return void
+     */
     private function chechClient($status, $msisdn=null, $request=null)
     {
         $user_id = auth()->user()->id;
