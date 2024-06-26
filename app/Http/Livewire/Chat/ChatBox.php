@@ -30,13 +30,13 @@ class ChatBox extends Component
         $this->client_id = $client_id;
         $this->owner =  $this->client->user_id;
         $this->team =  $team;
-
     }
 
-    public function sendMessage(){
+    public function sendMessage()
+    {
         // Check long of word if > will store to message
         $request = Request::create([
-            'source_id' => 'web_'.Hashids::encode($this->client->id),
+            'source_id' => 'webchat_' . Hashids::encode($this->client->id),
             'reply'     => $this->message,
             'from'      => $this->client->id,
             'user_id'   => $this->owner,
@@ -54,7 +54,8 @@ class ChatBox extends Component
         ]);
     }
 
-    public function sendAttachment(){
+    public function sendAttachment()
+    {
         Request::create([
             'reply'     => $this->message,
             'from'      => $this->client->id,
@@ -88,8 +89,8 @@ class ChatBox extends Component
      */
     public function read()
     {
-        if($this->client && $this->transcript){
-            return Request::with('client','agent')->where('client_id', $this->client->uuid)->get();
+        if ($this->client && $this->transcript) {
+            return Request::with('client', 'agent')->where('client_id', $this->client->uuid)->get();
         }
         return [];
     }

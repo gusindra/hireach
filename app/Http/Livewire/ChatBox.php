@@ -40,7 +40,7 @@ class ChatBox extends Component
     public $modalAttachment = false;
     public $modalQuick = false;
     public $modalTicket = false;
-    public $modalForward= false;
+    public $modalForward = false;
     public $modalUpdateTicket = false;
     public $transcript = 0;
     public $closeModal = false;
@@ -48,7 +48,7 @@ class ChatBox extends Component
 
     public function mount($client_id)
     {
-        if(!is_int($client_id)){
+        if (!is_int($client_id)) {
             @$client_id = Hashids::decode($client_id)[0];
         }
         $this->client = Client::find($client_id);
@@ -59,7 +59,8 @@ class ChatBox extends Component
         $this->handling_session = $this->checkSession();
     }
 
-    public function sendMessage(){
+    public function sendMessage()
+    {
         // Check long of word if > will store to message
         Request::create([
             'reply'     => $this->message,
@@ -71,7 +72,7 @@ class ChatBox extends Component
 
         $this->dispatchBrowserEvent('chat-send-message', [
             'from'      => $this->client->uuid,
-            'from_web'  => strpos($this->client->phone, '@c.us') !== false ? $this->client->phone : $this->client->phone."@c.us",
+            'from_web'  => strpos($this->client->phone, '@c.us') !== false ? $this->client->phone : $this->client->phone . "@c.us",
             'user_id'   => $this->owner,
             'reply'     => $this->message,
         ]);
@@ -90,21 +91,22 @@ class ChatBox extends Component
      *
      * @return void
      */
-    public function sendAttachment(){
-        if($this->photo){
+    public function sendAttachment()
+    {
+        if ($this->photo) {
             $this->validate([
                 'photo' => 'image|max:1024',
             ]);
 
             $file = Storage::disk('s3')->put('images', $this->photo);
 
-            $this->link_attachment = 'https://telixcel.s3.ap-southeast-1.amazonaws.com/'.$file;
+            $this->link_attachment = 'https://telixcel.s3.ap-southeast-1.amazonaws.com/' . $file;
             $this->type = 'image';
-        }else{
+        } else {
             $this->type = attachmentExt($this->link_attachment);
         }
 
-        if($this->type){
+        if ($this->type) {
             $request = Request::create([
                 'reply'     => $this->message,
                 'media'     => $this->link_attachment,
@@ -118,7 +120,7 @@ class ChatBox extends Component
 
             $this->dispatchBrowserEvent('chat-send-message', [
                 'from'      => auth()->user()->id,
-                'from_web'  => strpos($this->client->phone, '@c.us') !== false ? $this->client->phone : $this->client->phone."@c.us",
+                'from_web'  => strpos($this->client->phone, '@c.us') !== false ? $this->client->phone : $this->client->phone . "@c.us",
                 'user_id'   => $this->owner,
                 'reply'     => $this->message,
             ]);
@@ -127,7 +129,7 @@ class ChatBox extends Component
                 'request_id'    => $request->id,
                 'file'          => $this->link_attachment
             ]);
-        }else{
+        } else {
             dd('Format link false');
         }
     }
@@ -150,14 +152,15 @@ class ChatBox extends Component
         $this->modalTicket = true;
     }
 
-    public function sendTicket(){
+    public function sendTicket()
+    {
         $ticket = Ticket::create([
             'reasons'       => $this->reason,
             'status'        => 'open',
             'request_id'    => $this->request_id,
             'created_by'    => auth()->user()->id
         ]);
-        if($ticket){
+        if ($ticket) {
             $this->modalTicket = false;
         }
 
@@ -195,13 +198,13 @@ class ChatBox extends Component
      */
     public function ticketUpdate()
     {
-        if($this->ticket_status!='close'){
+        if ($this->ticket_status != 'close') {
             Ticket::find($this->ticket_id)->update([
                 'solution'       => $this->ticket_solution,
                 'status'        => $this->ticket_status,
                 'updated_by'    => auth()->user()->id
             ]);
-        }else{
+        } else {
             Ticket::find($this->ticket_id)->delete();
         }
         $this->modalUpdateTicket = false;
@@ -217,11 +220,11 @@ class ChatBox extends Component
     {
         $template = Template::find($id);
         $message = '';
-        foreach($template->actions as $key => $action){
-            if($key==0){
+        foreach ($template->actions as $key => $action) {
+            if ($key == 0) {
                 $message = $action->message;
-            }else{
-                $message = $message.' '.$action->message;
+            } else {
+                $message = $message . ' ' . $action->message;
             }
         }
         $this->message = $message;
@@ -241,7 +244,8 @@ class ChatBox extends Component
         $this->modalForward = true;
     }
 
-    public function sendForward(){
+    public function sendForward()
+    {
 
         $ticket = Ticket::create([
             'reasons'       => $this->reason,
@@ -250,7 +254,7 @@ class ChatBox extends Component
             'forward_to'    => $this->forward_to,
             'created_by'    => auth()->user()->id
         ]);
-        if($ticket){
+        if ($ticket) {
             $this->modalForward = false;
         }
     }
@@ -262,17 +266,17 @@ class ChatBox extends Component
      */
     public function joinChat()
     {
-        if(!$this->checkSession()){
+        if (!$this->checkSession()) {
             $this->handling_session = HandlingSession::create([
                 'client_id'     => $this->client_id,
                 'agent_id'      => $this->user_id,
                 'user_id'       => $this->owner,
             ]);
             Request::where('client_id', $this->client->uuid)->where('is_read', 0)->update(['is_read' => 1]);
-        }else{
-            if($this->handling_session->client_id == $this->client_id){
+        } else {
+            if ($this->handling_session->client_id == $this->client_id) {
                 $this->emit('handled');
-            }else{
+            } else {
                 $this->emit('exist');
             }
         }
@@ -285,14 +289,14 @@ class ChatBox extends Component
 
     public function closeChat($end)
     {
-        if($this->checkSession()){
+        if ($this->checkSession()) {
             $this->handling_session = HandlingSession::where('agent_id', $this->user_id)->delete();
-            if($end){
+            if ($end) {
                 $lastRequest = Request::where('client_id', $this->client->uuid)->orderBy('created_at', 'DESC')->first();
                 $lastRequest->is_closed = 1;
                 $lastRequest->save();
             }
-        }else{
+        } else {
             $this->emit('exist');
         }
         return redirect(request()->header('Referer'));
@@ -301,9 +305,9 @@ class ChatBox extends Component
     private function checkSession()
     {
         $session = HandlingSession::where('agent_id', $this->user_id)->first();
-        if(!$session)
+        if (!$session)
             $session = HandlingSession::where('client_id', $this->client_id)->where('user_id', $this->owner)->first();
-        
+
         $this->session = $session;
         return $session;
     }
@@ -312,10 +316,11 @@ class ChatBox extends Component
     {
         $this->transcript = !$this->transcript;
     }
-    
-    public function updateTransript($selected){
-        $status = $selected == 'yes' ? 'approve':'reject';
-        $this->session->update(['view_transcript'=>$status]);
+
+    public function updateTransript($selected)
+    {
+        $status = $selected == 'yes' ? 'approve' : 'reject';
+        $this->session->update(['view_transcript' => $status]);
     }
 
     /**
@@ -326,23 +331,24 @@ class ChatBox extends Component
     public function read()
     {
         $data = [];
-        if($this->client){
-            if($this->transcript){
-                $data['request'] = Request::with('client','agent')->where('client_id', $this->client->uuid)->get();
-            }else{
+        if ($this->client) {
+            if ($this->transcript) {
+                $data['request'] = Request::with('client', 'agent')->where('client_id', $this->client->uuid)->get();
+            } else {
                 $closed = Request::where('client_id', $this->client->uuid)->where('is_closed', 1)->orderBy('id', 'desc')->first();
-                $data['request'] = Request::with('client','agent')->where('client_id', $this->client->uuid)->where('id', '>=', $closed ? $closed->id : 0)->get();
+                $data['request'] = Request::with('client', 'agent')->where('client_id', $this->client->uuid)->where('id', '>=', $closed ? $closed->id : 0)->get();
             }
-        }else{
+        } else {
             $data['request'] = [];
         }
-        
+
         $data['count'] = count($data['request']);
 
-        if(substr($this->message,0, 1)=='/'){
+        if (substr($this->message, 0, 1) == '/') {
+
             $keyword = substr($this->message, 1);
-            $data['quick'] = Template::where('user_id', $this->owner)->where('type', 'helper')->where('name','LIKE',"%{$keyword}%")->get();
-        }else{
+            $data['quick'] = Template::where('user_id', $this->owner)->where('type', 'helper')->where('name', 'LIKE', "%{$keyword}%")->get();
+        } else {
             $data['quick'] = [];
         }
         return $data;
@@ -354,7 +360,7 @@ class ChatBox extends Component
             'data' => $this->read(),
             'cid' => $this->client_id,
             'team' => auth()->user()->currentTeam,
-            'quick_template' => $this->quick_reply->pluck('name','id'),
+            'quick_template' => $this->quick_reply->pluck('name', 'id'),
         ]);
     }
 }

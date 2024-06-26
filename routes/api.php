@@ -213,6 +213,31 @@ Route::get("/dummy-array", function () {
 
     return response()->json($resData);
 });
+Route::get("/dummy-array2", function () {
+    $resData = [
+        'code' => 200,
+        'message' => 'Success',
+        'response' => [
+            [
+                'id' => 1,
+                'name' => 'John Doe',
+                'email' => 'john.doe@example.com',
+                'roles' => ['admin', 'editor']
+            ],
+            [
+                'id' => 2,
+                'name' => 'Jane Smith',
+                'email' => 'jane.smith@example.com',
+                'roles' => ['user']
+            ]
+        ],
+        'data' => [
+            'warna' => 'kuning',
+        ]
+    ];
+
+    return response()->json($resData);
+});
 
 
 Route::get("/dummy-string", function () {

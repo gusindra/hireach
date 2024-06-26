@@ -133,24 +133,28 @@
         </x-slot>
 
         <x-slot name="content">
-            @if ($template->question && $template->question->type == 'api')
-                <div class="col-span-12 sm:col-span-12">
-                    <div class="ml-3 text-sm">
-                        <input id="is_multidata" name="is_multidata" wire:model="is_multidata"
-                            wire:model.defer="is_multidata" type="checkbox"
-                            class="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300 rounded"><label
-                            for="is_enabled" class="font-medium text-gray-500 px-2"> Enable if this action is used for
-                            looping result data respond.</label>
+            @if ($actionId)
+                @if ($template->question && $template->question->type == 'api')
+                    <div class="col-span-12 sm:col-span-12">
+                        <div class="ml-3 text-sm">
+                            <input id="is_multidata" name="is_multidata" wire:model="is_multidata"
+                                wire:model.defer="is_multidata" type="checkbox"
+                                class="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300 rounded"><label
+                                for="is_enabled" class="font-medium text-gray-500 px-2"> Enable if this action is used
+                                for
+                                looping result data respond.</label>
+                        </div>
+                        @if ($is_multidata)
+                            <x-jet-input placeholder="data,resultList" id="array_data" type="text"
+                                class="mt-1 block w-full" wire:model.debunce.800ms="array_data" autofocus />
+                        @endif
                     </div>
-                    @if ($is_multidata)
-                        <x-jet-input placeholder="[data][resultList]" id="array_data" type="text"
-                            class="mt-1 block w-full" wire:model.debunce.800ms="array_data" autofocus />
-                    @endif
-                </div>
-                <br>
+                    <br>
 
-                @livewire('template.add-data-action', ['actionId' => $actionId], key($actionId))
+                    @livewire('template.add-data-action', ['actionId' => $actionId], key($actionId))
+                @endif
             @endif
+
 
             <div class="col-span-6 sm:col-span-4 p-3">
                 <x-jet-label for="content" value="{{ __('Resource') }}" />
