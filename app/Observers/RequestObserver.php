@@ -315,10 +315,21 @@ class RequestObserver
 
             //check msisdn for $product items
             // CHARGE BY PRODUCT WA PRICE
+            // if (count($items) > 0) {
+            //     foreach ($items as $product) {
+            //         if ($product->sku == "WA") {
+            //             // ALL WA Charge this Price
+            //             $this->addSaldo($product->unit_price, $request);
+            //             $set_price = 1;
+            //         }
+            //     }
+            // }
+
+            //check msisdn for $product items
+            // CHARGE BY PRODUCT PRICE
             if (count($items) > 0) {
                 foreach ($items as $product) {
-                    if ($product->sku == "WA") {
-                        // ALL WA Charge this Price
+                    if (str_contains($request->source_id, $product->sku)) {
                         $this->addSaldo($product->unit_price, $request);
                         $set_price = 1;
                     }

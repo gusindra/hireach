@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\CampaignResource;
 use App\Http\Resources\SmsResource;
 use App\Http\Resources\TwoWayResource;
 use App\Models\BlastMessage;
@@ -10,6 +11,7 @@ use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use App\Jobs\ProcessChatApi;
 use App\Models\ApiCredential;
+use App\Models\Campaign;
 use App\Models\Client;
 use App\Models\ProviderUser;
 use App\Models\Request as ModelsRequest;
@@ -29,10 +31,10 @@ class ApiTwoWayController extends Controller
     {
         //$data = ModelsRequest::where('user_id', '=', auth()->user()->id)->get();
         $skip = $request->page*$request->pageSize;
-        $customer = Client::where('phone', $request->phone)->first(); //->where('user_id', auth()->user()->id)
+        $customer = Client::where('phone', $request->phone)->where('user_id', auth()->user()->id)->first(); //
         if($customer){
             //$data = ModelsRequest::paginate($request->page);
-            $data = ModelsRequest::where('client_id', $customer->uuid)->skip($skip)->take($request->pageSize)->where('user_id', '=', auth()->user()->id)->get();
+            $data = ModelsRequest::where('client_id', $customer->uuid)->skip($skip)->take($request->pageSize)->where('user_id', '=', $customer->user_id)->get();
             if(count($data)>=1){
                 return response()->json([
                     'code' => 200,
@@ -46,11 +48,6 @@ class ApiTwoWayController extends Controller
             'code' => 404,
             'message' => "Can not found client from Phone Number"
         ]);
-        return response()->json([
-            'code' => 200,
-            'message' => "Successful",
-            'response' => TwoWayResource::collection($data),
-        ]);
     }
 
     /**
@@ -59,22 +56,56 @@ class ApiTwoWayController extends Controller
      * @param  mixed $phone
      * @return void
      */
-    public function show($phone)
+    public function show(Request $request)
     {
-        $customer = Client::where('phone', $phone)->where('user_id', auth()->user()->id)->first();
-        if($customer){
-            $data = ModelsRequest::where('user_id', '=', auth()->user()->id)->where('client_id', $customer->uuid)->get();
+        // return response()->json([
+        //     'code' => 404,
+        //     'message' => "User not found"
+        // ]);
+        if(is_numeric($request->value)){
+            $customer = Client::where('phone', $request->value)->where('user_id', auth()->user()->id)->first();
+            if($customer){
+                $data = ModelsRequest::where('user_id', '=', auth()->user()->id)->where('client_id', $customer->uuid)->get();
 
+                return response()->json([
+                    'code' => 200,
+                    'message' => "Successful",
+                    'response' => SmsResource::collection($data),
+                ]);
+            }
             return response()->json([
-                'code' => 200,
-                'message' => "Successful",
-                'response' => SmsResource::collection($data),
+                'code' => 404,
+                'message' => "Client not found"
+            ]);
+        }elseif(strpos($request->value, '@')){
+            $customer = Client::where('email', $request->value)->where('user_id', auth()->user()->id)->first();
+            if($customer){
+                $data = ModelsRequest::where('user_id', '=', auth()->user()->id)->where('client_id', $customer->uuid)->get();
+
+                return response()->json([
+                    'code' => 200,
+                    'message' => "Successful",
+                    'response' => SmsResource::collection($data),
+                ]);
+            }
+            return response()->json([
+                'code' => 404,
+                'message' => "Client not found"
+            ]);
+        }else{
+            $data = Campaign::where('uuid', $request->value)->where('user_id', auth()->user()->id)->first();
+            if($data){
+                return response()->json([
+                    'code' => 200,
+                    'message' => "Successful",
+                    'response' => CampaignResource::make($data)
+                ]);
+            }
+            return response()->json([
+                'code' => 404,
+                'message' => "Campaign not found"
             ]);
         }
-        return response()->json([
-            'code' => 404,
-            'message' => "User not found"
-        ]);
     }
 
     /**
@@ -95,11 +126,7 @@ class ApiTwoWayController extends Controller
             'detail' => 'string',
             'otp' => 'boolean'
         ]);
-        //return response()->json([
-        //    'message' => "Successful",
-        //     'code' => 200
-        //]);
-        //return $request;
+
         try{
             $provider = cache()->remember('provider-user-', $this->cacheDuration, function() use ($request) {
                 return ProviderUser::where('user_id', auth()->user()->id)->where('channel', $request->channel)->first();
@@ -118,15 +145,15 @@ class ApiTwoWayController extends Controller
                             $credential = $cre;
                         }
                     }
+                    if($credential==''){
+                        return response()->json([
+                            'message' => 'Invalid Credential',
+                            'code' => 400
+                        ]);
+                    }
                 }
                 //return $credential;
 
-                if($credential==''){
-                    return response()->json([
-                        'message' => 'Invalid Credential',
-                        'code' => 400
-                    ]);
-                }
 
                 //auto check otp / non otp type base on text
                 $checkString = $request->text;
@@ -135,20 +162,56 @@ class ApiTwoWayController extends Controller
                 $allphone = $request->to;
                 $phones = explode(",", $request->to);
                 $balance = (int)balance(auth()->user());
+
+                //ADD CAMPAIGN API
+                $campaign = $this->campaignAdd($request);
+
                 if($balance>500 && count($phones)<$balance/1){
-                    $data = array(
-                        'type' => $request->type,
-                        'to' => $request->to,
-                        'from' => $request->from,
-                        'text' => $request->text,
-                        'title' => $request->title,
-                    );
-                    $chat = $this->saveResult(null, $data);
-                    ProcessChatApi::dispatch($request->all(), $credential, $chat);
+                    if(count($phones)>1){
+                        foreach($phones as $p){
+                            $data = array(
+                                'type' => $request->type,
+                                'to' => trim($p),
+                                'from' => $request->from,
+                                'text' => $request->text,
+                                //'servid' => $request->servid,
+                                'channel' => $request->channel,
+                                'title' => $request->title,
+                                'otp' => $request->otp,
+                                'is_otp' => $request->otp,
+                                'provider' => $provider,
+                            );
+                            if($request->has('templateid')){
+                                $data['templateid'] = $request->templateid;
+                            }
+                            $chat = $this->saveResult($campaign, $data);
+                            if($request->channel!='webchat')
+                                ProcessChatApi::dispatch($request->all(), $credential, $chat);
+                        }
+                    }else{
+                        $data = array(
+                            'type' => $request->type,
+                            'to' => $request->to,
+                            'from' => $request->from,
+                            'text' => $request->text,
+                            'channel' => $request->channel,
+                            'is_otp' => $request->otp,
+                            'title' => $request->title,
+                        );
+                        $chat = $this->saveResult($campaign, $data);
+                        if($request->channel!='webchat')
+                            ProcessChatApi::dispatch($request->all(), $credential, $chat);
+                    }
+
+                    return response()->json([
+                        'code'          => 200,
+                        'campaign_id'   => $campaign->uuid,
+                        'message'       => "Campaign successful create, prepare sending notification to ".count($phones)." contact.",
+                    ]);
                 }else{
                     return response()->json([
-                        'message' => "Insufficient Balance",
-                        'code' => 405
+                        'code'      => 405,
+                        'message'   => "Campaign fail to created, Insufficient Balance!",
                     ]);
                 }
                 //$this->sendSMS($request->all());
@@ -165,9 +228,36 @@ class ApiTwoWayController extends Controller
             ]);
         }
         // show result on progress
-        return response()->json([
-            'message' => "Successful, prepare sending to ".count($phones)." msisdn",
-            'code' => 200,
+        // show result on progress
+
+        // return response()->json([
+        //     'message' => "Successful, prepare sending to ".count($phones)." msisdn",
+        //     'code' => 200,
+        // ]);
+    }
+
+    /**
+     * This to add campaign default create by API
+     *
+     * @param  mixed $request
+     * @return object $campaign
+     */
+    private function campaignAdd($request){
+        return Campaign::create([
+            'title'         => $request->title,
+            'channel'       => strtoupper($request->channel),
+            'provider'      => $request->provider,
+            'from'          => $request->from,
+            'to'            => $request->to,
+            'text'          => $request->text,
+            'is_otp'        => 0,
+            'request_type'  => 'api',
+            'status'        => 'starting',
+            'way_type'      => 2,
+            'type'          => $request->type,
+            'template_id'   => $request->templateid,
+            'user_id'       => auth()->user()->id,
+            'uuid'          => Str::uuid()
         ]);
     }
 
@@ -332,13 +422,13 @@ class ApiTwoWayController extends Controller
         }
     }
 
-    private function saveResult($msg, $request){
+    private function saveResult($campaign, $request){
         $user_id = auth()->user()->id;
         //ModelsRequest::create($modelData);
         $client = $this->chechClient("400", $request);
         $chat = ModelsRequest::create([
-            'source_id' => 'api_'.Hashids::encode($client->id),
-            'reply'     => $request['text'],
+            'source_id' => 'webchat_api_'.Hashids::encode($client->id),
+            'reply'     => 'campaign'.$campaign->id,
             'from'      => $client->id,
             'user_id'   => $user_id,
             'type'      => 'text',
