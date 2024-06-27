@@ -26,6 +26,7 @@ class ChatBox extends Component
 
     public function mount($client_id, $team)
     {
+        dd(1);
         $this->client = Client::find($client_id);
         $this->client_id = $client_id;
         $this->owner =  $this->client->user_id;

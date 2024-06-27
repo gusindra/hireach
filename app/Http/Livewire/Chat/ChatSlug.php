@@ -13,6 +13,7 @@ use Livewire\WithFileUploads;
 use Vinkla\Hashids\Facades\Hashids;
 use Illuminate\Support\Facades\Storage;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Log;
 
 class ChatSlug extends Component
 {
@@ -46,10 +47,11 @@ class ChatSlug extends Component
      */
     public function checkClient()
     {
+
         // checking client
-        $client = Client::where('phone', $this->number)->where('user_id', $this->team->user_id)->first();
-        // if not exsist create new client
+        $client = Client::where('phone', $this->number)->where('user_id', $this->team->user_id)->first();        // if not exsist create new client
         if (!$client) {
+
             $client = Client::create([
                 'uuid'          => Str::uuid(),
                 'name'          => $this->name,
@@ -72,6 +74,9 @@ class ChatSlug extends Component
      */
     public function sendMessage()
     {
+
+        Log::info('sendMessage - user_id: ' . $this->owner);
+
         // Check long of word if > will store to message
         $request = Request::create([
             'source_id' => 'webchat_' . Hashids::encode($this->client->id),
@@ -183,6 +188,7 @@ class ChatSlug extends Component
      */
     public function message()
     {
+
         if ($this->client) {
             if ($this->transcript) {
                 return Request::with('client', 'agent')->where('client_id', $this->client->uuid)->get();

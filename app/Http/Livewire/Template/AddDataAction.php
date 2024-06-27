@@ -97,7 +97,7 @@ class AddDataAction extends Component
      */
     public function delete($id)
     {
-        dd($id);
+
         DataAction::destroy($id);
 
         $this->dispatchBrowserEvent('event-notification', [

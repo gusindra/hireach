@@ -17,7 +17,7 @@ class EditApi extends Component
     {
         $this->template = $template;
         $this->templateId = $this->template->id;
-        $this->data = Endpoint::where('template_id',$this->templateId)->first();
+        $this->data = Endpoint::where('template_id', $this->templateId)->first();
         //dd($template->id);
         //$this->data = Endpoint::find($this->templateId);
         $this->endpoint = $this->data->endpoint ?? '';
@@ -62,7 +62,7 @@ class EditApi extends Component
     {
         $this->validate();
         //dd($this->templateId);
-        $endpoint = Endpoint::where('template_id',$this->templateId)->first();
+        $endpoint = Endpoint::where('template_id', $this->templateId)->first();
         $endpoint->update($this->modelData());
         $this->emit('saved');
     }
