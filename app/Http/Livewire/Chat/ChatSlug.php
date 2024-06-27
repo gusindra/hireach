@@ -28,6 +28,8 @@ class ChatSlug extends Component
     public $clientId;
     public $owner;
     public $type;
+    public $teamStatus;
+    public $time;
     public $photo;
     public $modalAttachment = false;
     public $link_attachment;
@@ -82,8 +84,8 @@ class ChatSlug extends Component
             'sent_at'   => date('Y-m-d H:i:s'),
             'team_id'   => $this->team->id
         ]);
-        $this->message = null; 
-        
+        $this->message = null;
+
         $this->dispatchBrowserEvent('contentChanged', ['newName' => $request->id]);
     }
 
@@ -139,7 +141,7 @@ class ChatSlug extends Component
             dd('Format link false');
         }
     }
-    
+
     /**
      * Request to see transcript
      *
@@ -188,7 +190,26 @@ class ChatSlug extends Component
         }
         return [];
     }
-    
+
+    /**
+     * Get user chat
+     *
+     * @return void
+     */
+    public function teamStatus(){
+        $status = null;
+        if($this->team->agents){
+            $status = agentStatus($this->team->agents);
+            if($this->teamStatus != $status){
+                $this->time = 1;
+                $this->teamStatus = agentStatus($this->team->agents);
+            }else{
+                $this->time = 0;
+            }
+        }
+        return $this->teamStatus;
+    }
+
     public function actionShowModal()
     {
         $this->modalAttachment = true;
@@ -199,6 +220,7 @@ class ChatSlug extends Component
         return view('livewire.chat.chat-slug', [
             'data' => $this->read(),
             'messages' => $this->message(),
+            'team_status' => $this->teamStatus(),
         ]);
     }
 }

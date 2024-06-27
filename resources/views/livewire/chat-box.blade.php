@@ -92,7 +92,7 @@
                         @if(@$handling_session)
                             @if($handling_session->agent_id == $user_id && $handling_session->client_id == $client_id)
                                 @if($item->activeTickets->count()==0 && $item->source_id)
-                                <section class="max-w-sm mx-auto rounded-lg shadow-sm flex flex-row items-center ml-2">
+                                <section class="max-w-sm mx-auto rounded-lg flex flex-row items-center ml-2">
                                     <aside class="invisible group-hover:visible h-full text-center flex-grow flex flex-col text-sm ml-auto divide-y relative rounded-md">
                                         <a class="text-blue-500 hover:text-blue-700 h-1/2 flex items-center text-left text-xs dark:bg-slate-800 w-1/2 p-1" href="#" wire:click="ticketShowModal({{ $item->id }}, '{{ $item->reply }}')">Convert Ticket</a>
                                         <a class="text-blue-500 hover:text-blue-700 h-1/2 flex items-center text-left text-xs dark:bg-slate-800 w-1/2 p-1" href="#" wire:click="forwardShowModal({{ $item->id }}, '{{ $item->reply }}')">Forward</a>
@@ -159,7 +159,7 @@
             </div>
         </div>
         @if($client)
-            <div class="{{count($data['quick'])==0?'hidden':''}} lg:absolute lg:bottom-24 bottom-1 lg:w-2/4 w-100">
+            <div class="{{count($data['quick'])==0?'hidden':''}} lg:absolute lg:bottom-24 bottom-1 mb-16 lg:w-2/4 w-100">
                 <div class="relative z-10 w-full mt-1 bg-gray-200 rounded-md shadow-lg top-0 border-2 border-gray-400">
                     <ul class="p-0 overflow-auto h-auto max-h-screen text-base leading-6 rounded-md shadow-xs focus:outline-none sm:text-sm sm:leading-5">
                         @foreach ($data['quick'] as $quick)
@@ -186,7 +186,7 @@
                             </svg>
                         </button>
                     </div>
-                    <div data-emojiarea data-type="unicode" data-global-picker="false" class="flex py-2 col-span-6 pr-2" >
+                    <div data-emojiarea data-type="unicode" data-global-picker="false" class="flex py-2 col-span- pr-2" >
                         <div class="flex items-center col-span-1 align-text-bottom emoji-button cursor-pointer text-sm text-grey-500 dark:text-slate-300 p-1">
                             <button class="cursor-pointer text-sm text-grey-500 dark:text-slate-300 p-1" >
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
@@ -227,7 +227,7 @@
                         </x-jet-action-message>
                     </div>
                     <div class="justify-center w-100 flex col-span-12 mt-3">
-                        <button class="bg-green-600 text-white border border-gray-300 px-4 py-2" wire:click="joinChat">
+                        <button class="bg-green-600 text-white border border-gray-300 px-6 py-2 mb-8 rounded-md" wire:click="joinChat">
                             {{__('Join')}}
                         </button>
                     </div>
@@ -429,14 +429,14 @@
     </x-jet-confirmation-modal>
 
     <script>
-        setTimeout(function (){
-            if($('#messageBox').is(':visible')){ //if the container is visible on the page
-                var d = $('#messageBox');
-                d.scrollTop(d.prop("scrollHeight"));
-            } else {
-                alert(2);
-            }
-        }, 100)
+        // setTimeout(function (){
+        //     if($('#messageBox').is(':visible')){ //if the container is visible on the page
+        //         var d = $('#messageBox');
+        //         d.scrollTop(d.prop("scrollHeight"));
+        //     } else {
+        //         alert(2);
+        //     }
+        // }, 100)
     </script>
     <script type="module" src="{{ url('js/emoji/docs/assets/js/jquery.emojiarea.min.js') }}"></script>
 

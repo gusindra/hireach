@@ -242,6 +242,7 @@
             });
         });
     </script>
+    
     <script>
         // Instaniate a connection
         var connection = clientSocket();

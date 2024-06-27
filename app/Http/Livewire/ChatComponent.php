@@ -41,6 +41,7 @@ class ChatComponent extends Component
     public $type;
     public $photo;
     public $quick_reply;
+    public $heightTextArea = '100px';
 
     public function mount(){
         $this->user_id = auth()->user()->id;
@@ -371,7 +372,7 @@ class ChatComponent extends Component
         }
         $this->message = $message;
     }
-    
+
     public function getTicket()
     {
         $data = Ticket::with('request')->get();

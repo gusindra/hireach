@@ -104,7 +104,7 @@ function agentStatus($teamuser)
                 if(!$user->status){
                     return "Offline";
                 }
-                return "Away";
+                return $user->status;
             }
         }
     }
