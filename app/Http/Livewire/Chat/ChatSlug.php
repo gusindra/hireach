@@ -13,6 +13,7 @@ use Livewire\WithFileUploads;
 use Vinkla\Hashids\Facades\Hashids;
 use Illuminate\Support\Facades\Storage;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Log;
 
 class ChatSlug extends Component
 {
@@ -48,10 +49,11 @@ class ChatSlug extends Component
      */
     public function checkClient()
     {
+
         // checking client
-        $client = Client::where('phone',$this->number)->where('user_id', $this->team->user_id)->first();
-        // if not exsist create new client
-        if(!$client){
+        $client = Client::where('phone', $this->number)->where('user_id', $this->team->user_id)->first();        // if not exsist create new client
+        if (!$client) {
+
             $client = Client::create([
                 'uuid'          => Str::uuid(),
                 'name'          => $this->name,
@@ -72,10 +74,14 @@ class ChatSlug extends Component
      *
      * @return void
      */
-    public function sendMessage(){
+    public function sendMessage()
+    {
+
+        Log::info('sendMessage - user_id: ' . $this->owner);
+
         // Check long of word if > will store to message
         $request = Request::create([
-            'source_id' => 'web_'.Hashids::encode($this->client->id),
+            'source_id' => 'webchat_' . Hashids::encode($this->client->id),
             'reply'     => $this->message,
             'from'      => $this->client->id,
             'user_id'   => $this->owner,
@@ -104,23 +110,24 @@ class ChatSlug extends Component
      *
      * @return void
      */
-    public function sendAttachment(){
-        if($this->photo){
+    public function sendAttachment()
+    {
+        if ($this->photo) {
             $this->validate([
                 'photo' => 'image|max:1024',
             ]);
 
             $file = Storage::disk('s3')->put('images', $this->photo);
 
-            $this->link_attachment = 'https://telixcel.s3.ap-southeast-1.amazonaws.com/'.$file;
+            $this->link_attachment = 'https://telixcel.s3.ap-southeast-1.amazonaws.com/' . $file;
             $this->type = 'image';
-        }else{
+        } else {
             $this->type = attachmentExt($this->link_attachment);
         }
 
-        if($this->type){
+        if ($this->type) {
             $request = Request::create([
-                'source_id' => 'web_'.Hashids::encode($this->client->id),
+                'source_id' => 'web_' . Hashids::encode($this->client->id),
                 'reply'     => $this->message,
                 'media'     => $this->link_attachment,
                 'from'      => $this->client->id,
@@ -137,7 +144,7 @@ class ChatSlug extends Component
                 'request_id'    => $request->id,
                 'file'          => $this->link_attachment
             ]);
-        }else{
+        } else {
             dd('Format link false');
         }
     }
@@ -147,18 +154,19 @@ class ChatSlug extends Component
      *
      * @return void
      */
-    public function requestTransript(){
+    public function requestTransript()
+    {
         $session = HandlingSession::where('client_id', $this->client->id)->where('user_id', $this->owner)->first();
         // dd($session);
-        if($session){
-            if(is_null($session->view_transcript)){
+        if ($session) {
+            if (is_null($session->view_transcript)) {
                 $session->view_transcript = 'requested';
                 $session->save();
                 $this->requestTransript = 'requested';
-            }else{
+            } else {
                 $this->requestTransript = $session->view_transcript;
             }
-        }else{
+        } else {
             $this->transcript = false;
         }
     }
@@ -168,8 +176,9 @@ class ChatSlug extends Component
      *
      * @return void
      */
-    public function read(){
-        if($this->client)
+    public function read()
+    {
+        if ($this->client)
             return $this->client;
         return null;
     }
@@ -181,11 +190,12 @@ class ChatSlug extends Component
      */
     public function message()
     {
-        if($this->client){
-            if($this->transcript){
-                return Request::with('client','agent')->where('client_id', $this->client->uuid)->get();
-            }else{
-                return Request::with('client','agent')->where('client_id', $this->client->uuid)->whereDate('created_at', Carbon::today())->get();
+
+        if ($this->client) {
+            if ($this->transcript) {
+                return Request::with('client', 'agent')->where('client_id', $this->client->uuid)->get();
+            } else {
+                return Request::with('client', 'agent')->where('client_id', $this->client->uuid)->whereDate('created_at', Carbon::today())->get();
             }
         }
         return [];

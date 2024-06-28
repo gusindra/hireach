@@ -19,8 +19,10 @@ class AddDataAction extends Component
 
     public function mount($actionId)
     {
-        if($actionId){
+
+        if ($actionId) {
             $this->action = Action::find($actionId);
+
             $this->actionId = $this->action->id;
         }
     }
@@ -44,7 +46,7 @@ class AddDataAction extends Component
 
     public function addArrayData($id)
     {
-        foreach($this->dataArray as $data){
+        foreach ($this->dataArray as $data) {
             DataAction::create([
                 'name'          => $data['name'],
                 'value'         => $data['value'],
@@ -53,7 +55,7 @@ class AddDataAction extends Component
         }
     }
 
-     /**
+    /**
      * The read function.
      *
      * @return void
@@ -67,7 +69,7 @@ class AddDataAction extends Component
     {
         $this->validate();
         $data = DataAction::create($this->modelData());
-        foreach($this->read() as $variable){
+        foreach ($this->read() as $variable) {
             $this->dataArray[$variable->id] = [
                 'name'          => $variable->name,
                 'value'         => $variable->value,
@@ -95,6 +97,7 @@ class AddDataAction extends Component
      */
     public function delete($id)
     {
+
         DataAction::destroy($id);
 
         $this->dispatchBrowserEvent('event-notification', [
