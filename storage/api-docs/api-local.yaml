@@ -645,25 +645,6 @@ components:
       type: object
       xml:
         name: GetCampaign
-    Pet:
-      description: 'Pet object that needs to be added to the store'
-      required: true
-      content:
-        application/xml:
-          schema:
-            $ref: '#/components/schemas/Pet'
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Pet'
-    UserArray:
-      description: 'List of user object'
-      required: true
-      content:
-        application/json:
-          schema:
-            type: array
-            items:
-              $ref: '#/components/schemas/User'
     SmsArray:
     OneWay:
       description: 'List of one way request'
@@ -689,26 +670,6 @@ components:
             items:
               $ref: '#/components/schemas/OneWayRequest'
   requestBodies:
-    Pet:
-      description: 'Pet object that needs to be added to the store'
-      required: true
-      content:
-        application/xml:
-          schema:
-            $ref: '#/components/schemas/Pet'
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Pet'
-    UserArray:
-      description: 'List of user object'
-      required: true
-      content:
-        application/json:
-          schema:
-            type: array
-            items:
-              $ref: '#/components/schemas/User'
-    SmsArray:
     OneWay:
       description: 'List of one way request'
       required: true

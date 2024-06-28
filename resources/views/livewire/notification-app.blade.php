@@ -1,4 +1,4 @@
-<div wire:poll.visible>
+<div wire:poll.7500ms>
     <div class="relative">
         <x-jet-dropdown align="right" width="60">
             <x-slot name="trigger">
@@ -141,7 +141,6 @@
                 window.addEventListener('event-notification', event => {
                     var d = document.getElementById("icon-notif");
                     document.getElementById('sound').play();
-                    console.log(1);
                     setTimeout((e) => {
                         var d = document.getElementById("icon-notif");
                         d.classList.add("apply-shake");
