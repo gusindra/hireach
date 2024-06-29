@@ -2,12 +2,7 @@
     <div class="max-w-full sm:px-1 lg:px-1 lg:mr-6 sm:ml-24">
         <div class="lg:grid lg:grid-cols-12 gap-2 lg:h-screen">
             <!-- List Customer -->
-<<<<<<< HEAD
-            <div
-                class="col-start-2 bg-white dark:bg-slate-600 mt-2 overflow-hidden shadow-xl sm:rounded-sm col-span-2 lg:h-screen lg:max-h-full">
-=======
             <div class="col-start-1 bg-white dark:bg-slate-600 mt-2 overflow-hidden shadow-xl sm:rounded-sm col-span-2 lg:h-screen lg:max-h-full">
->>>>>>> 0e028928edeb75835ff0cc123951fe937db73eaf
                 <div class="bg-gray-400 dark:bg-slate-600  h-10">
                     <div class="w-full mx-auto">
                         <div class="flex items-center justify-between flex-wrap">
@@ -41,14 +36,8 @@
                     </div>
                 </div>
                 <div class="overflow-auto md:h-3/4 sm:h-1/2">
-<<<<<<< HEAD
-                    <input class="w-full dark:bg-slate-800" type="text" placeholder="search" name="search"
-                        id="search" wire:model="search">
-                    <div wire:poll.visible>
-=======
                     <input class="w-full dark:bg-slate-800" type="text" placeholder="search" name="search" id="search" wire:model="search">
                     <div wire:poll.keep-alive>
->>>>>>> 0e028928edeb75835ff0cc123951fe937db73eaf
                         <!-- //TICKET -->
                         @foreach ($tickets as $ticket)
                             <a x-on:click="window.scrollBy(0, $refs.blue.getBoundingClientRect().top - 50"
@@ -158,20 +147,10 @@
                 </div>
             @endif
 
-<<<<<<< HEAD
-            <div class="{{ $client ? 'block' : 'hidden' }}">
-                <div
-                    class="{{ count($dataTemplate['quick']) == 0 ? 'hidden' : '' }} lg:absolute lg:bottom-24 bottom-1 lg:w-2/4 w-100">
-                    <div
-                        class="relative z-10 w-full mt-1 bg-gray-200 rounded-md shadow-lg top-0 border-2 border-gray-400">
-                        <ul
-                            class="p-0 overflow-auto h-auto max-h-screen text-base leading-6 rounded-md shadow-xs focus:outline-none sm:text-sm sm:leading-5">
-=======
             <div class="{{$client?'block':'hidden'}}">
                 <div class="{{count($dataTemplate['quick'])==0?'hidden':''}} lg:absolute lg:bottom-24 lg:mb-10 lg:left-0 lg:ml-32 bottom-1 lg:w-2/4 w-100">
                     <div class="relative z-10 w-full mt-1 bg-gray-200 rounded-md shadow-lg top-0 border-2 border-gray-400">
                         <ul class="p-0 overflow-auto h-auto max-h-screen text-base leading-6 rounded-md shadow-xs focus:outline-none sm:text-sm sm:leading-5">
->>>>>>> 0e028928edeb75835ff0cc123951fe937db73eaf
                             @foreach ($dataTemplate['quick'] as $quick)
                                 <li role="option"
                                     class="relative text-gray-900 cursor-default select-none border border-gray-300">
@@ -195,14 +174,8 @@
                         </div>
                     </div>
                 @endif
-<<<<<<< HEAD
-                <div id="texting-area"
-                    class="{{ $handlingSession && $handlingSession->client_id == $client_id ? 'block' : 'hidden' }} pb-12 grid grid-cols-8 z-10 md:static sm:fixed sm:inset-x-0 sm:bottom-0 lg:fixed lg:bottom-0 dark:bg-slate-800 bg-gray-50">
-                    <div class="flex items-center justify-center col-span-1 align-text-bottom">
-=======
                 <div id="texting-area" class="{{$handlingSession && $handlingSession->client_id==$client_id?'block':'hidden'}} pb-2 grid grid-cols-12 z-10 md:static sm:fixed sm:inset-x-0 sm:bottom-0 lg:fixed lg:bottom-0 dark:bg-slate-800 bg-gray-50">
                     <div class="flex flex-row-reverse items-center col-span-1 align-text-bottom emoji-button cursor-pointer text-sm text-grey-500 dark:text-slate-300 p-1">
->>>>>>> 0e028928edeb75835ff0cc123951fe937db73eaf
                         <button class="cursor-pointer text-sm text-grey-500 p-2" wire:click="actionShowModal">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none"
                                 viewBox="0 0 24 24" stroke="currentColor">
@@ -211,30 +184,6 @@
                             </svg>
                         </button>
                     </div>
-<<<<<<< HEAD
-                    <div data-emojiarea data-type="unicode" data-global-picker="false"
-                        class="flex py-2 col-span-6 pr-2">
-                        <div
-                            class="flex items-center col-span-1 align-text-bottom emoji-button cursor-pointer text-sm text-grey-500 dark:text-slate-300 p-1">
-                            <button class="cursor-pointer text-sm text-grey-500 dark:text-slate-300 p-1">
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                    stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
-                                    <path stroke-linecap="round" stroke-linejoin="round"
-                                        d="M15.182 15.182a4.5 4.5 0 01-6.364 0M21 12a9 9 0 11-18 0 9 9 0 0118 0zM9.75 9.75c0 .414-.168.75-.375.75S9 10.164 9 9.75 9.168 9 9.375 9s.375.336.375.75zm-.375 0h.008v.015h-.008V9.75zm5.625 0c0 .414-.168.75-.375.75s-.375-.336-.375-.75.168-.75.375-.75.375.336.375.75zm-.375 0h.008v.015h-.008V9.75z" />
-                                </svg>
-                            </button>
-                        </div>
-                        <x-textarea id="message" class="mt-1 block w-full h-full text-lg dark:bg-slate-900"
-                            placeholder="{{ __('write a reply...') }}" wire:model="message" />
-                    </div>
-                    <div class="flex items-center justify-center col-span-1 align-text-bottom">
-                        <button class="w-full p-2 sm:p-2 md:p-4 lg:p-4 bg-green-600 text-white rounded-full"
-                            wire:click="sendMessage">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 rotate-30" viewBox="0 0 20 20"
-                                fill="currentColor">
-                                <path style="transform: rotate(90deg);transform-origin: 50% 50%;"
-                                    d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z" />
-=======
                     <div data-emojiarea data-type="unicode" data-global-picker="false" class="flex py-2 col-span-10 pr-2" >
                         <div class="flex items-center col-span-1 align-text-bottom emoji-button cursor-pointer text-sm text-grey-500 dark:text-slate-300 p-1">
                             <button class="cursor-pointer text-sm text-grey-500 dark:text-slate-300 p-1" >
@@ -255,18 +204,12 @@
                         <button class="w-1/2 p-2 sm:p-2 md:p-4 lg:p-4 bg-green-600 text-white rounded-full text-center items-center flex justify-center" wire:click="sendMessage">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 rotate-30" viewBox="0 0 20 20" fill="currentColor">
                                 <path style="transform: rotate(90deg);transform-origin: 50% 50%;" d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z" />
->>>>>>> 0e028928edeb75835ff0cc123951fe937db73eaf
                             </svg>
                         </button>
                     </div>
                 </div>
-<<<<<<< HEAD
-                <div
-                    class="{{ $handlingSession ? 'hidden' : 'block' }} py-12 z-10 md:static sm:fixed sm:inset-x-0 sm:bottom-0 lg:fixed lg:bottom-0 dark:bg-slate-800">
-=======
 
                 <div class="{{$handlingSession?'hidden':'block'}} hidden z-10 md:static sm:fixed sm:inset-x-0 sm:bottom-0 lg:fixed lg:bottom-0 dark:bg-slate-800">
->>>>>>> 0e028928edeb75835ff0cc123951fe937db73eaf
                     <div id="handle_session">
                         <div class="justify-center w-100 flex col-span-12">
                             <button class="bg-green-600 text-white border border-gray-300 px-8 py-4 text-lg"
@@ -483,65 +426,6 @@
                 }
             </script>
         @endpush
-<<<<<<< HEAD
-    @endif
-
-    @push('chat-waweb')
-        <script>
-            $(function() {
-                /**
-                 * Returns the chat message proper format
-                 *
-                 * @param {string} id
-                 * @param {string} username
-                 * @param {string} message
-                 */
-                function messageFormat(id, name, message) {
-                    let userId = "1";
-                    let color = id == userId ? "bg-blue-400" : "bg-green-400";
-                    let alignment = id == userId ? "text-right" : "text-left";
-                    return `
-                        <div class="grid grid-cols-1 items-center gap-0">
-                            <span class="${alignment} font-semibold text-sm">${name}</span>
-                            <span class="${alignment} ${color} text-sm text-white px-3 py-2 rounded mb-2">${message}</span>
-                        </div>
-                    `;
-                }
-
-                // Instantiate a connection
-                var waConnection = clientSocket({
-                    port: 3287
-                });
-                // The messageBox element
-                var messageBox = $("#messageBox");
-                // The message element
-                var message = $("#message");
-                // lastest session wa
-                var waSession =
-                    "{{ auth()->user()->currentTeam->waWeb ? json_encode(auth()->user()->currentTeam->waWeb->session) : 0 }}";
-
-                /**
-                 * When the connection is open
-                 */
-                waConnection.onopen = function() {
-                    console.log("Check WA connection is open on Blade");
-                    // Send the information of the client user here
-                    // console.log("session", @json($session));
-
-                    // Check if has session connection WA before
-                    if (waSession != 0) {
-                        // console.log("send session");
-                        // console.log(waSession);
-                        waConnection.send(
-                            JSON.stringify({
-                                type: "sendSession",
-                                data: {
-                                    team_id: "{{ auth()->user()->currentTeam->id }}",
-                                    session: @json($session)
-                                }
-                            })
-                        );
-=======
         @push('chat-waweb')
             <script>
                 $(function(){
@@ -595,38 +479,8 @@
                                 })
                             );
                         }
->>>>>>> 0e028928edeb75835ff0cc123951fe937db73eaf
                     }
 
-<<<<<<< HEAD
-                /**
-                 * Will receive messages from the websocket server
-                 * and show it to blade
-                 */
-                waConnection.onmessage = function(message) {
-                    var result = JSON.parse(message.data);
-                    console.log(result);
-                    var dataResponse = result.data;
-                    if (result.type == "MSG") {
-                        console.log("will save response", dataResponse);
-                        @this.call('saveResponse', dataResponse.details);
-
-                        // messageBox.append(messageFormat(
-                        //     dataResponse.team_id,
-                        //     dataResponse.team_name,
-                        //     dataResponse.message
-                        // ));
-                    }
-
-                    if (result.type == "WA_READY") {
-                        console.log("WA READY", dataResponse);
-                    }
-
-                    if (result.type == "WA_FAILURE") {
-                        console.log("WA FAILURE", dataResponse);
-                        //store api wa session here
-                        @this.call('isFail');
-=======
                     /**
                      * Will receive messages from the websocket server
                      * and show it to blade
@@ -655,7 +509,6 @@
                             //store api wa session here
                             @this.call('isFail');
                         }
->>>>>>> 0e028928edeb75835ff0cc123951fe937db73eaf
                     }
 
                     /**
@@ -674,7 +527,6 @@
             </script>
         @endpush
     @endif
-
 
     <link rel="stylesheet" href="{{ url('js/emoji/docs/assets/css/style.css') }}">
 
