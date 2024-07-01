@@ -43,10 +43,11 @@ class ChatComponent extends Component
     public $quick_reply;
     public $heightTextArea = '100px';
 
-    public function mount(){
+    public function mount()
+    {
         $this->user_id = auth()->user()->id;
         $this->owner = auth()->user()->currentTeam->user_id;
-        if(auth()->user()->currentTeam->waWeb){
+        if (auth()->user()->currentTeam->waWeb) {
             $this->session = auth()->user()->currentTeam->waWeb->session;
         }
         $this->filter = "active";
@@ -61,8 +62,11 @@ class ChatComponent extends Component
      * @param  mixed $id
      * @return void
      */
-    public function chatCustomer($id){
+    public function chatCustomer($id)
+    {
+
         $id = Hashids::decode($id)[0];
+
         $this->client_id = $id;
         $data = Client::find($this->client_id);
         $this->client = $data;
@@ -75,8 +79,9 @@ class ChatComponent extends Component
         session(['key' => 'value']);
     }
 
-    public function dispatchEvent(){
-        $this->dispatchBrowserEvent('event-notification',[
+    public function dispatchEvent()
+    {
+        $this->dispatchBrowserEvent('event-notification', [
             'eventName' => 'Sample Event',
             'eventMessage' => 'You have a sample notification'
         ]);
@@ -105,52 +110,54 @@ class ChatComponent extends Component
         $this->emit('saved');
     }
 
-     /**
+    /**
      * The read function.
      *
      * @return void
      */
     public function read()
     {
-        $clients = auth()->user()->currentTeam->client;
+        $clients = auth()->user()->currentTeam->client->groupBy('uuid')->mapWithKeys(function ($group, $key) {
+            return [$key => $group->first()];
+        });
 
-        $sorted  = $clients->sortByDesc(function($client){
+        $sorted  = $clients->sortByDesc(function ($client) {
             return $client->date;
         });
-        // dd($sorted->values()->all());
 
-        if($this->filter=='waiting'){
+
+        if ($this->filter == 'waiting') {
             $template = auth()->user()->currentTeam->template;
-            $wait = $template->filter(function($template){
-                if($template->is_wait_for_chat==1){
+            $wait = $template->filter(function ($template) {
+                if ($template->is_wait_for_chat == 1) {
                     return $template;
                 }
             })->pluck(['id'])->toArray();
 
             $ticket = Ticket::leftJoin('requests', 'requests.id', '=', 'tickets.request_id')->select('requests.client_id', 'tickets.forward_to')->where('forward_to', auth()->user()->id)->get();
             //$ticket = Ticket::where('forward_to', auth()->user()->id)->get();
-            $forward = $ticket->filter(function($ticket){
+            $forward = $ticket->filter(function ($ticket) {
                 return $ticket;
             })->pluck(['client_id'])->toArray();
 
             // dd($forward);
-            $sorted = $sorted->filter(function($client) use ($wait, $forward){
+            $sorted = $sorted->filter(function ($client) use ($wait, $forward) {
                 //template waiting || forward ticket
-                if($client->newestRequest){
-                    if(in_array($client->newestRequest->template_id, $wait) || in_array($client->uuid, $forward)){
+                if ($client->newestRequest) {
+                    if (in_array($client->newestRequest->template_id, $wait) || in_array($client->uuid, $forward)) {
                         return $client;
-                    }elseif($client->newestRequest->created_at <= Carbon::now()->subMinutes(15)->toDateTimeString() && $client->active && !$client->newestRequest->is_closed){
+                    } elseif ($client->newestRequest->created_at <= Carbon::now()->subMinutes(15)->toDateTimeString() && $client->active && !$client->newestRequest->is_closed) {
                         return $client;
                     }
                 }
             });
-        }elseif($this->filter=='active'){
-            $sorted  = $sorted->filter(function($client) {
-                if($client->newestRequest){
-                    if($client->newestRequest->from != 'bot' && $client->newestRequest->from != 'api'){
-                        if($client->newestRequest->created_at >= Carbon::now()->subMinutes(15)->toDateTimeString() && !$client->newestRequest->is_closed){
+        } elseif ($this->filter == 'active') {
+            $sorted  = $sorted->filter(function ($client) {
+                if ($client->newestRequest) {
+                    if ($client->newestRequest->from != 'bot' && $client->newestRequest->from != 'api') {
+                        if ($client->newestRequest->created_at >= Carbon::now()->subMinutes(15)->toDateTimeString() && !$client->newestRequest->is_closed) {
                             return $client;
-                        }elseif(@auth()->user()->chatsession->client_id==$client->id){
+                        } elseif (@auth()->user()->chatsession->client_id == $client->id) {
                             return $client;
                         }
                     }
@@ -158,9 +165,9 @@ class ChatComponent extends Component
             });
         }
 
-        if($this->search!=""){
-            $sorted  = $sorted->filter(function($client){
-                if(str_contains(strtolower($client->name), strtolower($this->search))){
+        if ($this->search != "") {
+            $sorted  = $sorted->filter(function ($client) {
+                if (str_contains(strtolower($client->name), strtolower($this->search))) {
                     return $client;
                 }
             });
@@ -173,10 +180,10 @@ class ChatComponent extends Component
     {
         // dd($details);
 
-        $client = $this->checkClient($details["from"].'_'.$details["to"],$details["from"],$details["from"],auth()->user()->currentTeam);
+        $client = $this->checkClient($details["from"] . '_' . $details["to"], $details["from"], $details["from"], auth()->user()->currentTeam);
 
         $msg = Request::create([
-            'source_id' => $details["from"].'_'.$details["to"],
+            'source_id' => $details["from"] . '_' . $details["to"],
             'reply'     => $details["body"],
             'from'      => $details["from"],
             'client_id' => $client->uuid,
@@ -184,13 +191,13 @@ class ChatComponent extends Component
             'type'      => 'text'
         ]);
 
-        if($msg && $this->session){
+        if ($msg && $this->session) {
             // sent wa via wa web
             // need to get all response that create after this $msg only by bot and send to event lisener
             $replayed = Request::where('client_id', $msg->client_id)->where('from', "bot")->get();
-            foreach($replayed as $reply){
+            foreach ($replayed as $reply) {
                 $this->dispatchBrowserEvent('chat-send-message', [
-                    'from_web'  => strpos($client->phone, '@c.us') !== false ? $client->phone : $client->phone."@c.us",
+                    'from_web'  => strpos($client->phone, '@c.us') !== false ? $client->phone : $client->phone . "@c.us",
                     'from'      => $client->uuid,
                     'user_id'   => $reply->user_id,
                     'reply'     => $reply->reply,
@@ -218,9 +225,9 @@ class ChatComponent extends Component
         $last_request = Request::with('client')->where('source_id', $id)->first();
         // Client::where('source_id', $message['id'])->where('from', $message['from'])->first();
 
-        if($last_request){
+        if ($last_request) {
             $client = $last_request->client;
-        }else{
+        } else {
             // Need to find user base on credential
             $user_id = $this->user_id;
 
@@ -245,7 +252,8 @@ class ChatComponent extends Component
         ]);
     }
 
-    public function sendMessage(){
+    public function sendMessage()
+    {
         // Check long of word if > will store to message
         Request::create([
             'reply'     => $this->message,
@@ -266,17 +274,17 @@ class ChatComponent extends Component
      */
     public function joinChat()
     {
-        if(!$this->checkSession()){
+        if (!$this->checkSession()) {
             $this->handling_session = HandlingSession::create([
                 'client_id'     => $this->client_id,
                 'agent_id'      => $this->user_id,
                 'user_id'       => $this->owner,
             ]);
             Request::where('client_id', $this->client->uuid)->where('is_read', 0)->update(['is_read' => 1]);
-        }else{
-            if($this->handling_session->client_id == $this->client_id){
+        } else {
+            if ($this->handling_session->client_id == $this->client_id) {
                 $this->emit('handled');
-            }else{
+            } else {
                 $this->emit('exist');
             }
         }
@@ -285,7 +293,7 @@ class ChatComponent extends Component
     private function checkSession()
     {
         $session = HandlingSession::where('agent_id', $this->user_id)->first();
-        if(!$session)
+        if (!$session)
             $session = HandlingSession::where('client_id', $this->client_id)->where('user_id', $this->owner)->first();
 
         return $session;
@@ -301,21 +309,22 @@ class ChatComponent extends Component
      *
      * @return void
      */
-    public function sendAttachment(){
-        if($this->photo){
+    public function sendAttachment()
+    {
+        if ($this->photo) {
             $this->validate([
                 'photo' => 'image|max:1024',
             ]);
 
             $file = Storage::disk('s3')->put('images', $this->photo);
 
-            $this->link_attachment = 'https://telixcel.s3.ap-southeast-1.amazonaws.com/'.$file;
+            $this->link_attachment = 'https://telixcel.s3.ap-southeast-1.amazonaws.com/' . $file;
             $this->type = 'image';
-        }else{
+        } else {
             $this->type = attachmentExt($this->link_attachment);
         }
 
-        if($this->type){
+        if ($this->type) {
             $request = Request::create([
                 'reply'     => $this->message,
                 'media'     => $this->link_attachment,
@@ -331,7 +340,7 @@ class ChatComponent extends Component
                 'request_id'    => $request->id,
                 'file'          => $this->link_attachment
             ]);
-        }else{
+        } else {
             dd('Format link false');
         }
     }
@@ -341,19 +350,20 @@ class ChatComponent extends Component
         $this->modalAttachment = true;
     }
 
-    public function quickReply(){
+    public function quickReply()
+    {
         $data = [];
 
-        if(substr($this->message,0, 1)=='/'){
+        if (substr($this->message, 0, 1) == '/') {
             $keyword = substr($this->message, 1);
-            $data['quick'] = Template::where('user_id', $this->owner)->where('type', 'helper')->where('name','LIKE',"%{$keyword}%")->get();
-        }else{
+            $data['quick'] = Template::where('user_id', $this->owner)->where('type', 'helper')->where('name', 'LIKE', "%{$keyword}%")->get();
+        } else {
             $data['quick'] = [];
         }
         return $data;
     }
 
-     /**
+    /**
      * showQuickModal
      *
      * @param  mixed $id
@@ -363,11 +373,11 @@ class ChatComponent extends Component
     {
         $template = Template::find($id);
         $message = '';
-        foreach($template->actions as $key => $action){
-            if($key==0){
+        foreach ($template->actions as $key => $action) {
+            if ($key == 0) {
                 $message = $action->message;
-            }else{
-                $message = $message.' '.$action->message;
+            } else {
+                $message = $message . ' ' . $action->message;
             }
         }
         $this->message = $message;
@@ -376,13 +386,12 @@ class ChatComponent extends Component
     public function getTicket()
     {
         $data = Ticket::with('request')->get();
-        $sorted = $data->filter(function($ticket){
-            if($ticket->request->team_id == auth()->user()->currentTeam->id){
+        $sorted = $data->filter(function ($ticket) {
+            if ($ticket->request->team_id == auth()->user()->currentTeam->id) {
                 return $ticket;
             }
         });
         return $sorted->values()->all();
-
     }
 
     public function render()
@@ -393,7 +402,7 @@ class ChatComponent extends Component
             'filter' => $this->filter,
             'handlingSession' => $this->checkSession(),
             'dataTemplate' => $this->quickReply(),
-            'quick_template' => $this->quick_reply->pluck('name','id'),
+            'quick_template' => $this->quick_reply->pluck('name', 'id'),
         ]);
     }
 }
