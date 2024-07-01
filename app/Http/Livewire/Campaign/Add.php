@@ -24,7 +24,7 @@ class Add extends Component
         $this->validate();
 
         $provider = cache()->remember('provider-user-'.auth()->user()->id, $this->cacheDuration, function() {
-            return auth()->user()->providerUser->first()->provider;
+            return auth()->user()->providerUser && auth()->user()->providerUser->first() ? auth()->user()->providerUser->first()->provider : [];
         });
 
         if(!empty($provider)){
@@ -36,6 +36,8 @@ class Add extends Component
                 'type' => 0
             ]);
             $this->modalActionVisible = false;
+        }else{
+            $this->emit('campaign_failed');
         }
 
         $this->resetForm();

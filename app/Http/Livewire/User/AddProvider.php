@@ -4,6 +4,7 @@ namespace App\Http\Livewire\User;
 
 use App\Models\Provider;
 use App\Models\ProviderUser;
+use Illuminate\Support\Facades\Cache;
 use Livewire\Component;
 
 class AddProvider extends Component
@@ -19,7 +20,6 @@ class AddProvider extends Component
     public $array_data;
     public $providers;
     public $provider = [];
-
     public $channels = [];
     public $modalActionVisible = false;
     public $confirmingActionRemoval = false;
@@ -27,6 +27,13 @@ class AddProvider extends Component
         'provider_id' => '',
         'channel' => ''
     ];
+
+    /**
+     * mount
+     *
+     * @param  mixed $user
+     * @return void
+     */
     public function mount($user)
     {
 
@@ -37,6 +44,11 @@ class AddProvider extends Component
         $this->userId = $this->user->id;
     }
 
+    /**
+     * modelData
+     *
+     * @return void
+     */
     public function modelData()
     {
         $data = [
@@ -49,6 +61,12 @@ class AddProvider extends Component
     }
 
 
+    /**
+     * updatedinputproviderid
+     *
+     * @param  mixed $value
+     * @return void
+     */
     public function updatedinputproviderid($value)
     {
         $provider = Provider::find($value);
@@ -62,6 +80,11 @@ class AddProvider extends Component
         }
     }
 
+    /**
+     * rules
+     *
+     * @return void
+     */
     public function rules()
     {
         return [
@@ -71,6 +94,11 @@ class AddProvider extends Component
         ];
     }
 
+    /**
+     * messages
+     *
+     * @return void
+     */
     public function messages()
     {
         return [
@@ -81,6 +109,11 @@ class AddProvider extends Component
         ];
     }
 
+    /**
+     * create
+     *
+     * @return void
+     */
     public function create()
     {
         // dd($this->modelData());
@@ -90,6 +123,7 @@ class AddProvider extends Component
         $this->resetForm();
         if ($action->wasRecentlyCreated) {
             $this->emit('added');
+            Cache::forget('provider-user-'.$this->userId);
         } else {
             $this->emit('exist');
         }
@@ -99,10 +133,15 @@ class AddProvider extends Component
     }
 
 
+    /**
+     * addProvider
+     *
+     * @return void
+     */
     public function addProvider()
     {
         $action = ProviderUser::firstOrCreate([
-            'provider_id' => $this->input['provider_id'],
+            'provider_id'   => $this->input['provider_id'],
             'channel'       => strtoupper($this->input['channel']),
             'user_id'       => $this->userId
         ]);
@@ -111,6 +150,7 @@ class AddProvider extends Component
         $this->resetForm();
         if ($action->wasRecentlyCreated) {
             $this->emit('added');
+            Cache::forget('provider-user-'.$this->userId);
         } else {
             $this->emit('exist');
         }
@@ -119,6 +159,11 @@ class AddProvider extends Component
         $this->actionId = null;
     }
 
+    /**
+     * dehydrate
+     *
+     * @return void
+     */
     public function dehydrate()
     {
         if (!$this->modalActionVisible) {
@@ -143,11 +188,21 @@ class AddProvider extends Component
         ]);
     }
 
+    /**
+     * resetForm
+     *
+     * @return void
+     */
     public function resetForm()
     {
         $this->provider_id = null;
     }
 
+    /**
+     * actionShowModal
+     *
+     * @return void
+     */
     public function actionShowModal()
     {
         $this->array_data = Provider::all();
@@ -169,6 +224,12 @@ class AddProvider extends Component
     }
 
 
+    /**
+     * updateShowModal
+     *
+     * @param  mixed $id
+     * @return void
+     */
     public function updateShowModal($id)
     {
         $this->resetValidation();
@@ -190,6 +251,12 @@ class AddProvider extends Component
         $this->provider_id = $data->provider_id;
     }
 
+    /**
+     * deleteShowModal
+     *
+     * @param  mixed $id
+     * @return void
+     */
     public function deleteShowModal($id)
     {
         $this->actionId = $id;
@@ -198,7 +265,11 @@ class AddProvider extends Component
         $this->confirmingActionRemoval = true;
     }
 
-
+    /**
+     * render
+     *
+     * @return void
+     */
     public function render()
     {
         return view('livewire.user.add-provider', [

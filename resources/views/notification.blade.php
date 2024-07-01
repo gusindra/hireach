@@ -31,10 +31,10 @@
 
                                 <select name="statusFilter" id="statusFilter" wire:model="statusFilter"
                                     class="block appearance-none w-48 bg-white border border-gray-300 hover:border-gray-500 px-4 py-2 pr-8 rounded shadow leading-tight focus:outline-none focus:border-blue-500">
-                                    <option value="">All</option>
-                                    <option value="unread">Unread</option>
-                                    <option value="read">Read</option>
-                                    <option value="deleted">Deleted</option>
+                                    <option  value="">All</option>
+                                    <option {{app("request")->input("statusFilter")=='unread'?'selected':''}} value="unread">Unread</option>
+                                    <option {{app("request")->input("statusFilter")=='read'?'selected':''}} value="read">Read</option>
+                                    <option {{app("request")->input("statusFilter")=='deleted'?'selected':''}} value="deleted">Deleted</option>
                                 </select>
 
 
