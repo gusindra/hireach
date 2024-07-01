@@ -5,6 +5,7 @@ namespace App\Jobs;
 use App\Models\BlastMessage;
 use App\Models\CampaignModel;
 use App\Models\Client;
+use App\Models\Request;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -16,6 +17,7 @@ use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Str;
+use Vinkla\Hashids\Facades\Hashids;
 
 class ProcessWaApi implements ShouldQueue
 {
@@ -222,10 +224,11 @@ class ProcessWaApi implements ShouldQueue
 
             // check response code
             if ($response['message_id']) {
+                $client = $this->chechClient("200", $send_to);
                 $modelData = [
                     'msg_id'    => $response['message_id'],
                     'user_id'   => $this->user->user_id,
-                    'client_id' => $this->chechClient("200", $send_to),
+                    'client_id' => $client->uuid ,
                     'sender_id' => '',
                     'type'      => $this->request['text'],
                     'otp'       => 0,
@@ -238,7 +241,20 @@ class ProcessWaApi implements ShouldQueue
                     'msisdn'    => preg_replace('/\s+/', '', $msg_msis[0]),
                 ];
                 // Log::debug($modelData);
-                $mms = BlastMessage::create($modelData);
+                if($this->request['resource']==2){
+                    $mms = Request::create([
+                        'source_id' => 'smschat_'.Hashids::encode($client->id),
+                        'reply'     => $this->request['text'],
+                        'from'      => $client->id,
+                        'user_id'   => $this->user->user_id,
+                        'type'      => 'text',
+                        'client_id' => $client->uuid,
+                        'sent_at'   => date('Y-m-d H:i:s'),
+                        'team_id'   => auth()->user()->team->id
+                    ]);;
+                }else{
+                    $mms = BlastMessage::create($modelData);
+                }
                 $this->synCampaign($mms);
             } else {
                 Log::debug("failed msis format: ");
@@ -301,7 +317,6 @@ class ProcessWaApi implements ShouldQueue
                 "msgId" => $msg->id
             ];
 
-
             if (App::environment(['local', 'testing'])) {
                 $msgChannel = '123TESTING';
                 $response = Http::get(url('http://hireach.test/api/dummy-array'));
@@ -314,8 +329,10 @@ class ProcessWaApi implements ShouldQueue
                 $response = Http::withBody(json_encode($data), 'application/json')->withOptions(['verify' => false])->post($url);
                 $resData = json_decode($response->body(), true);
             }
-            $bm = BlastMessage::find($msg->id)->update(['status' => $resData['message'], 'code' => $resData['code'], 'sender_id' => 'WA_LONG', 'type' => $msgChannel, 'provider' => 4]);
-            $this->synCampaign($bm);
+            if($this->request['resource']==1){
+                $bm = BlastMessage::find($msg->id)->update(['status' => $resData['message'], 'code' => $resData['code'], 'sender_id' => 'WA_LONG', 'type' => $msgChannel, 'provider' => 4]);
+                $this->synCampaign($bm);
+            }
         } else {
             $this->saveResult('Reject invalid servid');
         }
@@ -371,14 +388,15 @@ class ProcessWaApi implements ShouldQueue
             }
             $resData['message'] = 'Success';
             $resData['code'] = 200;
-
-            $bm = BlastMessage::find($msg->id)->update([
-                'status' => $resData['message'],
-                'code' => $resData['code'],
-                'sender_id' => 'WA_LONG',
-                'type' => 1,
-                'provider' => $this->request['provider']->id]);
-            $this->synCampaign($bm);
+            if($this->request['resource']==1){
+                $bm = BlastMessage::find($msg->id)->update([
+                    'status' => $resData['message'],
+                    'code' => $resData['code'],
+                    'sender_id' => 'WA_LONG',
+                    'type' => 1,
+                    'provider' => $this->request['provider']->id]);
+                $this->synCampaign($bm);
+            }
         } else {
             $this->saveResult('Reject invalid servid');
         }
@@ -394,10 +412,11 @@ class ProcessWaApi implements ShouldQueue
     private function saveResult($msg)
     {
         $user_id = $this->user->is_enabled ? $this->user->user_id : $this->user->id;
+        $client = $this->chechClient("400", $this->request['to']);
         $modelData = [
             'msg_id'            => 0,
             'user_id'           => $user_id,
-            'client_id'         => $this->chechClient("400", $this->request['to']),
+            'client_id'         => $client->uuid,
             'type'              => $this->request['type'],
             'otp'               => $this->request['otp'],
             'status'            => $msg,
@@ -408,10 +427,23 @@ class ProcessWaApi implements ShouldQueue
             'balance'           => 0,
             'msisdn'            => $this->request['to'],
         ];
-        if($mms = BlastMessage::create($modelData)){
-            $this->synCampaign($mms->id);
-            return $mms;
+        if($this->request['resource']==2){
+            $client= $this->chechClient("400");
+            $mms = Request::create([
+                'source_id' => 'wachat_'.Hashids::encode($client->id),
+                'reply'     => $this->campaign ? 'Campaign No:'.$this->campaign->id : $this->request['text'],
+                'from'      => $client->id,
+                'user_id'   => $user_id,
+                'type'      => 'text',
+                'client_id' => $client->uuid,
+                'sent_at'   => date('Y-m-d H:i:s'),
+                'team_id'   => auth()->user()->team->id
+            ]);;
+        }else{
+            $mms = BlastMessage::create($modelData);
         }
+        $this->synCampaign($mms->id);
+        return $mms;
     }
 
     /**
@@ -419,7 +451,7 @@ class ProcessWaApi implements ShouldQueue
      *
      * @param  mixed $status
      * @param  mixed $msisdn
-     * @return string uuid
+     * @return object App\Models\Client
      */
     private function chechClient($status, $msisdn = null)
     {
@@ -434,7 +466,7 @@ class ProcessWaApi implements ShouldQueue
         $team = $this->user->currentTeam;
         $client->teams()->attach($team);
 
-        return $client->uuid;
+        return $client;
     }
 
     /**

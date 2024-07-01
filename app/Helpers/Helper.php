@@ -280,6 +280,10 @@ function balance($user, $team_id=0, $type='total')
     return $user->balance($team_id)->orderBy('id', 'desc')->get();
 }
 
+function balances($user){
+    return $user->balance(0);
+}
+
 function estimationSaldo(){
     $master = ProductLine::where('name', 'HiReach')->first();
     if($master)

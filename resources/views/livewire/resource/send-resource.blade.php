@@ -159,7 +159,7 @@
                                     @endforeach
                                 </select>
                             </div>
-                        @elseif($channel == 'wa' || $channel == 'sm' || $channel == 'pl' || $channel == 'waba' || $channel == 'wc')
+                        @elseif($channel == 'wa' || $channel == 'sm' || $channel == 'pl' || $channel == 'waba' || $channel == 'wc' || $channel == 'webchat')
                             <div class="mb-4">
                                 <label for="contact" class="block font-medium text-sm text-gray-700 dark:text-slate-300">Pilih Kontak:</label>
                                 <select wire:model="selectedContact" id="contact"
@@ -200,7 +200,7 @@
                                     </div>
                                 </div>
                             @endif
-                        @elseif ($channel == 'wa' || $channel == 'sm' || $channel == 'pl' || $channel == 'waba' || $channel == 'wc')
+                        @elseif ($channel == 'wa' || $channel == 'sm' || $channel == 'pl' || $channel == 'waba' || $channel == 'wc' || $channel == 'webchat')
                             <div>
                                 <div class="mb-4">
                                     <label for="audience" class="block font-medium text-sm text-gray-700 dark:text-slate-300">Select Audience:</label>
@@ -212,7 +212,7 @@
                                         @endforeach
                                     </select>
                                 </div>
-
+                            </div>
                                 @if ($to)
                                     <div class="col-span-2">
                                         <label class="block font-medium text-sm text-gray-700 dark:text-slate-300">Audience Clients</label>
@@ -224,7 +224,7 @@
                                         </div>
                                     </div>
                                 @endif
-                            </div>
+
                         @else
                             <p class="text-red-600 text-sm">Please select Channel first to choose Audience !</p>
                         @endif

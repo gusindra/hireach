@@ -305,11 +305,11 @@ class ApiTwoWayController extends Controller
                                 'title' => $sms->title,
                                 'otp' => $sms->otp,
                             );
-                            ProcessSmsApi::dispatch($data, auth()->user());
+                            // ProcessSmsApi::dispatch($data, auth()->user());
                             $totalPhone += 1;
                         }
                     }else{
-                        ProcessSmsApi::dispatch($sms, auth()->user());
+                        // ProcessSmsApi::dispatch($sms, auth()->user());
                         $totalPhone += 1;
                     }
                 }else{
@@ -422,6 +422,13 @@ class ApiTwoWayController extends Controller
         }
     }
 
+    /**
+     * saveResult
+     *
+     * @param  mixed $campaign
+     * @param  mixed $request
+     * @return void
+     */
     private function saveResult($campaign, $request){
         $user_id = auth()->user()->id;
         //ModelsRequest::create($modelData);
@@ -439,11 +446,21 @@ class ApiTwoWayController extends Controller
         return $chat;
     }
 
+    /**
+     * chechClient
+     *
+     * @param  mixed $status
+     * @param  mixed $request
+     * @return object App\Models\Client
+     */
     private function chechClient($status, $request=null){
         $user_id = auth()->user()->id;
-        $client = Client::where('phone', $request['to'])->where('user_id', $user_id)->firstOr(function () use ($request, $user_id) {
+        $request['email'] = strpos($request['to'], '@') ? $request['to'] : '';
+        $request['phone'] = !strpos($request['to'], '@') ? $request['to'] : '';
+        $client = Client::where('phone',  $request['phone'])->where('user_id', $user_id)->firstOr(function () use ($request, $user_id) {
             return Client::create([
-                'phone' => $request['to'],
+                'phone' =>  $request['phone'],
+                'email' => $request['email'],
                 'user_id' => $user_id,
                 'uuid' => Str::uuid()
             ]);

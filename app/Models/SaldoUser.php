@@ -37,4 +37,14 @@ class SaldoUser extends Model
     {
         return $this->belongsTo('App\Models\User');
     }
+
+    /**
+     * Get the flow that belongs to user.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function team()
+    {
+        return $this->belongsTo('App\Models\Team');
+    }
 }

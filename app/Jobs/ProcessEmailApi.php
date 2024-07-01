@@ -6,6 +6,7 @@ use App\Models\BlastMessage;
 use App\Models\Campaign;
 use App\Models\CampaignModel;
 use App\Models\Client;
+use App\Models\Request;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -16,6 +17,7 @@ use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
+use Vinkla\Hashids\Facades\Hashids;
 
 class ProcessEmailApi implements ShouldQueue
 {
@@ -122,8 +124,6 @@ class ProcessEmailApi implements ShouldQueue
                 $result = $response->body();
             }
 
-
-
             Log::debug($result);
             $response = json_decode($result, true);
             // Log::debug($response);
@@ -135,12 +135,13 @@ class ProcessEmailApi implements ShouldQueue
                 Campaign::find($this->campaign->id)->update(['status'=>'failed']);
             } elseif(is_array( $response) && array_key_exists('request_id', $response)) {
                 $balance = 0;
+                $client= $this->chechClient("200", $request['to']);
                 //check client && array
                 $modelData = [
                     'title'     => $request['title'],
                     'msg_id'    => $response['request_id'],
                     'user_id'   => $this->user->id,
-                    'client_id' => $this->chechClient("200", $request['to']),
+                    'client_id' => $client->uuid,
                     'sender_id' => $request['from'],
                     'type'      => $request['type'],
                     'otp'       => $request['otp'],
@@ -154,7 +155,20 @@ class ProcessEmailApi implements ShouldQueue
                     'provider' => $this->data['provider']->id
                 ];
                 // Log::debug($modelData);
-                $bm = BlastMessage::create($modelData);
+                if($this->data['resource']==2){
+                    $bm = Request::create([
+                        'source_id' => 'emailchat_'.Hashids::encode($client->id),
+                        'reply'     => $request['text'],
+                        'from'      => $client->id,
+                        'user_id'   => $this->user->id,
+                        'type'      => 'text',
+                        'client_id' => $client->uuid,
+                        'sent_at'   => date('Y-m-d H:i:s'),
+                        'team_id'   => auth()->user()->team->id
+                    ]);;
+                }else{
+                    $bm = BlastMessage::create($modelData);
+                }
                 $this->synCampaign($bm);
             }
             // Log::debug("Respone MSG:");
@@ -202,12 +216,13 @@ class ProcessEmailApi implements ShouldQueue
                 Campaign::find($this->campaign->id)->update(['status'=>'failed']);
             } else {
                 $balance = 0;
+                $client= $this->chechClient("200", $request['to']);
                 //check client && array
                 $modelData = [
                     'title'     => $request['title'],
                     'msg_id'    => $result['request_id'],
                     'user_id'   => $this->user->id,
-                    'client_id' => $this->chechClient("200", $request['to']),
+                    'client_id' => $client->uuid,
                     'sender_id' => $request['from'],
                     'type'      => $request['type'],
                     'otp'       => $request['otp'],
@@ -221,7 +236,20 @@ class ProcessEmailApi implements ShouldQueue
                     'provider' => $this->data['provider']->id
                 ];
                 // Log::debug($modelData);
-                $bm = BlastMessage::create($modelData);
+                if($this->data['resource']==2){
+                    $bm = Request::create([
+                        'source_id' => 'emailchat_'.Hashids::encode($client->id),
+                        'reply'     => $request['text'],
+                        'from'      => $client->id,
+                        'user_id'   => $this->user->id,
+                        'type'      => 'text',
+                        'client_id' => $client->uuid,
+                        'sent_at'   => date('Y-m-d H:i:s'),
+                        'team_id'   => auth()->user()->team->id
+                    ]);;
+                }else{
+                    $bm = BlastMessage::create($modelData);
+                }
                 $this->synCampaign($bm);
             }
             // Log::debug("Respone MSG:");
@@ -243,11 +271,12 @@ class ProcessEmailApi implements ShouldQueue
     private function saveResult($msg)
     {
         $user_id = $this->user->id;
+        $client= $this->chechClient("400");
         $modelData = [
             'title'             => $this->data['title'],
             'msg_id'            => 0,
             'user_id'           => $user_id,
-            'client_id'         => $this->chechClient("400"),
+            'client_id'         => $client->uuid,
             'type'              => $this->data['type'],
             'otp'               => $this->data['otp'],
             'status'            => $msg,
@@ -256,9 +285,22 @@ class ProcessEmailApi implements ShouldQueue
             'price'             => 0,
             'balance'           => 0,
             'msisdn'            => $this->data['to'],
-            'provider' => $this->data['provider']->id
+            'provider'          => $this->data['provider']->id
         ];
-        $mms = BlastMessage::create($modelData);
+        if($this->data['resource']==2){
+            $mms = Request::create([
+                'source_id' => 'emailchat_'.Hashids::encode($client->id),
+                'reply'     => $this->data['text'],
+                'from'      => $client->id,
+                'user_id'   => $user_id,
+                'type'      => 'text',
+                'client_id' => $client->uuid,
+                'sent_at'   => date('Y-m-d H:i:s'),
+                'team_id'   => auth()->user()->team->id
+            ]);;
+        }else{
+            $mms = BlastMessage::create($modelData);
+        }
         $this->synCampaign($mms);
         return $mms;
     }
@@ -268,7 +310,7 @@ class ProcessEmailApi implements ShouldQueue
      *
      * @param  mixed $status
      * @param  mixed $msisdn
-     * @return sting uuid
+     * @return object App\Models\Client
      */
     private function chechClient($status, $msisdn = null)
     {
@@ -294,7 +336,7 @@ class ProcessEmailApi implements ShouldQueue
         $team = $this->user->currentTeam;
         $client->teams()->attach($team);
 
-        return $client->uuid;
+        return $client;
     }
 
     private function synCampaign($blast)

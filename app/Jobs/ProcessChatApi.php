@@ -14,6 +14,7 @@ use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
+use Vinkla\Hashids\Facades\Hashids;
 
 class ProcessChatApi implements ShouldQueue
 {
@@ -201,6 +202,7 @@ class ProcessChatApi implements ShouldQueue
 
     private function saveResult($msg){
         $user_id = $this->user->id;
+        $client = $this->chechClient("400", $data);
         $request = Chat::create([
             'source_id' => Hashids::encode($this->client->id),
             'reply'     => $this->request['text'],
@@ -228,6 +230,13 @@ class ProcessChatApi implements ShouldQueue
         return $request;
     }
 
+    /**
+     * chechClient
+     *
+     * @param  mixed $status
+     * @param  mixed $msisdn
+     * @return object App\Models\Client
+     */
     private function chechClient($status, $msisdn=null){
         $user_id = $this->user->id;
         if($status=="200"){

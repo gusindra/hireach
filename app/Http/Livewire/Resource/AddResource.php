@@ -2,16 +2,21 @@
 
 namespace App\Http\Livewire\Resource;
 
+use App\Jobs\ProcessChatApi;
 use App\Jobs\ProcessEmailApi;
 use App\Jobs\ProcessSmsApi;
 use App\Jobs\ProcessWaApi;
 use App\Models\Audience;
 use App\Models\AudienceClient;
+use App\Models\Campaign;
 use App\Models\Client;
 use App\Models\ProviderUser;
+use App\Models\Request;
 use Livewire\Component;
 use App\Models\Template;
 use Illuminate\Support\Facades\Auth;
+use Vinkla\Hashids\Facades\Hashids;
+use Illuminate\Support\Str;
 
 class AddResource extends Component
 {
@@ -38,6 +43,7 @@ class AddResource extends Component
     public $clients = [];
     public $fromList = [];
     public $modalActionVisible = false;
+    public $input;
 
     /**
      * mount
@@ -48,7 +54,6 @@ class AddResource extends Component
      */
     public function mount($uuid, $modal = false)
     {
-
         $user = Auth::user();
         $this->resource = $uuid;
         $this->template = Template::with('question')->where('uuid', $uuid)->first();
@@ -134,7 +139,7 @@ class AddResource extends Component
     public function sendResource()
     {
         $this->validate();
-        
+
         if ($this->selectTo === 'manual') {
             $to = $this->to;
         } elseif ($this->selectTo === 'from_contact') {
@@ -145,7 +150,7 @@ class AddResource extends Component
 
             if ($this->channel == 'email') {
                 $to = Client::whereIn('uuid', $clientIds)->pluck('email')->implode(',');
-            } elseif ($this->channel == 'wa' || $this->channel == 'sm' || $this->channel == 'pl' || $this->channel == 'waba' || $this->channel == 'wc') {
+            } elseif ($this->channel == 'wa' || $this->channel == 'sm' || $this->channel == 'pl' || $this->channel == 'waba' || $this->channel == 'wc' || $this->channel == 'webchat') {
                 $to = Client::whereIn('uuid', $clientIds)->pluck('phone')->implode(',');
             }
         }
@@ -160,8 +165,6 @@ class AddResource extends Component
         $provider = $this->provider;
         $otp = $this->is_enabled;
 
-
-
         //SET PROVIDER BASE ON THE SETTING OR AUTO SELECT DEFAULT PROVIDER
         $provider = $this->provider = auth()->user()->providerUser->where('channel', strtoupper($this->channel))->first()->provider;
 
@@ -170,7 +173,6 @@ class AddResource extends Component
         } elseif ($provider->code == 'provider1') {
             $this->provider = 'provider2';
         }
-
 
         $contact = explode(',', $to);
         //SENDING RESOURCE
@@ -188,6 +190,7 @@ class AddResource extends Component
                     'templateid' => $templateid,
                     'to' => $to,
                     'from' => $from,
+                    'resource' => $this->resource,
                     'provider' => $provider,
                     'otp' => checkContentOtp($action->message)
                 ];
@@ -201,6 +204,7 @@ class AddResource extends Component
                 'templateid' => $templateid,
                 'to' => $to,
                 'from' => $from,
+                'resource' => $this->resource,
                 'provider' => $provider,
                 'otp' => checkContentOtp($text)
             ];
@@ -218,9 +222,11 @@ class AddResource extends Component
         //ONEWAY BLAST
         if (count($contact) > 1) {
             //GROUP RETRIVER
+            $this->campaignAdd($data);
             foreach ($contact as $p) {
                 $data['to'] = $p;
                 if ($template) {
+                    // PLEASE CHECK THIS CODE
                     foreach ($data as $da) {
                         $da['to'] = $p;
                         $this->callJobResource($da, $credential);
@@ -240,6 +246,8 @@ class AddResource extends Component
                 $this->callJobResource($data, $credential);
             }
         }
+
+
         $this->emit('resource_saved');
     }
 
@@ -268,6 +276,20 @@ class AddResource extends Component
             }
         } elseif ($this->channel == 'wa') {
             //ProcessChatApi::dispatch($request->all(), auth()->user());
+        }elseif ($this->channel == 'webchat') {
+            $user_id = auth()->user()->id;
+            //ModelsRequest::create($modelData);
+            $client = $this->chechClient("400", $data);
+            Request::create([
+                'source_id' => 'webchat_'.Hashids::encode($client->id),
+                'reply'     => 'blast',
+                'from'      => $client->id,
+                'user_id'   => $user_id,
+                'type'      => 'text',
+                'client_id' => $client->uuid,
+                'sent_at'   => date('Y-m-d H:i:s'),
+                'team_id'   => auth()->user()->team->id
+            ]);
         }
         //add wa long number
         //add sms long number
@@ -308,7 +330,7 @@ class AddResource extends Component
 
             if ($this->channel == 'email') {
                 $this->to = Client::whereIn('uuid', $clientIds)->pluck('email')->implode(',');
-            } elseif ($this->channel == 'wa' || $this->channel == 'sm' || $this->channel == 'pl') {
+            } elseif ($this->channel == 'wa' || $this->channel == 'sm' || $this->channel == 'pl' || $this->channel == 'webchat') {
                 $this->to = Client::whereIn('uuid', $clientIds)->pluck('phone')->implode(',');
             }
         } else {
@@ -316,6 +338,52 @@ class AddResource extends Component
         }
     }
 
+    /**
+     * chech client for resource 2
+     *
+     * @param  mixed $status
+     * @param  mixed $request
+     * @return object App\Models\Client
+     */
+    private function chechClient($status, $request=null){
+        $user_id = auth()->user()->id;
+        $request['email'] = strpos($request['to'], '@') ? $request['to'] : '';
+        $request['phone'] = !strpos($request['to'], '@') ? $request['to'] : '';
+        $client = Client::where('phone',  $request['phone'])->where('user_id', $user_id)->firstOr(function () use ($request, $user_id) {
+            return Client::create([
+                'phone' =>  $request['phone'],
+                'email' => $request['email'],
+                'user_id' => $user_id,
+                'uuid' => Str::uuid()
+            ]);
+        });
+        return $client;
+    }
+
+    /**
+     * campaignAdd
+     *
+     * @param  mixed $request
+     * @return void
+     */
+    private function campaignAdd($request){
+        return Campaign::create([
+            'title'         => $request['title'],
+            'channel'       => strtoupper($request['channel']),
+            'provider'      => $request['provider'],
+            'from'          => $request['from'],
+            'to'            => $request['to'],
+            'text'          => $request['text'],
+            'is_otp'        => 0,
+            'request_type'  => 'form',
+            'status'        => 'starting',
+            'way_type'      => $this->resource,
+            'type'          => $request['type'],
+            'template_id'   => $request['templateid'],
+            'user_id'       => auth()->user()->id,
+            'uuid'          => Str::uuid()
+        ]);
+    }
 
     /**
      * updatedChannel
@@ -339,6 +407,7 @@ class AddResource extends Component
             strtolower($this->channel) == 'sm' ||
             strtolower($this->channel) == 'pl' ||
             strtolower($this->channel) == 'waba' ||
+            strtolower($this->channel) == 'webchat' ||
             strtolower($this->channel) == 'wc'
         ) {
 

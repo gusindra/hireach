@@ -5,6 +5,7 @@ namespace App\Jobs;
 use App\Models\BlastMessage;
 use App\Models\CampaignModel;
 use App\Models\Client;
+use App\Models\Request;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -15,6 +16,7 @@ use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\App;
+use Vinkla\Hashids\Facades\Hashids;
 
 class ProcessSmsApi implements ShouldQueue
 {
@@ -243,14 +245,15 @@ class ProcessSmsApi implements ShouldQueue
                     //check client && array
                     if (is_array($msg_msis)) {
                         if (array_key_exists("1", $msg_msis) && array_key_exists("0", $msg_msis) && array_key_exists("2", $msg_msis) && array_key_exists("3", $msg_msis) && array_key_exists("4", $msg_msis)) {
+                            $client = $this->chechClient("200", $msg_msis[0]);
                             $modelData = [
                                 'msg_id'    => preg_replace('/\s+/', '', $msg_msis[1]),
                                 'user_id'   => $this->user->id,
-                                'client_id' => $this->chechClient("200", $msg_msis[0]),
+                                'client_id' => $client->uuid,
                                 'sender_id' => $request['from'],
                                 'type'      => $request['type'],
                                 'otp'       => $request['otp'],
-                                'provider' => $request['provider']->id,
+                                'provider'  => $request['provider']->id,
                                 'status'    => "PROCESSED",
                                 'code'      => $msg_msis[2],
                                 'message_content'  => $request['text'],
@@ -260,7 +263,20 @@ class ProcessSmsApi implements ShouldQueue
                                 'msisdn'    => preg_replace('/\s+/', '', $msg_msis[0]),
                             ];
                             // Log::debug($modelData);
-                            $mms = BlastMessage::create($modelData);
+                            if($request['resource']==2){
+                                $mms = Request::create([
+                                    'source_id' => 'smschat_'.Hashids::encode($client->id),
+                                    'reply'     => $request['text'],
+                                    'from'      => $client->id,
+                                    'user_id'   => $this->user->id,
+                                    'type'      => 'text',
+                                    'client_id' => $client->uuid,
+                                    'sent_at'   => date('Y-m-d H:i:s'),
+                                    'team_id'   => auth()->user()->team->id
+                                ]);;
+                            }else{
+                                $mms = BlastMessage::create($modelData);
+                            }
                             $this->synCampaign($mms);
                         } else {
                             Log::debug("failed msis format: ");
@@ -346,7 +362,9 @@ class ProcessSmsApi implements ShouldQueue
 
             //Log::debug($response);
             $resData = json_decode($response, true);
-            BlastMessage::find($msg->id)->update(['status' => $resData['message'], 'code' => $resData['code'], 'sender_id' => 'SMS_LONG', 'type' => $msgChannel, 'provider' => $provider = $this->request['provider']->id]);
+            if($request['resource']==1){
+                BlastMessage::find($msg->id)->update(['status' => $resData['message'], 'code' => $resData['code'], 'sender_id' => 'SMS_LONG', 'type' => $msgChannel, 'provider' => $provider = $this->request['provider']->id]);
+            }
         }
     }
 
@@ -359,10 +377,11 @@ class ProcessSmsApi implements ShouldQueue
     private function saveResult($msg)
     {
         $user_id = $this->user->id;
+        $client= $this->chechClient("400");
         $modelData = [
             'msg_id'            => 0,
             'user_id'           => $user_id,
-            'client_id'         => $this->chechClient("400"),
+            'client_id'         => $client->uuid,
             'type'              => $this->request['type'],
             'otp'               => $this->request['otp'],
             'status'            => $msg,
@@ -370,12 +389,24 @@ class ProcessSmsApi implements ShouldQueue
             'message_content'   => $this->request['text'],
             'price'             => 0,
             'balance'           => 0,
-            'provider' => $this->request['provider']->id,
+            'provider'          => $this->request['provider']->id,
             'msisdn'            => $this->request['to'],
         ];
-        $mms = BlastMessage::create($modelData);
+        if($this->request['resource']==2){
+            $mms = Request::create([
+                'source_id' => 'smschat_'.Hashids::encode($client->id),
+                'reply'     => $this->request['text'],
+                'from'      => $client->id,
+                'user_id'   => $user_id,
+                'type'      => 'text',
+                'client_id' => $client->uuid,
+                'sent_at'   => date('Y-m-d H:i:s'),
+                'team_id'   => auth()->user()->team->id
+            ]);;
+        }else{
+            $mms = BlastMessage::create($modelData);
+        }
         $this->synCampaign($mms);
-
         return $mms;
     }
 
@@ -384,7 +415,7 @@ class ProcessSmsApi implements ShouldQueue
      *
      * @param  mixed $status
      * @param  mixed $msisdn
-     * @return string uuid
+     * @return object App\Models\Client
      */
     private function chechClient($status, $msisdn = null)
     {
@@ -410,7 +441,7 @@ class ProcessSmsApi implements ShouldQueue
         $team = $this->user->currentTeam;
         $client->teams()->attach($team);
 
-        return $client->uuid;
+        return $client;
     }
 
     private function synCampaign($blast)
