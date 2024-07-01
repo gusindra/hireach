@@ -228,7 +228,7 @@ class ProcessWaApi implements ShouldQueue
                 $modelData = [
                     'msg_id'    => $response['message_id'],
                     'user_id'   => $this->user->user_id,
-                    'client_id' => $client->uuid ,
+                    'client_id' => $client->uuid,
                     'sender_id' => '',
                     'type'      => $this->request['text'],
                     'otp'       => 0,
@@ -241,9 +241,9 @@ class ProcessWaApi implements ShouldQueue
                     'msisdn'    => preg_replace('/\s+/', '', $msg_msis[0]),
                 ];
                 // Log::debug($modelData);
-                if($this->request['resource']==2){
+                if ($this->request['resource'] == 2) {
                     $mms = Request::create([
-                        'source_id' => 'smschat_'.Hashids::encode($client->id),
+                        'source_id' => 'wachat_' . Hashids::encode($client->id),
                         'reply'     => $this->request['text'],
                         'from'      => $client->id,
                         'user_id'   => $this->user->user_id,
@@ -252,7 +252,7 @@ class ProcessWaApi implements ShouldQueue
                         'sent_at'   => date('Y-m-d H:i:s'),
                         'team_id'   => auth()->user()->team->id
                     ]);;
-                }else{
+                } else {
                     $mms = BlastMessage::create($modelData);
                 }
                 $this->synCampaign($mms);
@@ -329,7 +329,7 @@ class ProcessWaApi implements ShouldQueue
                 $response = Http::withBody(json_encode($data), 'application/json')->withOptions(['verify' => false])->post($url);
                 $resData = json_decode($response->body(), true);
             }
-            if($this->request['resource']==1){
+            if ($this->request['resource'] == 1) {
                 $bm = BlastMessage::find($msg->id)->update(['status' => $resData['message'], 'code' => $resData['code'], 'sender_id' => 'WA_LONG', 'type' => $msgChannel, 'provider' => 4]);
                 $this->synCampaign($bm);
             }
@@ -388,13 +388,14 @@ class ProcessWaApi implements ShouldQueue
             }
             $resData['message'] = 'Success';
             $resData['code'] = 200;
-            if($this->request['resource']==1){
+            if ($this->request['resource'] == 1) {
                 $bm = BlastMessage::find($msg->id)->update([
                     'status' => $resData['message'],
                     'code' => $resData['code'],
                     'sender_id' => 'WA_LONG',
                     'type' => 1,
-                    'provider' => $this->request['provider']->id]);
+                    'provider' => $this->request['provider']->id
+                ]);
                 $this->synCampaign($bm);
             }
         } else {
@@ -421,25 +422,25 @@ class ProcessWaApi implements ShouldQueue
             'otp'               => $this->request['otp'],
             'status'            => $msg,
             'code'              => "400",
-            'message_content'   => $this->campaign ? 'Campaign No:'.$this->campaign->id : $this->request['text'],
+            'message_content'   => $this->campaign ? 'Campaign No:' . $this->campaign->id : $this->request['text'],
             'provider'          => $this->request['provider']->id,
             'price'             => 0,
             'balance'           => 0,
             'msisdn'            => $this->request['to'],
         ];
-        if($this->request['resource']==2){
-            $client= $this->chechClient("400");
+        if ($this->request['resource'] == 2) {
+
             $mms = Request::create([
-                'source_id' => 'wachat_'.Hashids::encode($client->id),
-                'reply'     => $this->campaign ? 'Campaign No:'.$this->campaign->id : $this->request['text'],
+                'source_id' => 'wachat_' . Hashids::encode($client->id),
+                'reply'     => $this->campaign ? 'Campaign No:' . $this->campaign->id : $this->request['text'],
                 'from'      => $client->id,
                 'user_id'   => $user_id,
                 'type'      => 'text',
                 'client_id' => $client->uuid,
                 'sent_at'   => date('Y-m-d H:i:s'),
-                'team_id'   => auth()->user()->team->id
+                'team_id'   =>  $this->request['team_id'],
             ]);;
-        }else{
+        } else {
             $mms = BlastMessage::create($modelData);
         }
         $this->synCampaign($mms->id);

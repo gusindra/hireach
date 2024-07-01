@@ -49,25 +49,35 @@ class ChatSlug extends Component
      */
     public function checkClient()
     {
+        if (strpos($this->number, '@') !== false) {
 
-        // checking client
-        $client = Client::where('phone', $this->number)->where('user_id', $this->team->user_id)->first();        // if not exsist create new client
+            $client = Client::where('email', $this->number)
+                ->where('user_id', $this->team->user_id)
+                ->first();
+        } else {
+            $client = Client::where('phone', $this->number)
+                ->where('user_id', $this->team->user_id)
+                ->first();
+        }
+
         if (!$client) {
-
             $client = Client::create([
-                'uuid'          => Str::uuid(),
-                'name'          => $this->name,
-                'sender'        => $this->name,
-                'phone'         => $this->number,
-                'user_id'       => $this->team->user_id,
+                'uuid'    => Str::uuid(),
+                'name'    => $this->name,
+                'sender'  => $this->name,
+                'phone'   => strpos($this->number, '@') === false ? $this->number : '',
+                'email'   => strpos($this->number, '@') !== false ? $this->number : '',
+                'user_id' => $this->team->user_id,
             ]);
             $team = Team::find($this->team->id);
             $client->teams()->attach($team);
         }
+
         $this->client = $client;
         $this->client_id = $client->id;
-        $this->owner =  $this->client->user_id;
+        $this->owner = $this->client->user_id;
     }
+
 
     /**
      * sendMessage
@@ -206,14 +216,15 @@ class ChatSlug extends Component
      *
      * @return void
      */
-    public function teamStatus(){
+    public function teamStatus()
+    {
         $status = null;
-        if($this->team->agents){
+        if ($this->team->agents) {
             $status = agentStatus($this->team->agents);
-            if($this->teamStatus != $status){
+            if ($this->teamStatus != $status) {
                 $this->time = 1;
                 $this->teamStatus = agentStatus($this->team->agents);
-            }else{
+            } else {
                 $this->time = 0;
             }
         }

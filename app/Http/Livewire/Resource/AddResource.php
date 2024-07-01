@@ -54,6 +54,7 @@ class AddResource extends Component
      */
     public function mount($uuid, $modal = false)
     {
+
         $user = Auth::user();
         $this->resource = $uuid;
         $this->template = Template::with('question')->where('uuid', $uuid)->first();
@@ -138,6 +139,8 @@ class AddResource extends Component
      */
     public function sendResource()
     {
+
+
         $this->validate();
 
         if ($this->selectTo === 'manual') {
@@ -209,6 +212,10 @@ class AddResource extends Component
                 'otp' => checkContentOtp($text)
             ];
         }
+
+        if ($this->resource == '2') {
+            $data['team_id'] = auth()->user()->currentTeam->id;
+        }
         //dd($data);
 
         if (strpos($this->channel, 'wa') !== false && $provider->code == 'provider1') {
@@ -266,6 +273,7 @@ class AddResource extends Component
 
             ProcessEmailApi::dispatch($data, auth()->user(), $reqArr);
         } elseif (strpos($this->channel, 'sms') !== false) {
+
             ProcessSmsApi::dispatch($data, auth()->user());
         } elseif (strpos(strtolower($this->channel), 'wa') !== false) {
 
@@ -276,19 +284,19 @@ class AddResource extends Component
             }
         } elseif ($this->channel == 'wa') {
             //ProcessChatApi::dispatch($request->all(), auth()->user());
-        }elseif ($this->channel == 'webchat') {
+        } elseif ($this->channel == 'webchat') {
             $user_id = auth()->user()->id;
             //ModelsRequest::create($modelData);
             $client = $this->chechClient("400", $data);
             Request::create([
-                'source_id' => 'webchat_'.Hashids::encode($client->id),
+                'source_id' => 'webchat_' . Hashids::encode($client->id),
                 'reply'     => 'blast',
                 'from'      => $client->id,
                 'user_id'   => $user_id,
                 'type'      => 'text',
                 'client_id' => $client->uuid,
                 'sent_at'   => date('Y-m-d H:i:s'),
-                'team_id'   => auth()->user()->team->id
+                'team_id'   => auth()->user()->currentTeam->id
             ]);
         }
         //add wa long number
@@ -345,7 +353,9 @@ class AddResource extends Component
      * @param  mixed $request
      * @return object App\Models\Client
      */
-    private function chechClient($status, $request=null){
+    private function chechClient($status, $request = null)
+    {
+        dd($request['to']);
         $user_id = auth()->user()->id;
         $request['email'] = strpos($request['to'], '@') ? $request['to'] : '';
         $request['phone'] = !strpos($request['to'], '@') ? $request['to'] : '';
@@ -366,7 +376,8 @@ class AddResource extends Component
      * @param  mixed $request
      * @return void
      */
-    private function campaignAdd($request){
+    private function campaignAdd($request)
+    {
         return Campaign::create([
             'title'         => $request['title'],
             'channel'       => strtoupper($request['channel']),
