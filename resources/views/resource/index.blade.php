@@ -14,7 +14,7 @@
                     @if (auth()->user()->currentTeam->id != 1)
                         <div class="flex m-4">
                             @if (request()->get('resource') > 0)
-                                @livewire('resource.add', ['way'=>request()->get('resource')])
+                                @livewire('resource.add', ['way' => request()->get('resource')])
                             @endif
                         </div>
                     @endif

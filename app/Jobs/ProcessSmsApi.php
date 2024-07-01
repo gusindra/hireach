@@ -52,7 +52,7 @@ class ProcessSmsApi implements ShouldQueue
         // Log::debug($this->request);
         //filter OTP & Non OTP
         $provider = $this->request['provider'];
-        if ($provider->code == 'provider1' || $this->request['otp']) {
+        if ($provider->code == 'provider1') {
             $this->MKProvider($this->request);
         } elseif ($provider->code == 'provider2') {
             $this->EMProvider($this->request);
@@ -262,19 +262,20 @@ class ProcessSmsApi implements ShouldQueue
                                 'balance'   => $balance,
                                 'msisdn'    => preg_replace('/\s+/', '', $msg_msis[0]),
                             ];
-                            // Log::debug($modelData);
-                            if($request['resource']==2){
+                            Log::debug($modelData);
+                            if ($request['resource'] == 2) {
+                                Log::debug("INI BUKAN EM");
                                 $mms = Request::create([
-                                    'source_id' => 'smschat_'.Hashids::encode($client->id),
+                                    'source_id' => 'smschat_' . Hashids::encode($client->id),
                                     'reply'     => $request['text'],
                                     'from'      => $client->id,
                                     'user_id'   => $this->user->id,
                                     'type'      => 'text',
                                     'client_id' => $client->uuid,
                                     'sent_at'   => date('Y-m-d H:i:s'),
-                                    'team_id'   => auth()->user()->team->id
+                                    'team_id'   =>  $this->request['team_id'],
                                 ]);;
-                            }else{
+                            } else {
                                 $mms = BlastMessage::create($modelData);
                             }
                             $this->synCampaign($mms);
@@ -362,7 +363,7 @@ class ProcessSmsApi implements ShouldQueue
 
             //Log::debug($response);
             $resData = json_decode($response, true);
-            if($request['resource']==1){
+            if ($request['resource'] == 1) {
                 BlastMessage::find($msg->id)->update(['status' => $resData['message'], 'code' => $resData['code'], 'sender_id' => 'SMS_LONG', 'type' => $msgChannel, 'provider' => $provider = $this->request['provider']->id]);
             }
         }
@@ -377,7 +378,7 @@ class ProcessSmsApi implements ShouldQueue
     private function saveResult($msg)
     {
         $user_id = $this->user->id;
-        $client= $this->chechClient("400");
+        $client = $this->chechClient("400");
         $modelData = [
             'msg_id'            => 0,
             'user_id'           => $user_id,
@@ -392,18 +393,19 @@ class ProcessSmsApi implements ShouldQueue
             'provider'          => $this->request['provider']->id,
             'msisdn'            => $this->request['to'],
         ];
-        if($this->request['resource']==2){
+        if ($this->request['resource'] == 2) {
+            Log::debug('masuk sinni');
             $mms = Request::create([
-                'source_id' => 'smschat_'.Hashids::encode($client->id),
+                'source_id' => 'smschat_' . Hashids::encode($client->id),
                 'reply'     => $this->request['text'],
                 'from'      => $client->id,
                 'user_id'   => $user_id,
                 'type'      => 'text',
                 'client_id' => $client->uuid,
                 'sent_at'   => date('Y-m-d H:i:s'),
-                'team_id'   => auth()->user()->team->id
+                'team_id'   =>  $this->request['team_id'],
             ]);;
-        }else{
+        } else {
             $mms = BlastMessage::create($modelData);
         }
         $this->synCampaign($mms);
@@ -429,6 +431,8 @@ class ProcessSmsApi implements ShouldQueue
                 ]);
             });
         } else {
+            Log::debug('masuk to');
+            Log::debug($this->request['to']);
             $phones = explode(",", $this->request['to']);
             $client = Client::where('phone', $phones[0])->where('user_id', $user_id)->firstOr(function () use ($phones, $user_id) {
                 return Client::create([
