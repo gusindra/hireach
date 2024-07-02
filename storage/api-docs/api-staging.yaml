@@ -643,7 +643,7 @@ components:
 tags:
   -
     name: One Way
-    description: '1 Way Channel Sending (SMS, Email, WA, WABA)'
+    description: '1 Way Channel Sending Blast Notif (SMS, Email, WA, WABA)'
   -
     name: Two Way
-    description: '2 Way Channel Sending Confersation (WA, WABA)'
+    description: '2 Way Channel Sending Blast Chat (WA, WABA)'
