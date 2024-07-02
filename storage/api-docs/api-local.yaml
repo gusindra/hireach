@@ -192,23 +192,64 @@ paths:
           description: 'Record not found'
       security:
         - bearerAuth: []
+  /two-way/campaign:
+    get:
+      tags:
+        - Two Way
+      summary: 'Get campaign has been create using tow way resource'
+      operationId: getTwoWayCampaign
+      parameters:
+        -
+          name: value
+          in: query
+          required: true
+          schema:
+            type: string
+        -
+          name: request
+          in: query
+          required: false
+          schema:
+            type: boolean
+            enum: [true, false]
+      responses:
+        '200':
+          description: 'successful operation'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetCampaign'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/GetCampaign'
+        '400':
+          description: 'Invalid supplied'
+        '404':
+          description: 'Record not found'
+      security:
+        - bearerAuth: []
 components:
   schemas:
     ApiResponse:
       title: 'Api response'
       description: 'Api response'
       properties:
-        message:
-          title: Message
-          description: Message
-          type: string
-          example: "Successful"
         code:
           title: Code
           description: Code
           type: integer
           format: int32
           example: 200
+        campaign_id:
+          title: Reference ID
+          description: Reference ID
+          type: string
+          example: "79b17f02-7941-47b0-915c-c31077966b98"
+        message:
+          title: Message
+          description: Message
+          type: string
+          example: "Campaign successful create, prepare sending notification to 1 contact."
         response:
           title: Response
           description: Response
@@ -327,7 +368,7 @@ components:
           type: string
           required: 'Yes'
           default: 'email'
-          option: 'email, wa, sms_otp_sid, sms_notp_sid, sms, talkbot'
+          option: 'email, wa, sms_otp_sid, sms_notp_sid, sms'
         type:
           title: 'type'
           description: 'Type for content.'
@@ -399,7 +440,7 @@ components:
           type: string
           required: 'Yes'
           default: 'web'
-          option: 'web, wa, sms, talkbot'
+          option: 'web, wa'
         type:
           title: 'type'
           description: 'Type for content.'
@@ -447,7 +488,7 @@ components:
           type: string
       type: object
       xml:
-        name: TwoWayNotification
+        name: BlastNotification
     SendSms:
       title: 'Send SMS model'
       description: 'Send SMS model'
@@ -604,26 +645,31 @@ components:
       type: object
       xml:
         name: GetCampaign
-    Pet:
-      description: 'Pet object that needs to be added to the store'
+    SmsArray:
+    OneWay:
+      description: 'List of one way request'
       required: true
       content:
-        application/xml:
-          schema:
-            $ref: '#/components/schemas/Pet'
         application/json:
           schema:
-            $ref: '#/components/schemas/Pet'
-    UserArray:
-      description: 'List of user object'
+            $ref: '#/components/schemas/OneWayRequest'
+    TwoWay:
+      description: 'List of two way request'
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/TwoWayRequest'
+    OneWayArray:
+      description: 'List of one way request'
       required: true
       content:
         application/json:
           schema:
             type: array
             items:
-              $ref: '#/components/schemas/User'
-    SmsArray:
+              $ref: '#/components/schemas/OneWayRequest'
+  requestBodies:
     OneWay:
       description: 'List of one way request'
       required: true
@@ -658,4 +704,4 @@ tags:
     description: '1 Way Channel Sending (SMS, Email, WA, WABA)'
   -
     name: Two Way
-    description: '2 Way Channel Sending Confersation (WA, WABA)'
+    description: '2 Way Channel Sending Confersation (WA, WABA, WEBCHAT, EMAIL)'

@@ -21,8 +21,9 @@ class Chat extends Component
         // dd($this->team);
     }
 
-    public function updateChatTeam(){
-        Team::find($this->team->id)->update(['slug'=>$this->slug]);
+    public function updateChatTeam()
+    {
+        Team::find($this->team->id)->update(['slug' => $this->slug]);
         $this->emit('saved');
     }
 

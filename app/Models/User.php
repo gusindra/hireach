@@ -218,6 +218,11 @@ class User extends Authenticatable
         return $this->hasMany('App\Models\SaldoUser', 'user_id')->orderBy('id', 'desc');
     }
 
+    public function balanceTeam()
+    {
+        return $this->hasMany('App\Models\SaldoUser', 'user_id')->orderBy('created_at', 'desc');
+    }
+
     /**
      * User is client
      *

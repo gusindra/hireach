@@ -4,7 +4,12 @@
             {{ __('Dashboard') }}
         </h2>
     </x-slot>
+    <div class="grid grid-cols-12">
 
+        <div class="absolute bottom-0 left-0 z-0">
+            @includeWhen(auth()->user(), 'menu.user-dashboard', [])
+        </div>
+    </div>
     @if (Auth::user()->role)
     @endif
 

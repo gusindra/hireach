@@ -19,24 +19,23 @@ class OrderProductObserver
      */
     public function created(OrderProduct $request)
     {
-        $order = Order::find($request->model_id);
-
-        if ($order) {
-            $subTotal = $request->latest()->first();
-
-            $order->update([
-                'total' => $subTotal->price,
-                'vat' => 11
-            ]);
-
-
-            // Log::info($request->price.$request->qty.$request->total_percentage);
-        } elseif ($order) {
+        if ($request->model == 'Order') {
+            $order = Order::find($request->model_id);
             $billing = Billing::where('order_id', $order->id);
-            $subTotal = $request->latest()->first();
-            $billing->update([
-                'amount' => $subTotal->price,
-            ]);
+            if ($order) {
+                $subTotal = $request->where('name', 'Topup')->latest()->first();
+
+                $order->update([
+                    'total' => $subTotal->price,
+                    'vat' => 11
+                ]);
+
+                $billing->update([
+                    'amount' => $subTotal->price,
+                ]);
+
+                // Log::info($request->price.$request->qty.$request->total_percentage);
+            }
         }
     }
 

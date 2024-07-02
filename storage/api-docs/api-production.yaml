@@ -7,7 +7,7 @@ info:
   license:
     name: 'Apache 2.0'
     url: 'http://www.apache.org/licenses/LICENSE-2.0.html'
-  version: 1.1.1
+  version: 1.1.2
 servers:
   -
     url: 'https://hireach.firmapps.ai/api'
@@ -546,64 +546,51 @@ components:
         - value
         - request
       properties:
-        code:
-          title: 'Status'
-          description: 'Campaign status'
+        id:
+          title: UUID
+          description: UUID
           type: string
-        message:
-          title: 'Status'
-          description: 'Campaign status'
+        type:
+          title: 'Type'
+          description: 'Character type for text'
+          type: integer
+          format: int64
+        title:
+          title: 'Title'
+          description: 'Broadcast Title'
           type: string
-        errors:
-          title: 'Errors'
-          description: 'Errors'
-          type: array
-          items:
-            status:
-              title: 'Status'
-              description: 'Campaign status'
-              type: string
-            id:
-              title: UUID
-              description: UUID
-              type: string
-            type:
-              title: 'Type'
-              description: 'Character type for text'
-              type: integer
-              format: int64
-            title:
-              title: 'Title'
-              description: 'Broadcast Title'
-              type: string
-            provider:
-              title: 'Provider'
-              description: 'Provoder'
-              type: string
-            channel:
-              title: 'Channel'
-              description: 'Channel'
-              type: string
-            text:
-              title: 'Text'
-              description: 'Message Content'
-              type: string
-            to:
-              title: 'To'
-              description: 'Sending request to (email or phone or id). Phone number must have the country code (without the “+” sign)'
-              type: string
-            date:
-              title: 'Date'
-              description: 'Broadcast date'
-              type: string
-              format: date-time
-            otp:
-              title: 'OTP'
-              description: 'SMS Type OTP or NON OTP'
-              type: boolean
+        provider:
+          title: 'Provider'
+          description: 'Provoder'
+          type: string
+        channel:
+          title: 'Channel'
+          description: 'Channel'
+          type: string
+        text:
+          title: 'Text'
+          description: 'Message Content'
+          type: string
+        to:
+          title: 'To'
+          description: 'Sending request to (email or phone or id). Phone number must have the country code (without the “+” sign)'
+          type: string
+        status:
+          title: 'Status'
+          description: 'Broadcast status'
+          type: string
+        date:
+          title: 'Date'
+          description: 'Broadcast date'
+          type: string
+          format: date-time
+        otp:
+          title: 'OTP'
+          description: 'SMS Type OTP or NON OTP'
+          type: boolean
       type: object
       xml:
-        name: GetCampaign
+        name: SingleSms
   requestBodies:
     Pet:
       description: 'Pet object that needs to be added to the store'
@@ -656,7 +643,7 @@ components:
 tags:
   -
     name: One Way
-    description: '1 Way Channel Sending (SMS, Email, WA, WABA)'
+    description: '1 Way Channel Sending Blast Notif (SMS, Email, WA, WABA)'
   -
     name: Two Way
-    description: '2 Way Channel Sending Confersation (WA, WABA)'
+    description: '2 Way Channel Sending Blast Chat (WA, WABA)'

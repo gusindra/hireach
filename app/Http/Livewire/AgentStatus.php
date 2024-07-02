@@ -51,6 +51,7 @@ class AgentStatus extends Component
 
         $this->status = $status;
         $this->emit('saved');
+        return redirect(request()->header('Referer'));
     }
 
     public function render()

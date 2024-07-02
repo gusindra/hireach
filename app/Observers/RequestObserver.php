@@ -133,7 +133,7 @@ class RequestObserver
                             }
                             // make logic to check template from api
                             Log::debug($url);
-                            //Log::debug($response);
+                            Log::debug($response);
                             $trigger = Template::where('template_id', $template->id)->where('trigger', $response['code'])->first();
                             if ($trigger) {
                                 foreach ($trigger->actions as $action) {
@@ -315,10 +315,21 @@ class RequestObserver
 
             //check msisdn for $product items
             // CHARGE BY PRODUCT WA PRICE
+            // if (count($items) > 0) {
+            //     foreach ($items as $product) {
+            //         if ($product->sku == "WA") {
+            //             // ALL WA Charge this Price
+            //             $this->addSaldo($product->unit_price, $request);
+            //             $set_price = 1;
+            //         }
+            //     }
+            // }
+
+            //check msisdn for $product items
+            // CHARGE BY PRODUCT PRICE
             if (count($items) > 0) {
                 foreach ($items as $product) {
-                    if ($product->sku == "WA") {
-                        // ALL WA Charge this Price
+                    if (str_contains($request->source_id, $product->sku) || (($request->from == 'bot' || is_numeric($request->from)) && $product->sku == 'webchat')) {
                         $this->addSaldo($product->unit_price, $request);
                         $set_price = 1;
                     }
@@ -346,6 +357,7 @@ class RequestObserver
         // text
         if ($action->type == 'text') {
             $request = Message::create([
+
                 'reply'         => $action->message,
                 'from'          => 'bot',
                 'user_id'       => $request->user_id,
@@ -355,6 +367,7 @@ class RequestObserver
             ]);
         } else {
             $request = Message::create([
+
                 'reply'         => '',
                 'media'         => $action->message,
                 'from'          => 'bot',
@@ -466,7 +479,7 @@ class RequestObserver
             'currency'      => $currency,
             'amount'        => $price,
             'mutation'      => 'debit',
-            'description'   => 'Cost - ' . $request->id . ' - ' . $request->source_id,
+            'description' => 'Cost - ' . $request->id . ' - ' . ($request->source_id !== null ? $request->source_id : ($request->from == 'bot' ? 'bot_template_' . $request->template_id : 'agen_' . $request->from)),
             'user_id'       => $request->user_id,
         ]);
     }

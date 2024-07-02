@@ -6,7 +6,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="csrf-token" content="{{ csrf_token() }}">
 
-        <title>{{ config('app.name', 'Telixcel') }}</title>
+        <title>{{ config('app.name', 'HiReach') }}</title>
 
         <!--Favicon-->
         <link rel="manifest" href="{{url('frontend/images/webmanifest.json')}}">
@@ -75,8 +75,9 @@
         <script src="{{ url('backend/js/socket.js')}}"></script>
         @stack('chat-websocket')
         @stack('charts')
-        @stack('chat-box')
+        <!-- @stack('chat-box') -->
         @stack('chat-waweb')
+
         <script>
             // Initial load of the page
             window.addEventListener("load", function() {
@@ -113,11 +114,13 @@
                 switchMode(event.detail.newMode);
             });
         </script>
+
         <audio id="sound" class="hidden" controls>
             <source src="{{url('/assets/sound/notif.wav')}}" type="audio/wav">
             Your browser does not support the audio element.
         </audio>
-        <script>
+
+        <!-- <script>
             (function(n,o,t,i,f) {
                 n[i] = {}; var m = ['init', 'on']; n[i]._c = [];m.forEach(me => n[i][me] = function() {n[i]._c.push([me, arguments])});
                 var elt = o.createElement(f); elt.type = "text/javascript"; elt.async = true; elt.src = t;
@@ -127,6 +130,6 @@
             novu.init('GmksWJkfvKlW', '#notification-bell', {
                 subscriberId: "on-boarding-subscriber-id-123",
             });
-        </script>
+        </script> -->
     </body>
 </html>

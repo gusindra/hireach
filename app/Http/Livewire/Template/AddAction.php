@@ -80,7 +80,10 @@ class AddAction extends Component
         $this->emit('added');
         $this->emit('addArrayData', $action->id);
         $this->actionId = null;
+        $this->updateShowModal($action->id);
     }
+
+
 
     /**
      * The update function.
@@ -125,7 +128,9 @@ class AddAction extends Component
      */
     public function delete()
     {
+
         Action::destroy($this->actionId);
+        $this->actionId = null;
         $this->confirmingActionRemoval = false;
 
         $this->dispatchBrowserEvent('event-notification', [

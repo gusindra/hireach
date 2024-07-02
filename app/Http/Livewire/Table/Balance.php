@@ -32,6 +32,7 @@ class Balance extends LivewireDatatable
             }),
     		Column::name('description')->label('DESCRIPTION')->filterable(),
     		Column::name('currency')->label('Currency')->filterable(),
+    		Column::name('team_id')->label('Team')->filterable(),
     		Column::callback(['amount', 'mutation'], function ($amount, $mutation) {
                 return view('user.amount', ['amount' => $amount, 'mutation'=> $mutation]);
             })->label('NOMINAL (RP)')->alignRight()->exportCallback(function ($value) {

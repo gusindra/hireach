@@ -33,7 +33,6 @@
                         @foreach ($days as $day => $selected)
                             <tr>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-
                                     <input id="days_{{ $day }}" wire:poll.4000ms="getCampaign"
                                         wire:model="days.{{ $day }}" type="checkbox"
                                         class="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300 rounded"

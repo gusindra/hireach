@@ -38,7 +38,7 @@
     <body class="font-sans antialiased">
         <x-jet-banner />
 
-        <div class="min-h-screen bg-gray-100 dark:bg-slate-700">
+        <div class="min-h-screen bg-gray-100 dark:bg-slate-800">
 
             <!-- Page Heading -->
             @if (isset($header))
@@ -56,12 +56,12 @@
             </main>
         </div>
 
-        @stack('modals')
+        <!-- @stack('modals') -->
 
         @livewireScripts
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-        <script src="{{ url('backend/js/socket.js')}}"></script>
-        @stack('chat-websocket')
+        <!-- <script src="{{ url('backend/js/socket.js')}}"></script> -->
+        <!-- @stack('chat-websocket') -->
         <script>
             // Initial load of the page
             window.addEventListener("load", function() {
@@ -83,6 +83,11 @@
                 }
             });
 
+            /**
+             * switchMode
+             *
+             * @return void
+             */
             function switchMode(mode) {
                 if (localStorage.dark === 'true') {
                     document.documentElement.classList.add('dark')

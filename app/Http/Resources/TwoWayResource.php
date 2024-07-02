@@ -19,7 +19,7 @@ class TwoWayResource extends JsonResource
             'reply' => $this->reply,
             'from'  => $this->client->id == $this->from? 'client':'agent',
             'status'=> $this->status,
-            'date'  => $this->created_at,
+            'date'  => $this->created_at->format('Y-m-d H:i:s'),
         ];
     }
 }

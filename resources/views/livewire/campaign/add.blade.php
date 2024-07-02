@@ -12,6 +12,9 @@
         </x-slot>
 
         <x-slot name="content">
+            <x-jet-action-message class="mr-3" on="campaign_failed">
+                {{ __('Campaign failed to created. No Provider active is found. Please ask your Administrator.') }}
+            </x-jet-action-message>
             <div class="col-span-6 sm:col-span-4 p-3">
                 <x-jet-label for="title" value="{{ __('Title') }}" />
                 <x-jet-input id="title" type="text" class="mt-1 block w-full" wire:model.defer="title" autofocus />

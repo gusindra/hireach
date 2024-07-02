@@ -14,6 +14,7 @@ use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
+use Vinkla\Hashids\Facades\Hashids;
 
 class ProcessChatApi implements ShouldQueue
 {
@@ -43,16 +44,15 @@ class ProcessChatApi implements ShouldQueue
     public function handle()
     {
         //Log::debug($this->service);
-        //filter OTP & Non OTP
-        $this->MKProvider($this->request);
-        //if($this->request['provider']=='provider1'){
-        //}elseif($this->request['provider']=='provider2'){
-        //    $this->EMProvider($this->data);
-        //}
+        if($this->request['provider']=='provider2' && strpos(strtolower($this->request['channel']), 'long') !== false){
+            $this->EMProvider($this->data);
+        }elseif($this->request['provider']=='provider1' && strpos(strtolower($this->request['channel']), 'sms') !== false){
+            $this->MKProvider($this->request);
+        }
     }
 
     private function MKProvider($request){
-        $msg    = ''; 
+        $msg    = '';
         try{
             $sid    = $this->user->api_key;//"AC6c598c40bbbb22a9c3cb76fd7baa67b8";
             $token  = $this->user->server_key;//"500107131bbdb25dee1992053e93409f";
@@ -60,9 +60,9 @@ class ProcessChatApi implements ShouldQueue
 
             // $password = base64_encode($this->user->credential.':'.$this->user->api_key);
             $password = $this->user->api_key;
-    
+
             $url = 'https://www.etracker.cc/OTT/api/Send';
-    
+
             if(@$request['type']==0){
                 $response = Http::withBasicAuth($this->user->credential, $password)->accept('application/xml')->post($url, [
                     'channel' => 'whatsapp',
@@ -177,7 +177,7 @@ class ProcessChatApi implements ShouldQueue
         $content = 'test enjoymov api';
         $msgChannel = 'WA';
         $countryCode = '62';
- 
+
         $code = str_split($request->to, 2);
         $countryCode = $code[0];
         $phone = substr($request->to, 2);
@@ -196,12 +196,13 @@ class ProcessChatApi implements ShouldQueue
             'msgChannel' => $msgChannel,
             "msgId" => $msg->id
         ]);
-        
-        //$msg = $this->saveResult('progress'); 
+
+        //$msg = $this->saveResult('progress');
     }
 
     private function saveResult($msg){
         $user_id = $this->user->id;
+        $client = $this->chechClient("400", $data);
         $request = Chat::create([
             'source_id' => Hashids::encode($this->client->id),
             'reply'     => $this->request['text'],
@@ -229,6 +230,13 @@ class ProcessChatApi implements ShouldQueue
         return $request;
     }
 
+    /**
+     * chechClient
+     *
+     * @param  mixed $status
+     * @param  mixed $msisdn
+     * @return object App\Models\Client
+     */
     private function chechClient($status, $msisdn=null){
         $user_id = $this->user->id;
         if($status=="200"){

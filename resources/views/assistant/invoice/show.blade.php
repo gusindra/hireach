@@ -122,9 +122,7 @@
                 <iframe class="md:col-span-12 lg:col-span-4 w-full h-screen"
                     src="/admin/commercial/{{ $order->id }}/invoice/print"></iframe>
 
-                <div class="justify-between lg:visible md:invisible">
-
-                </div>
+                <div class="justify-between lg:visible md:invisible"></div>
             </div>
         </div>
     </div>
