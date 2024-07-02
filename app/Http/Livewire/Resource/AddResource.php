@@ -34,7 +34,7 @@ class AddResource extends Component
     public $from;
     public $type;
     public $otp;
-    public $selectedContact;
+
     public $to;
     public $providers;
     public $selectTo;
@@ -44,6 +44,11 @@ class AddResource extends Component
     public $fromList = [];
     public $modalActionVisible = false;
     public $input;
+    public $contacts = [];
+    public $audiences = [];
+    public $selectedContact = '';
+    public $search = '';
+
 
     /**
      * mount
@@ -73,7 +78,74 @@ class AddResource extends Component
         if ($user) {
             $this->providers = ProviderUser::where('user_id', $user->id)->get();
         }
+
+        $this->contacts = Client::orderBy('created_at', 'desc')->where('user_id', auth()->user()->currentTeam->user_id)->limit(5)->get();
+        $this->audiences = Audience::orderBy('created_at', 'desc')->where('user_id', auth()->user()->currentTeam->user_id)->get();
     }
+
+    public function updatedSearch()
+    {
+
+        if ($this->selectTo == 'from_audience') {
+            if ($this->search) {
+                $this->audiences = Audience::where('name', 'like', '%' . $this->search . '%')
+                    ->limit(5)
+                    ->get();
+            } else {
+                $this->audiences = [];
+            }
+        } elseif ($this->selectTo == 'from_contact') {
+            if ($this->search) {
+                $this->contacts = Client::where(function ($query) {
+                    $query->where('name', 'like', '%' . $this->search . '%')
+                        ->orWhere('email', 'like', '%' . $this->search . '%')
+                        ->orWhere('phone', 'like', '%' . $this->search . '%');
+                })
+                    ->limit(5)
+                    ->get();
+            } else {
+                $this->contacts = [];
+            }
+        }
+    }
+
+    public function selectAudience($id)
+    {
+        $audience = Audience::find($id);
+        $this->selectedAudience = $id;
+        $this->search = $audience->name;
+
+        if ($id) {
+            $selectedAudienceId = $this->selectedAudience;
+
+            $clientIds = AudienceClient::where('audience_id', $selectedAudienceId)->pluck('client_id');
+
+            if ($this->channel == 'email') {
+                $this->to = Client::whereIn('uuid', $clientIds)->pluck('email')->implode(',');
+            } elseif ($this->channel != 'email') {
+                $this->to = Client::whereIn('uuid', $clientIds)->pluck('phone')->implode(',');
+            }
+        } else {
+            $this->clients = [];
+        }
+    }
+
+
+
+    public function selectContact($value)
+    {
+        $this->selectedContact = $value;
+        $this->search = $value;
+
+        if ($this->channel == 'email') {
+            $this->to = $value;
+        } else {
+            $this->to = $value;
+        }
+    }
+
+
+
 
     /**
      * actionShowModal
@@ -153,7 +225,7 @@ class AddResource extends Component
 
             if ($this->channel == 'email') {
                 $to = Client::whereIn('uuid', $clientIds)->pluck('email')->implode(',');
-            } elseif ($this->channel == 'wa' || $this->channel == 'sm' || $this->channel == 'pl' || $this->channel == 'waba' || $this->channel == 'wc' || $this->channel == 'webchat') {
+            } elseif ($this->channel != 'email') {
                 $to = Client::whereIn('uuid', $clientIds)->pluck('phone')->implode(',');
             }
         }
@@ -311,6 +383,7 @@ class AddResource extends Component
     public function updatedSelectTo()
     {
         $this->reset('to');
+        $this->reset('search');
     }
 
     /**
@@ -338,7 +411,7 @@ class AddResource extends Component
 
             if ($this->channel == 'email') {
                 $this->to = Client::whereIn('uuid', $clientIds)->pluck('email')->implode(',');
-            } elseif ($this->channel == 'wa' || $this->channel == 'sm' || $this->channel == 'pl' || $this->channel == 'webchat') {
+            } elseif ($this->channel != 'email') {
                 $this->to = Client::whereIn('uuid', $clientIds)->pluck('phone')->implode(',');
             }
         } else {
@@ -413,6 +486,7 @@ class AddResource extends Component
             $this->fromList[1] = auth()->user()->email;
             $this->from = 'noreply@hireach.archeeshop.com';
         } elseif (
+
             strpos(strtolower($this->channel), 'long_wa') !== false ||
             strpos(strtolower($this->channel), 'long_sms') !== false ||
             strtolower($this->channel) == 'sm' ||
