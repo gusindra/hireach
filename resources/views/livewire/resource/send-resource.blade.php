@@ -4,7 +4,7 @@
             <div class="col-span-2 lg:col-span-2 p-3 bg-gray-100 border-1 rounded-lg space-y-2">
                 <!-- Channel -->
                 <div class="col-span-6 sm:col-span-4">
-                    <x-jet-label for="channel" value="{{ __('Channel') }}" class="text-xs" />
+                    <x-jet-label for="channel" value="{{ __('Channel') }}" />
                     <select name="channel" id="channel"
                         class="border-gray-300 dark:bg-slate-800 dark:text-slate-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 rounded-md shadow-sm mt-1 block w-full"
                         wire:model.debunce.800ms="channel">
@@ -60,10 +60,10 @@
                                 class="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300 rounded">
                         </div>
                         <div class="ml-3 text-sm">
-                            <label for="is_enabled" class="font-medium text-gray-700 dark:text-slate-300 text-xs">Sending
+                            <label for="is_enabled" class="font-medium text-gray-700 dark:text-slate-300">Sending
                                 OTP
                                 (One Time Password) ?</label>
-                            <p class="text-gray-500 dark:text-slate-300 text-xs">Tick if you send OTP Message</p>
+                            <p class="text-gray-500 dark:text-slate-300">Tick if you send OTP Message</p>
                         </div>
                     </div>
                 </div>
@@ -135,9 +135,9 @@
                             <select wire:model="selectTo" id="selectTo"
                                 class="form-select block w-full mt-1 rounded-md shadow-sm border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
                                 <option value="">Please select the recipient</option>
-                                <option value="manual" selected>Manual Add</option>
-                                <option value="from_contact">From Contact</option>
-                                <option value="from_audience">From Audience</option>
+                                <option value="manual" selected>Manual</option>
+                                <option value="from_contact">From contact</option>
+                                <option value="from_audience">From audience</option>
                             </select>
                         </div>
                     </div>
@@ -156,23 +156,30 @@
                                     <input type="text" id="search"
                                         class="form-input block w-full mt-1 rounded-md shadow-sm border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
                                         wire:model.debounce.300ms="search" @focus="open = true" @input="open = true"
-                                        @click.away="open = false" placeholder="{{$search==''?'No Contact Add':''}}">
-                                        <x-jet-action-message class="mr-3" on="loading">
-                                            <svg class="animate-spin mr-3 h-5 w-5 text-gray-300 absolute right-0 -mt-8" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                                            </svg>
-                                        </x-jet-action-message>
+                                        @click="open = true" @click.away="open = false"
+                                        placeholder="{{ $search == '' ? 'No Contact Add' : '' }}">
+                                    <x-jet-action-message class="mr-3" on="loading">
+                                        <svg class="animate-spin mr-3 h-5 w-5 text-gray-300 absolute right-0 -mt-8"
+                                            xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                            <circle class="opacity-25" cx="12" cy="12" r="10"
+                                                stroke="currentColor" stroke-width="4"></circle>
+                                            <path class="opacity-75" fill="currentColor"
+                                                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+                                            </path>
+                                        </svg>
+                                    </x-jet-action-message>
                                     <input type="hidden" id="selectedContact" name="selectedContact"
-                                        wire:model="selectedContact">
-                                    <div
+                                        wire:model="{{ $channel == 'email' ? 'selectedEmail' : 'selectedPhone' }}">
+                                    <div x-show="open"
                                         class="absolute z-10 w-full mt-1 bg-white rounded-md shadow-lg">
-                                        <ul class="overflow-auto h-40 {{$selectedContact==''?'block':'hidden'}}">
+                                        <ul
+                                            class="overflow-auto h-40 {{ $selectedContact == '' ? 'block' : 'hidden' }}">
                                             @forelse ($contactArray as $contact)
                                                 <li wire:key="{{ $loop->index }}"
-                                                    wire:click="selectContact('{{ $channel == 'email' ? $contact->email : $contact->phone }}');"
+                                                    wire:click="{{ $channel == 'email' ? "selectContact('$contact->email')" : "selectContact('$contact->phone')" }}"
                                                     class="cursor-pointer px-4 py-2 hover:bg-indigo-200">
-                                                    {{ $contact->name!=''? $contact->name.' - ' : '' }} {{ $contact->email ?? $contact->phone }}
+                                                    {{ $contact->name != '' ? $contact->name . ' - ' : '' }}
+                                                    {{ $channel == 'email' ? $contact->email : $contact->phone }}
                                                 </li>
                                             @empty
                                                 <li class="px-4 py-2">No results found</li>
@@ -182,36 +189,33 @@
                                 </div>
                             </div>
                         @else
-                            <p class="text-red-600 text-sm">Please select Channel first to choose contact !</p>
+                            <p class="text-red-600 text-sm">Please select Channel first to choose contact!</p>
                         @endif
                     @endif
 
+
+
                     @if ($selectTo == 'from_audience')
-                        @if ($channel == 'email' || $channel != 'email')
+                        @if ($channel == 'email')
                             <div class="mb-4">
                                 <label for="audience"
                                     class="block font-medium text-sm text-gray-700 dark:text-slate-300">Select
                                     Audience:</label>
-                                <div x-data="{ open: false }" class="relative">
+                                <div x-data="{ open: false }" class="relative mt-3">
                                     <input type="text" id="search" placeholder="Select Audience"
                                         class="form-input block w-full mt-1 rounded-md shadow-sm border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
                                         wire:model.debounce.300ms="search" @focus="open = true" @input="open = true"
                                         @click.away="open = false">
-                                    <x-jet-action-message class="mr-3" on="loading">
-                                        <svg class="animate-spin mr-3 h-5 w-5 text-gray-300 absolute right-0 -mt-8" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                                        </svg>
-                                    </x-jet-action-message>
+
                                     <input type="hidden" id="selectedAudience" name="selectedAudience"
                                         wire:model="selectedAudience">
 
                                     <div x-show="open"
-                                        class="absolute z-10 w-full mt-1 bg-white rounded-md shadow-lg">
+                                        class="absolute z-10 w-full mt-1 bg-white rounded-md shadow-lg max-h-40 overflow-y-auto">
                                         <ul>
                                             @forelse ($audiences as $audience)
                                                 <li wire:key="{{ $audience->id }}"
-                                                    wire:click="selectAudience({{ $audience->id }}); open = false;"
+                                                    @mousedown.prevent="$wire.selectAudience({{ $audience->id }}); open = false;"
                                                     class="cursor-pointer px-4 py-2 hover:bg-indigo-200">
                                                     {{ $audience->name }}
                                                 </li>
@@ -226,9 +230,9 @@
                             @if ($to)
                                 <div class="col-span-2">
                                     <label class="block font-medium text-sm text-gray-700 dark:text-slate-300">Audience
-                                        Clients ({{count(explode(',',$to))}})</label>
+                                        Clients</label>
                                     <div class="overflow-x-auto">
-                                        <div class="overflow-x-auto border border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 rounded-md shadow-sm dark:bg-slate-800 dark:text-slate-300 mt-1 block w-full p-3"
+                                        <div class="border border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 rounded-md shadow-sm dark:bg-slate-800 dark:text-slate-300 mt-1 block w-full p-3"
                                             wire:model="to">
                                             {{ $to }}
                                         </div>
@@ -241,7 +245,7 @@
                                     <label for="audience"
                                         class="block font-medium text-sm text-gray-700 dark:text-slate-300">Select
                                         Audience:</label>
-                                    <div x-data="{ open: false }" class="relative">
+                                    <div x-data="{ open: false }" class="relative mt-3">
                                         <input type="text" id="search" placeholder="Select Audience"
                                             class="form-input block w-full mt-1 rounded-md shadow-sm border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
                                             wire:model.debounce.300ms="search" @focus="open = true"
@@ -251,7 +255,7 @@
                                             wire:model="selectedAudience">
 
                                         <div x-show="open"
-                                            class="absolute z-10 w-full mt-1 bg-white rounded-md shadow-lg">
+                                            class="absolute z-10 w-full mt-1 bg-white rounded-md shadow-lg max-h-40 overflow-y-auto">
                                             <ul>
                                                 @forelse ($audiences as $audience)
                                                     <li wire:key="{{ $audience->id }}"
@@ -267,12 +271,13 @@
                                     </div>
                                 </div>
                             </div>
+
                             @if ($to)
                                 <div class="col-span-2">
                                     <label class="block font-medium text-sm text-gray-700 dark:text-slate-300">Audience
-                                        Clients ({{count(explode(',',$to))}})</label>
+                                        Clients</label>
                                     <div class="overflow-x-auto">
-                                        <div class="overflow-x-auto border border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 rounded-md shadow-sm dark:bg-slate-800 dark:text-slate-300 mt-1 block w-full p-3"
+                                        <div class="border border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 rounded-md shadow-sm dark:bg-slate-800 dark:text-slate-300 mt-1 block w-full p-3"
                                             wire:model="to">
                                             {{ $to }}
                                         </div>
@@ -280,10 +285,10 @@
                                 </div>
                             @endif
                         @else
-                            <p class="text-red-600 text-sm">Please select Channel first to choose Audience !</p>
+                            <p class="text-red-600 text-sm">Please select Channel first to choose Audience!</p>
                         @endif
-
                     @endif
+
                 </div>
                 <x-jet-input-error for="to" class="mt-2 mb-2" />
             </div>
@@ -305,6 +310,7 @@
             </div>
         </div>
     @else
+        <!-- This example requires Tailwind CSS v2.0+ -->
         <div class=" hidden bg-indigo-600 mb-4">
             <div class="w-full mx-auto p-3 px-3">
                 <div class="flex items-center justify-between flex-wrap">
@@ -573,9 +579,10 @@
                                 <x-textarea wire:model="to" class="mt-1 block w-full"></x-textarea>
                             @endif
                             @if ($selectTo == 'from_contact')
+
                                 @if ($channel == 'email')
                                     <div class="mb-4">
-                                        <label for="contact" class="block text-gray-700">Select contact:</label>
+                                        <label for="contact" class="block text-gray-700">Pilih Kontak:</label>
                                         <select wire:model="selectedContact" id="contact"
                                             class="form-multiselect block w-full mt-1 rounded-md shadow-sm border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
                                             <option value="">Select Contact</option>
@@ -587,7 +594,7 @@
                                     </div>
                                 @elseif($channel == 'wa' || $channel == 'sm' || $channel == 'pl' || $channel == 'waba' || $channel == 'wc')
                                     <div class="mb-4">
-                                        <label for="contact" class="block text-gray-700">Select contact:</label>
+                                        <label for="contact" class="block text-gray-700">Pilih Kontak:</label>
                                         <select wire:model="selectedContact" id="contact"
                                             class="form-multiselect block w-full mt-1 rounded-md shadow-sm border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
                                             <option value="">Select Contact</option>
@@ -603,6 +610,7 @@
                             @endif
 
                             @if ($selectTo == 'from_audience')
+
                                 @if ($channel == 'email')
                                     <div class="mb-4">
                                         <label for="audience" class="block text-gray-700">Select Audience:</label>
