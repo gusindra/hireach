@@ -39,12 +39,13 @@ class AddResource extends Component
     public $providers;
     public $selectTo;
     public $selectedAudience;
+    public $audienceDetail;
     public $modal;
     public $clients = [];
     public $fromList = [];
     public $modalActionVisible = false;
     public $input;
-    public $contacts = [];
+    public $contactArray = [];
     public $audiences = [];
     public $selectedContact = '';
     public $search = '';
@@ -83,12 +84,20 @@ class AddResource extends Component
         $this->audiences = Audience::orderBy('created_at', 'desc')->where('user_id', auth()->user()->currentTeam->user_id)->get();
     }
 
+    /**
+     * updatedSearch
+     *
+     * @return void
+     */
     public function updatedSearch()
     {
-
+        $this->emit('loading');
+        $this->selectedContact = "";
+        $channel = $this->channel;
         if ($this->selectTo == 'from_audience') {
             if ($this->search) {
                 $this->audiences = Audience::where('name', 'like', '%' . $this->search . '%')
+                    ->where('user_id', auth()->user()->id)
                     ->limit(5)
                     ->get();
             } else {
@@ -96,56 +105,75 @@ class AddResource extends Component
             }
         } elseif ($this->selectTo == 'from_contact') {
             if ($this->search) {
-                $this->contacts = Client::where(function ($query) {
-                    $query->where('name', 'like', '%' . $this->search . '%')
-                        ->orWhere('email', 'like', '%' . $this->search . '%')
-                        ->orWhere('phone', 'like', '%' . $this->search . '%');
+                $this->contactArray = Client::where(function ($query) use ($channel) {
+                    if($channel == 'email'){
+                        $query->where('name', 'like', '%' . $this->search . '%')
+                            ->orWhere('email', 'like', '%' . $this->search . '%');
+                    }elseif($channel != 'email'){
+                        $query->where('name', 'like', '%' . $this->search . '%')
+                            ->orWhere('email', 'like', '%' . $this->search . '%')
+                            ->orWhere('phone', 'like', '%' . $this->search . '%');
+                    }
                 })
-                    ->limit(5)
-                    ->get();
+                ->where('user_id', auth()->user()->id)
+                ->limit(5)
+                ->get();
             } else {
-                $this->contacts = [];
+                $this->contactArray = [];
             }
         }
     }
 
+    /**
+     * selectAudience
+     *
+     * @param  mixed $id
+     * @return void
+     */
     public function selectAudience($id)
     {
-        $audience = Audience::find($id);
+        $this->audienceDetail = Audience::find($id);
         $this->selectedAudience = $id;
-        $this->search = $audience->name;
+        $this->search = $this->audienceDetail->name;
 
         if ($id) {
             $selectedAudienceId = $this->selectedAudience;
 
             $clientIds = AudienceClient::where('audience_id', $selectedAudienceId)->pluck('client_id');
-
             if ($this->channel == 'email') {
-                $this->to = Client::whereIn('uuid', $clientIds)->pluck('email')->implode(',');
+                $this->to = Client::whereNotNull('email')->whereIn('uuid', $clientIds)->pluck('email')->implode(',');
             } elseif ($this->channel != 'email') {
-                $this->to = Client::whereIn('uuid', $clientIds)->pluck('phone')->implode(',');
+                $this->to = Client::whereNotNull('phone')->whereIn('uuid', $clientIds)->pluck('phone')->implode(',');
             }
         } else {
             $this->clients = [];
         }
     }
 
-
-
+    /**
+     * selectContact
+     *
+     * @param  mixed $value
+     * @return void
+     */
     public function selectContact($value)
     {
-        $this->selectedContact = $value;
-        $this->search = $value;
+        // dd($value);
+        $this->selectedContact = "";
+        if($value!=""){
+            $this->selectedContact = $value;
+            $this->search = $value;
 
-        if ($this->channel == 'email') {
-            $this->to = $value;
-        } else {
-            $this->to = $value;
+            if ($this->channel == 'email') {
+                $this->to = $value;
+            } else {
+                $this->to = $value;
+            }
+        }else{
+            $this->search = "";
         }
+        // dd($value);
     }
-
-
-
 
     /**
      * actionShowModal
@@ -200,7 +228,7 @@ class AddResource extends Component
         $this->templateId = $value;
         $template = Template::with('actions')->find($value);
         foreach ($template->actions as $action) {
-            $this->text = $this->text . '<div class="bg-green-200 p-3 rounded-lg my-4">' . $action->message . '</div>';
+            $this->text = $this->text . '<div class="bg-green-200 p-3 rounded-lg">' . $action->message . '</div>';
         }
     }
 
@@ -211,10 +239,8 @@ class AddResource extends Component
      */
     public function sendResource()
     {
-
-
         $this->validate();
-
+        dd($this->to);
         if ($this->selectTo === 'manual') {
             $to = $this->to;
         } elseif ($this->selectTo === 'from_contact') {
@@ -224,9 +250,9 @@ class AddResource extends Component
             $clientIds = AudienceClient::where('audience_id', $selectedAudienceId)->pluck('client_id');
 
             if ($this->channel == 'email') {
-                $to = Client::whereIn('uuid', $clientIds)->pluck('email')->implode(',');
+                $to = Client::whereNotNull('email')->whereIn('uuid', $clientIds)->pluck('email')->implode(',');
             } elseif ($this->channel != 'email') {
-                $to = Client::whereIn('uuid', $clientIds)->pluck('phone')->implode(',');
+                $to = Client::whereNotNull('phone')->whereIn('uuid', $clientIds)->pluck('phone')->implode(',');
             }
         }
         $to = $this->to;
@@ -326,7 +352,6 @@ class AddResource extends Component
             }
         }
 
-
         $this->emit('resource_saved');
     }
 
@@ -335,7 +360,7 @@ class AddResource extends Component
      *
      * @param  mixed $data
      * @param  mixed $credential
-     * @return json
+     * @return void
      */
     public function callJobResource($data, $credential = null)
     {
@@ -408,12 +433,12 @@ class AddResource extends Component
             $selectedAudienceId = $this->selectedAudience;
 
             $clientIds = AudienceClient::where('audience_id', $selectedAudienceId)->pluck('client_id');
-
             if ($this->channel == 'email') {
-                $this->to = Client::whereIn('uuid', $clientIds)->pluck('email')->implode(',');
+                $this->to = Client::whereNotNull('email')->whereIn('uuid', $clientIds)->pluck('email')->implode(',');
             } elseif ($this->channel != 'email') {
-                $this->to = Client::whereIn('uuid', $clientIds)->pluck('phone')->implode(',');
+                $this->to = Client::whereNotNull('phone')->whereIn('uuid', $clientIds)->pluck('phone')->implode(',');
             }
+            dd($this->to);
         } else {
             $this->clients = [];
         }
@@ -428,7 +453,6 @@ class AddResource extends Component
      */
     private function chechClient($status, $request = null)
     {
-        dd($request['to']);
         $user_id = auth()->user()->id;
         $request['email'] = strpos($request['to'], '@') ? $request['to'] : '';
         $request['phone'] = !strpos($request['to'], '@') ? $request['to'] : '';
@@ -447,7 +471,7 @@ class AddResource extends Component
      * campaignAdd
      *
      * @param  mixed $request
-     * @return void
+     * @return object App\Models\Campaign
      */
     private function campaignAdd($request)
     {
