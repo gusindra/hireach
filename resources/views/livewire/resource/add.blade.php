@@ -21,9 +21,11 @@
         <x-slot name="footer">
         <a class="inline-flex items-center border border-transparent rounded-md h-8 p-4 mt-4 text-xs text-blue-800 disabled:opacity-25 transition"
             href="{{ route('show.resource') }}?resource={{$way}}">Go to Form Resource {{$way}}Way</a>
-            <x-jet-secondary-button wire:click="$toggle('modalActionVisible')" wire:loading.attr="disabled">
+        <button class="inline-flex items-center border border-transparent rounded-md h-8 p-4 mt-4 text-xs text-blue-800 disabled:opacity-25 transition cursor-pointer"
+            href="#" wire:click="$toggle('modalActionVisible')">Cancel</button>
+            <!-- <x-jet-secondary-button wire:click="$toggle('modalActionVisible')" wire:loading.attr="disabled">
                 {{ __('Cancel') }}
-            </x-jet-secondary-button>
+            </x-jet-secondary-button> -->
         </x-slot>
     </x-jet-dialog-modal>
 </div>
