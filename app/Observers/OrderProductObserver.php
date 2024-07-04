@@ -23,7 +23,9 @@ class OrderProductObserver
             $order = Order::find($request->model_id);
             $billing = Billing::where('order_id', $order->id);
             if ($order) {
-                $subTotal = $request->where('name', 'Topup')->latest()->first();
+                // $subTotal = $request->where('name', 'Topup')->latest()->first();
+                $subTotal = $request->latest()->first();
+
 
                 $order->update([
                     'total' => $subTotal->price,
