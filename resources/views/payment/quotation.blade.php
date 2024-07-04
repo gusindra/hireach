@@ -21,12 +21,6 @@
                 </div>
             </div>
         </div>
-        <div class="col-span-12 px-3 ml-24 mt-2">
-            <div class="w-full mx-auto sm:px-6 lg:px-8">
-                <div class="overflow-hidden sm:rounded-lg">
-                    @livewire('payment.history')
-                </div>
-            </div>
-        </div>
+
         <x-jet-section-border />
 </x-app-layout>

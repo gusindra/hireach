@@ -29,5 +29,5 @@
             </div>
         </div>
     </div>
-    <x-jet-section-border/>
+    <x-jet-section-border />
 </x-app-layout>
