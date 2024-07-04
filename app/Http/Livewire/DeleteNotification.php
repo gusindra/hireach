@@ -4,39 +4,34 @@ namespace App\Http\Livewire;
 
 use App\Models\Notice;
 use Livewire\Component;
-use Mediconesystems\LivewireDatatables\Http\Livewire\LivewireDatatable;
 
 class DeleteNotification extends Component
 {
+    public $notificationId;
     public $notification;
     public $modalDeleteVisible = false;
-    public $actionShowDeleteModal = false;
 
     public function mount($id)
     {
-
         $this->notification = Notice::withTrashed()->find($id);
     }
 
-    public function delete($id)
+    public function showDeleteModal($id)
     {
-        $notification = Notice::findOrFail($id);
-        $notification->delete();
-        $notification->update(['status' => 'deleted']);
-        $this->emit('LivewireDatatable');
+        $this->notificationId = $id;
+        $this->modalDeleteVisible = true;
+    }
+
+    public function deleteNotification()
+    {
+        Notice::destroy($this->notificationId);
+        $this->notification->update(['status' => 'deleted']);
+
         $this->modalDeleteVisible = false;
-        $this->redirect('notif-center');
+
+        $this->emit('notificationDeleted');
+        return redirect()->route('notification');
     }
-
-    public function actionShowDeleteModal()
-    {
-
-        if ($this->notification && $this->notification->status != 'deleted') {
-            $this->modalDeleteVisible = true;
-        }
-    }
-
-
 
     public function render()
     {
