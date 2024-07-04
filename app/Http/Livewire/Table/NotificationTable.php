@@ -14,7 +14,7 @@ class NotificationTable extends LivewireDatatable
 {
     public $model = Notice::class;
     public $filterDate = null;
-    public $statusFilter ='All';
+    public $statusFilter = 'All';
 
 
     /**
@@ -26,9 +26,9 @@ class NotificationTable extends LivewireDatatable
     {
         $query = Notice::query();
 
-        if(auth()->user()->isSuper || (auth()->user()->team && auth()->user()->team->role == 'superadmin')){
+        if (auth()->user()->isSuper || (auth()->user()->team && auth()->user()->team->role == 'superadmin')) {
             $query = $query->withTrashed();
-        }else{
+        } else {
             $query = $query->where('user_id', auth()->user()->id);
         }
         // if ($this->filterDate) {
@@ -94,16 +94,16 @@ class NotificationTable extends LivewireDatatable
             }),
             Column::callback(['status', 'id'], function ($status, $id) {
                 $html = '<div class="flex">';
-                $html = $html.view('datatables::link', [
+                $html = $html . view('datatables::link', [
                     'href' => "/notif-center/" . $id,
                     'slot' => 'View'
                 ]);
                 $disabled = $status === 'deleted' ? 'disabled' : '';
-                $html = $html. view('tables.delete-notification', [
+                $html = $html . view('tables.delete-notification', [
                     'id' => $id,
                     'disabled' => $disabled,
                 ]);
-                return $html."</div>";
+                return $html . "</div>";
             })->label('Actions')
         ];
     }
@@ -127,16 +127,16 @@ class NotificationTable extends LivewireDatatable
             })->label('Status'),
             Column::callback(['status', 'id'], function ($status, $id) {
                 $html = '<div class="flex">';
-                $html = $html.view('datatables::link', [
+                $html = $html . view('datatables::link', [
                     'href' => "/notif-center/" . $id,
                     'slot' => 'View'
                 ]);
                 $disabled = $status === 'deleted' ? 'disabled' : '';
-                $html = $html. view('datatables::delete-notification', [
+                $html = $html . view('tables.delete-notification', [
                     'id' => $id,
                     'disabled' => $disabled,
                 ]);
-                return $html."</div>";
+                return $html . "</div>";
             })->label('Actions'),
         ];
     }

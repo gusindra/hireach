@@ -37,45 +37,44 @@ class ProjectAssistance extends Command
     {
         // HANLDE CONTRACT AND UPDATE PROJECT
         $ex_contracts = Contract::where('status', 'approved')->whereDate('expired_at', '<=', Carbon::now());
-        if($ex_contracts->count()>0){
+        if ($ex_contracts->count() > 0) {
             // CHANGE STATUS CONTRACT & PROJECT
             $ex_contracts->update([
                 'status' => 'expired'
             ]);
-            foreach($ex_contracts->get() as $contract){
-                foreach ($contract->userApproval as $flow){
-                    $this->notice($ex_contracts, $flow->user_id, $contract->title. ' is expired');
+            foreach ($ex_contracts->get() as $contract) {
+                foreach ($contract->userApproval as $flow) {
+                    $this->notice($ex_contracts, $flow->user_id, $contract->title . ' is expired');
                 }
             }
         }
         // CREATE NOTIFICATION CONTRACT
         $next_contracts = Contract::where('status', 'approved')->whereDate('expired_at', '<=', Carbon::now()->addDays('30'))->get();
-        if($next_contracts){
+        if ($next_contracts) {
             // create app notif // email notif to admin
-            foreach($next_contracts as $contract){
+            foreach ($next_contracts as $contract) {
                 // $this->info($contract);
-                foreach ($contract->userApproval as $flow){
+                foreach ($contract->userApproval as $flow) {
                     $count = Notice::where('user_id', $flow->user_id)->where('status', 'unread')->where('model', 'Contract')->where('model_id', $contract->id)->count();
-                    if($count==0){
-                        $this->notice($contract, $flow->user_id, 'Contract : '.$contract->title. ' will expire in next 30 days.');
+                    if ($count == 0) {
+                        $this->notice($contract, $flow->user_id, 'Contract : ' . $contract->title . ' will expire in next 30 days.');
                     }
                 }
-
             }
         }
 
         // HANDDLE EXPIRED QUOTATION & NOTIF
         $ex_quote = Quotation::whereNotIn('status', ['reviewed', 'expired', 'draft'])->whereDate('date', '<=', Carbon::now());
-        foreach($ex_quote->get() as $quote){
+        foreach ($ex_quote->get() as $quote) {
             $expiredDate = $quote->expired_date;
-            if($expiredDate < Carbon::now()){
-                if(!$quote->order){
+            if ($expiredDate < Carbon::now()) {
+                if (!$quote->order) {
                     $quotation = Quotation::find($quote->id)->update([
                         'status' => 'expired'
                     ]);
-                    if($quotation->userApproval){
-                        foreach ($quotation->userApproval as $flow){
-                            $this->notice($quotation, $flow->user_id, $quotation->name. ' is expired');
+                    if ($quotation->userApproval) {
+                        foreach ($quotation->userApproval as $flow) {
+                            $this->notice($quotation, $flow->user_id, $quotation->name . ' is expired');
                         }
                     }
                 }
@@ -84,12 +83,12 @@ class ProjectAssistance extends Command
 
         // HANDLE ORDER TYPE SAAS TO GENERATE BILLING / INVOICE
         $invoice = 0;
-        $generate_inv = Order::whereIn('status', ['active','unpaid', 'paid'])->where('type', 'saas');
-        foreach($generate_inv->get() as $order){
-            if($order->lastInvoice->id > 0){
+        $generate_inv = Order::whereIn('status', ['active', 'unpaid', 'paid'])->where('type', 'saas');
+        foreach ($generate_inv->get() as $order) {
+            if ($order->lastInvoice->id > 0) {
                 // Create new Invoice for this month
                 $lastInvoice = Carbon::parse($order->lastInvoice->period)->format('m-Y');
-                if($lastInvoice != date('m-Y')){
+                if ($lastInvoice != date('m-Y')) {
                     Billing::create([
                         'uuid'          => Str::uuid(),
                         'status'        => 'unpaid',
@@ -100,7 +99,7 @@ class ProjectAssistance extends Command
                         'order_id'      => $order->id,
                         'period'        => date('Y-m-d')
                     ]);
-                    $invoice +=1;
+                    $invoice += 1;
                 }
             }
         }
@@ -111,7 +110,8 @@ class ProjectAssistance extends Command
         $this->info("Invoice Created: {$invoice}!");
     }
 
-    private function notice($model, $user_id, $message){
+    private function notice($model, $user_id, $message)
+    {
         Notice::create([
             'type' => 'app',
             'model' => class_basename($model),
