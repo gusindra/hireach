@@ -250,18 +250,50 @@
                 <x-jet-label for="selectTo" value="{{ __('Select To') }}" />
                 <select wire:model="selectTo" id="selectTo" @if ($campaign->status == 'started') disabled @endif
                     class="form-select mt-1 block w-full rounded-md shadow-sm border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
-                    <option disabled value="manual">Manual</option>
+                    <option value="manual">Manual</option>
                     <option value="audience">Audience</option>
                 </select>
             </div>
 
             @if ($selectTo === 'manual')
                 <div class="col-span-6 sm:col-span-4">
-                    <x-jet-label for="to" value="{{ __('To') }}" />
-                    <textarea id="to" rows="4" @if ($campaign->status == 'started') disabled @endif
-                        class="form-textarea mt-1 block w-full rounded-md shadow-sm border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
-                        wire:model.defer="to"></textarea>
-                    <x-jet-input-error for="to" class="mt-2" />
+                    <div class="relative grid grid-cols-2 gap-4">
+                        <div>
+                            <x-jet-label for="to" value="{{ __('To') }}" />
+                        </div>
+                        <div>
+                            <label class="block mb-2 text-right text-sm font-medium text-gray-900 dark:text-white"
+                                for="file_input">
+                                Upload Contact
+                            </label>
+                        </div>
+                    </div>
+
+
+                    <div class="p-4 sm:p-1 rounded border w-full sm:w-auto">
+                        <div class="flex flex-col sm:flex-row items-center space-y-2 sm:space-y-0 sm:space-x-4">
+                            <!-- Label for browsing -->
+                            <label for="file"
+                                class="cursor-pointer px-4 py-2 bg-gray-200 dark:bg-gray-600 text-gray-700 dark:text-gray-300 rounded-l flex items-center">
+                                Browse
+                            </label>
+
+                            <!-- Hidden file input -->
+                            <input id="file" type="file" wire:model="file" accept=".csv,.xlsx,.xls"
+                                class="hidden">
+
+                            <!-- Display selected file name -->
+                            <div class="flex items-center">
+                                <span class="text-sm font-medium text-gray-500 dark:text-gray-400 truncate">
+                                    <!-- Show selected file name or default text -->
+                                    {{ $file ? $file->getClientOriginalName() : 'Choose a file' }}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
+
+
                 </div>
             @elseif ($selectTo === 'audience')
                 <div class="col-span-6 sm:col-span-4">

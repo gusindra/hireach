@@ -9,6 +9,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 
 class importAudienceContact implements ShouldQueue
@@ -40,10 +41,18 @@ class importAudienceContact implements ShouldQueue
      */
     public function handle()
     {
-        foreach ($this->data as $row) {
-            $exists = Client::where('user_id', $this->userId)->where('phone', $row[1])->count();
+        if ($this->audienceId) {
+            AudienceClient::where('audience_id', $this->audienceId)->delete();
+        }
 
-            if ($exists == 0) {
+        foreach ($this->data as $row) {
+
+            $client = Client::where('user_id', $this->userId)
+                ->where('phone', $row[1])
+                ->first();
+
+
+            if (!$client) {
                 $client = Client::create([
                     'uuid'      => Str::uuid(),
                     'name'      => $row[0],
@@ -52,12 +61,14 @@ class importAudienceContact implements ShouldQueue
                     'user_id'   => $this->userId,
                     'created_at' => now()
                 ]);
-
-                AudienceClient::create([
-                    'audience_id' => $this->audienceId,
-                    'client_id'   => $client->uuid
-                ]);
             }
+
+
+            AudienceClient::create([
+                'audience_id' => $this->audienceId,
+                'client_id'   => $client->uuid,
+                'created_at' => now(),
+            ]);
         }
     }
 }
