@@ -48,16 +48,16 @@ class importAudienceContact implements ShouldQueue
         foreach ($this->data as $row) {
 
             $client = Client::where('user_id', $this->userId)
-                ->where('phone', $row[1])
+                ->where('phone', $row[0])
                 ->first();
 
 
             if (!$client) {
                 $client = Client::create([
                     'uuid'      => Str::uuid(),
-                    'name'      => $row[0],
-                    'phone'     => $row[1],
-                    'email'     => $row[2],
+                    'phone'     => $row[0],
+                    'email'     => $row[1],
+                    'name'      => $row[2],
                     'user_id'   => $this->userId,
                     'created_at' => now()
                 ]);

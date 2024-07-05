@@ -18,19 +18,19 @@ class ImportContact implements ToModel, WithStartRow
         return 2;
     }
     /**
-    * @param array $row
-    *
-    * @return \Illuminate\Database\Eloquent\Model|null
-    */
+     * @param array $row
+     *
+     * @return \Illuminate\Database\Eloquent\Model|null
+     */
     public function model(array $row)
     {
         $client = Client::firstOrCreate(
-            ['phone' => $row[1], 'user_id' => auth()->user()->id],
+            ['phone' => $row[0], 'user_id' => auth()->user()->id],
             [
                 'uuid'      => Str::uuid(),
-                'name'      => $row[0],
-                'email'     => $row[2],
-                'created_at'=> $row[3],
+                'email'     => $row[1],
+                'name'      => $row[2],
+                'created_at' => $row[3],
                 'title'     => $row[4],
                 'sender'    => $row[5],
                 'identity'  => $row[6],
@@ -41,10 +41,10 @@ class ImportContact implements ToModel, WithStartRow
             ]
         );
 
-        if($client){
+        if ($client) {
             $client->update([
-                'name'      => $row[0],
-                'email'     => $row[2],
+                'name'      => $row[2],
+                'email'     => $row[1],
                 'title'     => $row[4],
                 'sender'    => $row[5],
                 'identity'  => $row[6],

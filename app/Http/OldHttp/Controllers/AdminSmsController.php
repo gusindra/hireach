@@ -16,12 +16,12 @@ class AdminSmsController extends Controller
             // Your auth here
             $user = auth()->user();
 
-            if($user->super->first()){
-                if($user->super->first()->role=='superadmin'){
+            if ($user->super->first()) {
+                if ($user->super->first()->role == 'superadmin') {
                     return $next($request);
                 }
             }
-            if((auth()->user()->activeRole && str_contains(auth()->user()->activeRole->role->name, "Admin"))){
+            if ((auth()->user()->activeRole && str_contains(auth()->user()->activeRole->role->name, "Admin"))) {
                 return $next($request);
             }
             abort(404);
@@ -37,47 +37,48 @@ class AdminSmsController extends Controller
     }
 
     // show form to import file and show item
-    public function formImportStatus(){
+    public function formImportStatus()
+    {
         return view('report.import-sms-status');
     }
 
     // import file & syn
-    public function importStatus(Request $request){
+    public function importStatus(Request $request)
+    {
         //get file
-        $upload=$request->file('csv');
-        $filePath=$upload->getRealPath();
+        $upload = $request->file('csv');
+        $filePath = $upload->getRealPath();
         //open and read
-        $file=fopen($filePath, 'r');
+        $file = fopen($filePath, 'r');
 
-        $header= fgetcsv($file);
+        $header = fgetcsv($file);
 
         // dd($header);
         // $escapedHeader=[];
         //validate
         //dd($header);
         // foreach ($header as $key => $value) {
-            //     // dd($key);
-            //     $lheader=strtolower($value);
-            //     $pieces = explode("\t", $lheader);
-            //     foreach($pieces as $keyPie){
+        //     // dd($key);
+        //     $lheader=strtolower($value);
+        //     $pieces = explode("\t", $lheader);
+        //     foreach($pieces as $keyPie){
         //         $escapedItem=preg_replace('/[^a-z]/', '', $keyPie);
         //         array_push($escapedHeader, $escapedItem);
         //     }
         // }
         // dd($escapedHeader);
-        $updateData=0;
-        $unpassData=0;
-        $notMatch=0;
-        $escapedData=[];
+        $updateData = 0;
+        $unpassData = 0;
+        $notMatch = 0;
+        $escapedData = [];
 
         //looping through other columns
-        while($columns = fgetcsv($file, 2048, "\t"))
-        {
+        while ($columns = fgetcsv($file, 2048, "\t")) {
             array_push($escapedData, $columns);
         }
 
-        foreach($escapedData as $data){
-            if(array_key_exists("0", $data) && array_key_exists("2", $data) && array_key_exists("3", $data) && array_key_exists("6", $data)){
+        foreach ($escapedData as $data) {
+            if (array_key_exists("0", $data) && array_key_exists("2", $data) && array_key_exists("3", $data) && array_key_exists("6", $data)) {
                 $messageid = strip_tags($data["0"]);
                 $senderid = strip_tags($data["2"]);
                 $msisdn = strip_tags($data["3"]);
@@ -93,26 +94,26 @@ class AdminSmsController extends Controller
                 //     echo $key." ".$item;
                 // }
                 // return $data[6];
-                if($status=="DELIVERED"){
-                    $updateStatus ='dELIVERED';
-                    Log::debug($updateStatus." - ".$status);
-                }elseif($status=="UNDELIVERED"){
-                    $updateStatus ='unDELIVERED';
-                    Log::debug($updateStatus." - ".$status);
-                }else{
-                    $updateStatus ='aCCEPTED';
-                    Log::debug($updateStatus." - ".$status);
+                if ($status == "DELIVERED") {
+                    $updateStatus = 'dELIVERED';
+                    Log::debug($updateStatus . " - " . $status);
+                } elseif ($status == "UNDELIVERED") {
+                    $updateStatus = 'unDELIVERED';
+                    Log::debug($updateStatus . " - " . $status);
+                } else {
+                    $updateStatus = 'aCCEPTED';
+                    Log::debug($updateStatus . " - " . $status);
                 }
                 //ProcessSmsStatus::dispatch($request);
-                $updateData+=1;
-            }else{
+                $updateData += 1;
+            } else {
                 // return $data;
                 //echo 1;
                 //Log::debug($data);
-                $notMatch+=1;
+                $notMatch += 1;
             }
         }
         // dd($escapedData);
-        return view('report.import-sms-status', ["updated"=>$updateData,"unpass"=>$unpassData,"notmatch"=>$notMatch]);
+        return view('report.import-sms-status', ["updated" => $updateData, "unpass" => $unpassData, "notmatch" => $notMatch]);
     }
 }
