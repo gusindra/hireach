@@ -337,42 +337,43 @@ class Edit extends Component
     public function update($id, $formName = 'basic')
     {
 
-        // $this->formName = $formName;
-        // $this->validate();
+        $this->formName = $formName;
+        $this->validate();
+        if ($this->file) {
+            $filePath = $this->file->getRealPath();
 
-        $filePath = $this->file->getRealPath();
+            $mimeType = $this->file->getClientMimeType();
+            $data = [];
 
-        $mimeType = $this->file->getClientMimeType();
-        $data = [];
-
-        if ($mimeType == 'text/csv') {
-            $fileContents = file($filePath);
-            foreach ($fileContents as $key => $line) {
-                if ($key > 0) {
-                    $data[] = str_getcsv($line);
+            if ($mimeType == 'text/csv') {
+                $fileContents = file($filePath);
+                foreach ($fileContents as $key => $line) {
+                    if ($key > 0) {
+                        $data[] = str_getcsv($line);
+                    }
+                }
+            } else {
+                $rows = Excel::toArray([], $filePath)[0];
+                foreach ($rows as $key => $row) {
+                    if ($key > 0) {
+                        $data[] = $row;
+                    }
                 }
             }
-        } else {
-            $rows = Excel::toArray([], $filePath)[0];
-            foreach ($rows as $key => $row) {
-                if ($key > 0) {
-                    $data[] = $row;
-                }
+
+            if (empty($this->audience_id)) {
+                $this->audience = Audience::create([
+                    'name'        => $this->title,
+                    'description' => 'This Audience Created Automatically at Campaign',
+                    'user_id'     => auth()->user()->id,
+                ]);
+
+                $this->audience_id = $this->audience->id; // Set audience_id to the created audience's ID
             }
+
+            // Ensure $this->audience_id is set correctly
+            $data = importAudienceContact::dispatch($data, $this->audience_id, auth()->user()->id);
         }
-
-        if (empty($this->audience_id)) {
-            $this->audience = Audience::create([
-                'name'        => $this->title,
-                'description' => 'This Audience Created Automatically at Campaign',
-                'user_id'     => auth()->user()->id,
-            ]);
-
-            $this->audience_id = $this->audience->id; // Set audience_id to the created audience's ID
-        }
-
-        // Ensure $this->audience_id is set correctly
-        $data = importAudienceContact::dispatch($data, $this->audience_id, auth()->user()->id);
 
 
 
