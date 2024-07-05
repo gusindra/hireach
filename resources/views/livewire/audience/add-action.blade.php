@@ -40,7 +40,7 @@
                             <div class="py-2 align-middle inline-block min-w-full sm:px-6 lg:px-8">
                                 @if ($data->count())
                                     <div class="shadow overflow-hidden border-b border-gray-200 sm:rounded-lg">
-                                        @livewire('table.audience-contact-table')
+                                        @livewire('table.audience-contact-table', ['audienceId' => $audienceId])
                                     </div>
                                 @endif
                             </div>

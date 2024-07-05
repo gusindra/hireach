@@ -25,7 +25,13 @@ class NotificationController extends Controller
         if ($notification->model == 'Ticket') {
             $value =  $notification->ticket->request->client->id;
         } elseif ($notification->model == 'Order') {
-            return redirect()->to("/order/" . $notification->model_id);
+            if (auth()->user()->super && auth()->user()->super->first() && auth()->user()->super->first()->role == 'superadmin') {
+                return redirect()->to("/admin/order/" . $notification->model_id);
+            } elseif (auth()->user()->activeRole && str_contains(auth()->user()->activeRole->role->name, "Admin")) {
+                return redirect()->to("admin/order/" . $notification->model_id);
+            } else {
+                return redirect()->to("/order/" . $notification->model_id);
+            }
         } elseif ($notification->model == 'Invoice' || $notification->model == 'INVOICE') {
             return redirect()->to("/invoice-order/" . $notification->model_id);
         } elseif ($notification->model == 'Balance') {
@@ -48,6 +54,14 @@ class NotificationController extends Controller
                 } elseif ($flow->model == 'INVOICE') {
                     return redirect()->to("/invoice-order/" . $flow->model_id);
                 }
+            }
+        } elseif ($notification->model == 'Quotation') {
+            if (auth()->user()->super && auth()->user()->super->first() && auth()->user()->super->first()->role == 'superadmin') {
+                return redirect()->to("/admin/quotation/" . $notification->model_id);
+            } elseif (auth()->user()->activeRole && str_contains(auth()->user()->activeRole->role->name, "Admin")) {
+                return redirect()->to("admin/quotation/" . $notification->model_id);
+            } else {
+                return redirect()->to("/quotation/" . $notification->model_id);
             }
         } else {
             return redirect()->to("/message/?id=" . Hashids::encode($notification->id));

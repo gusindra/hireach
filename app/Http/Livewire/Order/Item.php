@@ -203,6 +203,7 @@ class Item extends Component
     {
         $items = OrderProduct::orderBy('id', 'asc')->where('model', 'Order')->where('model_id', $this->data->id)->get();
         $total = Order::find($this->data->id)->total;
+
         return [
             'items' => $items,
             'total' => $total

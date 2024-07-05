@@ -23,12 +23,27 @@ class OrderProductObserver
             $order = Order::find($request->model_id);
             $billing = Billing::where('order_id', $order->id);
             if ($order) {
-                $subTotal = $request->where('name', 'Topup')->latest()->first();
+                // $subTotal = $request->where('name', 'Topup')->latest()->first();
+                $subTotal = $request->latest()->first();
 
-                $order->update([
-                    'total' => $subTotal->price,
-                    'vat' => 11
-                ]);
+                if ($order) {
+                    // $amount = $request->price * $request->qty * $request->total_percentage / 100;
+                    if (count($order->items) == 0) {
+                        $order->update([
+                            'total' => 0,
+                            'vat' => 11
+                        ]);
+                    } else {
+                        $total = 0;
+                        foreach ($order->items as $item) {
+                            $total = $total + ($item->price * $item->qty * $item->total_percentage / 100);
+                        }
+                        $order->update([
+                            'total' => $total,
+                            'vat' => 11
+                        ]);
+                    }
+                }
 
                 $billing->update([
                     'amount' => $subTotal->price,

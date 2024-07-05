@@ -58,6 +58,7 @@ class Order extends Model
 
     public function user()
     {
+        // return $this->belongsTo('App\Models\Client', 'customer_id', 'uuid');
         return $this->belongsTo('App\Models\User', 'customer_id', 'id');
     }
 

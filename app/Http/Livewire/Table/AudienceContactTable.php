@@ -9,14 +9,15 @@ use Mediconesystems\LivewireDatatables\Http\Livewire\LivewireDatatable;
 class AudienceContactTable extends LivewireDatatable
 {
     public $model = AudienceClient::class;
+    public $audienceId;
 
     public function builder()
     {
 
         $query = AudienceClient::query()
             ->join('clients', 'clients.uuid', '=', 'audience_clients.client_id')
-            ->select('audience_clients.*', 'clients.name', 'clients.phone', 'clients.email');
-
+            ->select('audience_clients.*', 'clients.name', 'clients.phone', 'clients.email')
+            ->where('audience_clients.audience_id', $this->audienceId);
 
         if ($this->search) {
             $query->where(function ($query) {
@@ -38,15 +39,9 @@ class AudienceContactTable extends LivewireDatatable
     public function columns()
     {
         return [
-
-            Column::name('client.name')->label('Name'),
-            Column::name('client.phone')->label('Phone')->searchable(),
-            Column::name('client.email')->label('Email'),
-
-            // Column::callback(['id'], function ($id) {
-            //     return view('tables.delete-audience-contact', ['id' => $id]);
-            // })->label('Actions'),
-
+            Column::name('clients.name')->label('Name'),
+            Column::name('clients.phone')->label('Phone')->searchable(),
+            Column::name('clients.email')->label('Email'),
             Column::callback(['id'], function ($id) {
                 return view('tables.delete-audience-clientv2', ['id' => $id]);
             })->unsortable()->label('Actions')

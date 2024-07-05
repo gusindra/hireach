@@ -80,8 +80,8 @@ class AddResource extends Component
             $this->providers = ProviderUser::where('user_id', $user->id)->get();
         }
 
-        $this->contacts = Client::orderBy('created_at', 'desc')->where('user_id', auth()->user()->currentTeam->user_id)->limit(5)->get();
-        $this->audiences = Audience::orderBy('created_at', 'desc')->where('user_id', auth()->user()->currentTeam->user_id)->get();
+        $this->contactArray = Client::orderBy('created_at', 'desc')->where('user_id', auth()->user()->currentTeam->user_id)->limit(5)->get();
+        $this->audiences = Audience::orderBy('created_at', 'desc')->where('user_id', auth()->user()->currentTeam->user_id)->limit(5)->get();
     }
 
     /**
@@ -93,7 +93,9 @@ class AddResource extends Component
     {
         $this->emit('loading');
         $this->selectedContact = "";
+
         $channel = $this->channel;
+
         if ($this->selectTo == 'from_audience') {
             if ($this->search) {
                 $this->audiences = Audience::where('name', 'like', '%' . $this->search . '%')
@@ -101,28 +103,30 @@ class AddResource extends Component
                     ->limit(5)
                     ->get();
             } else {
-                $this->audiences = [];
+                $this->audiences =  Audience::orderBy('created_at', 'desc')->where('user_id', auth()->user()->currentTeam->user_id)->limit(5)->get();
             }
         } elseif ($this->selectTo == 'from_contact') {
             if ($this->search) {
                 $this->contactArray = Client::where(function ($query) use ($channel) {
-                    if($channel == 'email'){
+                    if ($channel == 'email') {
                         $query->where('name', 'like', '%' . $this->search . '%')
                             ->orWhere('email', 'like', '%' . $this->search . '%');
-                    }elseif($channel != 'email'){
+                    } else {
                         $query->where('name', 'like', '%' . $this->search . '%')
                             ->orWhere('email', 'like', '%' . $this->search . '%')
                             ->orWhere('phone', 'like', '%' . $this->search . '%');
                     }
                 })
-                ->where('user_id', auth()->user()->id)
-                ->limit(5)
-                ->get();
+                    ->where('user_id', auth()->user()->id)
+                    ->limit(5)
+                    ->get();
             } else {
-                $this->contactArray = [];
+
+                $this->contactArray =  Client::orderBy('created_at', 'desc')->where('user_id', auth()->user()->currentTeam->user_id)->limit(5)->get();
             }
         }
     }
+
 
     /**
      * selectAudience
@@ -150,6 +154,11 @@ class AddResource extends Component
         }
     }
 
+    public function loadDefaultContacts()
+    {
+        $this->contactArray = Client::orderBy('created_at', 'desc')->where('user_id', auth()->user()->currentTeam->user_id)->take(5)->get();
+    }
+
     /**
      * selectContact
      *
@@ -158,18 +167,19 @@ class AddResource extends Component
      */
     public function selectContact($value)
     {
+
         // dd($value);
         $this->selectedContact = "";
-        if($value!=""){
+        if ($value != "") {
             $this->selectedContact = $value;
             $this->search = $value;
-
+            $this->contactArray = [];
             if ($this->channel == 'email') {
                 $this->to = $value;
             } else {
                 $this->to = $value;
             }
-        }else{
+        } else {
             $this->search = "";
         }
         // dd($value);
