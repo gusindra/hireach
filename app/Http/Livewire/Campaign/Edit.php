@@ -14,11 +14,16 @@ use Livewire\Component;
 use Illuminate\Support\Facades\Auth;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Exports\ExportAudienceContact;
+use App\Jobs\importAudienceContact;
+use App\Models\Client;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Http;
+use Livewire\WithFileUploads;
 
 class Edit extends Component
 {
+    use WithFileUploads;
+
     public $campaign_id;
     public $campaign;
     public $title;
@@ -33,7 +38,7 @@ class Edit extends Component
     public $to;
     public $audience_id;
     public $audience;
-    public $selectTo = 'audience';
+    public $selectTo = 'manual';
     public $userProvider;
     public $selectedProviderCode;
     public $templates;
@@ -43,6 +48,8 @@ class Edit extends Component
     public $hasSchedule = false;
     public $showModal = false;
     protected $cacheDuration = 3600;
+    public $file;
+
 
     /**
      * mount
@@ -68,7 +75,10 @@ class Edit extends Component
         $this->to = $campaign->to;
         $this->audience_id = $campaign->audience_id;
         // $this->selectTo = $campaign->audience_id ? 'audience' : 'manual';
-        $this->selectTo = 'audience';
+        if ($this->audience_id) {
+            $this->selectTo = 'audience';
+        }
+
 
         $this->audience = Audience::withCount('audienceClients')->get();
 
@@ -122,19 +132,7 @@ class Edit extends Component
      *
      * @return void
      */
-    public function updatedSelectTo()
-    {
-        if ($this->selectTo === 'manual') {
-            $this->campaign->audience_id = null;
-            $this->campaign->save();
 
-            $this->audience_id = null;
-            $this->to = '';
-        } else {
-
-            $this->to = '';
-        }
-    }
 
     /**
      * loadAudienceContacts
@@ -270,24 +268,25 @@ class Edit extends Component
             $this->showModal = false;
 
             $channel = $this->campaign->channel;
-            $provider = cache()->remember('provider-user-'.auth()->user()->id.'-'.$channel, $this->cacheDuration, function() use ($channel) {
+            $provider = cache()->remember('provider-user-' . auth()->user()->id . '-' . $channel, $this->cacheDuration, function () use ($channel) {
                 return auth()->user()->providerUser->where('channel', strtoupper($channel))->first()->provider;
             });
             // START TO HIT CREATE CAMPAIGN API
-            if($provider->code=='provider3'){
+            if ($provider->code == 'provider3') {
                 //EXPORT FILE EXCEL AUDIENCE
-                Excel::store(new ExportAudienceContact($this->audience_id), $this->campaign_id.'_campaign.xlsx');
+                Excel::store(new ExportAudienceContact($this->audience_id), $this->campaign_id . '_campaign.xlsx');
                 //RUN JOB CAMPAIGN API
                 $url = 'https://45.118.134.84:6005/';
                 $response = Http::withOptions(['verify' => false,])
                     ->withHeaders([
                         'Client-Key' => ENV('WTID_CLIENT_KEY', 'MDgzMTUyNDU1NTU1NA=='),
-                        'Client-Secret' => ENV('WTID_CLIENT_SECRET', 'MDgzMTUyNDU1NTU1NHwyMDI0LTA1LTI5IDA4OjMwOjQ1')])
-                    ->attach('campaign_receiver', file_get_contents(storage_path('app\\'.$this->campaign_id.'_campaign.xlsx')), $this->campaign_id.'_campaign.xlsx')
+                        'Client-Secret' => ENV('WTID_CLIENT_SECRET', 'MDgzMTUyNDU1NTU1NHwyMDI0LTA1LTI5IDA4OjMwOjQ1')
+                    ])
+                    ->attach('campaign_receiver', file_get_contents(storage_path('app\\' . $this->campaign_id . '_campaign.xlsx')), $this->campaign_id . '_campaign.xlsx')
                     ->post($url . 'api/campaign/create', [
                         'campaign_name' => 'Testing API from HiReach',
                         'campaign_text' => 'Hallo testing 1'
-                ]);
+                    ]);
                 $resData = json_decode($response, true);
                 Log::debug($resData);
                 if ($resData['status']) {
@@ -305,19 +304,18 @@ class Edit extends Component
             }
             $audience = Audience::find($this->audience_id);
             // ADD BLAST DATA TO HIREACH
-            foreach($audience->audienceClients as $client){
+            foreach ($audience->audienceClients as $client) {
                 $data = [
                     'provider' => $provider,
-                    'to' => $this->campaign->channel == 'email' ? $client->client->email:$client->client->phone,
+                    'to' => $this->campaign->channel == 'email' ? $client->client->email : $client->client->phone,
                     'type' => $this->campaign->type,
                     'otp' => $this->campaign->is_otp,
-                    'text' => 'Campaign No:'.$this->campaign->id,
+                    'text' => 'Campaign No:' . $this->campaign->id,
                 ];
                 $this->callJobResource($data);
             }
             // ALL OK START THE CAMPAIGN API
-            if($provider->code=='provider3'){
-
+            if ($provider->code == 'provider3') {
             }
         } catch (\Illuminate\Validation\ValidationException $e) {
             $this->showModal = false;
@@ -338,8 +336,44 @@ class Edit extends Component
 
     public function update($id, $formName = 'basic')
     {
+
         $this->formName = $formName;
         $this->validate();
+        if ($this->file) {
+            $filePath = $this->file->getRealPath();
+
+            $mimeType = $this->file->getClientMimeType();
+            $data = [];
+
+            if ($mimeType == 'text/csv') {
+                $fileContents = file($filePath);
+                foreach ($fileContents as $key => $line) {
+                    if ($key > 0) {
+                        $data[] = str_getcsv($line);
+                    }
+                }
+            } else {
+                $rows = Excel::toArray([], $filePath)[0];
+                foreach ($rows as $key => $row) {
+                    if ($key > 0) {
+                        $data[] = $row;
+                    }
+                }
+            }
+
+            if (empty($this->audience_id)) {
+                $this->audience = Audience::create([
+                    'name'        => $this->title,
+                    'description' => 'This Audience Created Automatically at Campaign',
+                    'user_id'     => auth()->user()->id,
+                ]);
+                $this->audience_id = $this->audience->id; // Set audience_id to the created audience's ID
+            }
+            $this->selectTo = 'audience';
+
+            // Ensure $this->audience_id is set correctly
+            $data = importAudienceContact::dispatch($data, $this->audience_id, auth()->user()->id);
+        }
 
         $campaign = Campaign::where('id', $id)->where('user_id', auth()->user()->id)->firstOrFail();
 
@@ -355,7 +389,7 @@ class Edit extends Component
             'channel' => $this->channel,
             'text' => $this->text,
             'from' => $this->from,
-            'to' => $this->audience_id ? 'Audience-'.$this->audience_id : $this->to,
+            'to' => $this->audience_id ? 'Audience-' . $this->audience_id : $this->to,
         ]);
 
         if ($formName == 'provider') {
