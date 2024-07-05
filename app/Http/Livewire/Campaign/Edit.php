@@ -367,16 +367,13 @@ class Edit extends Component
                     'description' => 'This Audience Created Automatically at Campaign',
                     'user_id'     => auth()->user()->id,
                 ]);
-
                 $this->audience_id = $this->audience->id; // Set audience_id to the created audience's ID
             }
+            $this->selectTo = 'audience';
 
             // Ensure $this->audience_id is set correctly
             $data = importAudienceContact::dispatch($data, $this->audience_id, auth()->user()->id);
         }
-
-
-
 
         $campaign = Campaign::where('id', $id)->where('user_id', auth()->user()->id)->firstOrFail();
 

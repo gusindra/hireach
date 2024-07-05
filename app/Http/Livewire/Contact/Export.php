@@ -32,7 +32,7 @@ class Export extends Component
         // ->groupby('new_date')
         // ->get();;
 
-        $this->group_date = Client::where('user_id', auth()->user()->id)->groupBy('created_at')->whereMonth('created_at', Carbon::now()->month)->get();
+        $this->group_date = Client::where('user_id', auth()->user()->id)->groupBy('created_at')->get(); //->whereMonth('created_at', Carbon::now()->month)
         //dd($this->group_date);
     }
 
@@ -83,7 +83,7 @@ class Export extends Component
         ];
         return $data;
     }
-    
+
     /**
      * resetForm
      *
