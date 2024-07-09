@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Resources\CampaignResource;
 use App\Http\Resources\OneWayResource;
 use App\Http\Resources\SmsResource;
+use App\Jobs\importAudienceContact;
 use App\Models\BlastMessage;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
@@ -13,10 +14,12 @@ use App\Jobs\ProcessSmsApi;
 use App\Jobs\ProcessEmailApi;
 use App\Jobs\ProcessWaApi;
 use App\Models\ApiCredential;
+use App\Models\Audience;
 use App\Models\Campaign;
 use App\Models\Client;
 use App\Models\ProviderUser;
 use Illuminate\Support\Str;
+use Maatwebsite\Excel\Facades\Excel;
 
 class ApiOneWayController extends Controller
 {
@@ -317,6 +320,206 @@ class ApiOneWayController extends Controller
             'user_id'       => auth()->user()->id,
             'uuid'          => Str::uuid()
         ]);
+    }
+
+    /**
+     * send Bulk sms
+     *
+     * @param  mixed $request
+     * @return void
+     */
+    public function sendBulk(Request $request)
+    {
+        $validateArr = [
+            'channel'   => 'required',
+            'type'      => 'required|numeric',
+            'title'     => 'required|string',
+            'text'      => 'required|string',
+            'from'      => 'required|string',
+            'provider'  => 'required|string',
+            'contact'   => 'required|file',
+            'otp'       => 'boolean'
+        ];
+
+        if(strpos( strtolower($request->channel), 'sms' ) !== false){
+            $validateArr['from'] = 'alpha_num|required_if:channel,sms_otp_sid|required_if:channel,sms_notp_sid';
+        }elseif(strpos( strtolower($request->channel), 'email' ) !== false){
+            $validateArr['from'] = 'required';
+        }
+        $request->validate($validateArr);
+
+        try{
+            $provider = cache()->remember('provider-user-'.auth()->user()->id.'-'.$request->channel, $this->cacheDuration, function() use ($request) {
+                return auth()->user()->providerUser->where('channel', strtoupper($request->channel))->first()->provider;
+            });
+
+            $request->merge([
+                'provider' => $provider
+            ]);
+
+            if($provider){
+                $retriver = explode(",", $request->to);
+                $allretriver = $request->to;
+                $balance = (int)balance(auth()->user());
+                if($balance>1500000 && count($retriver)<$balance/1){
+                    //CHECK OTP
+                    //auto check otp / non otp type base on text
+                    if(strpos(strtolower($request->channel), 'sms') !== false){
+                        $checkString = $request->text;
+                        $otpWord = ['Angka Rahasia', 'Authorisation', 'Authorise', 'Authorization', 'Authorized', 'Code', 'Harap masukkan', 'Kata Sandi', 'Kode',' Kode aktivasi', 'konfirmasi', 'otentikasi', 'Otorisasi', 'Rahasia', 'Sandi', 'trx', 'unik', 'Venfikasi', 'KodeOTP', 'NewOtp', 'One-Time Password', 'Otorisasi', 'OTP', 'Pass', 'Passcode', 'PassKey', 'Password', 'PIN', 'verifikasi', 'insert current code', 'Security', 'This code is valid', 'Token', 'Passcode', 'Valid OTP', 'verification','Verification', 'login code', 'registration code', 'secunty code'];
+                        if($request->otp){
+                            $request->merge([
+                                'otp' => 1
+                            ]);
+                        }elseif(Str::contains($checkString, $otpWord)){
+                            $request->merge([
+                                'otp' => 1
+                            ]);
+                        }else{
+                            $request->merge([
+                                'otp' => 0
+                            ]);
+                        }
+                    }
+                    //GET CREDENTIAL MK
+                    if(strtolower($request->channel)=='wa'){
+                        $credential = null;
+                        foreach(auth()->user()->credential as $cre){
+                            if($cre->client=='api_wa_mk'){
+                                $credential = $cre;
+                            }
+                        }
+                    }
+                    //IMPORT CONTACT
+                    $audience = $this->importContact($request);
+                    //ADD CAMPAIGN API
+                    $campaign = $this->campaignAdd($request);
+                    //THIS WILL QUEUE SMS JOB
+                    //COUNT PHONE NUMBER REQUESTED
+                    //GROUP RETRIVER
+                    $phones = $retriver;
+                    if(count($phones)>29){
+                        //GROUP RETRIVER
+                        foreach($phones as $p){
+                            $data = array(
+                                'type' => $request->type,
+                                'to' => trim($p),
+                                'from' => $request->from,
+                                'text' => $request->text,
+                                'servid' => $request->servid,
+                                'title' => $request->title,
+                                'otp' => $request->otp,
+                                'provider' => $provider,
+                            );
+                            if($request->has('templateid')){
+                                $data['templateid'] = $request->templateid;
+                            }
+                            if(strtolower($request->channel)=='email'){
+                                //THIS WILL QUEUE EMAIL JOB
+                                //return $data;
+                                $reqArr = json_encode($request->all());
+                                ProcessEmailApi::dispatch($data, auth()->user(), $reqArr);
+                            }elseif(strpos(strtolower($request->channel), 'sms') !== false){
+                                ProcessSmsApi::dispatch($data, auth()->user());
+                            }elseif(strtolower($request->channel)=='wa'){
+                                if($credential){
+                                    ProcessWaApi::dispatch($data, $credential);
+                                }else{
+                                    return response()->json([
+                                        'code'          => 401,
+                                        'campaign_id'   => $campaign->uuid,
+                                        'message'       => "Campaign successful create, but invalid credential",
+                                    ]);
+                                }
+                            }elseif(strtolower($request->channel)=='long_wa'){
+                                $request->merge([
+                                    'provider' => $provider
+                                ]);
+                                ProcessWaApi::dispatch($request->all(), auth()->user());
+                            }elseif(strtolower($request->channel)=='long_sms'){
+                                $request->merge([
+                                    'provider' => $provider
+                                ]);
+                                ProcessSmsApi::dispatch($request->all(), auth()->user());
+                            }
+                        }
+                    }else{
+                        //SINGLE RETRIVER
+                        return response()->json([
+                            'code'      => 406,
+                            'message'   => "Minimum contact 3000 to sending bulk message"
+                        ]);
+                    }
+
+                    // show result on progress
+                    return response()->json([
+                        'code'          => 200,
+                        'campaign_id'   => $campaign->uuid,
+                        'message'       => "Campaign successful create, prepare sending notification to ".count($phones)." contact.",
+                    ]);
+                }else{
+                    return response()->json([
+                        'code'      => 405,
+                        'message'   => "Campaign fail to created, Insufficient Balance!",
+                    ]);
+                }
+            }else{
+                return response()->json([
+                    'code'      => 405,
+                    'message'   => "Campaign fail to created, please check your provider or ask Administrator!"
+                ]);
+            }
+            //$this->sendSMS($request->all());
+        }catch(\Exception $e){
+            return response()->json([
+                'code'      => 400,
+                'message'   => $e->getMessage()
+            ]);
+        }
+    }
+
+    /**
+     * importContact
+     *
+     * @param  mixed $input
+     * @return void
+     */
+    private function importContact($input)
+    {
+        if ($input->file) {
+            $filePath = $input->file->getRealPath();
+
+            $mimeType = $input->file->getClientMimeType();
+            $data = [];
+
+            if ($mimeType == 'text/csv') {
+                $fileContents = file($filePath);
+                foreach ($fileContents as $key => $line) {
+                    if ($key > 0) {
+                        $data[] = str_getcsv($line);
+                    }
+                }
+            } else {
+                $rows = Excel::toArray([], $filePath)[0];
+                foreach ($rows as $key => $row) {
+                    if ($key > 0) {
+                        $data[] = $row;
+                    }
+                }
+            }
+
+            if (empty($input->audience_id)) {
+                $input->audience = Audience::create([
+                    'name'        => $input->title,
+                    'description' => 'This Audience Created Automatically fromd Campaign',
+                    'user_id'     => auth()->user()->id,
+                ]);
+                $audience_id = $input->audience->id; // Set audience_id to the created audience's ID
+            }
+
+            // Ensure $this->audience_id is set correctly
+            $data = importAudienceContact::dispatch($data, $audience_id, auth()->user()->id);
+        }
     }
 
     // ===========================================

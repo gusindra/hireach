@@ -334,6 +334,13 @@ class Edit extends Component
         $this->campaign->save();
     }
 
+    /**
+     * update
+     *
+     * @param  mixed $id
+     * @param  mixed $formName
+     * @return void
+     */
     public function update($id, $formName = 'basic')
     {
 
