@@ -11,21 +11,22 @@ class DeleteNotification extends Component
     public $notification;
     public $modalDeleteVisible = false;
 
-    public function mount($id)
+    public function mount()
     {
-        $this->notification = Notice::withTrashed()->find($id);
+        $this->notification = Notice::withTrashed()->find($this->notificationId);
     }
 
-    public function showDeleteModal($id)
+    public function showDeleteModal()
     {
-        $this->notificationId = $id;
+
         $this->modalDeleteVisible = true;
     }
 
     public function deleteNotification()
     {
-        Notice::destroy($this->notificationId);
-        $this->notification->update(['status' => 'deleted']);
+        $data = Notice::find($this->notificationId);
+        $data->delete();
+        $data->update(['status' => 'deleted']);
 
         $this->modalDeleteVisible = false;
 

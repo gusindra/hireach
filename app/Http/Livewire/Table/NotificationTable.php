@@ -100,7 +100,7 @@ class NotificationTable extends LivewireDatatable
                 ]);
                 $disabled = $status === 'deleted' ? 'disabled' : '';
                 $html = $html . view('tables.delete-notification', [
-                    'id' => $id,
+                    'notificationId' => $id,
                     'disabled' => $disabled,
                 ]);
                 return $html . "</div>";

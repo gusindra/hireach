@@ -83,16 +83,16 @@ class TopupUser extends Component
                     'note'              => 'Topup',
                     'user_id'           => 0,
                 ]);
-                OrderProduct::create([
-                    'model'             => 'Order',
-                    'model_id'          => $order->id,
-                    'qty'               => '1',
-                    'unit'              => '1',
-                    'name'              => 'Tax',
-                    'price'             => '' . $this->nominal * (11 / 100),
-                    'note'              => 'VAT/PPN @ 11%',
-                    'user_id'           => 0,
-                ]);
+                // OrderProduct::create([
+                //     'model'             => 'Order',
+                //     'model_id'          => $order->id,
+                //     'qty'               => '1',
+                //     'unit'              => '1',
+                //     'name'              => 'Tax',
+                //     'price'             => '' . $this->nominal * (11 / 100),
+                //     'note'              => 'VAT/PPN @ 11%',
+                //     'user_id'           => 0,
+                // ]);
             }
 
             //ProcessEmail::dispatch($order, 'create_order');

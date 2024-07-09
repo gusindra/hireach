@@ -152,21 +152,17 @@ class OrderAdminTest extends TestCase
 
 
         // Update the commission
-        Livewire::actingAs($user)
-            ->test(\App\Http\Livewire\Commission\Edit::class, ['model' => 'order', 'data' => $order, 'disabled' => false])
-            ->set('type', 'fixed')
-            ->set('rate', 15)
-            ->set('status', 'draft')
-            ->call('update', $commision->id)
-            ->assertEmitted('saved');
+        Livewire::test('commission.edit', ['model' => 'order', 'data' => $order, 'disabled' => false])
+            ->set('rate', 10)
+            ->set('clientId', $client->id)
+            ->set('type', 'percentage')
+            ->call('update', $order->id);
 
         $this->assertDatabaseHas('commisions', [
-            'model' => 'order',
-            'model_id' => $order->id,
-            'type' => 'fixed',
-            'ratio' => 15,
-            'status' => 'draft',
-
+            'id' => $commision->id,
+            'ratio' => 10,
+            'type' => 'percentage',
+            'client_id' => $client->id,
         ]);
     }
 

@@ -250,7 +250,6 @@ class AddResource extends Component
     public function sendResource()
     {
         $this->validate();
-        dd($this->to);
         if ($this->selectTo === 'manual') {
             $to = $this->to;
         } elseif ($this->selectTo === 'from_contact') {

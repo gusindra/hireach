@@ -2,6 +2,7 @@
 
 namespace App\Http\Livewire\Order;
 
+use App\Models\Client;
 use App\Models\Company;
 use App\Models\Order;
 use App\Models\User;
@@ -45,13 +46,15 @@ class Add extends Component
 
     public function modelData()
     {
+        $user = User::find($this->customer_id);
+        $customer = Client::where('email', $user->email)->first();
         $data = [
 
             'type'          => 'selling',
             'name'          => $this->name,
             'entity_party'  => $this->entity,
             'status'        => 'draft',
-            'customer_id' => $this->customer_id,
+            'customer_id' => $customer->uuid,
             'user_id'       => Auth::user()->id,
         ];
         if ($this->model && $this->source) {
