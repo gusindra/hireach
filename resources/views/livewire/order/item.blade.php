@@ -122,6 +122,10 @@
                                             <x-jet-input-error for="tax" class="mt-2" />
                                         </div>
                                     </div>
+
+                                    <x-jet-action-message class="mr-3" on="added">
+                                        {{ __('Action added.') }}
+                                    </x-jet-action-message>
                                     <div class="col-span-6 grid grid-cols-2 mt-4">
 
                                         <div class="col-span-12 sm:col-span-1 mx-4">

@@ -31,15 +31,15 @@ class TopupUser extends Component
     public function dataOrder()
     {
         $data = [
-            'date'              => date("Y-m-d H:i:s"),
-            'name'              => 'Request Topup from ' . Auth::user()->name,
-            'no'                => 'HAPP' . date("YmdHis"),
-            'type'              => 'selling',
-            'entity_party'      => '1',
-            'total'             => 0,
-            'status'            => 'unpaid',
-            'customer_id'       => $this->chechClient(),
-            'user_id'           => 0,
+            'date' => date("Y-m-d H:i:s"),
+            'name' => 'Request Topup from ' . Auth::user()->name,
+            'no' => 'HAPP' . date("YmdHis"),
+            'type' => 'selling',
+            'entity_party' => '1',
+            'total' => 0,
+            'status' => 'unpaid',
+            'customer_id' => $this->chechClient(),
+            'user_id' => 0,
         ];
         return $data;
     }
@@ -74,25 +74,25 @@ class TopupUser extends Component
             $order = Order::create($this->dataOrder());
             if ($order) {
                 OrderProduct::create([
-                    'model'             => 'Order',
-                    'model_id'          => $order->id,
-                    'qty'               => '1',
-                    'unit'              => '1',
-                    'name'              => 'Topup',
-                    'price'             => $this->nominal,
-                    'note'              => 'Topup',
-                    'user_id'           => 0,
+                    'model' => 'Order',
+                    'model_id' => $order->id,
+                    'qty' => '1',
+                    'unit' => '1',
+                    'name' => 'Topup',
+                    'price' => $this->nominal,
+                    'note' => 'Topup',
+                    'user_id' => 0,
                 ]);
-                // OrderProduct::create([
-                //     'model'             => 'Order',
-                //     'model_id'          => $order->id,
-                //     'qty'               => '1',
-                //     'unit'              => '1',
-                //     'name'              => 'Tax',
-                //     'price'             => '' . $this->nominal * (11 / 100),
-                //     'note'              => 'VAT/PPN @ 11%',
-                //     'user_id'           => 0,
-                // ]);
+                OrderProduct::create([
+                    'model' => 'Order',
+                    'model_id' => $order->id,
+                    'qty' => '1',
+                    'unit' => '1',
+                    'name' => 'Tax',
+                    'price' => '' . $this->nominal * (11 / 100),
+                    'note' => 'VAT/PPN @ 11%',
+                    'user_id' => 0,
+                ]);
             }
 
             //ProcessEmail::dispatch($order, 'create_order');

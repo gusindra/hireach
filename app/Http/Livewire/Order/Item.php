@@ -29,9 +29,12 @@ class Item extends Component
 
     public function mount($data)
     {
+
         $this->data = $data;
         $this->products = CommerceItem::where('user_id', $data->user_id)->get();
         $this->tax = $data->vat;
+
+
     }
 
     public function rules()
@@ -115,9 +118,34 @@ class Item extends Component
      */
     public function updateTax()
     {
+        if (!$this->data || !$this->tax) {
+            return;
+        }
+
         $order = Order::find($this->data->id);
+
+        if (!$order) {
+            return;
+        }
+
+        $orderProduct = OrderProduct::where('model_id', $order->id)->where('name', 'Topup')->latest()->first();
+
+        if (!$orderProduct) {
+            return;
+        }
+
+        $price = (float) $orderProduct->price;
+
+        $orderProductTax = OrderProduct::where('model_id', $order->id)->where('name', 'Tax')->latest()->first();
+
+        if ($orderProductTax) {
+            $orderProductTax->update(['price' => $price * $this->tax / 100]);
+            return ;
+        }
+
         $order->update(['vat' => $this->tax]);
     }
+
 
     /**
      * The delete function.
@@ -201,7 +229,11 @@ class Item extends Component
      */
     public function read()
     {
-        $items = OrderProduct::orderBy('id', 'asc')->where('model', 'Order')->where('model_id', $this->data->id)->get();
+        $items = OrderProduct::orderBy('id', 'asc')
+        ->where('model', 'Order')
+        ->where('model_id', $this->data->id)
+        ->where('name', 'not like', '%Tax%')
+        ->get();
         $total = Order::find($this->data->id)->total;
 
         return [

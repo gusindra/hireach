@@ -19,16 +19,19 @@ class OrderProductObserver
      */
     public function created(OrderProduct $request)
     {
+        // // Periksa apakah nama adalah "Tax" dan hentikan pemrosesan jika ya
+        // if (stripos($request->name, 'Tax') !== false) {
+        //     return;
+        // }
+
         if ($request->model == 'Order') {
             $order = Order::find($request->model_id);
-            $billing = Billing::where('order_id', $order->id);
-            if ($order) {
-                // $subTotal = $request->where('name', 'Topup')->latest()->first();
+            $billing = Billing::where('order_id', $order->id)->first();
 
-                $subTotal = $request->latest()->first();
+            if ($order) {
+                $subTotal = OrderProduct::latest()->first();
 
                 if ($order) {
-                    // $amount = $request->price * $request->qty * $request->total_percentage / 100;
                     if (count($order->items) == 0) {
                         $order->update([
                             'total' => 0,
@@ -36,9 +39,11 @@ class OrderProductObserver
                         ]);
                     } else {
                         $total = 0;
+
                         foreach ($order->items as $item) {
-                            $total = $total + ($item->price * $item->qty * $item->total_percentage / 100);
+                            $total += ($item->price * $item->qty * $item->total_percentage / 100);
                         }
+
                         $order->update([
                             'total' => $total,
                             'vat' => 11
@@ -46,14 +51,15 @@ class OrderProductObserver
                     }
                 }
 
-                $billing->update([
-                    'amount' => $subTotal->price,
-                ]);
-
-                // Log::info($request->price.$request->qty.$request->total_percentage);
+                if ($billing) {
+                    $billing->update([
+                        'amount' => $subTotal->price,
+                    ]);
+                }
             }
         }
     }
+
 
     /**
      * Handle the Project "deleted" event.

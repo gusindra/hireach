@@ -6,6 +6,7 @@ use App\Models\Billing;
 use App\Models\Order;
 use App\Models\User;
 use Livewire\Component;
+use Illuminate\Support\Str;
 
 class Edit extends Component
 {
@@ -37,6 +38,9 @@ class Edit extends Component
     public $modalDeleteVisible = false;
     public $customer;
     public $formName;
+    public $nominal ;
+
+    public $nominal_view;
 
     public function mount($uuid)
     {
@@ -59,6 +63,7 @@ class Edit extends Component
         $this->input['source_id'] = $this->order->source_id ?? '';
         $this->input['date'] = $this->order->date ? $this->order->date->format('Y-m-d') : '';
         $this->input['total'] = $this->order->total ?? '';
+        $this->nominal = $this->order->total ?? '';
     }
 
     public function rules()
@@ -90,6 +95,7 @@ class Edit extends Component
             'customer_id'       => $this->input['customer_id'],
             'type'              => $this->input['type'],
             'addressed_company' => $this->addressed_company,
+            'total'             =>  $this->nominal,
             'description'       => $this->description,
             'created_by'        => $this->created_by,
             'created_role'      => $this->created_role,
@@ -97,6 +103,15 @@ class Edit extends Component
             'addressed_role'    => $this->addressed_role,
         ];
     }
+
+
+    public function onClickNominal($value)
+    {
+
+        $this->nominal = $value;
+        $this->nominal_view = number_format($value);
+    }
+
 
     public function updateStatus($id, $formName = '')
 
@@ -142,6 +157,19 @@ class Edit extends Component
         $this->validate();
         // dd($this->modelData());
         $order = Order::find($id)->update($this->modelData());
+
+        $bill=Billing::updateOrCreate([
+            'uuid'          => Str::uuid(),
+            'status'        => 'unpaid',
+            'code'          => $this->input['no'],
+            'description'   => $this->name,
+              'amount'        =>  $this->nominal,
+            'order_id'      => $this->order->id,
+
+
+
+        ]);
+
         $this->emit('saved');
     }
 

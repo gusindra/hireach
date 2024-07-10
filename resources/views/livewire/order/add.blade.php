@@ -17,29 +17,44 @@
 
         <x-slot name="content">
             <div class="col-span-6 sm:col-span-4 p-3">
-                <x-jet-label for="entity" value="{{ __('Entity of Party B') }}" />
-                <select name="entity" id="entity"
+                <x-jet-label for="type" value="{{ __('Type') }}" />
+                <select name="type" id="type"
                     class="border-gray-300 dark:bg-slate-800 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 rounded-md shadow-sm mt-1 block w-full"
-                    wire:model.debunce.800ms="entity">
-                    <option selected>-- Select Party --</option>
-                    @foreach ($companies as $company)
-                        <option value="{{ $company->id }}">{{ $company->name }}</option>
-                    @endforeach
+                    wire:model.debounce.800ms="type">
+                    <option selected value="">-- Select Type --</option>
+                    <option value="topup">Top Up</option>
+                    <option value="other">Other</option>
                 </select>
-                <x-jet-input-error for="entity" class="mt-2" />
+                <x-jet-input-error for="type" class="mt-2" />
             </div>
-            <div class="col-span-6 sm:col-span-4 p-2">
-                <x-jet-label for="name" value="{{ __('Name') }}" />
-                <x-jet-input autocomplete="off" id="name" type="text" class="mt-1 block w-full"
-                    wire:model.debunce.800ms="name" autofocus />
-                <x-jet-input-error for="name" class="mt-2" />
-            </div>
+
+
+            @if ($type == 'other')
+                <div class="col-span-6 sm:col-span-4 p-3">
+                    <x-jet-label for="entity" value="{{ __('Entity of Party B') }}" />
+                    <select name="entity" id="entity"
+                        class="border-gray-300 dark:bg-slate-800 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 rounded-md shadow-sm mt-1 block w-full"
+                        wire:model.debounce.800ms="entity">
+                        <option selected>-- Select Party --</option>
+                        @foreach ($companies as $company)
+                            <option value="{{ $company->id }}">{{ $company->name }}</option>
+                        @endforeach
+                    </select>
+                    <x-jet-input-error for="entity" class="mt-2" />
+                </div>
+                <div class="col-span-6 sm:col-span-4 p-2">
+                    <x-jet-label for="name" value="{{ __('Name') }}" />
+                    <x-jet-input autocomplete="off" id="name" type="text" class="mt-1 block w-full"
+                        wire:model.debounce.800ms="name" autofocus />
+                    <x-jet-input-error for="name" class="mt-2" />
+                </div>
+
 
             <div class="col-span-6 sm:col-span-4 p-3">
                 <x-jet-label for="customer_id" value="{{ __('Customer') }}" />
                 <select name="customer_id" id="customer_id"
                     class="border-gray-300 dark:bg-slate-800 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 rounded-md shadow-sm mt-1 block w-full"
-                    wire:model.debunce.800ms="customer_id">
+                    wire:model.debounce.800ms="customer_id">
                     <option selected>-- Select Customer --</option>
                     @foreach ($customer as $item)
                         <option value="{{ $item->id }}">{{ $item->name }}</option>
@@ -47,6 +62,7 @@
                 </select>
                 <x-jet-input-error for="customer_id" class="mt-2" />
             </div>
+            @endif
         </x-slot>
 
         <x-slot name="footer">

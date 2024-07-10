@@ -8,6 +8,7 @@ use App\Models\Commision;
 use App\Models\FlowProcess;
 use App\Models\FlowSetting;
 use App\Models\Notice;
+use App\Models\OrderProduct;
 use App\Models\SaldoUser;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
@@ -36,6 +37,8 @@ class OrderObserver
                 'period'        => $request->date->format('m/Y')
             ]);
         }
+
+
     }
 
     /**
@@ -50,7 +53,7 @@ class OrderObserver
         //Log::debug($request->status);
         if ($request->status == 'unpaid') {
             $bill = Billing::where('order_id', $request->id)->get();
-            $order = Order::where('customer_id', $request->id)->get();
+            // $order = Order::where('customer_id', $request->id)->get();
             if (count($bill) == 0) {
                 Billing::create([
                     'uuid'          => Str::uuid(),
@@ -141,6 +144,43 @@ class OrderObserver
                 'status'    => 'unpaid'
             ]);
         }
+
+        $orderProducts = OrderProduct::where('model_id', $request->id)->get();
+        if ($request->type == 'topup') {
+
+            OrderProduct::updateOrCreate(
+                [
+                    'model' => 'Order',
+                    'model_id' => $request->id,
+                    'name' => 'Topup'
+                ],
+                [
+                    'qty' => 1,
+                    'unit' => 1,
+                    'price' => $request->total,
+                    'note' => 'Topup',
+                    'user_id' => 0,
+                ]
+            );
+
+            // Membuat atau memperbarui OrderProduct Tax
+            OrderProduct::updateOrCreate(
+                [
+                    'model' => 'Order',
+                    'model_id' => $request->id,
+                    'name' => 'Tax'
+                ],
+                [
+                    'qty' => 1,
+                    'unit' => 1,
+                    'price' => $request->total * (11 / 100),
+                    'note' => 'VAT/PPN @ 11%',
+                    'user_id' => 0,
+                ]
+            );
+        }
+
+
     }
 
     /**
