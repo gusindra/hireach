@@ -129,7 +129,7 @@ class ApiOneWayController extends Controller
             'provider'  => 'required|string',
             'text'      => 'required|string',
             'detail'    => 'string',
-            'otp'       => 'boolean'
+            // 'otp'       => 'boolean'
         ];
         if(strpos( strtolower($request->channel), 'sms' ) !== false){
             $validateArr['from'] = 'alpha_num|required_if:channel,sms_otp_sid|required_if:channel,sms_notp_sid';
@@ -153,6 +153,7 @@ class ApiOneWayController extends Controller
 
             if($provider){
                 $retriver = explode(",", $request->to);
+                Log::debug('retrive'. $retriver);
                 $allretriver = $request->to;
                 $balance = (int)balance(auth()->user());
                 if($balance>500 && count($retriver)<$balance/1){
@@ -189,8 +190,12 @@ class ApiOneWayController extends Controller
                     //THIS WILL QUEUE SMS JOB
                     //COUNT PHONE NUMBER REQUESTED
                     //GROUP RETRIVER
+
+
                     $phones = $retriver;
                     if(count($phones)>1){
+
+                        Log::info('masuk sini kalau phone >1');
                         //GROUP RETRIVER
                         foreach($phones as $p){
                             $data = array(
@@ -304,10 +309,11 @@ class ApiOneWayController extends Controller
      * @return object $campaign
      */
     private function campaignAdd($request){
+        Log::debug($request);
         return Campaign::create([
             'title'         => $request->title,
             'channel'       => strtoupper($request->channel),
-            'provider'      => $request->provider,
+            'provider'      => $request->provider->code,
             'from'          => $request->from,
             'to'            => $request->to,
             'text'          => $request->text,
@@ -322,12 +328,7 @@ class ApiOneWayController extends Controller
         ]);
     }
 
-    /**
-     * send Bulk sms
-     *
-     * @param  mixed $request
-     * @return void
-     */
+
     public function sendBulk(Request $request)
     {
         $validateArr = [
@@ -338,70 +339,88 @@ class ApiOneWayController extends Controller
             'from'      => 'required|string',
             'provider'  => 'required|string',
             'contact'   => 'required|file',
-            'otp'       => 'boolean'
         ];
 
-        if(strpos( strtolower($request->channel), 'sms' ) !== false){
+        if (strpos(strtolower($request->channel), 'sms') !== false) {
             $validateArr['from'] = 'alpha_num|required_if:channel,sms_otp_sid|required_if:channel,sms_notp_sid';
-        }elseif(strpos( strtolower($request->channel), 'email' ) !== false){
+        } elseif (strpos(strtolower($request->channel), 'email') !== false) {
             $validateArr['from'] = 'required';
         }
+
         $request->validate($validateArr);
 
-        try{
-            $provider = cache()->remember('provider-user-'.auth()->user()->id.'-'.$request->channel, $this->cacheDuration, function() use ($request) {
+        try {
+            $provider = cache()->remember('provider-user-' . auth()->user()->id . '-' . $request->channel, $this->cacheDuration, function() use ($request) {
                 return auth()->user()->providerUser->where('channel', strtoupper($request->channel))->first()->provider;
             });
 
-            $request->merge([
-                'provider' => $provider
-            ]);
+            $request->merge(['provider' => $provider]);
 
-            if($provider){
-                $retriver = explode(",", $request->to);
-                $allretriver = $request->to;
-                $balance = (int)balance(auth()->user());
-                if($balance>1500000 && count($retriver)<$balance/1){
-                    //CHECK OTP
-                    //auto check otp / non otp type base on text
-                    if(strpos(strtolower($request->channel), 'sms') !== false){
-                        $checkString = $request->text;
-                        $otpWord = ['Angka Rahasia', 'Authorisation', 'Authorise', 'Authorization', 'Authorized', 'Code', 'Harap masukkan', 'Kata Sandi', 'Kode',' Kode aktivasi', 'konfirmasi', 'otentikasi', 'Otorisasi', 'Rahasia', 'Sandi', 'trx', 'unik', 'Venfikasi', 'KodeOTP', 'NewOtp', 'One-Time Password', 'Otorisasi', 'OTP', 'Pass', 'Passcode', 'PassKey', 'Password', 'PIN', 'verifikasi', 'insert current code', 'Security', 'This code is valid', 'Token', 'Passcode', 'Valid OTP', 'verification','Verification', 'login code', 'registration code', 'secunty code'];
-                        if($request->otp){
-                            $request->merge([
-                                'otp' => 1
-                            ]);
-                        }elseif(Str::contains($checkString, $otpWord)){
-                            $request->merge([
-                                'otp' => 1
-                            ]);
-                        }else{
-                            $request->merge([
-                                'otp' => 0
-                            ]);
+            if ($provider) {
+                // Import contacts
+                $audience = $this->importContact($request);
+                if (!is_array($audience)) {
+                    $audience = $audience->toArray();
+                }
+
+                if (empty($audience)) {
+                    return response()->json([
+                        'code'      => 406,
+                        'message'   => "No valid contacts found in the imported file."
+                    ]);
+                }
+
+                // Extract phone numbers from imported contacts
+                $retriver = array_column($audience, 0); // Assuming phone number is at index 0
+                $allPhones = [];
+
+                foreach ($retriver as $phones) {
+                    $phonesArray = explode(',', $phones);
+                    $allPhones = array_merge($allPhones, $phonesArray);
+                }
+
+                Log::debug('All Phones: ' . json_encode($allPhones));
+
+                if (empty($retriver)) {
+                    return response()->json([
+                        'code'      => 406,
+                        'message'   => "No valid phone numbers found in the imported contacts."
+                    ]);
+                }
+
+                $balance = (int) balance(auth()->user());
+
+                if ($balance > 1500000 && count($retriver) < $balance / 1) {
+                    // Auto check OTP
+                    Log::info('Auto check OTP');
+                    if (strpos(strtolower($request->channel), 'sms') !== false) {
+                        $otpWord = ['Angka Rahasia', 'Authorisation', 'Authorise', 'Authorization', 'Authorized', 'Code', 'Harap masukkan', 'Kata Sandi', 'Kode', 'Kode aktivasi', 'konfirmasi', 'otentikasi', 'Otorisasi', 'Rahasia', 'Sandi', 'trx', 'unik', 'Venfikasi', 'KodeOTP', 'NewOtp', 'One-Time Password', 'Otorisasi', 'OTP', 'Pass', 'Passcode', 'PassKey', 'Password', 'PIN', 'verifikasi', 'insert current code', 'Security', 'This code is valid', 'Token', 'Passcode', 'Valid OTP', 'verification', 'Verification', 'login code', 'registration code', 'security code'];
+                        if ($request->otp) {
+                            $request->merge(['otp' => 1]);
+                        } elseif (Str::contains($request->text, $otpWord)) {
+                            $request->merge(['otp' => 1]);
+                        } else {
+                            $request->merge(['otp' => 0]);
                         }
                     }
-                    //GET CREDENTIAL MK
-                    if(strtolower($request->channel)=='wa'){
-                        $credential = null;
-                        foreach(auth()->user()->credential as $cre){
-                            if($cre->client=='api_wa_mk'){
-                                $credential = $cre;
-                            }
-                        }
+
+                    // Get credential for WhatsApp
+                    $credential = null;
+                    if (strtolower($request->channel) == 'wa') {
+                        $credential = auth()->user()->credential->firstWhere('client', 'api_wa_mk');
                     }
-                    //IMPORT CONTACT
-                    $audience = $this->importContact($request);
-                    //ADD CAMPAIGN API
+
+                    // Add campaign API
+                    $request->merge(['to' => json_encode($allPhones)]);
                     $campaign = $this->campaignAdd($request);
-                    //THIS WILL QUEUE SMS JOB
-                    //COUNT PHONE NUMBER REQUESTED
-                    //GROUP RETRIVER
-                    $phones = $retriver;
-                    if(count($phones)>29){
-                        //GROUP RETRIVER
-                        foreach($phones as $p){
-                            $data = array(
+
+                    // Process sending messages
+                    $phones = $allPhones;
+
+                    if (count($phones) > 29) {
+                        foreach ($phones as $p) {
+                            Log::info('Processing phone: ' . $p);
+                            $data = [
                                 'type' => $request->type,
                                 'to' => trim($p),
                                 'from' => $request->from,
@@ -410,67 +429,60 @@ class ApiOneWayController extends Controller
                                 'title' => $request->title,
                                 'otp' => $request->otp,
                                 'provider' => $provider,
-                            );
-                            if($request->has('templateid')){
+                            ];
+
+                            Log::debug('Data being dispatched: ' . json_encode($data));
+
+                            if ($request->has('templateid')) {
                                 $data['templateid'] = $request->templateid;
                             }
-                            if(strtolower($request->channel)=='email'){
-                                //THIS WILL QUEUE EMAIL JOB
-                                //return $data;
+
+                            if (strtolower($request->channel) == 'email') {
                                 $reqArr = json_encode($request->all());
                                 ProcessEmailApi::dispatch($data, auth()->user(), $reqArr);
-                            }elseif(strpos(strtolower($request->channel), 'sms') !== false){
+                            } elseif (strpos(strtolower($request->channel), 'sms') !== false) {
                                 ProcessSmsApi::dispatch($data, auth()->user());
-                            }elseif(strtolower($request->channel)=='wa'){
-                                if($credential){
+                            } elseif (strtolower($request->channel) == 'wa') {
+                                if ($credential) {
                                     ProcessWaApi::dispatch($data, $credential);
-                                }else{
+                                } else {
                                     return response()->json([
                                         'code'          => 401,
                                         'campaign_id'   => $campaign->uuid,
                                         'message'       => "Campaign successful create, but invalid credential",
                                     ]);
                                 }
-                            }elseif(strtolower($request->channel)=='long_wa'){
-                                $request->merge([
-                                    'provider' => $provider
-                                ]);
+                            } elseif (strtolower($request->channel) == 'long_wa') {
                                 ProcessWaApi::dispatch($request->all(), auth()->user());
-                            }elseif(strtolower($request->channel)=='long_sms'){
-                                $request->merge([
-                                    'provider' => $provider
-                                ]);
+                            } elseif (strtolower($request->channel) == 'long_sms') {
                                 ProcessSmsApi::dispatch($request->all(), auth()->user());
                             }
                         }
-                    }else{
-                        //SINGLE RETRIVER
+                    } else {
                         return response()->json([
                             'code'      => 406,
                             'message'   => "Minimum contact 3000 to sending bulk message"
                         ]);
                     }
 
-                    // show result on progress
                     return response()->json([
                         'code'          => 200,
                         'campaign_id'   => $campaign->uuid,
-                        'message'       => "Campaign successful create, prepare sending notification to ".count($phones)." contact.",
+                        'message'       => "Campaign successful create, prepare sending notification to " . count($phones) . " contact.",
                     ]);
-                }else{
+                } else {
                     return response()->json([
                         'code'      => 405,
                         'message'   => "Campaign fail to created, Insufficient Balance!",
                     ]);
                 }
-            }else{
+            } else {
                 return response()->json([
                     'code'      => 405,
                     'message'   => "Campaign fail to created, please check your provider or ask Administrator!"
                 ]);
             }
-            //$this->sendSMS($request->all());
-        }catch(\Exception $e){
+        } catch (\Exception $e) {
             return response()->json([
                 'code'      => 400,
                 'message'   => $e->getMessage()
@@ -478,19 +490,16 @@ class ApiOneWayController extends Controller
         }
     }
 
-    /**
-     * importContact
-     *
-     * @param  mixed $input
-     * @return void
-     */
+
+
+
     private function importContact($input)
     {
-        if ($input->file) {
-            $filePath = $input->file->getRealPath();
+        $data = [];
 
-            $mimeType = $input->file->getClientMimeType();
-            $data = [];
+        if ($input->contact) {
+            $filePath = $input->contact->getRealPath();
+            $mimeType = $input->contact->getClientMimeType();
 
             if ($mimeType == 'text/csv') {
                 $fileContents = file($filePath);
@@ -511,16 +520,18 @@ class ApiOneWayController extends Controller
             if (empty($input->audience_id)) {
                 $input->audience = Audience::create([
                     'name'        => $input->title,
-                    'description' => 'This Audience Created Automatically fromd Campaign',
+                    'description' => 'This Audience Created Automatically from Campaign',
                     'user_id'     => auth()->user()->id,
                 ]);
-                $audience_id = $input->audience->id; // Set audience_id to the created audience's ID
             }
 
-            // Ensure $this->audience_id is set correctly
-            $data = importAudienceContact::dispatch($data, $audience_id, auth()->user()->id);
+            $audience_id = $input->audience->id;
+            importAudienceContact::dispatch($data, $audience_id, auth()->user()->id);
         }
+
+        return $data;
     }
+
 
     // ===========================================
     // Function below to testing in Controller
