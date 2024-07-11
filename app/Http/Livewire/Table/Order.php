@@ -2,6 +2,7 @@
 
 namespace App\Http\Livewire\Table;
 
+use App\Models\Company;
 use App\Models\Order as ModelsOrder;
 use Illuminate\Support\Facades\Auth;
 use Mediconesystems\LivewireDatatables\Column;
@@ -36,11 +37,21 @@ class Order extends LivewireDatatable
     public function adminColumns()
     {
         return [
+            Column::callback('type', function ($value) {
+                if ($value) {
+                    return strtoupper($value);
+                }
+                return '-';
+            })->label('Type')->filterable(),
+            Column::name('customer_id')->label('Customer'),
             Column::name('no')->label('No'),
             Column::name('name')->label('Name'),
-            Column::callback('company.name', function ($value) {
+            Column::callback('entity_party', function ($value) {
                 if ($value) {
-                    return $value;
+                    $company = cache()->remember('company-', $value, function() use ($value) {
+                        return Company::find($value);
+                    });
+                    return $value.' - '.$company->name;
                 }
                 return '-';
             })->label('Party')->filterable(),
