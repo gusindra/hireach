@@ -10,6 +10,7 @@ use App\Models\FlowSetting;
 use App\Models\Notice;
 use App\Models\OrderProduct;
 use App\Models\SaldoUser;
+use App\Models\Setting;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
@@ -25,6 +26,8 @@ class OrderObserver
      */
     public function created(Order $request)
     {
+
+
         if ($request->status == 'unpaid') {
             Billing::create([
                 'uuid'          => Str::uuid(),
@@ -53,6 +56,7 @@ class OrderObserver
         //Log::debug($request->status);
         if ($request->status == 'unpaid') {
             $bill = Billing::where('order_id', $request->id)->get();
+
             // $order = Order::where('customer_id', $request->id)->get();
             if (count($bill) == 0) {
                 Billing::create([
@@ -75,6 +79,24 @@ class OrderObserver
                 'user_id'       => $request->customer_id,
                 'status'        => 'unread',
             ]);
+            $billing = Billing::where('order_id', $request->id)->first();
+            $vatSetting = Setting::where('key', 'vat')->latest()->first();
+            $vatValue = $vatSetting ? $vatSetting->value : 0;
+
+            $orderProducts = OrderProduct::where('model_id',$request->id)
+            ->where('name', '!=', 'Tax')
+            ->get();
+
+            $totalPrice = $orderProducts->sum(function($item) {
+                return $item->price * $item->qty;
+            });
+
+            $taxPrice = $totalPrice * ($vatValue / 100);
+
+            $billing->update([
+                'amount' => $totalPrice+$taxPrice
+            ]);
+
         } elseif ($request->status == 'paid') {
             // $request->bill->update([
             //     'status'    => 'paid'
@@ -145,40 +167,22 @@ class OrderObserver
             ]);
         }
 
-        $orderProducts = OrderProduct::where('model_id', $request->id)->get();
-        if ($request->type == 'topup') {
+        if($request->type =='topup'){
 
-            OrderProduct::updateOrCreate(
-                [
+            $orderProducts = OrderProduct::where('model_id', $request->id)->get();
+            if ($orderProducts->isEmpty()) {
+                OrderProduct::create([
                     'model' => 'Order',
                     'model_id' => $request->id,
-                    'name' => 'Topup'
-                ],
-                [
+                    'name' => 'Topup',
                     'qty' => 1,
                     'unit' => 1,
                     'price' => $request->total,
                     'note' => 'Topup',
                     'user_id' => 0,
-                ]
-            );
-
-            // Membuat atau memperbarui OrderProduct Tax
-            OrderProduct::updateOrCreate(
-                [
-                    'model' => 'Order',
-                    'model_id' => $request->id,
-                    'name' => 'Tax'
-                ],
-                [
-                    'qty' => 1,
-                    'unit' => 1,
-                    'price' => $request->total * (11 / 100),
-                    'note' => 'VAT/PPN @ 11%',
-                    'user_id' => 0,
-                ]
-            );
+                ]);
         }
+}
 
 
     }

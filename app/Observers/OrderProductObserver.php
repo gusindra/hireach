@@ -5,6 +5,7 @@ namespace App\Observers;
 use App\Models\Billing;
 use App\Models\OrderProduct;
 use App\Models\Order;
+use App\Models\Setting;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Log;
@@ -19,15 +20,44 @@ class OrderProductObserver
      */
     public function created(OrderProduct $request)
     {
-        // // Periksa apakah nama adalah "Tax" dan hentikan pemrosesan jika ya
-        // if (stripos($request->name, 'Tax') !== false) {
-        //     return;
-        // }
+
 
         if ($request->model == 'Order') {
-            $order = Order::find($request->model_id);
-            $billing = Billing::where('order_id', $order->id)->first();
 
+            $vatSetting = Setting::where('key', 'vat')->latest()->first();
+            $vatValue = $vatSetting ? $vatSetting->value : 0;
+
+            $orderProducts = OrderProduct::where('model_id',$request->model_id)
+            ->where('name', '!=', 'Tax')
+            ->get();
+
+            $totalPrice = $orderProducts->sum(function($item) {
+                return $item->price * $item->qty;
+            });
+
+            $taxPrice = $totalPrice * ($vatValue / 100);
+
+            OrderProduct::updateOrCreate(
+                [
+                    'model' => 'Order',
+                    'model_id' => $request->model_id,
+                    'name' => 'Tax'
+                ],
+                [
+                    'qty' => 1,
+                    'unit' => 1,
+                    'price' => $taxPrice,
+                    'note' => 'VAT/PPN @ '.$vatValue.'%',
+                    'user_id' => 0,
+                ]
+            );
+
+            $order = Order::find($request->model_id);
+
+
+            $tax=OrderProduct::where('model_id',$request->model_id)->where('name','Tax')->latest()->first();
+            $billing = Billing::where('order_id', $order->id)->first();
+            $vat=Setting::where('key','vat')->latest()->first();
             if ($order) {
                 $subTotal = OrderProduct::latest()->first();
 
@@ -35,25 +65,25 @@ class OrderProductObserver
                     if (count($order->items) == 0) {
                         $order->update([
                             'total' => 0,
-                            'vat' => 11
+                            'vat' =>$vat->value
                         ]);
                     } else {
                         $total = 0;
 
-                        foreach ($order->items as $item) {
+                        foreach ($orderProducts as $item) {
                             $total += ($item->price * $item->qty * $item->total_percentage / 100);
                         }
 
                         $order->update([
-                            'total' => $total,
-                            'vat' => 11
+                            'total' => $totalPrice+$taxPrice
                         ]);
+
                     }
                 }
-
                 if ($billing) {
+
                     $billing->update([
-                        'amount' => $subTotal->price,
+                        'amount' => $totalPrice+$taxPrice
                     ]);
                 }
             }
@@ -69,21 +99,69 @@ class OrderProductObserver
      */
     public function deleted(OrderProduct $request)
     {
-        $order = Order::find($request->model_id);
-        if ($order) {
-            // $amount = $request->price * $request->qty * $request->total_percentage / 100;
-            if (count($order->items) == 0) {
-                $order->update([
-                    'total' => 0
-                ]);
-            } else {
-                $total = 0;
-                foreach ($order->items as $item) {
-                    $total = $total + ($item->price * $item->qty * $item->total_percentage / 100);
+        if ($request->model == 'Order') {
+
+            $vatSetting = Setting::where('key', 'vat')->latest()->first();
+            $vatValue = $vatSetting ? $vatSetting->value : 0;
+
+            $orderProducts = OrderProduct::where('model_id',$request->model_id)
+            ->where('name', '!=', 'Tax')
+            ->get();
+
+            $totalPrice = $orderProducts->sum(function($item) {
+                return $item->price * $item->qty;
+            });
+
+            $taxPrice = $totalPrice * ($vatValue / 100);
+
+            OrderProduct::updateOrCreate(
+                [
+                    'model' => 'Order',
+                    'model_id' => $request->model_id,
+                    'name' => 'Tax'
+                ],
+                [
+                    'qty' => 1,
+                    'unit' => 1,
+                    'price' => $taxPrice,
+                    'note' => 'VAT/PPN @ '.$vatValue.'%',
+                    'user_id' => 0,
+                ]
+            );
+
+            $order = Order::find($request->model_id);
+
+
+            $tax=OrderProduct::where('model_id',$request->model_id)->where('name','Tax')->latest()->first();
+            $billing = Billing::where('order_id', $order->id)->first();
+            $vat=Setting::where('key','vat')->latest()->first();
+            if ($order) {
+                $subTotal = OrderProduct::latest()->first();
+
+                if ($order) {
+                    if (count($order->items) == 0) {
+                        $order->update([
+                            'total' => 0,
+                            'vat' =>$vat->value
+                        ]);
+                    } else {
+                        $total = 0;
+
+                        foreach ($orderProducts as $item) {
+                            $total += ($item->price * $item->qty * $item->total_percentage / 100);
+                        }
+
+                        $order->update([
+                            'total' => $totalPrice+$taxPrice
+                        ]);
+                    }
                 }
-                $order->update([
-                    'total' => $total
-                ]);
+
+                if ($billing) {
+                    $billing->update([
+                        'amount' => $totalPrice+$taxPrice
+                    ]);
+                }
             }
         }
     }

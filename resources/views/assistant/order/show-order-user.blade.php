@@ -298,8 +298,10 @@
                                                                                                 Amount</th>
                                                                                         </tr>
                                                                                     </thead>
+
                                                                                     <tbody
                                                                                         class="bg-white divide-y divide-gray-200 text-xs">
+
                                                                                         @foreach ($data->items as $item)
                                                                                             <tr class=" ">
                                                                                                 <td
@@ -340,7 +342,9 @@
                                                                                                 class="px-2 py-2 text-sm whitespace-no-wrap text-right">
                                                                                                 <span
                                                                                                     class="uppercase">{{ $data->bill->currency ?? 'IDR' }}</span>
-                                                                                                {{ number_format($data->total) }}
+                                                                                                {{ $data->items->reject(function ($item) {
+                                                                                                        return $item->name === 'Tax';
+                                                                                                    })->sum('price') }}
                                                                                             </td>
                                                                                         </tr>
                                                                                         @if ($data->vat > 0)
@@ -354,7 +358,7 @@
                                                                                                     class="px-2 py-2 text-xs whitespace-no-wrap text-right">
                                                                                                     <span
                                                                                                         class="uppercase">{{ $data->bill->currency ?? 'IDR' }}</span>
-                                                                                                    {{ number_format($data->bill->amount * ($data->vat / 100)) }}
+                                                                                                    {{ $data->items->where('name', 'Tax')->sum('price') }}
                                                                                                 </td>
                                                                                             </tr>
                                                                                             <tr class="bg-gray-100">
@@ -366,7 +370,7 @@
                                                                                                     class="px-2 py-2 text-xl whitespace-no-wrap text-right">
                                                                                                     <span
                                                                                                         class="uppercase">{{ $data->bill->currency ?? 'IDR' }}</span>
-                                                                                                    {{ number_format($data->bill->amount + $data->bill->amount * ($data->vat / 100)) }}
+                                                                                                    {{ $data->items->sum('price') }}
                                                                                                 </td>
                                                                                             </tr>
                                                                                         @else
@@ -379,7 +383,7 @@
                                                                                                     class="px-2 py-2 text-xl whitespace-no-wrap text-right">
                                                                                                     <span
                                                                                                         class="uppercase">{{ $data->bill->currency ?? 'IDR' }}</span>
-                                                                                                    {{ number_format($data->bill->amount) }}
+                                                                                                    {{ $data->items->sum('price') }}
                                                                                                 </td>
                                                                                             </tr>
                                                                                         @endif

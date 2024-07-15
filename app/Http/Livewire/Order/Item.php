@@ -2,6 +2,7 @@
 
 namespace App\Http\Livewire\Order;
 
+use App\Models\Setting;
 use Livewire\Component;
 use App\Models\CommerceItem;
 use App\Models\Input;
@@ -29,12 +30,14 @@ class Item extends Component
 
     public function mount($data)
     {
-
-        $this->data = $data;
+         $this->data = $data;
         $this->products = CommerceItem::where('user_id', $data->user_id)->get();
-        $this->tax = $data->vat;
-
-
+        if (!$this->data->vat) {
+            $setting = Setting::where('key', 'vat')->latest()->first();
+            $this->tax = $setting->value;
+        } else {
+            $this->tax = $this->data->vat;
+        }
     }
 
     public function rules()
@@ -128,7 +131,10 @@ class Item extends Component
             return;
         }
 
-        $orderProduct = OrderProduct::where('model_id', $order->id)->where('name', 'Topup')->latest()->first();
+        $orderProduct = OrderProduct::where('model_id', $order->id)
+                                    ->where('name', 'Topup')
+                                    ->latest()
+                                    ->first();
 
         if (!$orderProduct) {
             return;
@@ -136,15 +142,27 @@ class Item extends Component
 
         $price = (float) $orderProduct->price;
 
-        $orderProductTax = OrderProduct::where('model_id', $order->id)->where('name', 'Tax')->latest()->first();
-
-        if ($orderProductTax) {
-            $orderProductTax->update(['price' => $price * $this->tax / 100]);
-            return ;
-        }
 
         $order->update(['vat' => $this->tax]);
+
+        OrderProduct::updateOrCreate(
+            [
+                'model' => 'Order',
+                'model_id' => $order->id,
+                'name' => 'Tax'
+            ],
+            [
+                'qty' => 1,
+                'unit' => 1,
+                'price' => $order->total * ($this->tax / 100),
+                'note' => 'VAT/PPN @ '.$this->tax.'%',
+                'user_id' => 0,
+            ]
+        );
+        return;
     }
+
+
 
 
     /**
@@ -242,10 +260,50 @@ class Item extends Component
         ];
     }
 
+
+    public function calculation()
+    {
+        // Retrieve items excluding tax
+        $items = OrderProduct::orderBy('id', 'asc')
+            ->where('model', 'Order')
+            ->where('model_id', $this->data->id)
+            ->where('name', 'not like', '%Tax%')
+            ->get();
+
+        // Calculate subtotal by summing the product of price and quantity
+        $subTotal = $items->reduce(function ($carry, $item) {
+            return $carry + ($item->price * $item->qty);
+        }, 0);
+
+        // Retrieve the latest tax entry for the order and default to 0.0 if not found
+        $taxEntry = OrderProduct::where('name', 'Tax')->where('model_id', $this->data->id)->latest()->first();
+        $tax = $taxEntry ? $taxEntry->price : 0.0;
+
+        // Calculate the total including tax
+        $total = $tax + $subTotal;
+
+
+        // Return the calculated values
+        return [
+            'subTotal' => $subTotal,
+            'tax' => $tax,
+            'total' => $total,
+            'note' => 'VAT/PPN @ ' . $this->tax . '%',
+        ];
+    }
+
+
+
+
+
     public function render()
     {
+        // Perform the calculation and get the results
+        $calculationResults = $this->calculation();
+
+        // Pass the calculated data to the view
         return view('livewire.order.item', [
-            'data' => $this->read()
+            'orderData' => $calculationResults
         ]);
     }
 }

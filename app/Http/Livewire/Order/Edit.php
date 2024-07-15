@@ -3,6 +3,7 @@
 namespace App\Http\Livewire\Order;
 
 use App\Models\Billing;
+use App\Models\Client;
 use App\Models\Order;
 use App\Models\User;
 use Livewire\Component;
@@ -46,8 +47,8 @@ class Edit extends Component
     {
 
         $this->order = Order::find($uuid);
-        $this->user = User::noadmin()->get();
-        $this->customer = User::find($this->order->customer_id);
+        $this->user = Client::all();
+        $this->customer = Client::where('uuid', $this->order->customer_id)->first();
         $this->date = $this->order->date;
         $this->input['name'] = $this->order->name ?? '';
         $this->input['no'] =    'HAPP' . date("YmdHis");
@@ -64,6 +65,7 @@ class Edit extends Component
         $this->input['date'] = $this->order->date ? $this->order->date->format('Y-m-d') : '';
         $this->input['total'] = $this->order->total ?? '';
         $this->nominal = $this->order->total ?? '';
+
     }
 
     public function rules()
@@ -127,21 +129,16 @@ class Edit extends Component
         $this->emit('update_status');
     }
 
-    public function onChangeModelId()
+    public function updatedInputCustomerId()
     {
-        if ($this->order) {
-            $this->order->customer_id;
-            $customer = User::find($this->input['customer_id']);
 
-            if ($customer) {
-                $this->customer = $customer;
-            } else {
-                $this->customer = NULL;
-            }
+        if ($this->order) {
+            $customer = Client::where('uuid', $this->input['customer_id'])->first();
+            $this->customer = $customer ?? '';
         } else {
-            $this->model = NULL;
-            $this->model_id = NULL;
-            $this->addressed_company = NULL;
+            $this->model = null;
+            $this->model_id = null;
+            $this->addressed_company = null;
             $this->addressed = '';
         }
     }

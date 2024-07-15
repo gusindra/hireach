@@ -90,6 +90,7 @@
                                     </table>
                                 </div>
                                 <div class="mt-10">
+
                                     <div class="col-span-6 grid grid-cols-2 mt-4">
                                         <div class="col-span-12 sm:col-span-1 mx-4">
                                             <x-jet-label for="input" value="{{ __(' ') }}" />
@@ -99,7 +100,8 @@
                                             <x-jet-label for="input.customer_id" value="{{ __('Sub Total') }}" />
                                             <span
                                                 class="border dark:bg-slate-700 rounded-md shadow-sm mt-1 block w-full p-2 text-right">Rp
-                                                {{ number_format($data['total']) }}</span>
+                                                {{ number_format($orderData['subTotal'], 2) }}
+                                            </span>
                                             <x-jet-input-error for="input.total" class="mt-2" />
                                         </div>
                                     </div>
@@ -118,7 +120,7 @@
                                             <x-jet-label for="tax" value="{{ __('VAT') }}" />
                                             <span
                                                 class="border dark:bg-slate-700 rounded-md shadow-sm mt-1 block w-full p-2 text-right">Rp
-                                                {{ number_format(($data['total'] * $tax) / 100) }}</span>
+                                                {{ number_format($orderData['tax'], 2) }}</span>
                                             <x-jet-input-error for="tax" class="mt-2" />
                                         </div>
                                     </div>
@@ -136,7 +138,7 @@
                                             <x-jet-label for="input.customer_id" value="{{ __('Total') }}" />
                                             <span
                                                 class="border dark:bg-slate-700 rounded-md shadow-sm mt-1 block w-full p-2 text-right">Rp
-                                                {{ number_format($data['total'] + ($data['total'] * $tax) / 100) }}</span>
+                                                {{ number_format($orderData['total'], 2) }}</span>
                                             <x-jet-input-error for="input.total" class="mt-2" />
                                         </div>
                                     </div>

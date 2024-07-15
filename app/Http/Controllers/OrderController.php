@@ -52,7 +52,6 @@ class OrderController extends Controller
 
     public function showUserOrder(Order $order)
     {
-
         return view('assistant.order.show-order-user', ['data' => $order]);
     }
 }

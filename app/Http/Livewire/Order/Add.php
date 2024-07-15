@@ -38,7 +38,7 @@ class Add extends Component
     {
         return [
             'type' => 'required',
-            'entity' => 'required_if:type,other',
+            'entity' => 'required_if:type,selling',
             'name' => 'required',
             'customer_id' => 'required',
         ];

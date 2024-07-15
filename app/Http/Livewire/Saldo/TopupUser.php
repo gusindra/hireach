@@ -4,6 +4,7 @@ namespace App\Http\Livewire\Saldo;
 
 use App\Models\Order;
 use App\Models\OrderProduct;
+use App\Models\Setting;
 use Livewire\Component;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
@@ -69,30 +70,40 @@ class TopupUser extends Component
     public function create()
     {
         //dd($this->nominal*(11/100));
+        $vat=Setting::where('key','vat')->latest()->first();
+
         $this->validate();
         try {
             $order = Order::create($this->dataOrder());
             if ($order) {
-                OrderProduct::create([
-                    'model' => 'Order',
-                    'model_id' => $order->id,
-                    'qty' => '1',
-                    'unit' => '1',
-                    'name' => 'Topup',
-                    'price' => $this->nominal,
-                    'note' => 'Topup',
-                    'user_id' => 0,
-                ]);
-                OrderProduct::create([
-                    'model' => 'Order',
-                    'model_id' => $order->id,
-                    'qty' => '1',
-                    'unit' => '1',
-                    'name' => 'Tax',
-                    'price' => '' . $this->nominal * (11 / 100),
-                    'note' => 'VAT/PPN @ 11%',
-                    'user_id' => 0,
-                ]);
+                OrderProduct::updateOrCreate(
+                    [
+                        'model' => 'Order',
+                        'model_id' => $order->id,
+                        'name' => 'Topup'
+                    ],
+                    [
+                        'qty' => 1,
+                        'unit' => 1,
+                        'price' => $this->nominal,
+                        'note' => 'Topup',
+                        'user_id' => 0,
+                    ]
+                );
+                OrderProduct::updateOrCreate(
+                    [
+                        'model' => 'Order',
+                        'model_id' => $order->id,
+                        'name' => 'Tax'
+                    ],
+                    [
+                        'qty' => 1,
+                        'unit' => 1,
+                        'price' => $this->nominal * ($vat->value / 100),
+                        'note' => 'VAT/PPN @ '.$vat->value.'%',
+                        'user_id' => 0,
+                    ]
+                );
             }
 
             //ProcessEmail::dispatch($order, 'create_order');

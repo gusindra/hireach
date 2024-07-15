@@ -2,6 +2,7 @@
 
 namespace App\Http\Livewire\Table;
 
+use App\Models\Client;
 use App\Models\Company;
 use App\Models\Order as ModelsOrder;
 use Illuminate\Support\Facades\Auth;
@@ -19,20 +20,25 @@ class Order extends LivewireDatatable
     public function builder()
     {
         $auth = Auth::user();
+        $client = Client::where('email', $auth->email)->first();
+
         $query = ModelsOrder::query()->orderBy('created_at', 'desc');
 
-        if (auth()->user()->super && auth()->user()->super->first() && auth()->user()->super->first()->role == 'superadmin' || auth()->user()->activeRole && str_contains(auth()->user()->activeRole->role->name, "Admin")) {
-            if($this->userId != 0){
-                $query->where('customer_id', $this->userId)->where('status', '!=', 'draft');
-            }else{
-                $query;
+        $isAdmin = $auth->super && $auth->super->first() && $auth->super->first()->role == 'superadmin';
+        $isAdmin = $isAdmin || ($auth->activeRole && str_contains($auth->activeRole->role->name, "Admin"));
+
+        if ($isAdmin) {
+            if ($this->userId != 0) {
+                $query->where('customer_id', $client->uuid)->where('status', '!=', 'draft');
             }
+            // No need for else clause as it does not change the query.
         } else {
-            $query->where('customer_id', $auth->id)->where('status', '!=', 'draft');
+            $query->where('customer_id', $client->uuid)->where('status', '!=', 'draft');
         }
 
         return $query;
     }
+
 
     public function adminColumns()
     {
