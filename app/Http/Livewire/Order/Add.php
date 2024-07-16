@@ -46,8 +46,11 @@ class Add extends Component
 
     private function checkClient()
     {
-        $client = Auth::user();
+        $client = User::find($this->customer_id);
+
         try {
+
+
             $customer = Client::where('email', $client->email)->where('user_id', 0)->firstOr(function () use ($client) {
                 return Client::create([
                     'name' => $client->name,

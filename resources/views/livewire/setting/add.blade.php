@@ -76,12 +76,16 @@
                                 <td class="py-2 px-4">{{ $setting->value }}</td>
                                 <td class="py-2 px-4">{{ $setting->remark ? $setting->remark : '-' }}</td>
                                 <td class="py-2 px-4 text-center">
-                                    <button
-                                        class="bg-red-500 text-white font-bold py-1 px-3 rounded hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-400"
-                                        wire:click="confirmDelete({{ $setting->id }})">
-                                        Delete
-                                    </button>
+                                    <div class="flex items-center justify-center space-x-2">
+                                        @livewire('setting.edit', ['settingId' => $setting->id])
+                                        <button
+                                            class="bg-red-500 text-white font-bold py-1 px-3 rounded hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-400"
+                                            wire:click="confirmDelete({{ $setting->id }})">
+                                            Delete
+                                        </button>
+                                    </div>
                                 </td>
+
                             </tr>
                         @endforeach
                     </tbody>
