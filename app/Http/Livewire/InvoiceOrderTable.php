@@ -16,7 +16,7 @@ class InvoiceOrderTable extends LivewireDatatable
 
     public function builder()
     {
-        $query = Billing::where('status', 'paid')->with('order.attachment');
+        $query = Billing::where('status', 'paid');
 
         return $query;
     }

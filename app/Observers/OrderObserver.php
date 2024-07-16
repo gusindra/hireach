@@ -8,7 +8,9 @@ use App\Models\Commision;
 use App\Models\FlowProcess;
 use App\Models\FlowSetting;
 use App\Models\Notice;
+use App\Models\OrderProduct;
 use App\Models\SaldoUser;
+use App\Models\Setting;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
@@ -24,6 +26,8 @@ class OrderObserver
      */
     public function created(Order $request)
     {
+
+
         if ($request->status == 'unpaid') {
             Billing::create([
                 'uuid'          => Str::uuid(),
@@ -36,6 +40,8 @@ class OrderObserver
                 'period'        => $request->date->format('m/Y')
             ]);
         }
+
+
     }
 
     /**
@@ -50,7 +56,8 @@ class OrderObserver
         //Log::debug($request->status);
         if ($request->status == 'unpaid') {
             $bill = Billing::where('order_id', $request->id)->get();
-            $order = Order::where('customer_id', $request->id)->get();
+
+            // $order = Order::where('customer_id', $request->id)->get();
             if (count($bill) == 0) {
                 Billing::create([
                     'uuid'          => Str::uuid(),
@@ -72,6 +79,33 @@ class OrderObserver
                 'user_id'       => $request->customer_id,
                 'status'        => 'unread',
             ]);
+            $billing = Billing::where('order_id', $request->id)->first();
+
+            $vatSetting = cache('vat_setting');
+
+            if (empty($vatSetting)) {
+                $vatSetting = cache()->remember('vat_setting', 1444, function () {
+                    return Setting::where('key', 'vat')->latest()->first();
+                });
+            }
+
+            $vatValue = $vatSetting ? $vatSetting->value : 0;
+
+            $orderProducts = OrderProduct::where('model_id', $request->id)
+                ->where('name', '!=', 'Tax')
+                ->get();
+
+            $totalPrice = $orderProducts->sum(function ($item) {
+                return $item->price * $item->qty;
+            });
+
+            $taxPrice = $totalPrice * ($vatValue / 100);
+
+            $billing->update([
+                'amount' => $totalPrice + $taxPrice
+            ]);
+
+
         } elseif ($request->status == 'paid') {
             // $request->bill->update([
             //     'status'    => 'paid'
@@ -86,9 +120,10 @@ class OrderObserver
             // }
 
             $user = User::where('email', $request->customer->email)->first();
-            if ($user) {
-                $currentSaldo = SaldoUser::where('user_id', $user->id)->latest()->first();
-
+            $currentSaldo = SaldoUser::where('user_id', $user->id)->latest()->first();
+            $orderProd=OrderProduct::where('name','Topup')->where('model_id',$request->id)->get();
+            $saldo =$orderProd->sum('price');
+                 if ($user) {
                 SaldoUser::create([
                     'user_id' => $user->id,
                     'team_id' => null,
@@ -97,8 +132,8 @@ class OrderObserver
                     'mutation' => 'credit',
                     'description' => 'Auto Topup from Order Successfully',
                     'currency' => 'IDR',
-                    'amount' => $request->total,
-                    'balance' => $currentSaldo && $currentSaldo->amount ? $currentSaldo->amount + $request->total : $request->total
+                    'amount' => $saldo,
+                    'balance' => $currentSaldo && $currentSaldo->amount ? $currentSaldo->amount + $saldo : $saldo
                 ]);
             }
         } elseif ($request->status == 'submit') {
@@ -141,6 +176,25 @@ class OrderObserver
                 'status'    => 'unpaid'
             ]);
         }
+
+        if($request->type =='topup'){
+
+            $orderProducts = OrderProduct::where('model_id', $request->id)->get();
+            if ($orderProducts->isEmpty()) {
+                OrderProduct::create([
+                    'model' => 'Order',
+                    'model_id' => $request->id,
+                    'name' => 'Topup',
+                    'qty' => 1,
+                    'unit' => 1,
+                    'price' => $request->total,
+                    'note' => 'Topup',
+                    'user_id' => 0,
+                ]);
+        }
+}
+
+
     }
 
     /**

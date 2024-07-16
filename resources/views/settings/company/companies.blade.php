@@ -40,6 +40,8 @@
                 </div>
             </div>
 
+            @livewire('setting.add')
+
         </div>
     </div>
 </x-app-layout>

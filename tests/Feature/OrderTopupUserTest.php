@@ -108,7 +108,7 @@ class OrderTopupUserTest extends TestCase
     public function test_topup_1_auto()
     {
 
-        $order = Order::where('total', '100')->latest()->first();
+        $order = Order::where('total', '111')->latest()->first();
         // Get the latest saldo entry related to the order
         $saldo = SaldoUser::where('model', 'Order')->where('model_id', $order->id)->latest()->first();
 
@@ -116,7 +116,7 @@ class OrderTopupUserTest extends TestCase
         $this->assertDatabaseHas('saldo_users', [
             'id' => $saldo->id,
             'user_id' => $saldo->user_id,
-            'amount' => 100,
+            'amount' => 111,
             'balance' => $saldo->balance,
         ]);
     }
@@ -126,7 +126,7 @@ class OrderTopupUserTest extends TestCase
         $user = User::find(2);
         $this->actingAs($user);
         Livewire::actingAs($user)->test(TopupUser::class)
-            ->set('nominal', '100')
+            ->set('nominal', '200')
             ->call('create');
         $this->assertDatabaseHas('orders', [
             'name' => 'Request Topup from ' . $user->name,
@@ -191,7 +191,7 @@ class OrderTopupUserTest extends TestCase
         $this->assertDatabaseHas('saldo_users', [
             'id' => $saldo->id,
             'user_id' => $saldo->user_id,
-            'amount' => 100,
+            'amount' => 333,
             'balance' => $saldo->balance,
         ]);
     }

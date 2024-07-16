@@ -3,9 +3,11 @@
 namespace App\Http\Livewire\Order;
 
 use App\Models\Billing;
+use App\Models\Client;
 use App\Models\Order;
 use App\Models\User;
 use Livewire\Component;
+use Illuminate\Support\Str;
 
 class Edit extends Component
 {
@@ -37,13 +39,16 @@ class Edit extends Component
     public $modalDeleteVisible = false;
     public $customer;
     public $formName;
+    public $nominal ;
+
+    public $nominal_view;
 
     public function mount($uuid)
     {
 
         $this->order = Order::find($uuid);
-        $this->user = User::noadmin()->get();
-        $this->customer = User::find($this->order->customer_id);
+        $this->user = Client::all();
+        $this->customer = Client::where('uuid', $this->order->customer_id)->first();
         $this->date = $this->order->date;
         $this->input['name'] = $this->order->name ?? '';
         $this->input['no'] =    'HAPP' . date("YmdHis");
@@ -59,6 +64,8 @@ class Edit extends Component
         $this->input['source_id'] = $this->order->source_id ?? '';
         $this->input['date'] = $this->order->date ? $this->order->date->format('Y-m-d') : '';
         $this->input['total'] = $this->order->total ?? '';
+        $this->nominal = $this->order->total ?? '';
+
     }
 
     public function rules()
@@ -90,6 +97,7 @@ class Edit extends Component
             'customer_id'       => $this->input['customer_id'],
             'type'              => $this->input['type'],
             'addressed_company' => $this->addressed_company,
+            'total'             =>  $this->nominal,
             'description'       => $this->description,
             'created_by'        => $this->created_by,
             'created_role'      => $this->created_role,
@@ -97,6 +105,15 @@ class Edit extends Component
             'addressed_role'    => $this->addressed_role,
         ];
     }
+
+
+    public function onClickNominal($value)
+    {
+
+        $this->nominal = $value;
+        $this->nominal_view = number_format($value);
+    }
+
 
     public function updateStatus($id, $formName = '')
 
@@ -112,21 +129,16 @@ class Edit extends Component
         $this->emit('update_status');
     }
 
-    public function onChangeModelId()
+    public function updatedInputCustomerId()
     {
-        if ($this->order) {
-            $this->order->customer_id;
-            $customer = User::find($this->input['customer_id']);
 
-            if ($customer) {
-                $this->customer = $customer;
-            } else {
-                $this->customer = NULL;
-            }
+        if ($this->order) {
+            $customer = Client::where('uuid', $this->input['customer_id'])->first();
+            $this->customer = $customer ?? '';
         } else {
-            $this->model = NULL;
-            $this->model_id = NULL;
-            $this->addressed_company = NULL;
+            $this->model = null;
+            $this->model_id = null;
+            $this->addressed_company = null;
             $this->addressed = '';
         }
     }
@@ -142,6 +154,19 @@ class Edit extends Component
         $this->validate();
         // dd($this->modelData());
         $order = Order::find($id)->update($this->modelData());
+
+        $bill=Billing::updateOrCreate([
+            'uuid'          => Str::uuid(),
+            'status'        => 'unpaid',
+            'code'          => $this->input['no'],
+            'description'   => $this->name,
+              'amount'        =>  $this->nominal,
+            'order_id'      => $this->order->id,
+
+
+
+        ]);
+
         $this->emit('saved');
     }
 
