@@ -191,7 +191,6 @@ class ApiOneWayController extends Controller
                     //COUNT PHONE NUMBER REQUESTED
                     //GROUP RETRIVER
 
-
                     $phones = $retriver;
                     if(count($phones)>1){
 
@@ -388,9 +387,9 @@ class ApiOneWayController extends Controller
                     ]);
                 }
 
+                // check balance minimum for 3K contact or 1,5 juta
                 $balance = (int) balance(auth()->user());
-
-                if ($balance > 1500000 && count($retriver) < $balance / 1) {
+                if ($balance > 150000 && count($retriver) < $balance / 1) {
                     // Auto check OTP
                     Log::info('Auto check OTP');
                     if (strpos(strtolower($request->channel), 'sms') !== false) {
@@ -417,7 +416,7 @@ class ApiOneWayController extends Controller
                     // Process sending messages
                     $phones = $allPhones;
 
-                    if (count($phones) > 29) {
+                    if (count($phones) > env('MIN_CAMPAIGN_CONTACT', 3000)) {
                         foreach ($phones as $p) {
                             Log::info('Processing phone: ' . $p);
                             $data = [
@@ -489,9 +488,6 @@ class ApiOneWayController extends Controller
             ]);
         }
     }
-
-
-
 
     private function importContact($input)
     {
