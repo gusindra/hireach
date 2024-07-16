@@ -126,7 +126,7 @@ class OrderTopupUserTest extends TestCase
         $user = User::find(2);
         $this->actingAs($user);
         Livewire::actingAs($user)->test(TopupUser::class)
-            ->set('nominal', '100')
+            ->set('nominal', '200')
             ->call('create');
         $this->assertDatabaseHas('orders', [
             'name' => 'Request Topup from ' . $user->name,
@@ -191,7 +191,7 @@ class OrderTopupUserTest extends TestCase
         $this->assertDatabaseHas('saldo_users', [
             'id' => $saldo->id,
             'user_id' => $saldo->user_id,
-            'amount' => 111,
+            'amount' => 333,
             'balance' => $saldo->balance,
         ]);
     }

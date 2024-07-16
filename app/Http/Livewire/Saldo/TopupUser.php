@@ -11,6 +11,7 @@ use Illuminate\Support\Str;
 use App\Models\Client;
 use App\Models\Team;
 use App\Jobs\ProcessEmail;
+use Illuminate\Support\Facades\Cache;
 
 class TopupUser extends Component
 {
@@ -69,8 +70,16 @@ class TopupUser extends Component
 
     public function create()
     {
-        //dd($this->nominal*(11/100));
-        $vat=Setting::where('key','vat')->latest()->first();
+        $vat = cache('vat_setting');
+        if (empty($vat)) {
+
+            $vat = cache()->remember('vat_setting', 1444, function () {
+                return Setting::where('key', 'vat')->latest()->first();
+            });
+
+        }
+
+
 
         $this->validate();
         try {
@@ -111,7 +120,7 @@ class TopupUser extends Component
             return redirect()->to('/payment/invoice/' . $order->id);
         } catch (\Throwable $th) {
             //throw $th;
-            dd($th);
+            dd('Mohon Tambahkan VAT pada setting');
         }
         $this->emit('fail');
     }

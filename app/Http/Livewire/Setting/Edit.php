@@ -29,7 +29,7 @@ class Edit extends Component
         $this->selectedSettingId = $setting->id;
         $this->value = $setting->value;
         $this->remark = $setting->remark;
-        $this->showEditModal = true;
+        $this->showModal = true;
     }
 
     public function update()
@@ -42,10 +42,7 @@ class Edit extends Component
             'remark' => $this->remark,
         ]);
 
-        $this->reset(['key', 'value', 'remark', 'selectedSettingId', 'showEditModal']);
-        session()->flash('message', 'Setting updated successfully.');
-
-        return redirect()->route('settings.index'); // Adjust the route as needed
+        $this->reset(['key', 'value', 'remark', 'selectedSettingId', 'showModal']);
     }
 
     public function render()

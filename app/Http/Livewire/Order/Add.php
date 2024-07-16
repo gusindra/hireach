@@ -25,14 +25,12 @@ class Add extends Component
     public $customer_id;
     public $name;
 
-    public $nominal = '';
     public $nominal_view;
 
     public function mount()
     {
         $this->customer = User::noadmin()->get();
-        // $this->nominal_view = number_format($this->nominal);
-    }
+       }
 
     public function rules()
     {
@@ -46,7 +44,7 @@ class Add extends Component
 
     private function checkClient()
     {
-        $client = User::find($this->customer_id);
+            $client = User::find($this->customer_id);
 
         try {
 
@@ -74,30 +72,6 @@ class Add extends Component
         // $this->validate();
 
        $order= Order::create($this->modelData());
-    //    if ($this->type=='topup') {
-
-    //     OrderProduct::create([
-
-    //         'model' => 'Order',
-    //         'model_id' => $order->id,
-    //         'qty' => '1',
-    //         'unit' => '1',
-    //         'name' => 'Topup',
-    //         'price' => $this->nominal,
-    //         'note' => 'Topup',
-    //         'user_id' => 0,
-    //     ]);
-    //     OrderProduct::create([
-    //         'model' => 'Order',
-    //         'model_id' => $order->id,
-    //         'qty' => '1',
-    //         'unit' => '1',
-    //         'name' => 'Tax',
-    //         'price' => '' . $this->nominal * (11 / 100),
-    //         'note' => 'VAT/PPN @ 11%',
-    //         'user_id' => 0,
-    //     ]);
-    // }
         $this->modalActionVisible = false;
         $this->resetForm();
         $this->emit('refreshLivewireDatatable');

@@ -80,22 +80,31 @@ class OrderObserver
                 'status'        => 'unread',
             ]);
             $billing = Billing::where('order_id', $request->id)->first();
-            $vatSetting = Setting::where('key', 'vat')->latest()->first();
+
+            $vatSetting = cache('vat_setting');
+
+            if (empty($vatSetting)) {
+                $vatSetting = cache()->remember('vat_setting', 1444, function () {
+                    return Setting::where('key', 'vat')->latest()->first();
+                });
+            }
+
             $vatValue = $vatSetting ? $vatSetting->value : 0;
 
-            $orderProducts = OrderProduct::where('model_id',$request->id)
-            ->where('name', '!=', 'Tax')
-            ->get();
+            $orderProducts = OrderProduct::where('model_id', $request->id)
+                ->where('name', '!=', 'Tax')
+                ->get();
 
-            $totalPrice = $orderProducts->sum(function($item) {
+            $totalPrice = $orderProducts->sum(function ($item) {
                 return $item->price * $item->qty;
             });
 
             $taxPrice = $totalPrice * ($vatValue / 100);
 
             $billing->update([
-                'amount' => $totalPrice+$taxPrice
+                'amount' => $totalPrice + $taxPrice
             ]);
+
 
         } elseif ($request->status == 'paid') {
             // $request->bill->update([
@@ -111,9 +120,10 @@ class OrderObserver
             // }
 
             $user = User::where('email', $request->customer->email)->first();
-            if ($user) {
-                $currentSaldo = SaldoUser::where('user_id', $user->id)->latest()->first();
-
+            $currentSaldo = SaldoUser::where('user_id', $user->id)->latest()->first();
+            $orderProd=OrderProduct::where('name','Topup')->where('model_id',$request->id)->get();
+            $saldo =$orderProd->sum('price');
+                 if ($user) {
                 SaldoUser::create([
                     'user_id' => $user->id,
                     'team_id' => null,
@@ -122,8 +132,8 @@ class OrderObserver
                     'mutation' => 'credit',
                     'description' => 'Auto Topup from Order Successfully',
                     'currency' => 'IDR',
-                    'amount' => $request->total,
-                    'balance' => $currentSaldo && $currentSaldo->amount ? $currentSaldo->amount + $request->total : $request->total
+                    'amount' => $saldo,
+                    'balance' => $currentSaldo && $currentSaldo->amount ? $currentSaldo->amount + $saldo : $saldo
                 ]);
             }
         } elseif ($request->status == 'submit') {

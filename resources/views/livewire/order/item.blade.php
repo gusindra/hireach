@@ -15,9 +15,14 @@
                 <x-jet-action-message class="mr-3" on="saved">
                     {{ __('Action saved.') }}
                 </x-jet-action-message>
-                <x-add-button show="{{ $data->status == 'draft' ? true : false }}" wire:click="showCreateModal">
-                    {{ __('Add Item') }}
-                </x-add-button>
+                @if ($data->status == 'draft')
+                    <x-add-button :show="$data->status == 'draft'" wire:click="showCreateModal">
+                        {{ __('Add Item') }}
+                    </x-add-button>
+                @endif
+
+
+
             </div>
 
             <div class="space-y-6">
@@ -163,10 +168,11 @@
         <x-slot name="content">
             <div class="col-span-6 sm:col-span-4 p-3">
                 <x-jet-label for="name" value="{{ __('Item Name') }}" />
-                <x-jet-input id="name" type="text" class="mt-1 block w-full" wire:model.debunce.800ms="name"
-                    autofocus />
+                <x-jet-input id="name" type="text" class="mt-1 block w-full" wire:model.debounce.800ms="name"
+                    autofocus placeholder="{{ $data->type == 'topup' ? 'Topup' : '' }}" />
                 <x-jet-input-error for="name" class="mt-2" />
             </div>
+
             <div class="col-span-6 sm:col-span-4 p-3 grid grid-cols-3">
                 <div class=" ">
                     <x-jet-label for="price" value="{{ __('Price') }}" />
@@ -200,8 +206,9 @@
             </div>
             <div class="col-span-6 sm:col-span-4 p-3">
                 <x-jet-label for="description" value="{{ __('Description') }}" />
-                <x-jet-input id="description" type="text" class="mt-1 block w-full"
-                    wire:model.debunce.800ms="description" autofocus />
+                <x-jet-input id="description"
+                    placeholder="{{ $data->type == 'topup' ? 'example : Topup for Email' : '' }}" type="text"
+                    class="mt-1 block w-full" wire:model.debunce.800ms="description" autofocus />
                 <x-jet-input-error for="description" class="mt-2" />
             </div>
         </x-slot>

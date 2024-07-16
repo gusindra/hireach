@@ -30,15 +30,24 @@ class Item extends Component
 
     public function mount($data)
     {
-         $this->data = $data;
+        $this->data = $data;
         $this->products = CommerceItem::where('user_id', $data->user_id)->get();
+
         if (!$this->data->vat) {
-            $setting = Setting::where('key', 'vat')->latest()->first();
-            $this->tax = $setting->value;
+            $vat = cache('vat_setting');
+
+            if (empty($vat)) {
+                $vat = cache()->remember('vat_setting', 1444, function () {
+                    return Setting::where('key', 'vat')->latest()->first();
+                });
+            }
+
+            $this->tax = $vat->value;
         } else {
             $this->tax = $this->data->vat;
         }
     }
+
 
     public function rules()
     {
@@ -53,16 +62,17 @@ class Item extends Component
     public function modelData()
     {
         return [
-            'model_id'      => $this->data->id,
-            'model'         => 'Order',
-            'name'          => $this->name,
-            'unit'          => $this->unit,
-            'qty'          => $this->qty,
-            'price'         => $this->price,
-            'total_percentage'  => $this->percentage,
-            'note'          => $this->description,
-            'user_id'       => Auth::user()->id
+            'model_id'         => $this->data->id,
+            'model'            => 'Order',
+            'name'             => $this->data->type === 'topup' ? 'Topup' : $this->name,
+            'unit'             => $this->unit,
+            'qty'              => $this->qty,
+            'price'            => $this->price,
+            'total_percentage' => $this->percentage,
+            'note'             => $this->description,
+            'user_id'          => Auth::user()->id
         ];
+
     }
 
     public function create()
