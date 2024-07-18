@@ -186,10 +186,8 @@ Route::get('/sent/sample', function (Request $request) {
     }
 });
 
-
 Route::post('/get/saveAlarm', [ApiViGuardController::class, 'index']);
 Route::post('/saveAlarm', [ApiViGuardController::class, 'post']);
-
 
 Route::get('/dummy-json', function () {
     return response()->json([
@@ -203,7 +201,6 @@ Route::get('/dummy-json', function () {
     ]);
 });
 
-
 Route::get("/dummy-array", function () {
     $resData = [
         'code' => 200,
@@ -213,6 +210,7 @@ Route::get("/dummy-array", function () {
 
     return response()->json($resData);
 });
+
 Route::get("/dummy-array2", function () {
     $resData = [
         'code' => 200,
@@ -239,8 +237,10 @@ Route::get("/dummy-array2", function () {
     return response()->json($resData);
 });
 
-
 Route::get("/dummy-string", function () {
-
     return '6281339668556,118888000,200,IDR,350|6281999222185,118888001,200,IDR,350';
+});
+
+Route::get("/dummy-string-error", function () {
+    return '400';
 });

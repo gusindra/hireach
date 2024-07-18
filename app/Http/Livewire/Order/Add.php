@@ -24,14 +24,24 @@ class Add extends Component
     public $customer;
     public $customer_id;
     public $name;
-
+    public $nominal;
     public $nominal_view;
 
+    /**
+     * mount
+     *
+     * @return void
+     */
     public function mount()
     {
         $this->customer = User::noadmin()->get();
        }
 
+    /**
+     * rules
+     *
+     * @return void
+     */
     public function rules()
     {
         return [
@@ -42,13 +52,15 @@ class Add extends Component
         ];
     }
 
+    /**
+     * checkClient
+     *
+     * @return void
+     */
     private function checkClient()
     {
-            $client = User::find($this->customer_id);
-
+        $client = User::find($this->customer_id);
         try {
-
-
             $customer = Client::where('email', $client->email)->where('user_id', 0)->firstOr(function () use ($client) {
                 return Client::create([
                     'name' => $client->name,
@@ -67,6 +79,11 @@ class Add extends Component
         return $customer->uuid;
     }
 
+    /**
+     * create
+     *
+     * @return void
+     */
     public function create()
     {
         // $this->validate();
@@ -77,9 +94,13 @@ class Add extends Component
         $this->emit('refreshLivewireDatatable');
     }
 
+    /**
+     * modelData
+     *
+     * @return void
+     */
     public function modelData()
     {
-
         $data = [
             'type' => $this->type ?? 'selling',
             'name' => $this->name ??  'Topup from Admin :  ' . Auth::user()->name,
@@ -96,6 +117,11 @@ class Add extends Component
         return $data;
     }
 
+    /**
+     * resetForm
+     *
+     * @return void
+     */
     public function resetForm()
     {
         $this->type = null;
@@ -104,11 +130,21 @@ class Add extends Component
         $this->customer_id = null;
     }
 
+    /**
+     * actionShowModal
+     *
+     * @return void
+     */
     public function actionShowModal()
     {
         $this->modalActionVisible = true;
     }
 
+    /**
+     * readCompany
+     *
+     * @return void
+     */
     private function readCompany()
     {
         if ((Auth::user()->super->first() && Auth::user()->super->first()->role == 'superadmin') || (Auth::user()->activeRole)) {
@@ -117,6 +153,12 @@ class Add extends Component
         return Company::where('user_id', Auth::user()->id)->get();
     }
 
+    /**
+     * onClickNominal
+     *
+     * @param  mixed $value
+     * @return void
+     */
     public function onClickNominal($value)
     {
         $this->nominal = $value;
@@ -124,6 +166,11 @@ class Add extends Component
     }
 
 
+    /**
+     * render
+     *
+     * @return void
+     */
     public function render()
     {
         return view('livewire.order.add', [

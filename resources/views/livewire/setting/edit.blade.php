@@ -1,5 +1,5 @@
 <div>
-    <x-jet-button wire:click="$set('showModal', true)">
+    <x-jet-button wire:click="showModalUpdate()">
         {{ __('Edit') }}
     </x-jet-button>
     <!-- Edit Setting Modal -->

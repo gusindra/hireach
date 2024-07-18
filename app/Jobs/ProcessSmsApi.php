@@ -2,6 +2,7 @@
 
 namespace App\Jobs;
 
+use App\Actions\CheckApiResponse;
 use App\Models\BlastMessage;
 use App\Models\CampaignModel;
 use App\Models\Client;
@@ -65,7 +66,7 @@ class ProcessSmsApi implements ShouldQueue
      * @param  mixed $request
      * @return void
      */
-    private function MKProvider($request)
+    private function MKProvider($request, CheckApiResponse $checkApiResponse)
     {
         if ($request['otp'] == false) {
             $user   = env('MK_NON_OTP_USER');
@@ -82,8 +83,8 @@ class ProcessSmsApi implements ShouldQueue
         }
         try {
             $url = 'http://www.etracker.cc/bulksms/mesapi.aspx';
-            //$url = 'http://telixcel.com/api/send/smsbulk';
-            //$url = 'http://telixnet.test/api/send/smsbulk';
+
+            //$url = 'http://telixcel.com/api/send/smsbulk'; 
             $response = '';
             if ($request['type'] == "0") {
                 // $response = Http::asForm()->accept('application/xml')->post($url, [
@@ -103,7 +104,7 @@ class ProcessSmsApi implements ShouldQueue
                 $environment = App::environment();
 
                 if (App::environment(['local', 'testing'])) {
-                    $response = Http::get(url('http://hireach.test/api/dummy-string'));
+                    $response = Http::get(url('http://hireach.test/api/dummy-string-error'));
                 } elseif (App::environment('development')) {
                     $response = Http::get('https://hireach.archeeshop.com/api/dummy-string');
                 } else {
@@ -133,62 +134,9 @@ class ProcessSmsApi implements ShouldQueue
                 //     'detail' => 1,
                 // ]);
             }
-            // return $response;
-            // Log::debug("MK Res:");
-            // Log::debug($response);
             // check response code
-            if ($response == '400') {
-                $msg = "Missing parameter or invalid field type";
-            } elseif ($response == '401') {
-                $msg = "Invalid username, password or ServID";
-            } elseif ($response == '402') {
-                $msg = "Invalid Account Type (when call using postpaid client’s account)";
-            } elseif ($response == '403') {
-                $msg = "Invalid Account, Your IP address is not allowed";
-            } elseif ($response == '404') {
-                $msg = "Invalid Account, Value for parameter “From” is too long";
-            } elseif ($response == '405') {
-                $msg = "Invalid Parameter, Value for parameter “Type” is not within the options";
-            } elseif ($response == '406') {
-                $msg = "Invalid Parameter, MSISDN given is either too long or too short";
-            } elseif ($response == '408') {
-                $msg = "System Error, Message Queue path retrieval failed";
-            } elseif ($response == '409') {
-                $msg = "System Error, Unable to send message";
-            } elseif ($response == '411') {
-                $msg = "Blacklisted, Recipient has Opted-Out from receive bulk promo message";
-            } elseif ($response == '412') {
-                $msg = "Invalid Account, Account suspended/terminated.";
-            } elseif ($response == '413') {
-                $msg = "Invalid Broadcast Time";
-            } elseif ($response == '414') {
-                $msg = "Invalid Account, nactive Account.";
-            } elseif ($response == '415') {
-                $msg = "Invalid Account, You not subscribe to Bulk SMS service";
-            } elseif ($response == '416') {
-                $msg = "Invalid Account, You not subscribe to this coverage";
-            } elseif ($response == '417') {
-                $msg = "Invalid Account, No route has been configured for this coverage";
-            } elseif ($response == '418') {
-                $msg = "Invalid Account, There is no available route for this broadcast";
-            } elseif ($response == '419') {
-                $msg = "Invalid Account, The Service ID is invalid";
-            } elseif ($response == '420') {
-                $msg = "System Error, System is unable to process the text message";
-            } elseif ($response == '421') {
-                $msg = "System Error, No coverage price has been set for this broadcast";
-            } elseif ($response == '422') {
-                $msg = "Invalid Account, No wallet.";
-            } elseif ($response == '423') {
-                $msg = "Invalid Account, Insufficient credit in wallet.";
-            } elseif ($response == '424') {
-                $msg = "Invalid Account, You not subscribe to this coverage";
-            } elseif ($response == '425') {
-                $msg = "System Error, No setting configuration for this route";
-            } elseif ($response == '427') {
-                $msg = "Invalid Broadcast Title";
-            } elseif ($response == '500') {
-                $msg = "System Error";
+            if (strlen($response)<5) {
+                $msg = $checkApiResponse->macrokiosk($response);
             } else {
                 // if (isJSON($response)) {
                 //     // JSON is valid
