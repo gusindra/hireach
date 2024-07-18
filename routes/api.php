@@ -88,9 +88,8 @@ Route::post('/delivery-notification ',  [ApiBulkSmsController::class, 'status'])
 //Route::get('/log-request-status1',  [ApiBulkSmsController::class, 'logStatus']);
 //TWO WAY MESSAGE
 Route::post('/inbound-messages',  [ApiWaController::class, 'retriveNewMessage']);
-Route::post('/inbound-messages/{provider}',  [ApiTwoWayController::class, 'retriveNewMessage']);
-
-
+Route::get('/inbound-messages/{provider}',  [ApiTwoWayController::class, 'retriveNewMessage']);
+//ViGuard API access
 Route::post('/get/saveAlarm', [ApiViGuardController::class, 'index']);
 Route::post('/saveAlarm', [ApiViGuardController::class, 'post']);
 

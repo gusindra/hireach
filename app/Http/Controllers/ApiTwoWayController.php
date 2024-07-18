@@ -10,11 +10,13 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use App\Jobs\ProcessChatApi;
+use App\Jobs\ProcessInboundMessage;
 use App\Models\ApiCredential;
 use App\Models\Campaign;
 use App\Models\Client;
 use App\Models\ProviderUser;
 use App\Models\Request as ModelsRequest;
+use Carbon\Carbon;
 use Illuminate\Support\Str;
 use Vinkla\Hashids\Facades\Hashids;
 
@@ -431,20 +433,23 @@ class ApiTwoWayController extends Controller
      * @return void
      */
     private function saveResult($campaign, $request, $prev=null){
-        $user_id = $prev ? $prev->user_id : auth()->user()->id;
+        $user_id = auth()->user()->id;
         //ModelsRequest::create($modelData);
-        $client = $prev ? $prev->client_id : $this->chechClient("400", $request);
-        $text = $campaign?'campaign'.$campaign->id:($prev?$request->text:$request['Text']);
-        $chat = ModelsRequest::create([
-            'source_id' => $prev ? $request->Msgid : 'webchat_api_'.Hashids::encode($client->id),
-            'reply'     => $campaign?'campaign'.$campaign->id:$request['text'],
-            'from'      => $prev ? $request->msisdn : $client->id,
+        $client = $this->chechClient("400", $request);
+        $text = $campaign?'campaign'.$campaign->id:$request['text'];
+
+        $data = [
+            'source_id' => 'webchat_api_'.Hashids::encode($client->id),
+            'reply'     => $text,
+            'from'      => $client->id,
             'user_id'   => $user_id,
             'type'      => 'text',
-            'client_id' => $prev ? $client : $client->uuid,
-            'sent_at'   => $prev ? $request->Time : date('Y-m-d H:i:s'),
-            'team_id'   => $prev ? $prev->team_id :auth()->user()->team->id
-        ]);
+            'client_id' => $client->uuid,
+            'sent_at'   => date('Y-m-d H:i:s'),
+            'team_id'   => auth()->user()->team->id
+        ];
+
+        $chat = ModelsRequest::create($data);
         return $chat;
     }
 
@@ -472,18 +477,29 @@ class ApiTwoWayController extends Controller
 
     public function retriveNewMessage(Request $request, $provider){
         $status=0;
-        if($provider=='MK'){
-            if($request->Msgid){
-                $prvMsg = ModelsRequest::where('source_id', $request->Msgid)->first();
+        //return $request;
+        if($provider=='sms-mk'){
+            if($request->msgid){
+                $prvMsg = ModelsRequest::where('from', $request->msisdn)->where('source_id', $request->msgid)->first();
+                $exsistingMsg = ModelsRequest::where('from', $request->msisdn)->where('source_id', $request->msgid)->where('reply', $request->text)->where('sent_at', Carbon::createFromFormat('Y-m-dH:i:s', $request->time))->first();
+                if($exsistingMsg){
+                    return response()->json([
+                        'code' => 401,
+                        'message' => "Duplicate request, this message is exsist"
+                    ]);
+                }
             }
             if($request->shortcode){
                 //MK SHORT CODE MO
-                $this->saveResult(null, $request, $prvMsg);
+                // $this->saveResult(null, $request, $prvMsg);
+                ProcessInboundMessage::dispatch($request->all(), $prvMsg);
+                $status=1;
             }elseif($request->longcode){
                 //MK LONG CODE MO
-                $this->saveResult(null, $request, $prvMsg);
+                // $this->saveResult(null, $request, $prvMsg);
+                ProcessInboundMessage::dispatch($request->all(), $prvMsg);
+                $status=1;
             }
-            $status=1;
         }
 
         if($status){
