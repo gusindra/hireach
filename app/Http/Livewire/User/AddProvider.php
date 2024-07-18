@@ -25,7 +25,8 @@ class AddProvider extends Component
     public $confirmingActionRemoval = false;
     public $input = [
         'provider_id' => '',
-        'channel' => ''
+        'channel' => '',
+        'from' => ''
     ];
 
     /**
@@ -54,6 +55,7 @@ class AddProvider extends Component
         $data = [
             'provider_id'   => $this->provider_id,
             'channel'       => $this->channel,
+            'from'          => $this->from,
             'user_id'       => $this->userId
         ];
 
@@ -88,9 +90,9 @@ class AddProvider extends Component
     public function rules()
     {
         return [
-            'input.provider_id'    => 'required',
-            'channel'       => 'required',
-            'userId'        => 'required',
+            'input.provider_id' => 'required',
+            'channel'           => 'required',
+            'userId'            => 'required',
         ];
     }
 
@@ -102,10 +104,10 @@ class AddProvider extends Component
     public function messages()
     {
         return [
-            'provider_id.required'   => 'The Provider field is required.',
-            'channel.required'   => 'The Channel field is required.',
-            'userId.required' => 'The user field is required.',
-            'provider_id.unique'   => 'The Provider has already been taken.',
+            'provider_id.required'  => 'The Provider field is required.',
+            'channel.required'      => 'The Channel field is required.',
+            'userId.required'       => 'The user field is required.',
+            'provider_id.unique'    => 'The Provider has already been taken.',
         ];
     }
 
@@ -116,8 +118,6 @@ class AddProvider extends Component
      */
     public function create()
     {
-        // dd($this->modelData());
-        // $this->validate();
         $action = ProviderUser::firstOrCreate($this->modelData(), $this->modelData());
         $this->modalActionVisible = false;
         $this->resetForm();
@@ -143,6 +143,7 @@ class AddProvider extends Component
         $action = ProviderUser::firstOrCreate([
             'provider_id'   => $this->input['provider_id'],
             'channel'       => strtoupper($this->input['channel']),
+            'from'          => strtoupper($this->input['from']),
             'user_id'       => $this->userId
         ]);
 

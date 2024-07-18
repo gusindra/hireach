@@ -3,6 +3,7 @@
 namespace App\Http\Livewire\Setting;
 
 use App\Models\Setting;
+use Illuminate\Support\Facades\Cache;
 use Livewire\Component;
 
 class Add extends Component
@@ -10,30 +11,27 @@ class Add extends Component
     public $key;
     public $value;
     public $remark;
-    public $showModal = false;
+    public $valueEdit;
+    public $remarkEdit;
+    public $showAddModal = false;
+    public $showEditModal = false;
     public $showDeleteModal = false;
-    public $settings = [];
+
+    // public $settings = [];
     public $selectedSettingId;
 
-    protected $rules = [
-        'key' => 'required|string',
-        'value' => 'required|string',
-        'remark' => 'nullable|string',
-    ];
-
-    public function mount()
+    public function showModalAdd()
     {
-        $this->loadSettings();
-    }
-
-    public function loadSettings()
-    {
-        $this->settings = Setting::all();
+        $this->showAddModal = true;
     }
 
     public function save()
     {
-        $this->validate();
+        $this->validate([
+            'key' => 'required',
+            'value' => 'required',
+            'remark' => 'nullable|string',
+        ]);
 
         Setting::create([
             'key' => $this->key,
@@ -42,10 +40,37 @@ class Add extends Component
         ]);
 
         $this->reset(['key', 'value', 'remark']);
-        $this->showModal = false;
+        $this->showAddModal = false;
         session()->flash('message', 'Setting added successfully.');
+    }
 
-        $this->loadSettings();
+    public function showModalUpdate($id)
+    {
+        $this->selectedSettingId = $id;
+        $editable = Setting::findOrFail($this->selectedSettingId);
+        $this->valueEdit = $editable->value;
+        $this->remarkEdit = $editable->remark;
+
+        $this->showEditModal = true;
+    }
+
+    public function updateSetting()
+    {
+        $this->validate([
+            'valueEdit' => 'required',
+            'remarkEdit' => 'nullable|string',
+        ]);
+
+        $setting = Setting::findOrFail($this->selectedSettingId);
+        $setting->update([
+            'value' => $this->valueEdit,
+            'remark' => $this->remarkEdit,
+        ]);
+
+        $this->reset(['key', 'value', 'remark', 'selectedSettingId', 'showEditModal']);
+
+        // CLEAR CACHE
+        Cache::forget('vat_setting');
     }
 
     public function confirmDelete($id)
@@ -61,10 +86,23 @@ class Add extends Component
         $this->selectedSettingId = null;
         session()->flash('message', 'Setting deleted successfully.');
 
-        $this->loadSettings();
+        //$this->loadSettings();
     }
+
+        /**
+     * readSetting
+     *
+     * @return void
+     */
+    private function readSetting()
+    {
+        return Setting::all();
+    }
+
     public function render()
     {
-        return view('livewire.setting.add');
+        return view('livewire.setting.add', [
+            'settings' => $this->readSetting(),
+        ]);
     }
 }

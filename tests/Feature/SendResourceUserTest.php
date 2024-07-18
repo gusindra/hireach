@@ -3,12 +3,7 @@
 namespace Tests\Feature;
 
 use App\Http\Livewire\Resource\AddResource;
-use App\Jobs\ProcessEmailApi;
 use App\Models\User;
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Queue;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -37,8 +32,6 @@ class SendResourceUserTest extends TestCase
 
     public function test_it_can_send_resource_one_way_via_email()
     {
-
-
         $user = User::find(2);
 
         Livewire::actingAs($user)->test(AddResource::class, ['uuid' => $user->id])
@@ -51,7 +44,6 @@ class SendResourceUserTest extends TestCase
             ->set('text', 'FROM PHP ARTISAN TEST.')
             ->call('sendResource');
 
-
         $this->assertDatabaseHas('blast_messages', [
             'user_id' => $user->id,
             'msisdn' => 'imadeardanayatra0251@gmail.com',
@@ -61,10 +53,7 @@ class SendResourceUserTest extends TestCase
 
     public function test_it_can_send_resource_one_way_via_long_sms()
     {
-
-
         $user = User::find(2);
-
 
         Livewire::actingAs($user)->test(AddResource::class, ['uuid' => $user->id])
             ->set('channel', 'long_sms')
@@ -87,10 +76,7 @@ class SendResourceUserTest extends TestCase
 
     public function test_it_can_send_resource_one_way_via_sms()
     {
-
-
         $user = User::find(2);
-
 
         Livewire::actingAs($user)->test(AddResource::class, ['uuid' => $user->id])
             ->set('channel', 'sms')
@@ -102,7 +88,6 @@ class SendResourceUserTest extends TestCase
             ->set('text', 'FROM PHP ARTISAN TEST.')
             ->call('sendResource');
 
-
         $this->assertDatabaseHas('blast_messages', [
             'user_id' => $user->id,
             'msisdn' => '09090',
@@ -112,10 +97,7 @@ class SendResourceUserTest extends TestCase
 
     public function test_it_can_send_resource_one_way_via_wa()
     {
-
-
         $user = User::find(2);
-
 
         Livewire::actingAs($user)->test(AddResource::class, ['uuid' => $user->id])
             ->set('channel', 'long_wa')
@@ -127,7 +109,6 @@ class SendResourceUserTest extends TestCase
             ->set('text', 'FROM PHP ARTISAN TEST.')
             ->call('sendResource');
 
-
         $this->assertDatabaseHas('blast_messages', [
             'user_id' => $user->id,
             'msisdn' => '09090',
@@ -138,9 +119,7 @@ class SendResourceUserTest extends TestCase
     public function test_it_can_send_resource_one_way_via_sms_otp()
     {
 
-
         $user = User::find(2);
-
 
         Livewire::actingAs($user)->test(AddResource::class, ['uuid' => $user->id])
             ->set('channel', 'sms_otp')
@@ -159,15 +138,6 @@ class SendResourceUserTest extends TestCase
             'status' => 'SUCCESS',
         ]);
     }
-
-
-
-
-
-
-
-
-
 
     public function test_it_can_send_resource_two_way_via_email()
     {
@@ -193,8 +163,6 @@ class SendResourceUserTest extends TestCase
 
     public function test_it_can_send_resource_two_way_via_long_sms()
     {
-
-
         $user = User::find(2);
         $randomText = str()->random(7);
 
@@ -219,8 +187,6 @@ class SendResourceUserTest extends TestCase
 
     public function test_it_can_send_resource_two_way_via_sms()
     {
-
-
         $user = User::find(2);
         $randomText = str()->random(9);
 
@@ -246,7 +212,6 @@ class SendResourceUserTest extends TestCase
         $randomText = str()->random(20);
         $user = User::find(2);
 
-
         Livewire::actingAs($user)->test(AddResource::class, ['uuid' => $user->id])
             ->set('channel', 'long_wa')
             ->set('from', '087767653663')
@@ -257,7 +222,6 @@ class SendResourceUserTest extends TestCase
             ->set('text', $randomText)
             ->call('sendResource');
 
-
         $this->assertDatabaseHas('requests', [
             'user_id' => $user->id,
             'reply' => $randomText,
@@ -267,9 +231,7 @@ class SendResourceUserTest extends TestCase
     public function test_it_can_send_resource_two_way_via_sms_otp()
     {
         $randomText = str()->random(9);
-
         $user = User::find(2);
-
 
         Livewire::actingAs($user)->test(AddResource::class, ['uuid' => $user->id])
             ->set('channel', 'long_sms')

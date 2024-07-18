@@ -20,7 +20,7 @@ class Edit extends Component
 
     public function mount($settingId)
     {
-        $this->loadSetting($settingId);
+        //$this->loadSetting($settingId);
     }
 
     public function loadSetting($settingId)
@@ -29,7 +29,11 @@ class Edit extends Component
         $this->selectedSettingId = $setting->id;
         $this->value = $setting->value;
         $this->remark = $setting->remark;
-        $this->showModal = true;
+        // $this->showModal = true;
+    }
+
+    public function showModalUpdate($settingId){
+        dd($settingId);
     }
 
     public function update()
@@ -38,7 +42,7 @@ class Edit extends Component
 
         $setting = Setting::findOrFail($this->selectedSettingId);
         $setting->update([
-             'value' => $this->value,
+            'value' => $this->value,
             'remark' => $this->remark,
         ]);
 

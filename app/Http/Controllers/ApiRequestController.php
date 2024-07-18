@@ -13,7 +13,7 @@ use Illuminate\Support\Facades\Log;
 class ApiRequestController extends Controller
 {
     /**
-     * post
+     * this function post to sending message via API
      *
      * @param  mixed $request
      * @return void
@@ -127,6 +127,12 @@ class ApiRequestController extends Controller
         ]);
     }
 
+    /**
+     * callBack
+     *
+     * @param  mixed $request
+     * @return void
+     */
     public function callBack(Request $request)
     {
         if($request->model=='blast'){

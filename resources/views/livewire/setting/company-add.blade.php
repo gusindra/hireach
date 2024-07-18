@@ -1,8 +1,10 @@
 <div class="px-4 pt-6">
-    <x-jet-button wire:click="actionShowModal">
-        {{__('Add Company')}}
-    </x-jet-button>
-
+    <h1 class="font-bold">Data Company</h1>
+    <div class="flex flex-row-reverse">
+        <x-add-button wire:click="actionShowModal">
+            {{__('Add Company')}}
+        </x-add-button>
+    </div>
 
     <!-- Form Action Modal -->
     <x-jet-dialog-modal wire:model="modalActionVisible">

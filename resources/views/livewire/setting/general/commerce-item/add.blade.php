@@ -1,7 +1,10 @@
 <div class="px-4 pt-6">
-    <x-jet-button wire:click="actionShowModal">
-        {{ __('Add Commerce Item') }}
-    </x-jet-button>
+    <h1 class="font-bold">Data Commerce Item</h1>
+    <div class="flex flex-row-reverse">
+        <x-add-button wire:click="actionShowModal">
+            {{ __('Add Commerce Item') }}
+        </x-add-button>
+    </div>
 
     <!-- Form Action Modal -->
     <x-jet-dialog-modal wire:model="modalActionVisible">
