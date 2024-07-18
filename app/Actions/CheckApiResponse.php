@@ -56,6 +56,10 @@ class CheckApiResponse
             $msg = "System Error, No setting configuration for this route";
         } elseif ($request == '427') {
             $msg = "Invalid Broadcast Title";
+        }elseif ($request == '429') {
+            $msg = "Invalid Additional Parameter length / data type";
+        }elseif ($request == '431') {
+            $msg = "Invalid Account, Forbidden access JWT Authentication method is forbidden to authenticate MT";
         } elseif ($request == '500') {
             $msg = "System Error";
         }

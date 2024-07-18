@@ -70,8 +70,8 @@ class ProcessSmsStatus implements ShouldQueue
             }else{
                 $status = $this->request['status'];
             }
-        } 
-        
+        }
+
         if(array_key_exists('msgID',$this->request)){
             $msgid = $this->request['msgID'];
         }elseif((array_key_exists('msgID',$this->request))){
@@ -79,7 +79,7 @@ class ProcessSmsStatus implements ShouldQueue
         }elseif((array_key_exists('message_id',$this->request))){
             $msgid = $this->request['message_id'];
         }
-        
+
         $sms = BlastMessage::where("msg_id", $msgid)->where("msisdn", $this->request['msisdn'])->where("status", "!=", $status)->first();
         if($sms){
             $sms->update([

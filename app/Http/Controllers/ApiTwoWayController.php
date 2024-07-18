@@ -427,21 +427,23 @@ class ApiTwoWayController extends Controller
      *
      * @param  mixed $campaign
      * @param  mixed $request
+     * @param  mixed $prev
      * @return void
      */
-    private function saveResult($campaign, $request){
-        $user_id = auth()->user()->id;
+    private function saveResult($campaign, $request, $prev=null){
+        $user_id = $prev ? $prev->user_id : auth()->user()->id;
         //ModelsRequest::create($modelData);
-        $client = $this->chechClient("400", $request);
+        $client = $prev ? $prev->client_id : $this->chechClient("400", $request);
+        $text = $campaign?'campaign'.$campaign->id:($prev?$request->text:$request['Text']);
         $chat = ModelsRequest::create([
-            'source_id' => 'webchat_api_'.Hashids::encode($client->id),
-            'reply'     => 'campaign'.$campaign->id,
-            'from'      => $client->id,
+            'source_id' => $prev ? $request->Msgid : 'webchat_api_'.Hashids::encode($client->id),
+            'reply'     => $campaign?'campaign'.$campaign->id:$request['text'],
+            'from'      => $prev ? $request->msisdn : $client->id,
             'user_id'   => $user_id,
             'type'      => 'text',
-            'client_id' => $client->uuid,
-            'sent_at'   => date('Y-m-d H:i:s'),
-            'team_id'   => auth()->user()->team->id
+            'client_id' => $prev ? $client : $client->uuid,
+            'sent_at'   => $prev ? $request->Time : date('Y-m-d H:i:s'),
+            'team_id'   => $prev ? $prev->team_id :auth()->user()->team->id
         ]);
         return $chat;
     }
@@ -466,5 +468,33 @@ class ApiTwoWayController extends Controller
             ]);
         });
         return $client;
+    }
+
+    public function retriveNewMessage(Request $request, $provider){
+        $status=0;
+        if($provider=='MK'){
+            if($request->Msgid){
+                $prvMsg = ModelsRequest::where('source_id', $request->Msgid)->first();
+            }
+            if($request->shortcode){
+                //MK SHORT CODE MO
+                $this->saveResult(null, $request, $prvMsg);
+            }elseif($request->longcode){
+                //MK LONG CODE MO
+                $this->saveResult(null, $request, $prvMsg);
+            }
+            $status=1;
+        }
+
+        if($status){
+            return response()->json([
+                'code' => 200,
+                'message' => "Successful"
+            ]);
+        }
+        return response()->json([
+            'code' => 400,
+            'message' => "Message fail to store"
+        ]);
     }
 }

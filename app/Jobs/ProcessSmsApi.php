@@ -53,8 +53,10 @@ class ProcessSmsApi implements ShouldQueue
         // Log::debug($this->request);
         //filter OTP & Non OTP
         $provider = $this->request['provider'];
-        if ($provider->code == 'provider1') {
-            $this->MKProvider($this->request);
+        $mk = array('provider1','mkxfirmapps');
+        if (in_array($provider->code, $mk) || $provider->code == 'provider1') {
+            $checkApiResponse = new CheckApiResponse;
+            $this->MKProvider($this->request, $provider, $checkApiResponse);
         } elseif ($provider->code == 'provider2') {
             $this->EMProvider($this->request);
         }
@@ -66,7 +68,7 @@ class ProcessSmsApi implements ShouldQueue
      * @param  mixed $request
      * @return void
      */
-    private function MKProvider($request, CheckApiResponse $checkApiResponse)
+    private function MKProvider($request, $provider, $checkApiResponse)
     {
         if ($request['otp'] == false) {
             $user   = env('MK_NON_OTP_USER');
@@ -77,14 +79,20 @@ class ProcessSmsApi implements ShouldQueue
             $pass   = env('MK_OTP_PSW');
             $serve  = env('MK_OTP_SERVICE');
         }
+        $setPro = $provider->settingProvider;
+        foreach( $setPro  as $env){
+            if($env->key=='user_id') $user = $env->value;
+            if($env->key=='api_pass') $pass = $env->value;
+            if($env->key=='serv_id') $serve = $env->value;
+        }
+        Log::debug($setPro);
+
         $msg    = '';
         if (array_key_exists('servid', $request)) {
             $serve  = $request['servid'];
         }
         try {
-            $url = 'http://www.etracker.cc/bulksms/mesapi.aspx';
-
-            //$url = 'http://telixcel.com/api/send/smsbulk'; 
+            $url = env('MK_SMS_URL');
             $response = '';
             if ($request['type'] == "0") {
                 // $response = Http::asForm()->accept('application/xml')->post($url, [
@@ -100,11 +108,8 @@ class ProcessSmsApi implements ShouldQueue
                 // ]);
                 // accept('application/json')->
 
-
-                $environment = App::environment();
-
                 if (App::environment(['local', 'testing'])) {
-                    $response = Http::get(url('http://hireach.test/api/dummy-string-error'));
+                    $response = Http::get(url('http://hireach.test/api/dummy-string'));
                 } elseif (App::environment('development')) {
                     $response = Http::get('https://hireach.archeeshop.com/api/dummy-string');
                 } else {
@@ -121,18 +126,6 @@ class ProcessSmsApi implements ShouldQueue
                         'provider' => $this->request['provider']->id
                     ]);
                 }
-
-                // $response = Http::get($url, [
-                //     'user' => $user,
-                //     'pass' => $pass,
-                //     'type' => $request['type'],
-                //     'to' => $request['to'],
-                //     'from' => $request['from'],
-                //     'text' => $request['text'],
-                //     'servid' => $serve,
-                //     'title' => $request['title'],
-                //     'detail' => 1,
-                // ]);
             }
             // check response code
             if (strlen($response)<5) {
@@ -212,9 +205,9 @@ class ProcessSmsApi implements ShouldQueue
                             ];
                             Log::debug($modelData);
                             if ($request['resource'] == 2) {
-                                Log::debug("INI BUKAN EM");
+                                // Log::debug("INI BUKAN EM");
                                 $mms = Request::create([
-                                    'source_id' => 'smschat_' . Hashids::encode($client->id),
+                                    'source_id' => $modelData?$modelData['msg_id']:'smschat_' . Hashids::encode($client->id),
                                     'reply'     => $request['text'],
                                     'from'      => $client->id,
                                     'user_id'   => $this->user->id,
@@ -241,8 +234,8 @@ class ProcessSmsApi implements ShouldQueue
             }
         } catch (\Exception $e) {
             Log::debug($e->getMessage());
-            $this->saveResult('Reject invalid servid');
             Log::debug('Reject invalid servid');
+            $this->saveResult('Reject invalid servid');
         }
         //}else{
         //    $this->saveResult('Reject invalid servid');

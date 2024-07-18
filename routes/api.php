@@ -75,9 +75,10 @@ Route::get('/test/{id}',  [ApiTeamWaController::class, 'getTeam']);
 Route::put('/team-auth/{id}',  [ApiTeamWaController::class, 'put']);
 
 
-//MO & DN URL
+//DN URL
 Route::get('/receive-request-status',  [ApiRequestController::class, 'status']);
 Route::get('/receive-update-status/{id}',  [ApiRequestController::class, 'status']);
+//MO URL
 Route::get('/callback-status',  [ApiRequestController::class, 'callBack']);
 Route::post('/callback-status',  [ApiRequestController::class, 'callBack']);
 Route::get('/callback-status/{model}/{id}',  [ApiRequestController::class, 'callBackStatus']);
@@ -85,7 +86,9 @@ Route::post('/callback-status/{model}/{id}',  [ApiRequestController::class, 'cal
 //Route::get('/log-request-status',  [ApiRequestController::class, 'logStatus']);
 Route::post('/delivery-notification ',  [ApiBulkSmsController::class, 'status']);
 //Route::get('/log-request-status1',  [ApiBulkSmsController::class, 'logStatus']);
+//TWO WAY MESSAGE
 Route::post('/inbound-messages',  [ApiWaController::class, 'retriveNewMessage']);
+Route::post('/inbound-messages/{provider}',  [ApiTwoWayController::class, 'retriveNewMessage']);
 
 
 Route::post('/get/saveAlarm', [ApiViGuardController::class, 'index']);

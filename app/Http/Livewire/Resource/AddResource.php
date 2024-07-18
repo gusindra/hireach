@@ -534,6 +534,11 @@ class AddResource extends Component
                 $this->fromList[1] = auth()->user()->phone_no;
             }
             $this->from = 'Auto';
+        }elseif(strtolower($this->channel) == 'sms'){
+            $froms = explode(',', $this->providers->firstWhere('channel', 'SMS')->from);
+            foreach($froms as $key => $from){
+                $this->fromList[$key] = $from;
+            }
         }
     }
 
