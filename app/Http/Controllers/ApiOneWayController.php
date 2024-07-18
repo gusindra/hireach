@@ -6,6 +6,7 @@ use App\Http\Resources\CampaignResource;
 use App\Http\Resources\OneWayResource;
 use App\Http\Resources\SmsResource;
 use App\Jobs\importAudienceContact;
+use App\Jobs\ProcessCampaignApi;
 use App\Models\BlastMessage;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
@@ -307,16 +308,17 @@ class ApiOneWayController extends Controller
      * @param  mixed $request
      * @return object $campaign
      */
-    private function campaignAdd($request){
-        Log::debug($request);
+    private function campaignAdd($request,$audience_id){
+Log::debug($request->all());
         return Campaign::create([
             'title'         => $request->title,
             'channel'       => strtoupper($request->channel),
             'provider'      => $request->provider->code,
             'from'          => $request->from,
             'to'            => $request->to,
+            'audience_id'=>$audience_id,
             'text'          => $request->text,
-            'is_otp'        => $request->otp,
+            'is_otp'        => $request->otp ?? '',
             'request_type'  => 'api',
             'status'        => 'starting',
             'way_type'      => 1,
@@ -356,29 +358,22 @@ class ApiOneWayController extends Controller
             $request->merge(['provider' => $provider]);
 
             if ($provider) {
-                // Import contacts
+
                 $audience = $this->importContact($request);
-                if (!is_array($audience)) {
-                    $audience = $audience->toArray();
-                }
+                $audience_id = $audience['audience_id'];
+                $retriver = array_column($audience['data'], 0);
 
-                if (empty($audience)) {
-                    return response()->json([
-                        'code'      => 406,
-                        'message'   => "No valid contacts found in the imported file."
-                    ]);
-                }
+                            $filteredContact = array_filter($retriver, function($phones) {
+                    return !empty($phones);
+                });
 
-                // Extract phone numbers from imported contacts
-                $retriver = array_column($audience, 0); // Assuming phone number is at index 0
+
                 $allPhones = [];
-
-                foreach ($retriver as $phones) {
+                foreach ($filteredContact as $phones) {
                     $phonesArray = explode(',', $phones);
                     $allPhones = array_merge($allPhones, $phonesArray);
                 }
 
-                Log::debug('All Phones: ' . json_encode($allPhones));
 
                 if (empty($retriver)) {
                     return response()->json([
@@ -410,13 +405,16 @@ class ApiOneWayController extends Controller
                     }
 
                     // Add campaign API
-                    $request->merge(['to' => json_encode($allPhones)]);
-                    $campaign = $this->campaignAdd($request);
+                    $campaign = $this->campaignAdd($request,$audience_id);
 
                     // Process sending messages
                     $phones = $allPhones;
 
                     if (count($phones) > env('MIN_CAMPAIGN_CONTACT', 3000)) {
+
+                        if($provider->code=='provider3'){
+                            ProcessCampaignApi::dispatch($request->except('contact'), auth()->user(),$campaign);
+                        }else{
                         foreach ($phones as $p) {
                             Log::info('Processing phone: ' . $p);
                             $data = [
@@ -430,7 +428,7 @@ class ApiOneWayController extends Controller
                                 'provider' => $provider,
                             ];
 
-                            Log::debug('Data being dispatched: ' . json_encode($data));
+
 
                             if ($request->has('templateid')) {
                                 $data['templateid'] = $request->templateid;
@@ -456,7 +454,7 @@ class ApiOneWayController extends Controller
                             } elseif (strtolower($request->channel) == 'long_sms') {
                                 ProcessSmsApi::dispatch($request->all(), auth()->user());
                             }
-                        }
+                        }}
                     } else {
                         return response()->json([
                             'code'      => 406,
@@ -525,7 +523,10 @@ class ApiOneWayController extends Controller
             importAudienceContact::dispatch($data, $audience_id, auth()->user()->id);
         }
 
-        return $data;
+                return [
+                    'data' => $data,
+                    'audience_id' => $audience_id
+                ];
     }
 
 
