@@ -61,7 +61,7 @@ class ProcessCampaignApi implements ShouldQueue
     private function WTProvider($request)
     {
 
-        $url = 'https://45.118.134.84:6005/';
+        $url = ENV('WTID_URL', 'http://hireach.test/api/wt');
 
         $environment = config('app.env');
         if ($environment === 'local' || $environment === 'testing') {
@@ -75,8 +75,8 @@ class ProcessCampaignApi implements ShouldQueue
             // Production environment: make the actual API call
             $response = Http::withOptions(['verify' => false,])
             ->withHeaders([
-                'Client-Key' => ENV('WTID_CLIENT_KEY', 'MDgxMjM0NTY3Ng=='),
-                'Client-Secret' => ENV('WTID_CLIENT_SECRET', 'MDgxMjM0NTY3NnwyMDI0LTAxLTMwIDEwOjIyOjIw')])
+                'Client-Key' => ENV('WTID_CLIENT_KEY', 'MD=='),
+                'Client-Secret' => ENV('WTID_CLIENT_SECRET', 'MD==jIw')])
             ->attach('campaign_receiver', file_get_contents(storage_path('app\template_contact_wetalk.xlsx')), 'template_contact_wetalk.xlsx')
             ->post($url . 'api/campaign/create', [
                 'campaign_name' => 'Testing API from HiReach',
