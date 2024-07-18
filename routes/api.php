@@ -57,10 +57,12 @@ Route::middleware(['auth:sanctum'])->group(function () {
     //API for 1Way
     Route::get('/one-way',  [ApiOneWayController::class, 'index']);
     Route::post('/one-way',  [ApiOneWayController::class, 'post']);
+    Route::post('/one-way/group',  [ApiOneWayController::class, 'sendBulk']);
     Route::get('/one-way/campaign',  [ApiOneWayController::class, 'show']);
     //API for 2Way
     Route::get('/two-way',  [ApiTwoWayController::class, 'index']);
     Route::post('/two-way',  [ApiTwoWayController::class, 'post']);
+    Route::post('/two-way/group',  [ApiTwoWayController::class, 'sendBulk']);
     Route::get('/two-way/campaign',  [ApiTwoWayController::class, 'show']);
 });
 

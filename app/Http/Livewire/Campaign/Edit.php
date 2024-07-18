@@ -276,11 +276,11 @@ class Edit extends Component
                 //EXPORT FILE EXCEL AUDIENCE
                 Excel::store(new ExportAudienceContact($this->audience_id), $this->campaign_id . '_campaign.xlsx');
                 //RUN JOB CAMPAIGN API
-                $url = 'https://45.118.134.84:6005/';
+                $url = ENV('WTID_URL', '6005');
                 $response = Http::withOptions(['verify' => false,])
                     ->withHeaders([
-                        'Client-Key' => ENV('WTID_CLIENT_KEY', 'MDgzMTUyNDU1NTU1NA=='),
-                        'Client-Secret' => ENV('WTID_CLIENT_SECRET', 'MDgzMTUyNDU1NTU1NHwyMDI0LTA1LTI5IDA4OjMwOjQ1')
+                        'Client-Key' => ENV('WTID_CLIENT_KEY', 'MD--=='),
+                        'Client-Secret' => ENV('WTID_CLIENT_SECRET', 'MD--Q1')
                     ])
                     ->attach('campaign_receiver', file_get_contents(storage_path('app\\' . $this->campaign_id . '_campaign.xlsx')), $this->campaign_id . '_campaign.xlsx')
                     ->post($url . 'api/campaign/create', [
@@ -334,6 +334,13 @@ class Edit extends Component
         $this->campaign->save();
     }
 
+    /**
+     * update
+     *
+     * @param  mixed $id
+     * @param  mixed $formName
+     * @return void
+     */
     public function update($id, $formName = 'basic')
     {
 
