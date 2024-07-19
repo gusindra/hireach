@@ -48,9 +48,8 @@ class Edit extends Component
 
     public function mount($uuid)
     {
-
         $this->order = Order::find($uuid);
-        $this->user = Client::all();
+        $this->user = [];
         $this->customer = Client::where('uuid', $this->order->customer_id)->first();
         $this->date = $this->order->date;
         $this->input['name'] = $this->order->name ?? '';

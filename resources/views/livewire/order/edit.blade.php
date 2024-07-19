@@ -39,7 +39,7 @@
             </x-slot>
 
             <x-slot name="description">
-                {{ __('The Customer basic information.') }}
+                {{ __('Order status information.') }}
             </x-slot>
 
             <x-slot name="form">
