@@ -29,13 +29,15 @@ class Order extends LivewireDatatable
 
         if ($isAdmin) {
             if ($this->userId != 0) {
-                $query->where('customer_id', $client->uuid)->where('status', '!=', 'draft');
+                $query->where('customer_id', $client->uuid);
             }
             // No need for else clause as it does not change the query.
-        } else {
-            $query->where('customer_id', $client->uuid)->where('status', '!=', 'draft');
+        } elseif ($client && $client->uuid) {
+            $query->where('customer_id', $client->uuid);
+        }else{
+          $query->where('user_id', $auth->id);
         }
-
+        $query->where('status', '!=', 'draft');
         return $query;
     }
 

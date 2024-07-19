@@ -1,6 +1,6 @@
 <div class="mx-auto">
     <!-- Settings List -->
-    @if (count($settings) > 0)
+
         <div class="bg-white shadow rounded-lg p-6">
             <h1 class="font-bold">Data General Setting</h1>
             <div class="flex flex-row-reverse">
@@ -19,6 +19,7 @@
                         </tr>
                     </thead>
                     <tbody class="text-gray-700">
+                    @if (count($settings) > 0)
                         @foreach ($settings as $setting)
                             <tr class="border-b hover:bg-gray-100">
                                 <td class="py-2 px-4">{{ $setting->key }}</td>
@@ -39,11 +40,12 @@
 
                             </tr>
                         @endforeach
+                    @endif
                     </tbody>
                 </table>
             </div>
         </div>
-    @endif
+
 
     <!-- Delete Confirmation Modal -->
     <x-jet-confirmation-modal wire:model="showDeleteModal">
