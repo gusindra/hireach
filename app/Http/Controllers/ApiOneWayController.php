@@ -308,15 +308,14 @@ class ApiOneWayController extends Controller
      * @param  mixed $request
      * @return object $campaign
      */
-    private function campaignAdd($request,$audience_id){
-Log::debug($request->all());
+    private function campaignAdd($request, $audience_id=null){
         return Campaign::create([
             'title'         => $request->title,
             'channel'       => strtoupper($request->channel),
             'provider'      => $request->provider->code,
             'from'          => $request->from,
-            'to'            => $request->to,
-            'audience_id'=>$audience_id,
+            'to'            => $audience_id ? 'Audience:'.$audience_id : $request->to,
+            'audience_id'   => $audience_id,
             'text'          => $request->text,
             'is_otp'        => $request->otp ?? '',
             'request_type'  => 'api',
@@ -330,6 +329,12 @@ Log::debug($request->all());
     }
 
 
+    /**
+     * This for sending sendBulk message using file contact
+     *
+     * @param  mixed $request
+     * @return void
+     */
     public function sendBulk(Request $request)
     {
         $validateArr = [
@@ -363,17 +368,15 @@ Log::debug($request->all());
                 $audience_id = $audience['audience_id'];
                 $retriver = array_column($audience['data'], 0);
 
-                            $filteredContact = array_filter($retriver, function($phones) {
+                $filteredContact = array_filter($retriver, function($phones) {
                     return !empty($phones);
                 });
-
 
                 $allPhones = [];
                 foreach ($filteredContact as $phones) {
                     $phonesArray = explode(',', $phones);
                     $allPhones = array_merge($allPhones, $phonesArray);
                 }
-
 
                 if (empty($retriver)) {
                     return response()->json([
@@ -386,7 +389,7 @@ Log::debug($request->all());
                 $balance = (int) balance(auth()->user());
                 if ($balance > 150000 && count($retriver) < $balance / 1) {
                     // Auto check OTP
-                    Log::info('Auto check OTP');
+                    //Log::info('Auto check OTP');
                     if (strpos(strtolower($request->channel), 'sms') !== false) {
                         $otpWord = ['Angka Rahasia', 'Authorisation', 'Authorise', 'Authorization', 'Authorized', 'Code', 'Harap masukkan', 'Kata Sandi', 'Kode', 'Kode aktivasi', 'konfirmasi', 'otentikasi', 'Otorisasi', 'Rahasia', 'Sandi', 'trx', 'unik', 'Venfikasi', 'KodeOTP', 'NewOtp', 'One-Time Password', 'Otorisasi', 'OTP', 'Pass', 'Passcode', 'PassKey', 'Password', 'PIN', 'verifikasi', 'insert current code', 'Security', 'This code is valid', 'Token', 'Passcode', 'Valid OTP', 'verification', 'Verification', 'login code', 'registration code', 'security code'];
                         if ($request->otp) {
@@ -416,7 +419,7 @@ Log::debug($request->all());
                             ProcessCampaignApi::dispatch($request->except('contact'), auth()->user(),$campaign);
                         }else{
                         foreach ($phones as $p) {
-                            Log::info('Processing phone: ' . $p);
+                            //Log::info('Processing phone: ' . $p);
                             $data = [
                                 'type' => $request->type,
                                 'to' => trim($p),
@@ -427,8 +430,6 @@ Log::debug($request->all());
                                 'otp' => $request->otp,
                                 'provider' => $provider,
                             ];
-
-
 
                             if ($request->has('templateid')) {
                                 $data['templateid'] = $request->templateid;
@@ -523,107 +524,16 @@ Log::debug($request->all());
             importAudienceContact::dispatch($data, $audience_id, auth()->user()->id);
         }
 
-                return [
-                    'data' => $data,
-                    'audience_id' => $audience_id
-                ];
+            return [
+                'data' => $data,
+                'audience_id' => $audience_id
+            ];
     }
 
 
     // ===========================================
     // Function below to testing in Controller
     // ===========================================
-
-    private function sendSMS($request)
-    {
-
-        $user   = 'TCI01';
-        $pass   = 'IFc21bL+';
-        $serve  = 'mes01';
-        $msg    = "";
-
-        // if(array_key_exists('servid', $request)){
-        //     $serve  = $request['servid'];
-        // }
-        if($serve==$request['servid']){
-            // $url = 'http://www.etracker.cc/bulksms/mesapi.aspx';
-            $url = 'http://telixcel.com/api/send/smsbulk';
-
-            $response = '';
-            if($request['type']=="0"){
-                //accept('application/json')->
-                $response = Http::get($url, [
-                    'user'  => $user,
-                    'pass'  => $pass,
-                    'type'  => $request['type'],
-                    'to'    => $request['to'],
-                    'from'  => $request['from'],
-                    'text'  => $request['text'],
-                    'servid' => $serve,
-                    'title' => $request['title'],
-                    'detail' => 1,
-                ]);
-            }
-
-            // check response code
-            if($response=='400'){
-                $msg = "Missing parameter or invalid field type";
-            }elseif($response=='401'){
-                $msg = "Invalid username, password or ServID";
-            }elseif($response=='402'){
-                $msg = "Invalid Account Type (when call using postpaid client’s account)";
-            }elseif($response=='403'){
-                $msg = "Invalid Email Format";
-            }elseif($response=='404'){
-                $msg = "Invalid MSISDN Format";
-            }elseif($response=='405'){
-                $msg = "Invalid Balance Tier Format";
-            }elseif($response=='500'){
-                $msg = "System Error";
-            }else{
-                //Log::debug('process array result');
-                $array_res = [];
-                $res = explode("|", $response);
-                $res_end = [];
-                //Log::debug('array start');
-                foreach($res as $k1 => $data){
-                    $data_res = explode (",", $data);
-                    foreach($data_res as $k2 => $data){
-                        if(count($res)==$k1+1){
-                            $res_end[$k2] = $data;
-                        }else{
-                            $array_res[$k1][$k2] = $data;
-                        }
-                    }
-                }
-                // Log::debug($res_end);
-                foreach ($array_res as $msg_msis){
-                    // Log::debug($this->chechClient("200", $msg_msis[0]));
-                    $modelData = [
-                        'msg_id'    => $msg_msis[1],
-                        'user_id'   => auth()->user()->id,
-                        'client_id' => $this->chechClient("200", $msg_msis[0]),
-                        'type'      => $request['type'],
-                        'status'    => "PROCESSED",
-                        'code'      => $msg_msis[2],
-                        'message_content'  => $request['text'],
-                        'currency'  => $msg_msis[3],
-                        'price'     => $msg_msis[4],
-                        'balance'   => $res_end[0],
-                        'msisdn'    => $msg_msis[0],
-                    ];
-                    // Log::debug($modelData);
-                    BlastMessage::create($modelData);
-                }
-            }
-        }else{
-            abort(404, "Serve ID is wrong");
-        }
-
-        if($msg!=''){
-            $this->saveResult($msg, $request);
-        }
-    }
 
     /**
      * saveResult
