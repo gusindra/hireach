@@ -30,6 +30,7 @@ class Request extends Model
         'sent_at',
         'is_read',
         'is_closed',
+        'is_inbound',
         'status'
     ];
 

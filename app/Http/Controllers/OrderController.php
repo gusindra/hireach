@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Order;
+use App\Models\OrderProduct;
 use App\Models\Quotation;
 use Illuminate\Support\Facades\Auth as FacadesAuth;
 
@@ -49,10 +50,26 @@ class OrderController extends Controller
     {
         return view('assistant.order.show', ['order' => $order]);
     }
-
     public function showUserOrder(Order $order)
     {
+          $orderProducts = OrderProduct::where('model_id', $order->id)
+            ->where('name', '!=', 'Tax')
+            ->get();
 
-        return view('assistant.order.show-order-user', ['data' => $order]);
+        $subTotal = $orderProducts->sum(function ($item) {
+            return $item->price * $item->qty;
+        });
+
+       $taxPrice = $subTotal * ($order->vat / 100);
+
+
+        return view('assistant.order.show-order-user', [
+            'data' => $order,
+            'orderProducts' => $orderProducts,
+            'subTotal' => $subTotal,
+            'tax' => $taxPrice,
+            'total' => $subTotal + $taxPrice
+        ]);
     }
+
 }

@@ -34,22 +34,26 @@
                                 @if ($data->count())
                                     <div class="shadow overflow-hidden border-b border-gray-200 sm:rounded-lg">
                                         <table class="min-w-full divide-y divide-gray-200 mt-2">
-                                            <thead>
-                                                <tr>
-                                                    <th
-                                                        class="px-6 py-3 bg-gray-50 dark:bg-slate-800 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider w-1/2">
-                                                        provider</th>
-                                                    <th
-                                                        class="px-6 py-3 bg-gray-50 dark:bg-slate-800 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider w-1/4">
-                                                    </th>
-                                                </tr>
-                                            </thead>
+
                                             <tbody class="bg-white dark:bg-slate-700 divide-y divide-gray-200">
+                                                <tr>
+                                                    <td class="w-full px-6 py-4 text-sm whitespace-no-wrap">
+                                                        <div class="">
+                                                            <div class="grid grid-cols-4 gap-4">
+                                                                <b>Provider Code</b>
+                                                                <b>Name</b>
+                                                                <b>Channel</b>
+                                                                <b>From / Sender ID</b>
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                    <td class="flex items-center justify-end px-4 py-3 text-right sm:px-6"></td>
+                                                </tr>
                                                 @foreach ($data as $item)
                                                     <tr>
-                                                        <td class="px-6 py-4 text-sm whitespace-no-wrap">
+                                                        <td class="w-full px-6 py-4 text-sm whitespace-no-wrap">
                                                             <div class="">
-                                                                <div class="flex justify-between">
+                                                                <div class="grid grid-cols-4 gap-4">
                                                                     <span>
                                                                         {{ $item->provider->code }}
                                                                     </span>
@@ -62,6 +66,9 @@
                                                                         {{ $item->channel }}
                                                                     </span>
 
+                                                                    <span>
+                                                                        {{ $item->from }}
+                                                                    </span>
                                                                 </div>
                                                             </div>
                                                         </td>
@@ -114,7 +121,7 @@
                 </div>
 
                 <div>
-                    <x-jet-label for="channel" value="{{ __('channel') }}" />
+                    <x-jet-label for="channel" value="{{ __('Channel') }}" />
                     <select name="channel" id="channel"
                         class="border-gray-300 dark:bg-slate-800 dark:text-slate-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 rounded-md shadow-sm mt-1 block w-full"
                         wire:model.debounce.800ms="input.channel">
@@ -126,7 +133,12 @@
                     <x-jet-input-error for="channel" class="mt-2" />
                 </div>
 
-
+                <div>
+                    <x-jet-label for="from" value="{{ __('From/Sender ID') }}" />
+                    <x-jet-input id="from" type="text" class="mt-1 block w-full"
+                        wire:model.debunce.800ms="input.from" autofocus />
+                    <x-jet-input-error for="from" class="mt-2" />
+                </div>
 
 
                 {{-- <div>

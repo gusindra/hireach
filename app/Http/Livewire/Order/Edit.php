@@ -3,9 +3,11 @@
 namespace App\Http\Livewire\Order;
 
 use App\Models\Billing;
+use App\Models\Client;
 use App\Models\Order;
 use App\Models\User;
 use Livewire\Component;
+use Illuminate\Support\Str;
 
 class Edit extends Component
 {
@@ -37,13 +39,18 @@ class Edit extends Component
     public $modalDeleteVisible = false;
     public $customer;
     public $formName;
+    public $nominal ;
+    public $selectedName = '';
+    public $search = '';
+    public $selectedId = null;
+    public $disable = false;
+    public $nominal_view;
 
     public function mount($uuid)
     {
-
         $this->order = Order::find($uuid);
-        $this->user = User::noadmin()->get();
-        $this->customer = User::find($this->order->customer_id);
+        $this->user = [];
+        $this->customer = Client::where('uuid', $this->order->customer_id)->first();
         $this->date = $this->order->date;
         $this->input['name'] = $this->order->name ?? '';
         $this->input['no'] =    'HAPP' . date("YmdHis");
@@ -59,6 +66,8 @@ class Edit extends Component
         $this->input['source_id'] = $this->order->source_id ?? '';
         $this->input['date'] = $this->order->date ? $this->order->date->format('Y-m-d') : '';
         $this->input['total'] = $this->order->total ?? '';
+        $this->nominal = $this->order->total ?? '';
+        $this->disable = $this->disableInput($this->order->status);
     }
 
     public function rules()
@@ -90,12 +99,46 @@ class Edit extends Component
             'customer_id'       => $this->input['customer_id'],
             'type'              => $this->input['type'],
             'addressed_company' => $this->addressed_company,
+            'total'             =>  $this->nominal,
             'description'       => $this->description,
             'created_by'        => $this->created_by,
             'created_role'      => $this->created_role,
             'addressed_name'    => $this->addressed_name,
             'addressed_role'    => $this->addressed_role,
         ];
+    }
+
+
+    public function onClickNominal($value)
+    {
+
+        $this->nominal = $value;
+        $this->nominal_view = number_format($value);
+    }
+
+
+    public function disableInput($status)
+    {
+
+        return $status === 'unpaid';
+    }
+
+    public function updatedSearch()
+    {
+
+
+    }
+
+    public function selectItem($id)
+    {
+        $client = Client::where('uuid', $id)->first();
+        if ($client) {
+            $this->search = $client->name;
+            $this->selectedId = $client->uuid;
+            $this->input['customer_id'] = $client->uuid;
+            $this->emit('updateCustomerId', $client->uuid);
+        }
+
     }
 
     public function updateStatus($id, $formName = '')
@@ -112,24 +155,22 @@ class Edit extends Component
         $this->emit('update_status');
     }
 
-    public function onChangeModelId()
+    public function inputCustomer($uuid)
     {
         if ($this->order) {
-            $this->order->customer_id;
-            $customer = User::find($this->input['customer_id']);
+            $customer = Client::where('uuid', $uuid)->first();
+            $this->customer = $customer ?? null;
+            $this->input['customer_id'] = $uuid;
 
-            if ($customer) {
-                $this->customer = $customer;
-            } else {
-                $this->customer = NULL;
-            }
+            $this->search = $customer->name ?? '';
         } else {
-            $this->model = NULL;
-            $this->model_id = NULL;
-            $this->addressed_company = NULL;
+            $this->model = null;
+            $this->model_id = null;
+            $this->addressed_company = null;
             $this->addressed = '';
         }
     }
+
 
     public function actionShowModal($url)
     {
@@ -142,6 +183,19 @@ class Edit extends Component
         $this->validate();
         // dd($this->modelData());
         $order = Order::find($id)->update($this->modelData());
+
+        $bill=Billing::updateOrCreate([
+            'uuid'          => Str::uuid(),
+            'status'        => 'unpaid',
+            'code'          => $this->input['no'],
+            'description'   => $this->name,
+              'amount'        =>  $this->nominal,
+            'order_id'      => $this->order->id,
+
+
+
+        ]);
+
         $this->emit('saved');
     }
 
@@ -165,9 +219,16 @@ class Edit extends Component
 
     public function render()
     {
+        $clients = Client::query()
+        ->where('name', 'like', "%{$this->search}%")
+        ->orWhere('phone', 'like', "%{$this->search}%")
+        ->orWhere('email', 'like', "%{$this->search}%")
+        ->limit(5)
+        ->get();
         return view('livewire.order.edit', [
             // 'model_list' => $this->readModelSelection(),
             'client' => $this->readClient(),
+            'clients' =>$clients
             // 'data' => $this->readItem(),
         ]);
     }

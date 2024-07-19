@@ -242,7 +242,9 @@
                                                         colspan="5" align="center">Sub Total</td>
                                                     <td class="px-2 py-2 text-sm whitespace-no-wrap text-right"><span
                                                             class="uppercase">{{ $data->bill->currency ?? 'IDR' }}</span>
-                                                        {{ number_format($data->total) }}</td>
+                                                        {{ number_format($subTotal, 2, ',', '.') }}
+
+                                                    </td>
                                                 </tr>
                                                 @if ($data->vat > 0)
                                                     <tr class="bg-gray-100">
@@ -252,7 +254,7 @@
                                                         <td class="px-2 py-2 text-xs whitespace-no-wrap text-right">
                                                             <span
                                                                 class="uppercase">{{ $data->bill->currency ?? 'IDR' }}</span>
-                                                            {{ number_format($data->bill->amount * ($data->vat / 100)) }}
+                                                            {{ number_format($tax, 2, ',', '.') }}
                                                         </td>
                                                     </tr>
                                                     <tr class="bg-gray-100">
@@ -261,7 +263,8 @@
                                                         <td class="px-2 py-2 text-xl whitespace-no-wrap text-right">
                                                             <span
                                                                 class="uppercase">{{ $data->bill->currency ?? 'IDR' }}</span>
-                                                            {{ number_format($data->bill->amount + $data->bill->amount * ($data->vat / 100)) }}
+                                                            {{ $total }}
+
                                                         </td>
                                                     </tr>
                                                 @else
@@ -271,7 +274,7 @@
                                                         <td class="px-2 py-2 text-xl whitespace-no-wrap text-right">
                                                             <span
                                                                 class="uppercase">{{ $data->bill->currency ?? 'IDR' }}</span>
-                                                            {{ number_format($data->bill->amount) }}
+                                                            {{ number_format($total, 2, ',', '.') }}
                                                         </td>
                                                     </tr>
                                                 @endif
@@ -296,7 +299,9 @@
                                         <tr class="border-none">
                                             <td class="text-sm whitespace-no-wrap align-top">
                                                 <h3 class="text-sm font-medium text-gray-900">PLEASE REMIT PAYMENT
-                                                    DIRECTLY TO</h3>
+                                                    DIRECTLY TO
+
+                                                </h3>
                                             </td>
                                         </tr>
                                         <tr>

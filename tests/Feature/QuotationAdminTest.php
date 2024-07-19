@@ -174,7 +174,7 @@ class QuotationAdminTest extends TestCase
             ->test(\App\Http\Livewire\Commercial\Quotation\Edit::class, ['code' => $quotation->id])
             ->call('delete');
 
-        $this->assertDatabaseMissing('orders', [
+        $this->assertDatabaseMissing('quotations', [
             'id' => $quotation->id,
         ]);
     }

@@ -298,8 +298,10 @@
                                                                                                 Amount</th>
                                                                                         </tr>
                                                                                     </thead>
+
                                                                                     <tbody
                                                                                         class="bg-white divide-y divide-gray-200 text-xs">
+
                                                                                         @foreach ($data->items as $item)
                                                                                             <tr class=" ">
                                                                                                 <td
@@ -340,7 +342,8 @@
                                                                                                 class="px-2 py-2 text-sm whitespace-no-wrap text-right">
                                                                                                 <span
                                                                                                     class="uppercase">{{ $data->bill->currency ?? 'IDR' }}</span>
-                                                                                                {{ number_format($data->total) }}
+                                                                                                {{ number_format($subTotal, 2, ',', '.') }}
+
                                                                                             </td>
                                                                                         </tr>
                                                                                         @if ($data->vat > 0)
@@ -354,7 +357,7 @@
                                                                                                     class="px-2 py-2 text-xs whitespace-no-wrap text-right">
                                                                                                     <span
                                                                                                         class="uppercase">{{ $data->bill->currency ?? 'IDR' }}</span>
-                                                                                                    {{ number_format($data->bill->amount * ($data->vat / 100)) }}
+                                                                                                    {{ number_format($tax, 2, ',', '.') }}
                                                                                                 </td>
                                                                                             </tr>
                                                                                             <tr class="bg-gray-100">
@@ -366,7 +369,8 @@
                                                                                                     class="px-2 py-2 text-xl whitespace-no-wrap text-right">
                                                                                                     <span
                                                                                                         class="uppercase">{{ $data->bill->currency ?? 'IDR' }}</span>
-                                                                                                    {{ number_format($data->bill->amount + $data->bill->amount * ($data->vat / 100)) }}
+                                                                                                    {{ $total }}
+
                                                                                                 </td>
                                                                                             </tr>
                                                                                         @else
@@ -379,7 +383,7 @@
                                                                                                     class="px-2 py-2 text-xl whitespace-no-wrap text-right">
                                                                                                     <span
                                                                                                         class="uppercase">{{ $data->bill->currency ?? 'IDR' }}</span>
-                                                                                                    {{ number_format($data->bill->amount) }}
+                                                                                                    {{ number_format($total, 2, ',', '.') }}
                                                                                                 </td>
                                                                                             </tr>
                                                                                         @endif
@@ -492,13 +496,7 @@
                 </div>
             </div>
         </div>
-        <div class="col-span-12 px-3 ml-24 mt-2">
-            <div class="w-full mx-auto sm:px-6 lg:px-8">
-                <div class="overflow-hidden sm:rounded-lg">
-                    @livewire('payment.history')
-                </div>
-            </div>
-        </div>
+
     </div>
     <x-jet-section-border />
 </x-app-layout>

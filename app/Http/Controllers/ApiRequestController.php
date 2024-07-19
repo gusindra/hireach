@@ -13,7 +13,7 @@ use Illuminate\Support\Facades\Log;
 class ApiRequestController extends Controller
 {
     /**
-     * post
+     * this function post to sending message via API
      *
      * @param  mixed $request
      * @return void
@@ -58,8 +58,17 @@ class ApiRequestController extends Controller
     public function status(Request $request)
     {
         //return $request->url;
-        Log::debug($request->all());
-        ProcessSmsStatus::dispatch($request->all());
+        //Log::debug($request->all());
+        $msgid = strip_tags(filterInput($request->msgID));
+        $exsistingMsg = BlastMessage::where("msg_id", $msgid)->where("msisdn", $request->msisdn)->where("status", $request->status)->first();
+        if(!$exsistingMsg){
+            ProcessSmsStatus::dispatch($request->all());
+        }else{
+            return response()->json([
+                'code' => 401,
+                'message' => "Nothing to update, status still same"
+            ]);
+        }
 
         // BlastMessage::where("msg_id", $request->msgID)->where("msisdn", $request->msisdn)->first()->update([
         //     'status' => $request->status
@@ -127,6 +136,12 @@ class ApiRequestController extends Controller
         ]);
     }
 
+    /**
+     * callBack
+     *
+     * @param  mixed $request
+     * @return void
+     */
     public function callBack(Request $request)
     {
         if($request->model=='blast'){

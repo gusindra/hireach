@@ -27,7 +27,7 @@
                         </div>
                     </div>
                     <div>
-                        <livewire:table.contact-table searchable="name, email, gender" />
+                        <livewire:table.contact-table searchable="name, email, phone" />
                         {{-- <livewire:table.team-table searchable="name, email, gender" exportable /> --}}
                     </div>
                 </div>

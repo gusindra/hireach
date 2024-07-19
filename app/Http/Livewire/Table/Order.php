@@ -2,6 +2,8 @@
 
 namespace App\Http\Livewire\Table;
 
+use App\Models\Client;
+use App\Models\Company;
 use App\Models\Order as ModelsOrder;
 use Illuminate\Support\Facades\Auth;
 use Mediconesystems\LivewireDatatables\Column;
@@ -18,29 +20,46 @@ class Order extends LivewireDatatable
     public function builder()
     {
         $auth = Auth::user();
+        $client = Client::where('email', $auth->email)->first();
+
         $query = ModelsOrder::query()->orderBy('created_at', 'desc');
 
-        if (auth()->user()->super && auth()->user()->super->first() && auth()->user()->super->first()->role == 'superadmin' || auth()->user()->activeRole && str_contains(auth()->user()->activeRole->role->name, "Admin")) {
-            if($this->userId != 0){
-                $query->where('customer_id', $this->userId)->where('status', '!=', 'draft');
-            }else{
-                $query;
-            }
-        } else {
-            $query->where('customer_id', $auth->id)->where('status', '!=', 'draft');
-        }
+        $isAdmin = $auth->super && $auth->super->first() && $auth->super->first()->role == 'superadmin';
+        $isAdmin = $isAdmin || ($auth->activeRole && str_contains($auth->activeRole->role->name, "Admin"));
 
+        if ($isAdmin) {
+            if ($this->userId != 0) {
+                $query->where('customer_id', $client->uuid);
+            }
+            // No need for else clause as it does not change the query.
+        } elseif ($client && $client->uuid) {
+            $query->where('customer_id', $client->uuid);
+        }else{
+          $query->where('user_id', $auth->id);
+        }
+        $query->where('status', '!=', 'draft');
         return $query;
     }
+
 
     public function adminColumns()
     {
         return [
+            Column::callback('type', function ($value) {
+                if ($value) {
+                    return strtoupper($value);
+                }
+                return '-';
+            })->label('Type')->filterable(),
+            Column::name('customer_id')->label('Customer'),
             Column::name('no')->label('No'),
             Column::name('name')->label('Name'),
-            Column::callback('company.name', function ($value) {
+            Column::callback('entity_party', function ($value) {
                 if ($value) {
-                    return $value;
+                    $company = cache()->remember('company-', $value, function() use ($value) {
+                        return Company::find($value);
+                    });
+                    return $value.' - '.$company->name;
                 }
                 return '-';
             })->label('Party')->filterable(),

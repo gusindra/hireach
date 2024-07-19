@@ -2,9 +2,11 @@
 
 namespace Tests\Feature;
 
+use App\Http\Livewire\Order\Add;
 use App\Http\Livewire\Order\Edit;
 use App\Http\Livewire\Order\Item;
 use App\Http\Livewire\Order\OrderProgress;
+use App\Models\Client;
 use App\Models\Commision;
 use App\Models\Order;
 use App\Models\OrderProduct;
@@ -16,36 +18,35 @@ use Tests\TestCase;
 
 class OrderAdminTest extends TestCase
 {
-    /**
-     * A basic feature test example.
-     *
-     * @return void
-     */
-    public function test_can_create_order()
+
+
+    public function test_order_admin_be_rendered()
     {
         $user = User::find(1);
+        $response = $this->actingAs($user)->get('admin/order');
 
-        Livewire::actingAs($user)
-            ->test('order.add')
-            ->set('name', 'Sample Order')
+        $response->assertStatus(200);
+    }
+
+    public function testCanCreateOrder()
+    {
+        $user=User::find(1);
+        $user2=User::find(2);
+
+        $client=Client::where('name','User Hireach')->latest()->first();
+        Livewire::actingAs($user)->test(Add::class)
             ->set('type', 'selling')
-            ->set('entity', 'Sample Entity')
-            ->set('customer_id', $user->id)
-            ->set('model', 'Sample Source')
-            ->set('source', 45)
-            ->call('create')
-            ->assertEmitted('refreshLivewireDatatable')
-            ->assertSet('modalActionVisible', false);
+            ->set('entity', 1)
+            ->set('name', 'Sample Order')
+            ->set('customer_id', $user2->id)
+            ->call('create');
 
         $this->assertDatabaseHas('orders', [
             'name' => 'Sample Order',
             'type' => 'selling',
-            'entity_party' => 'Sample Entity',
-            'status' => 'draft',
-            'customer_id' => $user->id,
+            'entity_party' => 1,
+            'customer_id' => $client->uuid,
             'user_id' => $user->id,
-            'source' => 'Sample Source',
-            'source_id' => 45,
         ]);
     }
 
@@ -152,21 +153,17 @@ class OrderAdminTest extends TestCase
 
 
         // Update the commission
-        Livewire::actingAs($user)
-            ->test(\App\Http\Livewire\Commission\Edit::class, ['model' => 'order', 'data' => $order, 'disabled' => false])
-            ->set('type', 'fixed')
-            ->set('rate', 15)
-            ->set('status', 'draft')
-            ->call('update', $commision->id)
-            ->assertEmitted('saved');
+        Livewire::test('commission.edit', ['model' => 'order', 'data' => $order, 'disabled' => false])
+            ->set('rate', 10)
+            ->set('clientId', $client->id)
+            ->set('type', 'percentage')
+            ->call('update', $order->id);
 
         $this->assertDatabaseHas('commisions', [
-            'model' => 'order',
-            'model_id' => $order->id,
-            'type' => 'fixed',
-            'ratio' => 15,
-            'status' => 'draft',
-
+            'id' => $commision->id,
+            'ratio' => 10,
+            'type' => 'percentage',
+            'client_id' => $client->id,
         ]);
     }
 

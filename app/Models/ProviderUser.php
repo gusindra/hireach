@@ -14,6 +14,7 @@ class ProviderUser extends Model
         'provider_id',
         'user_id',
         'channel',
+        'from',
     ];
 
     public function provider()

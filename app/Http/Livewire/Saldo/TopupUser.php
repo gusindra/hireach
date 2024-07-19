@@ -4,12 +4,14 @@ namespace App\Http\Livewire\Saldo;
 
 use App\Models\Order;
 use App\Models\OrderProduct;
+use App\Models\Setting;
 use Livewire\Component;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use App\Models\Client;
 use App\Models\Team;
 use App\Jobs\ProcessEmail;
+use Illuminate\Support\Facades\Cache;
 
 class TopupUser extends Component
 {
@@ -31,15 +33,15 @@ class TopupUser extends Component
     public function dataOrder()
     {
         $data = [
-            'date'              => date("Y-m-d H:i:s"),
-            'name'              => 'Request Topup from ' . Auth::user()->name,
-            'no'                => 'HAPP' . date("YmdHis"),
-            'type'              => 'selling',
-            'entity_party'      => '1',
-            'total'             => 0,
-            'status'            => 'unpaid',
-            'customer_id'       => $this->chechClient(),
-            'user_id'           => 0,
+            'date' => date("Y-m-d H:i:s"),
+            'name' => 'Request Topup from ' . Auth::user()->name,
+            'no' => 'HAPP' . date("YmdHis"),
+            'type' => 'selling',
+            'entity_party' => '1',
+            'total' => 0,
+            'status' => 'unpaid',
+            'customer_id' => $this->chechClient(),
+            'user_id' => 0,
         ];
         return $data;
     }
@@ -68,31 +70,49 @@ class TopupUser extends Component
 
     public function create()
     {
-        //dd($this->nominal*(11/100));
+        $vat = cache('vat_setting');
+        if (empty($vat)) {
+
+            $vat = cache()->remember('vat_setting', 1444, function () {
+                return Setting::where('key', 'vat')->latest()->first();
+            });
+
+        }
+
+
+
         $this->validate();
         try {
             $order = Order::create($this->dataOrder());
             if ($order) {
-                OrderProduct::create([
-                    'model'             => 'Order',
-                    'model_id'          => $order->id,
-                    'qty'               => '1',
-                    'unit'              => '1',
-                    'name'              => 'Topup',
-                    'price'             => $this->nominal,
-                    'note'              => 'Topup',
-                    'user_id'           => 0,
-                ]);
-                OrderProduct::create([
-                    'model'             => 'Order',
-                    'model_id'          => $order->id,
-                    'qty'               => '1',
-                    'unit'              => '1',
-                    'name'              => 'Tax',
-                    'price'             => '' . $this->nominal * (11 / 100),
-                    'note'              => 'VAT/PPN @ 11%',
-                    'user_id'           => 0,
-                ]);
+                OrderProduct::updateOrCreate(
+                    [
+                        'model' => 'Order',
+                        'model_id' => $order->id,
+                        'name' => 'Topup'
+                    ],
+                    [
+                        'qty' => 1,
+                        'unit' => 1,
+                        'price' => $this->nominal,
+                        'note' => 'Topup',
+                        'user_id' => 0,
+                    ]
+                );
+                OrderProduct::updateOrCreate(
+                    [
+                        'model' => 'Order',
+                        'model_id' => $order->id,
+                        'name' => 'Tax'
+                    ],
+                    [
+                        'qty' => 1,
+                        'unit' => 1,
+                        'price' => $this->nominal * ($vat->value / 100),
+                        'note' => 'VAT/PPN @ '.$vat->value.'%',
+                        'user_id' => 0,
+                    ]
+                );
             }
 
             //ProcessEmail::dispatch($order, 'create_order');
@@ -100,7 +120,7 @@ class TopupUser extends Component
             return redirect()->to('/payment/invoice/' . $order->id);
         } catch (\Throwable $th) {
             //throw $th;
-            dd($th);
+            dd('Mohon Tambahkan VAT pada setting');
         }
         $this->emit('fail');
     }

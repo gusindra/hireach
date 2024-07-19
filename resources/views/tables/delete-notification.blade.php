@@ -1,1 +1,1 @@
-@livewire('delete-notification', ['id' => $id])
+@livewire('delete-notification', ['notificationId' => $notificationId])

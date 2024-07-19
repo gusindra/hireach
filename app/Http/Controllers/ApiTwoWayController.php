@@ -10,11 +10,13 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use App\Jobs\ProcessChatApi;
+use App\Jobs\ProcessInboundMessage;
 use App\Models\ApiCredential;
 use App\Models\Campaign;
 use App\Models\Client;
 use App\Models\ProviderUser;
 use App\Models\Request as ModelsRequest;
+use Carbon\Carbon;
 use Illuminate\Support\Str;
 use Vinkla\Hashids\Facades\Hashids;
 
@@ -332,117 +334,32 @@ class ApiTwoWayController extends Controller
         ]);
     }
 
-    private function sendSMS($request){
-
-        $user   = 'TCI01';
-        $pass   = 'IFc21bL+';
-        $serve  = 'mes01';
-        $msg    = "";
-
-        // if(array_key_exists('servid', $request)){
-        //     $serve  = $request['servid'];
-        // }
-        if($serve==$request['servid']){
-            // $url = 'http://www.etracker.cc/bulksms/mesapi.aspx';
-            $url = 'http://telixcel.com/api/send/smsbulk';
-
-            $response = '';
-            if($request['type']=="0"){
-                //accept('application/json')->
-                $response = Http::get($url, [
-                    'user'  => $user,
-                    'pass'  => $pass,
-                    'type'  => $request['type'],
-                    'to'    => $request['to'],
-                    'from'  => $request['from'],
-                    'text'  => $request['text'],
-                    'servid' => $serve,
-                    'title' => $request['title'],
-                    'detail' => 1,
-                ]);
-            }
-
-            // check response code
-            if($response=='400'){
-                $msg = "Missing parameter or invalid field type";
-            }elseif($response=='401'){
-                $msg = "Invalid username, password or ServID";
-            }elseif($response=='402'){
-                $msg = "Invalid Account Type (when call using postpaid client’s account)";
-            }elseif($response=='403'){
-                $msg = "Invalid Email Format";
-            }elseif($response=='404'){
-                $msg = "Invalid MSISDN Format";
-            }elseif($response=='405'){
-                $msg = "Invalid Balance Tier Format";
-            }elseif($response=='500'){
-                $msg = "System Error";
-            }else{
-                //Log::debug('process array result');
-                $array_res = [];
-                $res = explode("|", $response);
-                $res_end = [];
-                //Log::debug('array start');
-                foreach($res as $k1 => $data){
-                    $data_res = explode (",", $data);
-                    foreach($data_res as $k2 => $data){
-                        if(count($res)==$k1+1){
-                            $res_end[$k2] = $data;
-                        }else{
-                            $array_res[$k1][$k2] = $data;
-                        }
-                    }
-                }
-                // Log::debug($res_end);
-                foreach ($array_res as $msg_msis){
-                    // Log::debug($this->chechClient("200", $msg_msis[0]));
-                    $modelData = [
-                        'msg_id'    => $msg_msis[1],
-                        'user_id'   => auth()->user()->id,
-                        'client_id' => $this->chechClient("200", $msg_msis[0]),
-                        'type'      => $request['type'],
-                        'status'    => "PROCESSED",
-                        'code'      => $msg_msis[2],
-                        'message_content'  => $request['text'],
-                        'currency'  => $msg_msis[3],
-                        'price'     => $msg_msis[4],
-                        'balance'   => $res_end[0],
-                        'msisdn'    => $msg_msis[0],
-                    ];
-                    // Log::debug($modelData);
-                    BlastMessage::create($modelData);
-                }
-            }
-        }else{
-            abort(404, "Serve ID is wrong");
-        }
-
-        if($msg!=''){
-            $this->saveResult($msg, $request);
-        }
-    }
-
     /**
      * saveResult
      *
      * @param  mixed $campaign
      * @param  mixed $request
+     * @param  mixed $prev
      * @return void
      */
-    private function saveResult($campaign, $request){
+    private function saveResult($campaign, $request, $prev=null){
         $user_id = auth()->user()->id;
         //ModelsRequest::create($modelData);
         $client = $this->chechClient("400", $request);
-        $chat = ModelsRequest::create([
+        $text = $campaign?'campaign'.$campaign->id:$request['text'];
+
+        $data = [
             'source_id' => 'webchat_api_'.Hashids::encode($client->id),
-            'reply'     => 'campaign'.$campaign->id,
+            'reply'     => $text,
             'from'      => $client->id,
             'user_id'   => $user_id,
             'type'      => 'text',
             'client_id' => $client->uuid,
             'sent_at'   => date('Y-m-d H:i:s'),
             'team_id'   => auth()->user()->team->id
-        ]);
+        ];
+
+        $chat = ModelsRequest::create($data);
         return $chat;
     }
 
@@ -466,5 +383,44 @@ class ApiTwoWayController extends Controller
             ]);
         });
         return $client;
+    }
+
+    public function retriveNewMessage(Request $request, $provider){
+        $status=0;
+        //return $request;
+        if($provider=='sms-mk'){
+            if($request->msgid){
+                $prvMsg = ModelsRequest::where('from', $request->msisdn)->where('source_id', $request->msgid)->first();
+                $exsistingMsg = ModelsRequest::where('from', $request->msisdn)->where('source_id', $request->msgid)->where('reply', $request->text)->where('sent_at', Carbon::createFromFormat('Y-m-dH:i:s', $request->time))->first();
+                if($exsistingMsg){
+                    return response()->json([
+                        'code' => 401,
+                        'message' => "Duplicate request, this message is exsist"
+                    ]);
+                }
+            }
+            if($request->shortcode){
+                //MK SHORT CODE MO
+                // $this->saveResult(null, $request, $prvMsg);
+                ProcessInboundMessage::dispatch($request->all(), $prvMsg);
+                $status=1;
+            }elseif($request->longcode){
+                //MK LONG CODE MO
+                // $this->saveResult(null, $request, $prvMsg);
+                ProcessInboundMessage::dispatch($request->all(), $prvMsg);
+                $status=1;
+            }
+        }
+
+        if($status){
+            return response()->json([
+                'code' => 200,
+                'message' => "Successful"
+            ]);
+        }
+        return response()->json([
+            'code' => 400,
+            'message' => "Message fail to store"
+        ]);
     }
 }

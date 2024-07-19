@@ -392,3 +392,19 @@ function checkContentOtp($content){
         return 0;
     }
 }
+
+function filterInput($content, $type='med'){
+    if ($type=='low')
+    {
+        $exclude = array('<?', '?>', 'mysql_', 'base64_', 'document.cookie','alert(','eval(');
+    }
+    elseif ($type=='med')
+    {
+        $exclude = array('<script', '</script', '<?', '?>', 'mysql_', 'base64_', '{{HTML::script', '<iframe', '</iframe', 'document.cookie','eval(','alert(');
+    }
+    elseif ($type=='high')
+    {
+        $exclude = array('<script', '</script', '<?', '?>', 'mysql_', 'base64_', '{{HTML::script', 'document.cookie', '_GLOBALS', '_REQUEST', '_GET', '_POST', 'XMLHttpRequest', '$.get', '$.ajax', '$.post', 'http://', 'https://');
+    }
+    return $content = str_ireplace($exclude, '', $content);
+}

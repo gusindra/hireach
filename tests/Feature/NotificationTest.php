@@ -52,17 +52,10 @@ class NotificationTest extends TestCase
 
     public function test_it_deletes_the_notification()
     {
-        $notification = Notice::create([
-            'type' => 'app',
-            'model_id' => 2,
-            'model' => 'USER',
-            'notification' => 'Test',
-            'user_id' => 1,
-            'status' => 'unread',
-        ]);
+        $notification = Notice::latest()->first();
         $user = User::find(1);
-        Livewire::actingAs($user)->test(DeleteNotification::class, ['id' => $notification->id])
-            ->call('delete', $notification->id);
+        Livewire::actingAs($user)->test(DeleteNotification::class, ['notificationId' => $notification->id])
+            ->call('deleteNotification', $notification->id);
 
         $this->assertSoftDeleted('notices', ['id' => $notification->id]);
         $notification->forceDelete();
