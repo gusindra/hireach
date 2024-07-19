@@ -45,6 +45,7 @@ class OrderProgress extends Component
 
         Order::find($this->orderId)
             ->update(['status' => 'unpaid']);
+            return redirect('admin/order/'.$this->orderId);
     }
     public function render()
     {

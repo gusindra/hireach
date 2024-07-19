@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\CommerceItem;
 use App\Models\Contract;
 use App\Models\Order;
+use App\Models\OrderProduct;
 use App\Models\Project;
 use App\Models\Quotation;
 use Auth;
@@ -98,8 +99,22 @@ class CommercialController extends Controller
             return view('assistant.commercial.contract.template', ['code' => $c]);
         } elseif ($id == 'invoice') {
             $o = Order::find($key);
+            $orderProducts = OrderProduct::where('model_id', $o->id)
+                ->where('name', '!=', 'Tax')
+                ->get();
 
-            return view('assistant.order.template', ['data' => $o]);
+            $subTotal = $orderProducts->sum(function ($item) {
+                return $item->price * $item->qty;
+            });
+
+            $taxPrice = $subTotal * ($o->vat / 100);
+
+            return view('assistant.order.template', [
+                'data' => $o,
+                'subTotal' => $subTotal,
+                'tax' => $taxPrice,
+                'total' => $subTotal + $taxPrice
+            ]);
         }
     }
 }

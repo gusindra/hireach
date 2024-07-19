@@ -6,7 +6,7 @@
                     <a href="{{route('payment.topup')}}" class="bg-gray-600 rounded-md py-1 px-4 hover:bg-gray-400">
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6 text-white">
                             <path fill-rule="evenodd" d="M9.53 2.47a.75.75 0 0 1 0 1.06L4.81 8.25H15a6.75 6.75 0 0 1 0 13.5h-3a.75.75 0 0 1 0-1.5h3a5.25 5.25 0 1 0 0-10.5H4.81l4.72 4.72a.75.75 0 1 1-1.06 1.06l-6-6a.75.75 0 0 1 0-1.06l6-6a.75.75 0 0 1 1.06 0Z" clip-rule="evenodd" />
-                        </svg>                       
+                        </svg>
                     </a>
                 </div>
             </div>
@@ -40,7 +40,7 @@
                         <div class="flex justify-between" x-data="{ input: 'Foo!' }">
                             <p class="mx-4 mt-1 text-gray-600 dark:text-slate-300">
                                 <span>Total Pembayaran</span><br>
-                                <span class="text-xl font-semibold">Rp {{number_format($order->items->sum('price'))}}</span>
+                                <span class="text-xl font-semibold">Rp {{number_format($total)}}</span>
                             </p>
                             <p class="mx-4 mt-1">
                                 <a wire:click="actionShowModal('detail')" href="#" x-clipboard="input" class="text-lg font-semibold text-green-600">Detail</a>
@@ -162,14 +162,14 @@
                     @foreach ($order->items as $item)
                         <div class="flex justify-between capitalize">
                             <span>{{ $item->name }} <small>{{ $item->note }}</small></span>
-                            <span>Rp{{ number_format($item->price) }}</span>
+                            <span>Rp{{ number_format($item->price * $item->qty) }}</span>
                         </div>
                     @endforeach
                 </div>
                 <hr>
                 <div class="flex justify-between py-2">
                     <span class="font-bold text-xl">{{ __('Total Bayar') }}</span>
-                    <span class="font-bold text-xl">Rp{{number_format($order->items->sum('price'))}}</span>
+                    <span class="font-bold text-xl">Rp{{number_format($total)}}</span>
                 </div>
                 <hr>
                 <div class="flex justify-between pt-2">
@@ -177,7 +177,7 @@
                 </div>
                 <div class="flex justify-between pb-2">
                     <span>{{ __('Transfer Bank') }}</span>
-                    <span>Rp{{number_format($order->items->sum('price'))}}</span>
+                    <span>Rp{{number_format($total)}}</span>
                 </div>
                 <hr>
                 <div class="flex justify-between py-2">
@@ -186,9 +186,9 @@
                 <div class="flex justify-between py-2">
                     <span class="font-bold">{{ __('Topup') }}</span>
                     <span class="text-right">
-                        {{number_format($order->items[0]->price)}}<br>
+                        {{number_format($subTotal)}}<br>
                         @foreach(estimationSaldo() as $product)
-                            <span class="text-xs capitalize">Estimation: {{number_format($order->items[0]->price/$product->unit_price)}} SMS</span>
+                            <span class="text-xs capitalize">Estimation: {{number_format($subTotal/$product->unit_price)}} SMS</span>
                         @endforeach
                     </span>
                 </div>

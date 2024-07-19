@@ -342,9 +342,8 @@
                                                                                                 class="px-2 py-2 text-sm whitespace-no-wrap text-right">
                                                                                                 <span
                                                                                                     class="uppercase">{{ $data->bill->currency ?? 'IDR' }}</span>
-                                                                                                {{ $data->items->reject(function ($item) {
-                                                                                                        return $item->name === 'Tax';
-                                                                                                    })->sum('price') }}
+                                                                                                {{ number_format($subTotal, 2, ',', '.') }}
+
                                                                                             </td>
                                                                                         </tr>
                                                                                         @if ($data->vat > 0)
@@ -358,7 +357,7 @@
                                                                                                     class="px-2 py-2 text-xs whitespace-no-wrap text-right">
                                                                                                     <span
                                                                                                         class="uppercase">{{ $data->bill->currency ?? 'IDR' }}</span>
-                                                                                                    {{ $data->items->where('name', 'Tax')->sum('price') }}
+                                                                                                    {{ number_format($tax, 2, ',', '.') }}
                                                                                                 </td>
                                                                                             </tr>
                                                                                             <tr class="bg-gray-100">
@@ -370,7 +369,8 @@
                                                                                                     class="px-2 py-2 text-xl whitespace-no-wrap text-right">
                                                                                                     <span
                                                                                                         class="uppercase">{{ $data->bill->currency ?? 'IDR' }}</span>
-                                                                                                    {{ $data->items->sum('price') }}
+                                                                                                    {{ $total }}
+
                                                                                                 </td>
                                                                                             </tr>
                                                                                         @else
@@ -383,7 +383,7 @@
                                                                                                     class="px-2 py-2 text-xl whitespace-no-wrap text-right">
                                                                                                     <span
                                                                                                         class="uppercase">{{ $data->bill->currency ?? 'IDR' }}</span>
-                                                                                                    {{ $data->items->sum('price') }}
+                                                                                                    {{ number_format($total, 2, ',', '.') }}
                                                                                                 </td>
                                                                                             </tr>
                                                                                         @endif
