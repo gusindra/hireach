@@ -84,7 +84,9 @@ class OrderObserver
             $vatSetting = cache('vat_setting');
 
             if (empty($vatSetting)) {
-                 
+                $vatSetting = cache()->remember('vat_setting', 1444, function () {
+                    return Setting::where('key', 'vat')->latest()->first();
+                });
             }
 
             $vatValue = $vatSetting ? $vatSetting->value : 0;

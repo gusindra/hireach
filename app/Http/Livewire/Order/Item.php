@@ -141,19 +141,20 @@ class Item extends Component
             return;
         }
 
-        $orderProduct = OrderProduct::where('model_id', $order->id)
-                                    ->where('name', 'Topup')
-                                    ->latest()
-                                    ->first();
+        $orderProducts = OrderProduct::where('model_id', $order->id)
+        ->where('name', '!=', 'Tax')
+        ->get();
 
-        if (!$orderProduct) {
-            return;
-        }
+        $subTotal = $orderProducts->sum(function ($item) {
+            return $item->price * $item->qty;
+        });
 
-        $price = (float) $orderProduct->price;
+        $total=    $subTotal + ($subTotal * ($this->tax / 100));
 
 
-        $order->update(['vat' => $this->tax]);
+
+        $order->update(['vat' => $this->tax,
+    'total'=>$total]);
 
         OrderProduct::updateOrCreate(
             [
@@ -164,7 +165,7 @@ class Item extends Component
             [
                 'qty' => 1,
                 'unit' => 1,
-                'price' => $order->total * ($this->tax / 100),
+                'price' => $subTotal * ($this->tax / 100),
                 'note' => 'VAT/PPN @ '.$this->tax.'%',
                 'user_id' => 0,
             ]

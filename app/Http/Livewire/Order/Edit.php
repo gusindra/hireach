@@ -40,14 +40,16 @@ class Edit extends Component
     public $customer;
     public $formName;
     public $nominal ;
-
+    public $selectedName = '';
+    public $search = '';
+    public $selectedId = null;
+    public $disable = false;
     public $nominal_view;
 
     public function mount($uuid)
     {
-
         $this->order = Order::find($uuid);
-        $this->user = Client::all();
+        $this->user = [];
         $this->customer = Client::where('uuid', $this->order->customer_id)->first();
         $this->date = $this->order->date;
         $this->input['name'] = $this->order->name ?? '';
@@ -65,7 +67,7 @@ class Edit extends Component
         $this->input['date'] = $this->order->date ? $this->order->date->format('Y-m-d') : '';
         $this->input['total'] = $this->order->total ?? '';
         $this->nominal = $this->order->total ?? '';
-
+        $this->disable = $this->disableInput($this->order->status);
     }
 
     public function rules()
@@ -115,6 +117,30 @@ class Edit extends Component
     }
 
 
+    public function disableInput($status)
+    {
+
+        return $status === 'unpaid';
+    }
+
+    public function updatedSearch()
+    {
+
+
+    }
+
+    public function selectItem($id)
+    {
+        $client = Client::where('uuid', $id)->first();
+        if ($client) {
+            $this->search = $client->name;
+            $this->selectedId = $client->uuid;
+            $this->input['customer_id'] = $client->uuid;
+            $this->emit('updateCustomerId', $client->uuid);
+        }
+
+    }
+
     public function updateStatus($id, $formName = '')
 
     {
@@ -129,12 +155,14 @@ class Edit extends Component
         $this->emit('update_status');
     }
 
-    public function updatedInputCustomerId()
+    public function inputCustomer($uuid)
     {
-
         if ($this->order) {
-            $customer = Client::where('uuid', $this->input['customer_id'])->first();
-            $this->customer = $customer ?? '';
+            $customer = Client::where('uuid', $uuid)->first();
+            $this->customer = $customer ?? null;
+            $this->input['customer_id'] = $uuid;
+
+            $this->search = $customer->name ?? '';
         } else {
             $this->model = null;
             $this->model_id = null;
@@ -142,6 +170,7 @@ class Edit extends Component
             $this->addressed = '';
         }
     }
+
 
     public function actionShowModal($url)
     {
@@ -190,9 +219,16 @@ class Edit extends Component
 
     public function render()
     {
+        $clients = Client::query()
+        ->where('name', 'like', "%{$this->search}%")
+        ->orWhere('phone', 'like', "%{$this->search}%")
+        ->orWhere('email', 'like', "%{$this->search}%")
+        ->limit(5)
+        ->get();
         return view('livewire.order.edit', [
             // 'model_list' => $this->readModelSelection(),
             'client' => $this->readClient(),
+            'clients' =>$clients
             // 'data' => $this->readItem(),
         ]);
     }
