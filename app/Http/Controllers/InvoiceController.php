@@ -29,6 +29,7 @@ class InvoiceController extends Controller
 
     public function show(Billing $invoice)
     {
+
         return view('assistant.invoice.show', ['invoice'=>$invoice, 'order'=>$invoice->order]);
     }
 }

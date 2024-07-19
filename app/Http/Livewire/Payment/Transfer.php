@@ -2,6 +2,7 @@
 
 namespace App\Http\Livewire\Payment;
 
+use App\Models\OrderProduct;
 use Livewire\Component;
 use App\Jobs\ProcessEmail;
 use App\Models\Notice;
@@ -12,6 +13,10 @@ class Transfer extends Component
     public $check = 1;
     public $modalDetail = false;
     public $modalUpload = false;
+
+    public $subTotal = 0;
+    public $taxPrice = 0;
+    public $total = 0;
 
     public function mount($order)
     {
@@ -57,10 +62,29 @@ class Transfer extends Component
         return $this->check;
     }
 
+    public function calc()
+    {
+        $orderProducts = OrderProduct::where('model_id', $this->order->id)
+            ->where('name', '!=', 'Tax')
+            ->get();
+
+        $this->subTotal = $orderProducts->sum(function ($item) {
+            return $item->price * $item->qty;
+        });
+
+        $this->taxPrice = $this->subTotal * ($this->order->vat / 100);
+        $this->total = $this->subTotal + $this->taxPrice;
+    }
+
     public function render()
     {
+        $this->calc();
+
         return view('livewire.payment.transfer', [
-            'check_status' => $this->read()
+            'check_status' => $this->read(),
+            'subTotal' => $this->subTotal,
+            'tax' => $this->taxPrice,
+            'total' => $this->total,
         ]);
     }
 }

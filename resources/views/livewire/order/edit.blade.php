@@ -191,42 +191,58 @@
 
         <x-slot name="form">
             <div class="col-span-6 grid grid-cols-2">
+                @if($order->status !== 'unpaid')
                 <div class="col-span-12 sm:col-span-1 mx-4">
                     <x-jet-label for="input.customer_id" value="{{ __('Client') }}" />
-                    <select {{ disableInput($order->status) ? 'disabled' : '' }} name="input.customer_id"
-                        id="input.customer_id"
-                        class="border-gray-300 dark:bg-slate-800 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 rounded-md shadow-sm mt-1 block w-full"
-                        wire:model.debunce.800ms="input.customer_id">
-                        <option selected>-- Select --</option>
-                        @foreach ($user as $item)
-                            <option value="{{ $item->uuid }}">{{ $item->name }}</option>
-                        @endforeach
+                    <div x-data="{ open: false, search: @entangle('search') }"
+                        @click.away="open = false"
+                        class="relative">
+                        <input
+                            type="text"
+                            x-model="search"
+                            @focus="open = true"
+                            @input.debounce.300ms="open = true"
+                            @keydown.escape.window="open = false"
+                            placeholder="Search Client..."
+                            class="form-input block w-full mt-1 rounded-md shadow-sm border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+                            wire:model.debounce.800ms="search"
+                            {{ $disable ? 'disabled' : '' }} />
 
+                        <div x-show="open"
+                            class="absolute z-10 w-full mt-1 bg-white rounded-md shadow-lg">
+                            <ul class="max-h-60 overflow-auto">
+                                @forelse ($clients as $client)
+                                    <li
+                                        wire:key="{{ $client->uuid }}"
+                                        @click="open = false; $wire.inputCustomer('{{ $client->uuid }}')"
+                                        class="cursor-pointer px-4 py-2 hover:bg-indigo-200">
+                                        {{ $client->name }} - {{ $client->phone }} - {{ $client->email }}
+                                    </li>
+                                @empty
+                                    <li class="px-4 py-2">No results found</li>
+                                @endforelse
+                            </ul>
+                        </div>
+                    </div>
 
-                    </select>
                     <x-jet-input-error for="input.customer_id" class="mt-2" />
                 </div>
-
-
-
+                @endif
                 <div class="col-span-12 sm:col-span-1">
                     <x-jet-label for="addressed_company" value="{{ __('Customer') }}" />
 
-
                     @if ($customer)
-                        <div class="absolute p-3 ml-20" style=" margin-top: -35px; ">
+                        <div class="absolute p-3 ml-20" style="margin-top: -35px;">
                             <a href="{{ route('user.show', $customer->id) }}" class="text-xs">view</a>
                         </div>
                     @endif
 
                     <span
                         class="border dark:bg-slate-800 rounded-md shadow-sm mt-1 block w-full p-2 capitalize">{{ $customer->name ?? '' }}</span>
-
-
-
                 </div>
             </div>
         </x-slot>
+
 
         <x-slot name="actions">
             <x-jet-action-message class="mr-3" on="saved">
