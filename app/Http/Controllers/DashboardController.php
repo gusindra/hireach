@@ -34,13 +34,11 @@ class DashboardController extends Controller
     public function index(Request $request)
     {
         $userId = FacadesAuth::user()->id;
-
-        if (empty(auth()->user()->currentTeam)) {
+        if (empty(auth()->user()->listTeams)) {
             return redirect()->route('teams.create');
         }
 
         if ($request->has('v')) {
-
             $dateS = Carbon::now()->startOfMonth();
             $dateE = Carbon::now()->startOfMonth()->addMonth(1);
             $event = Contract::whereBetween('expired_at', [$dateS, $dateE])->get();

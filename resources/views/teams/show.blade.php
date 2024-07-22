@@ -64,8 +64,5 @@
             </div>
         </div>
     </div>
-    <div class="grid grid-cols-12">
-
-
-    </div>
+    <div class="grid grid-cols-12"></div>
 </x-app-layout>

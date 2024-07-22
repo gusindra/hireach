@@ -45,7 +45,7 @@ class TeamInvitationController extends Controller
             $newTeamMember->update(['current_team_id'=>$invitation->team_id]);
 
             return redirect('login')->banner(
-                __('Great! You have accepted the invitation to join Telixcel team.')
+                __('Great! You have accepted the invitation to join HiReach team.')
             );
         }
         return redirect('register?email='.$invitation->email)->banner(

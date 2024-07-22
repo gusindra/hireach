@@ -5,6 +5,6 @@
             {{ __('Switch Team') }}
         </div>
         <x-switchable-team :team="auth()->user()->currentTeam ? auth()->user()->currentTeam->name : ''" :selection="auth()->user()->listTeams"></x-switchable-team>
-        <div class="border-t border-gray-100"></div>
+        <!-- <div class="border-t border-gray-100"></div> -->
     @endif
 </div>
