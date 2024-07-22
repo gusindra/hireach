@@ -5,6 +5,7 @@ namespace App\Actions\Fortify;
 use App\Models\RoleInvitation;
 use App\Models\RoleUser;
 use App\Models\Team;
+use App\Models\TeamInvitation;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
@@ -62,7 +63,9 @@ class CreateNewUser implements CreatesNewUsers
             if($newInvitation && $newInvitation->team_id){
                 $team = Team::find($newInvitation->team_id);
             }else{
-                $team = Team::find(4);
+                $newInvitation = TeamInvitation::where('email', $input['email'])->first();
+                $team = Team::find($newInvitation->team_id);
+                $newInvitation->delete();
             }
             $team->users()->attach(
                 $newTeamMember, ['role' => $role]

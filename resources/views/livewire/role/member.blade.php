@@ -23,7 +23,7 @@
                 <div class="col-span-6 sm:col-span-4">
                     <x-jet-label for="inviteEmail" value="{{ __('Email') }}" />
                     <x-jet-input id="inviteEmail" type="email" class="mt-1 block w-full" wire:model="inviteEmail"
-                        wire:model.defer="inviteEmail" wire:model.debunce.800ms="inviteEmail" />
+                        wire:model.defer="inviteEmail" wire:model.debounce.800ms="inviteEmail" />
                     <x-jet-input-error for="inviteEmail" class="mt-2" />
                 </div>
 
@@ -144,4 +144,56 @@
             </x-jet-danger-button>
         </x-slot>
     </x-jet-confirmation-modal>
+
+<!-- Copy Link Modal -->
+<x-jet-confirmation-modal wire:model="showCopyLinkModal">
+    <x-slot name="title">
+        {{ __('Copy Invitation Link') }}
+    </x-slot>
+
+    <x-slot name="content">
+        <div class="flex items-center justify-between">
+            <div class="w-full max-w-xs">
+                <x-jet-input id="inviteLink" type="text" class="mt-1 block w-full" wire:model.defer="inviteLink" readonly />
+            </div>
+            <div>
+                <button class="ml-2 px-4 py-2 bg-yellow-800 w-16 text-white rounded-md flex items-center" onclick="copyToClipboard()">
+                    {{ __('Copy') }}
+                </button>
+            </div>
+        </div>
+
+        <div id="copyMessage" class="mt-2 text-green-600 dark:text-green-400 hidden flex items-center">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg>
+            {{ __('Link copied!') }}
+        </div>
+    </x-slot>
+
+    <x-slot name="footer">
+        <x-jet-secondary-button wire:click="$toggle('showCopyLinkModal')" wire:loading.attr="disabled">
+            {{ __('Close') }}
+        </x-jet-secondary-button>
+    </x-slot>
+</x-jet-confirmation-modal>
+
+<script>
+    function copyToClipboard() {
+        var copyText = document.getElementById('inviteLink');
+        var message = document.getElementById('copyMessage');
+
+           copyText.select();
+        copyText.setSelectionRange(0, 99999);
+
+           document.execCommand('copy');
+
+
+        message.classList.remove('hidden');
+
+           setTimeout(function() {
+            message.classList.add('hidden');
+        }, 2000);
+    }
+</script>
+
+
 </div>

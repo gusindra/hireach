@@ -55,6 +55,11 @@ use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
+use Laravel\Jetstream\Http\Controllers\CurrentTeamController;
+use Laravel\Jetstream\Http\Controllers\Inertia\ApiTokenController;
+use Laravel\Jetstream\Http\Controllers\Inertia\TeamController;
+use Laravel\Jetstream\Http\Controllers\Inertia\UserProfileController;
+use Laravel\Jetstream\Jetstream;
 
 /*
 |--------------------------------------------------------------------------
@@ -890,4 +895,24 @@ Route::get('/joymove', function (HttpRequest $request) {
     ]);
     return $response;
     return $request->all();
+});
+
+
+$authMiddleware = config('jetstream.guard')
+            ? 'auth:'.config('jetstream.guard')
+            : 'auth';
+
+$authSessionMiddleware = config('jetstream.auth_session', false)
+        ? config('jetstream.auth_session')
+        : null;
+
+Route::group(['middleware' => 'web'], function () {
+    // Teams...
+
+        Route::get('/team-invitations/{invitation}', [TeamInvitationController::class, 'accept'])
+                    ->middleware(['signed'])
+                    ->name('team-invitations.accept');
+        // Route::get('/team-invitations/{invitation}', function () {
+        //     return 1;
+        // });
 });

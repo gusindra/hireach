@@ -113,14 +113,14 @@
                 @livewire('notification-app', ['client_id' => Auth::user()->id], key(Auth::user()->id))
 
                 <!-- Teams Dropdown -->
-                @if (Auth::user()->currentTeam && Laravel\Jetstream\Jetstream::hasTeamFeatures())
+                @if (!empty(auth()->user()->listTeams) && Laravel\Jetstream\Jetstream::hasTeamFeatures())
                     <div class="ml-3 relative">
                         <x-jet-dropdown align="right" width="60">
                             <x-slot name="trigger">
                                 <span class="inline-flex rounded-md">
                                     <button type="button"
                                         class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 dark:text-slate-300 bg-white supports-backdrop-blur:bg-white/60 dark:bg-slate-800 hover:bg-gray-50 hover:text-gray-700 focus:outline-none focus:bg-gray-50 active:bg-gray-50 transition">
-                                        {{ Auth::user()->currentTeam->name }}
+                                        {{ Auth::user()->currentTeam ? Auth::user()->currentTeam->name : '' }}
 
                                         <svg class="ml-2 -mr-0.5 h-4 w-4" xmlns="http://www.w3.org/2000/svg"
                                             viewBox="0 0 20 20" fill="currentColor">
@@ -139,20 +139,21 @@
                                         {{ __('Manage Team') }}
                                     </div>
 
-                                    @if (Auth::user()->currentTeam->id !== 1)
+                                    @if (Auth::user()->currentTeam && Auth::user()->currentTeam->id !== 1)
                                         <!-- Team Settings -->
                                         <x-jet-dropdown-link
                                             href="{{ route('teams.show', Auth::user()->currentTeam->id) }}">
                                             {{ __('Team Settings') }}
                                         </x-jet-dropdown-link>
                                     @endif
-                                    @can('create', Laravel\Jetstream\Jetstream::newTeamModel())
-                                        <x-jet-dropdown-link href="{{ route('teams.create') }}">
-                                            {{ __('Create New Team') }}
-                                        </x-jet-dropdown-link>
-                                    @endcan
 
                                     @if (@Auth::user()->isSuper->role == 'superadmin')
+                                        @can('create', Laravel\Jetstream\Jetstream::newTeamModel())
+                                            <x-jet-dropdown-link href="{{ route('teams.create') }}">
+                                                {{ __('Create New Team') }}
+                                            </x-jet-dropdown-link>
+                                        @endcan
+                                    @else
                                         @can('create', Laravel\Jetstream\Jetstream::newTeamModel())
                                             <x-jet-dropdown-link href="{{ route('teams.create') }}">
                                                 {{ __('Create New Team') }}
@@ -162,7 +163,7 @@
 
                                     <div class="border-t border-gray-100"></div>
 
-                                    @livewire('switch-team')
+                                    @livewire('switch-team', ['totalTeam' => empty(auth()->user()->listTeams)])
                                 </div>
                             </x-slot>
                         </x-jet-dropdown>
