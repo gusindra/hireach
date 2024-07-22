@@ -5,7 +5,7 @@
     </div>
     <div class="grid grid-cols-12">
 
-        @includeWhen(auth()->user()->isSuper || (auth()->user()->team && auth()->user()->team->role == 'superadmin'),
+        @includeWhen(auth()->user()->isSuper || (auth()->user()->team && str_contains(auth()->user()->activeRole->role->name, 'Admin')),
             'menu.admin-menu-setting',
             []
         )

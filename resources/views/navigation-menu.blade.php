@@ -15,7 +15,7 @@
 
                 <!-- Navigation Links -->
                 <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
-                    @if (Auth::user()->activeRole && str_contains(Auth::user()->activeRole->role->name, 'Admin'))
+                    @if (Auth::user()->activeRole && str_contains(auth()->user()->activeRole->role->name, 'Admin'))
                         <x-jet-nav-link href="{{ route('admin') }}" :active="request()->routeIs('admin')">
                             {{ __('Dashboard') }}
                         </x-jet-nav-link>
@@ -49,7 +49,7 @@
                             </x-jet-nav-link>
                         @elseif(false)
                             @if (@Auth::user()->role || Auth::user()->super->first())
-                                @if (Auth::user()->activeRole && str_contains(Auth::user()->activeRole->role->name, 'Admin'))
+                                @if (Auth::user()->activeRole && str_contains(auth()->user()->activeRole->role->name, 'Admin'))
                                     <x-jet-nav-link href="{{ route('admin.user') }}" :active="request()->routeIs('admin.user')">
                                         {{ __('Users') }}
                                     </x-jet-nav-link>
@@ -99,7 +99,6 @@
                             {{ __('Billing') }}
                         </x-jet-nav-link>
                     @endif
-
                 </div>
             </div>
 

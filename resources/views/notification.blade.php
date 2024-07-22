@@ -6,7 +6,7 @@
     </x-slot>
 
     <div class="grid grid-cols-12">
-        @if(auth()->user()->isSuper || (auth()->user()->team && auth()->user()->team->role == 'superadmin'))
+        @if(auth()->user()->isSuper || (auth()->user()->team && str_contains(auth()->user()->activeRole->role->name, 'Admin')))
             @includeWhen(auth()->user(), 'menu.admin-menu-setting', [])
         @else
             @includeWhen(auth()->user(), 'menu.user-dashboard', [])

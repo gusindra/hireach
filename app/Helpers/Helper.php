@@ -408,3 +408,36 @@ function filterInput($content, $type='med'){
     }
     return $content = str_ireplace($exclude, '', $content);
 }
+
+/**
+ * userAccess
+ *
+ * @param  mixed $menu
+ * @param  mixed $user
+ * @return void
+ */
+function userAccess($menu, $user, $level=''){
+    //LEVEL1
+    if ($user->super->first()) {
+        if ($user->super->first()->role == 'superadmin') {
+            return true;
+        }
+    }
+    //LEVEL 2
+    $gp = cache()->remember('permission-setting', 14400, function() use ($menu) {
+        return Permission::where('model', $menu)->pluck('name')->toArray();
+    });
+    foreach(auth()->user()->activeRole->role->permission as $permission)
+    {
+        if (in_array($permission->name, $gp)) {
+            return true;
+        }
+    }
+    //LEVEL 3
+    if($level=='admin'){
+        if ((auth()->user()->activeRole && str_contains(auth()->user()->activeRole->role->name, "Admin"))) {
+            return true;
+        }
+    }
+    return false;
+}

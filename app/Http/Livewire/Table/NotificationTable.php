@@ -26,7 +26,7 @@ class NotificationTable extends LivewireDatatable
     {
         $query = Notice::query();
 
-        if (auth()->user()->isSuper || (auth()->user()->team && auth()->user()->team->role == 'superadmin')) {
+        if (auth()->user()->isSuper || (auth()->user()->team && str_contains(Auth::user()->activeRole->role->name, 'Admin'))) {
             $query = $query->withTrashed();
         } else {
             $query = $query->where('user_id', auth()->user()->id);

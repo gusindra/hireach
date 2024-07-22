@@ -32,7 +32,7 @@ class Add extends Component
     {
         $this->validate();
         $this->user = auth()->user()->id;
-        if(auth()->user()->isSuper || (auth()->user()->team && auth()->user()->team->role == 'superadmin')){
+        if(auth()->user()->isSuper || (auth()->user()->team && str_contains(Auth::user()->activeRole->role->name, 'Admin'))){
             $this->user = 0;
         }
         if($this->grouptype=='user'){

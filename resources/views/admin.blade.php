@@ -5,7 +5,7 @@
         </h2>
     </x-slot>
 
-    @if (Auth::user()->currentTeam && Auth::user()->currentTeam->user_id == Auth::user()->id)
+    @if (Auth::user()->currentTeam || str_contains(auth()->user()->activeRole->role->name, 'Admin'))
         <!-- Team Dashboard -->
         <div class="grid grid-cols-12">
             @includeWhen(auth()->user(), 'menu.admin-menu-dashboard', [])

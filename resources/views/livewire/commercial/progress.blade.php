@@ -1,6 +1,6 @@
 <div wire:poll>
     @if ($model->status == 'draft' || ($model->status == 'unpaid' && $model_type == 'commission'))
-        @if (auth()->user()->isSuper || (auth()->user()->team && auth()->user()->team->role == 'superadmin'))
+        @if (auth()->user()->isSuper || (auth()->user()->team && str_contains(Auth::user()->activeRole->role->name, 'Admin')))
             <div class="px-4 py-5 bg-white dark:bg-slate-600 sm:p-6 shadow sm:rounded-md">
 
                 <div class="sm:px-0">
@@ -120,9 +120,9 @@
 
         <!-- The offcanvas component -->
          <!-- FOR MOBILE USAGE DESIGN -->
-        <div class="{{ auth()->user()->isSuper || (auth()->user()->team && auth()->user()->team->role == 'superadmin') ? 'block' : '' }} block sm:hidden"
+        <div class="{{ auth()->user()->isSuper || (auth()->user()->team && str_contains(Auth::user()->activeRole->role->name, 'Admin')) ? 'block' : '' }} block sm:hidden"
             x-data="{ offcanvas: false }">
-            @if (auth()->user()->isSuper || (auth()->user()->team && auth()->user()->team->role == 'superadmin'))
+            @if (auth()->user()->isSuper || (auth()->user()->team && str_contains(Auth::user()->activeRole->role->name, 'Admin')))
                 <button class="fixed top-52 right-0 bg-blue-100 p-1 text-sm text-gray-400"
                     @click="offycanvas = true">Approval</button>
             @endif
@@ -253,7 +253,7 @@
         </div>
     @endif
 
-    @if (auth()->user()->isSuper || (auth()->user()->team && auth()->user()->team->role == 'superadmin') &&
+    @if (auth()->user()->isSuper || (auth()->user()->team && str_contains(Auth::user()->activeRole->role->name, 'Admin')) &&
             $model->status == 'approved')
         <div
             class="px-4 py-5 bg-white text-center dark:bg-slate-600 sm:p-6 shadow sm:rounded-tl-md sm:rounded-tr-md mt-4">
