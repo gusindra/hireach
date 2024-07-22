@@ -1,5 +1,6 @@
 <?php
 
+
 namespace App\Http\Livewire\Role;
 
 use App\Mail\RoleInvitation as MailRoleInvitation;
@@ -7,6 +8,8 @@ use App\Models\RoleInvitation;
 use App\Models\RoleUser;
 use Livewire\Component;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\URL;
+use Illuminate\Support\Facades\Log;
 
 class Member extends Component
 {
@@ -15,6 +18,8 @@ class Member extends Component
     public $inviteEmail;
     public $inviteCancel;
     public $confirmingTeamMemberRemoval = false;
+    public $showCopyLinkModal = false;
+    public $inviteLink;
 
     public function mount($id)
     {
@@ -23,14 +28,20 @@ class Member extends Component
 
     public function addRoleMember()
     {
-
         $invitation = RoleInvitation::create([
             'email' => $this->inviteEmail,
             'role_id' => $this->role,
             'team_id' => auth()->user()->current_team_id
         ]);
 
-        // Mail::to($this->inviteEmail)->send(new MailRoleInvitation($invitation));
+        $this->inviteLink = URL::signedRoute('role-invitations.accept', [
+            'invitation' => $invitation->id,
+        ]);
+
+        Log::debug($this->inviteLink);
+
+
+        $this->showCopyLinkModal = true;
 
         $this->resetForm();
 
