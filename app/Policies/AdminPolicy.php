@@ -2,13 +2,22 @@
 
 namespace App\Policies;
 
-use App\Models\Template;
-use App\Models\User;
+use App\Models\Permission;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
-class TemplatePolicy
+class AdminPolicy
 {
     use HandlesAuthorization;
+
+    /**
+     * Create a new policy instance.
+     *
+     * @return void
+     */
+    public function __construct($model)
+    {
+        dd($model);
+    }
 
     /**
      * Determine whether the user can view any models.
