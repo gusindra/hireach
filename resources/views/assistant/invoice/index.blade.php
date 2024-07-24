@@ -17,7 +17,7 @@
                 </div>
 
                 <div class="py-3 px-1">
-                    @livewire('table.order')
+                    @livewire('table.order-user-table')
                 </div>
             </div>
         </div>

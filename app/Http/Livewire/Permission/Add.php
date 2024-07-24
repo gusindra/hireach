@@ -25,12 +25,13 @@ class Add extends Component
         $this->validate();
         foreach ($this->type as $key => $menu) {
             Permission::create([
-                'name'  => strtoupper($key . ' ' . $this->model),
-                'model'  => strtoupper($this->model)
+                'name' => strtoupper($key . ' ' . $this->model),
+                'model' => strtoupper($this->model)
             ]);
         }
         $this->modalActionVisible = false;
         $this->resetForm();
+        cache()->forget('permission-' . strtoupper($this->model));
         $this->emit('refreshLivewireDatatable');
     }
 

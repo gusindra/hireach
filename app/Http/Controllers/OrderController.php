@@ -9,21 +9,23 @@ use Illuminate\Support\Facades\Auth as FacadesAuth;
 
 class OrderController extends Controller
 {
-    // public $user_info;
-    // public function __construct()
-    // {
-    //     $this->middleware(function ($request, $next) {
-    //         // Your auth here
-    //         $permission = false;
-    //         $id = array("ORDER");
-    //         $permission = checkPermisissions($id);
+    public $user_info;
+    public function __construct()
+    {
 
-    //         if ($permission) {
-    //             return $next($request);
-    //         }
-    //         abort(404);
-    //     });
-    // }
+        $this->middleware(function ($request, $next) {
+            // Your auth here
+            $granted = false;
+            $user = auth()->user();
+            $granted = userAccess('ORDER');
+
+            if ($granted) {
+                return $next($request);
+            }
+            abort(403);
+        });
+    }
+
 
     public function index()
     {
@@ -52,7 +54,7 @@ class OrderController extends Controller
     }
     public function showUserOrder(Order $order)
     {
-          $orderProducts = OrderProduct::where('model_id', $order->id)
+        $orderProducts = OrderProduct::where('model_id', $order->id)
             ->where('name', '!=', 'Tax')
             ->get();
 
@@ -60,7 +62,7 @@ class OrderController extends Controller
             return $item->price * $item->qty;
         });
 
-       $taxPrice = $subTotal * ($order->vat / 100);
+        $taxPrice = $subTotal * ($order->vat / 100);
 
 
         return view('assistant.order.show-order-user', [

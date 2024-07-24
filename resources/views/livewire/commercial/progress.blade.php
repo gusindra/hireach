@@ -7,7 +7,7 @@
                     <h3 class="text-base font-bold text-gray-900 dark:text-slate-300">Submission Process</h3>
                 </div>
                 <div class="w-auto text-center mt-4">
-                    <x-jet-button wire:click="submit" class="hover:bg-green-700 bg-green-700">
+                    <x-jet-button :disabled="!userAccess('QUOTATION', 'update')" wire:click="submit" class="hover:bg-green-700 bg-green-700">
                         {{ $approvals->count() > 0 ? __('Re-Submit') : __('Submit') }}
                     </x-jet-button>
                 </div>
@@ -119,7 +119,7 @@
         </div>
 
         <!-- The offcanvas component -->
-         <!-- FOR MOBILE USAGE DESIGN -->
+        <!-- FOR MOBILE USAGE DESIGN -->
         <div class="{{ auth()->user()->isSuper || (auth()->user()->team && str_contains(Auth::user()->activeRole->role->name, 'Admin')) ? 'block' : '' }} block sm:hidden"
             x-data="{ offcanvas: false }">
             @if (auth()->user()->isSuper || (auth()->user()->team && str_contains(Auth::user()->activeRole->role->name, 'Admin')))
@@ -224,18 +224,22 @@
 
                                         @if ($approval->status != null)
                                             <li class="ml-5 mb-6">
-                                                <div class="absolute w-6 h-6 {{ $approval->status == 'approved' ? 'bg-blue-600' : 'bg-gray-300' }} rounded-full -left-3 border border-white dark:border-blue-900 dark:bg-blue-700">
+                                                <div
+                                                    class="absolute w-6 h-6 {{ $approval->status == 'approved' ? 'bg-blue-600' : 'bg-gray-300' }} rounded-full -left-3 border border-white dark:border-blue-900 dark:bg-blue-700">
                                                     <svg xmlns="http://www.w3.org/2000/svg"
                                                         class="m-auto mt-1 h-3 w-3 text-white" viewBox="0 0 20 20"
                                                         fill="currentColor">
-                                                        <path d="M10 2a6 6 0 00-6 6v3.586l-.707.707A1 1 0 004 14h12a1 1 0 00.707-1.707L16 11.586V8a6 6 0 00-6-6zM10 18a3 3 0 01-3-3h6a3 3 0 01-3 3z" />
+                                                        <path
+                                                            d="M10 2a6 6 0 00-6 6v3.586l-.707.707A1 1 0 004 14h12a1 1 0 00.707-1.707L16 11.586V8a6 6 0 00-6-6zM10 18a3 3 0 01-3-3h6a3 3 0 01-3 3z" />
                                                     </svg>
                                                 </div>
                                                 <div>
-                                                    <h3 class="text-sm font-semibold text-gray-900 dark:text-white">Notified</h3>
+                                                    <h3 class="text-sm font-semibold text-gray-900 dark:text-white">
+                                                        Notified</h3>
                                                     <ul class="text-left">
                                                         @foreach ($approvals->groupBy('user_id') as $approval)
-                                                            <li class="mb-2 mt-1 text-xs font-normal leading-none text-gray-400 dark:text-gray-300 capitalize">
+                                                            <li
+                                                                class="mb-2 mt-1 text-xs font-normal leading-none text-gray-400 dark:text-gray-300 capitalize">
                                                                 {{ $approval[0]->user->name }}
                                                             </li>
                                                         @endforeach
@@ -253,18 +257,20 @@
         </div>
     @endif
 
-    @if (auth()->user()->isSuper || (auth()->user()->team && str_contains(Auth::user()->activeRole->role->name, 'Admin')) &&
-            $model->status == 'approved')
+    @if (auth()->user()->isSuper ||
+            (auth()->user()->team &&
+                str_contains(Auth::user()->activeRole->role->name, 'Admin') &&
+                $model->status == 'approved'))
         <div
             class="px-4 py-5 bg-white text-center dark:bg-slate-600 sm:p-6 shadow sm:rounded-tl-md sm:rounded-tr-md mt-4">
-            <x-jet-button wire:click="activated" class="hover:bg-green-700 bg-green-500 px-2">
+            <x-jet-button :disabled="!userAccess('QUOTATION', 'update')" wire:click="activated" class="hover:bg-green-700 bg-green-500 px-2">
                 {{ __('Activated') }}
             </x-jet-button>
         </div>
     @endif
 
     @if ($model->status != 'draft' && $approval && $model->approval && empty($approval->status))
-        @if ($model->status == 'submit' || $model->status == 'submit' )
+        @if ($model->status == 'submit' || $model->status == 'submit')
             <!--  -->
             <div class="px-4 py-5 bg-white dark:bg-slate-600 sm:p-6 shadow sm:rounded-tl-md sm:rounded-tr-md mt-4">
                 <div class="sm:px-0">

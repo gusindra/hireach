@@ -1,7 +1,7 @@
 <div class="px-4 pt-6">
     <h1 class="font-bold">Data Commerce Item</h1>
     <div class="flex flex-row-reverse">
-        <x-add-button wire:click="actionShowModal">
+        <x-add-button :disabled="!userAccess('SETTING', 'create')" wire:click="actionShowModal">
             {{ __('Add Commerce Item') }}
         </x-add-button>
     </div>

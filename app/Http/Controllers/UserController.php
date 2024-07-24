@@ -13,15 +13,18 @@ class UserController extends Controller
     public $user_info;
     public function __construct()
     {
-        // $this->middleware(function ($request, $next) {
-        //     // Your auth here
-        //     $this->user_info=auth()->user()->super->first();
-        //     if(($this->user_info && $this->user_info->role=='superadmin') || (auth()->user()->activeRole && str_contains(auth()->user()->activeRole->role->name, "Admin"))){
-        //         return $next($request);
-        //     }
-        //     abort(404);
-        // });
+        $this->middleware(function ($request, $next) {
+            // Your auth here
+            $granted = false;
+            $user = auth()->user();
+            $granted = userAccess('USER');
+            if ($granted) {
+                return $next($request);
+            }
+            abort(403);
+        });
     }
+
 
     /**
      * index
@@ -97,7 +100,6 @@ class UserController extends Controller
      * @return void
      */
     public function clientUser(User $user, $client)
-
     {
         $clients = Client::find($client);
         return view('user.client-to-user-create', compact('user', 'clients'));
@@ -114,7 +116,7 @@ class UserController extends Controller
         $currentMonth = now()->format('Y-m');
         $filterMonth = request()->input('filterMonth', $currentMonth);
 
-        return view('user.user-request', ['user' => $user,'filterMonth' => $filterMonth]);
+        return view('user.user-request', ['user' => $user, 'filterMonth' => $filterMonth]);
     }
 
     /**

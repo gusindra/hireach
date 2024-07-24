@@ -5,7 +5,7 @@
             <x-jet-action-message class="mr-3" on="update_status">
                 {{ __('Your order submitted') }}
             </x-jet-action-message>
-            <x-jet-button class="ml-2" type="submit" wire:click="update">
+            <x-jet-button :disabled="!userAccess('ORDER', 'update')" class="ml-2" type="submit" wire:click="update">
                 {{ __('Submit Order') }}
             </x-jet-button>
 

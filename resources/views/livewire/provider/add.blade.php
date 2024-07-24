@@ -3,7 +3,7 @@
         {{ __('Create') }}
     </a> -->
     <div class="flex items-center justify-end">
-        <x-jet-button wire:click="actionShowModal">
+        <x-jet-button :disabled="!userAccess('PROVIDER', 'create')" wire:click="actionShowModal">
             {{ __('Add Provider') }}
         </x-jet-button>
     </div>

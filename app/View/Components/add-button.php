@@ -4,7 +4,7 @@ namespace App\View\Components;
 
 use Illuminate\View\Component;
 
-class add-button extends Component
+class addbutton extends Component
 {
     /**
      * Create a new component instance.

@@ -1,6 +1,6 @@
 <div>
     @if ($notification->status != 'deleted')
-        <x-link-button class="text-blue-700" wire:click="showDeleteModal({{ $notification->id }})">
+        <x-link-button :disabled="!userAccess('NOTICE', 'delete')" class="text-blue-700" wire:click="showDeleteModal({{ $notification->id }})">
             {{ __('Delete ') }}
         </x-link-button>
     @else
@@ -23,7 +23,8 @@
                 {{ __('Cancel') }}
             </x-jet-secondary-button>
 
-            <x-jet-danger-button class="ml-2" wire:click="deleteNotification" wire:loading.attr="disabled">
+            <x-jet-danger-button :disabled="!userAccess('NOTICE', 'delete')" class="ml-2" wire:click="deleteNotification"
+                wire:loading.attr="disabled">
                 {{ __('Delete') }}
             </x-jet-danger-button>
         </x-slot>

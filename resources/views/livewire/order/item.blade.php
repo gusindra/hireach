@@ -16,7 +16,7 @@
                     {{ __('Action saved.') }}
                 </x-jet-action-message>
                 @if ($data->status == 'draft')
-                    <x-add-button :show="$data->status == 'draft'" wire:click="showCreateModal">
+                    <x-add-button :disabled="!userAccess('ORDER', 'add')" :show="$data->status == 'draft'" wire:click="showCreateModal">
                         {{ __('Add Item') }}
                     </x-add-button>
                 @endif
