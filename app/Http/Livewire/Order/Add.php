@@ -16,6 +16,7 @@ use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 class Add extends Component
 {
     use AuthorizesRequests;
+
     public $modalActionVisible = false;
     public $type;
     public $entity;
@@ -87,8 +88,9 @@ class Add extends Component
     public function create()
     {
         // $this->validate();
+        $this->authorize('CREATE_ORDER', 'ORDER');
 
-       $order= Order::create($this->modelData());
+        $order= Order::create($this->modelData());
         $this->modalActionVisible = false;
         $this->resetForm();
         $this->emit('refreshLivewireDatatable');

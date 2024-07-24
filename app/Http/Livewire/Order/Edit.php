@@ -6,11 +6,14 @@ use App\Models\Billing;
 use App\Models\Client;
 use App\Models\Order;
 use App\Models\User;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Livewire\Component;
 use Illuminate\Support\Str;
 
 class Edit extends Component
 {
+    use AuthorizesRequests;
+
     public $order;
     public $quote;
     public $quoteNo;
@@ -82,7 +85,7 @@ class Edit extends Component
         ];
         if ($this->formName == 'customer') {
             $data = [
-                'input.customer_id'       => 'required',
+                'input.customer_id' => 'required',
             ];
         }
 
@@ -111,7 +114,6 @@ class Edit extends Component
 
     public function onClickNominal($value)
     {
-
         $this->nominal = $value;
         $this->nominal_view = number_format($value);
     }
@@ -119,14 +121,12 @@ class Edit extends Component
 
     public function disableInput($status)
     {
-
         return $status === 'unpaid';
     }
 
     public function updatedSearch()
     {
-
-
+        //
     }
 
     public function selectItem($id)
@@ -142,7 +142,6 @@ class Edit extends Component
     }
 
     public function updateStatus($id, $formName = '')
-
     {
         $this->formName = $formName;
         $this->validate();
@@ -171,16 +170,16 @@ class Edit extends Component
         }
     }
 
-
     public function actionShowModal($url)
     {
         $this->url = $url;
         $this->modalAttach = true;
     }
+
     public function update($id)
     {
-        // dd($id);
         $this->validate();
+        $this->authorize('UPDATE_ORDER', 'ORDER');
         // dd($this->modelData());
         $order = Order::find($id)->update($this->modelData());
 
@@ -191,9 +190,6 @@ class Edit extends Component
             'description'   => $this->name,
               'amount'        =>  $this->nominal,
             'order_id'      => $this->order->id,
-
-
-
         ]);
 
         $this->emit('saved');

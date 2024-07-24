@@ -427,9 +427,7 @@ function userAccess($menu, $action = 'view', $level = '')
     $user = auth()->user();
     //LEVEL1
     if ($user->super->first()) {
-
         if ($user->super->first()->role == 'superadmin') {
-
             return true;
         }
     }
@@ -440,7 +438,6 @@ function userAccess($menu, $action = 'view', $level = '')
 
     foreach (auth()->user()->activeRole->role->permission as $permission) {
         if (in_array($permission->name, $gp)) {
-
             if (stripos($permission->name, strtoupper($action)) !== false) {
                 return true;
             }

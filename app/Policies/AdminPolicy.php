@@ -2,7 +2,9 @@
 
 namespace App\Policies;
 
+use App\Models\Order;
 use App\Models\Permission;
+use App\Models\User;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
 class AdminPolicy
@@ -14,9 +16,9 @@ class AdminPolicy
      *
      * @return void
      */
-    public function __construct($model)
+    public function __construct()
     {
-        dd($model);
+        // dd($model);
     }
 
     /**
@@ -25,7 +27,7 @@ class AdminPolicy
      * @param  \App\Models\User  $user
      * @return mixed
      */
-    public function viewAny(User $user)
+    public function viewAny(User $user, $model, $modelId)
     {
         //
     }
@@ -37,9 +39,9 @@ class AdminPolicy
      * @param  \App\Models\Template  $template
      * @return mixed
      */
-    public function view(User $user, Template $template)
+    public function view(User $user, $model, $modelId)
     {
-        return $user->id === $template->user_id;
+        return true;
     }
 
     /**
@@ -48,22 +50,37 @@ class AdminPolicy
      * @param  \App\Models\User  $user
      * @return mixed
      */
-    public function create(User $user)
+    public function create(User $user, $model)
     {
-        return true;
+        foreach ($user->activeRole->role->permission as $permission) {
+            if (stripos($permission->name, strtoupper($model)) !== false) {
+                if (stripos($permission->name, "CREATE") !== false) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     /**
      * Determine whether the user can update the model.
      *
-     * @param  \App\Models\User  $user
-     * @param  \App\Models\Template  $template
-     * @return mixed
+     * @param  \App\Models\User $user
+     * @param  string $model
+     * @return void
      */
-    public function update(User $user, Template $template)
+    public function update(User $user, $model)
     {
-        //return true;
-        return $user->id === $template->user_id;
+        // return $user->id === $template->user_id;
+
+        foreach ($user->activeRole->role->permission as $permission) {
+            if ($permission->model == strtoupper($model)) {
+                if (stripos($permission->name, "UPDATE") !== false) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     /**
@@ -73,9 +90,10 @@ class AdminPolicy
      * @param  \App\Models\Template  $template
      * @return mixed
      */
-    public function delete(User $user, Template $template)
+    public function delete(User $user, $model, $modelId)
     {
-        return $user->id === $template->user_id;
+        return true;
+
     }
 
     /**
@@ -85,9 +103,10 @@ class AdminPolicy
      * @param  \App\Models\Template  $template
      * @return mixed
      */
-    public function restore(User $user, Template $template)
+    public function restore(User $user, $model, $modelId)
     {
-        return $user->id === $template->user_id;
+        return true;
+
     }
 
     /**
@@ -97,8 +116,9 @@ class AdminPolicy
      * @param  \App\Models\Template  $template
      * @return mixed
      */
-    public function forceDelete(User $user, Template $template)
+    public function forceDelete(User $user, $model, $modelId)
     {
-        return $user->id === $template->user_id;
+        return true;
+
     }
 }
