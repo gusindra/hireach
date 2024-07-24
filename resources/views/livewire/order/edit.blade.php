@@ -76,7 +76,7 @@
                     {{ __('Order saved.') }}
                 </x-jet-action-message>
 
-                <x-save-button show="{{ $order->status == 'unpaid' ? true : false }}">
+                <x-save-button :disabled="!userAccess('ORDER', 'update')" show="{{ $order->status == 'unpaid' ? true : false }}">
                     {{ __('Save') }}
                     </x-jet-button>
             </x-slot>
@@ -172,7 +172,7 @@
                 {{ __('Order basic saved.') }}
             </x-jet-action-message>
 
-            <x-save-button show="{{ $order->status == 'draft' ? true : false }}">
+            <x-save-button :disabled="!userAccess('ORDER', 'update')" show="{{ $order->status == 'draft' ? true : false }}">
                 {{ __('Save') }}
                 </x-jet-button>
         </x-slot>
@@ -191,42 +191,33 @@
 
         <x-slot name="form">
             <div class="col-span-6 grid grid-cols-2">
-                @if($order->status !== 'unpaid')
-                <div class="col-span-12 sm:col-span-1 mx-4">
-                    <x-jet-label for="input.customer_id" value="{{ __('Client') }}" />
-                    <div x-data="{ open: false, search: @entangle('search') }"
-                        @click.away="open = false"
-                        class="relative">
-                        <input
-                            type="text"
-                            x-model="search"
-                            @focus="open = true"
-                            @input.debounce.300ms="open = true"
-                            @keydown.escape.window="open = false"
-                            placeholder="Search Client..."
-                            class="form-input block w-full mt-1 rounded-md shadow-sm border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
-                            wire:model.debounce.800ms="search"
-                            {{ $disable ? 'disabled' : '' }} />
+                @if ($order->status !== 'unpaid')
+                    <div class="col-span-12 sm:col-span-1 mx-4">
+                        <x-jet-label for="input.customer_id" value="{{ __('Client') }}" />
+                        <div x-data="{ open: false, search: @entangle('search') }" @click.away="open = false" class="relative">
+                            <input type="text" x-model="search" @focus="open = true"
+                                @input.debounce.300ms="open = true" @keydown.escape.window="open = false"
+                                placeholder="Search Client..."
+                                class="form-input block w-full mt-1 rounded-md shadow-sm border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+                                wire:model.debounce.800ms="search" {{ $disable ? 'disabled' : '' }} />
 
-                        <div x-show="open"
-                            class="absolute z-10 w-full mt-1 bg-white rounded-md shadow-lg">
-                            <ul class="max-h-60 overflow-auto">
-                                @forelse ($clients as $client)
-                                    <li
-                                        wire:key="{{ $client->uuid }}"
-                                        @click="open = false; $wire.inputCustomer('{{ $client->uuid }}')"
-                                        class="cursor-pointer px-4 py-2 hover:bg-indigo-200">
-                                        {{ $client->name }} - {{ $client->phone }} - {{ $client->email }}
-                                    </li>
-                                @empty
-                                    <li class="px-4 py-2">No results found</li>
-                                @endforelse
-                            </ul>
+                            <div x-show="open" class="absolute z-10 w-full mt-1 bg-white rounded-md shadow-lg">
+                                <ul class="max-h-60 overflow-auto">
+                                    @forelse ($clients as $client)
+                                        <li wire:key="{{ $client->uuid }}"
+                                            @click="open = false; $wire.inputCustomer('{{ $client->uuid }}')"
+                                            class="cursor-pointer px-4 py-2 hover:bg-indigo-200">
+                                            {{ $client->name }} - {{ $client->phone }} - {{ $client->email }}
+                                        </li>
+                                    @empty
+                                        <li class="px-4 py-2">No results found</li>
+                                    @endforelse
+                                </ul>
+                            </div>
                         </div>
-                    </div>
 
-                    <x-jet-input-error for="input.customer_id" class="mt-2" />
-                </div>
+                        <x-jet-input-error for="input.customer_id" class="mt-2" />
+                    </div>
                 @endif
                 <div class="col-span-12 sm:col-span-1">
                     <x-jet-label for="addressed_company" value="{{ __('Customer') }}" />
@@ -249,7 +240,7 @@
                 {{ __('Order saved.') }}
             </x-jet-action-message>
 
-            <x-save-button show="{{ $order->status == 'draft' ? true : false }}">
+            <x-save-button :disabled="!userAccess('ORDER', 'update')" show="{{ $order->status == 'draft' ? true : false }}">
                 {{ __('Save') }}
                 </x-jet-button>
         </x-slot>
@@ -287,7 +278,7 @@
                     {{ __('Order saved.') }}
                 </x-jet-action-message>
 
-                <x-jet-button class="bg-red-600" wire:click="actionShowDeleteModal">
+                <x-jet-button :disabled="!userAccess('ORDER', 'delete')" class="bg-red-600" wire:click="actionShowDeleteModal">
                     {{ __('Delete Order') }}
                 </x-jet-button>
             </x-slot>

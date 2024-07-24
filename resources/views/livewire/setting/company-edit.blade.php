@@ -62,7 +62,7 @@
                 {{ __('Company saved.') }}
             </x-jet-action-message>
 
-            <x-jet-button>
+            <x-jet-button :disabled="!userAccess('SETTING', 'update')">
                 {{ __('Save') }}
             </x-jet-button>
         </x-slot>
@@ -92,10 +92,13 @@
         <div class="mt-2 md:mt-0 md:col-span-4">
             <div class="px-4 py-5 bg-white dark:bg-slate-600 sm:p-6 shadow sm:rounded-tl-md sm:rounded-tr-md">
                 <div>
+
                     @livewire('image-upload', ['model' => 'company', 'model_id' => $company->id])
+
                 </div>
             </div>
         </div>
+
 
 
     </div>
@@ -120,8 +123,8 @@
             </div>
         </x-slot>
 
-        <x-slot name="actions"> 
-            <x-jet-button class="bg-red-600" wire:click="actionShowDeleteModal">
+        <x-slot name="actions">
+            <x-jet-button :disabled="!userAccess('SETTING', 'delete')" class="bg-red-600" wire:click="actionShowDeleteModal">
                 {{ __('Delete Company') }}
             </x-jet-button>
         </x-slot>

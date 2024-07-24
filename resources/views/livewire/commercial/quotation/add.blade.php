@@ -1,5 +1,5 @@
 <div>
-    <x-jet-button wire:click="actionShowModal">
+    <x-jet-button :disabled="!userAccess('QUOTATION', 'create')" wire:click="actionShowModal">
         Add Quotation
     </x-jet-button>
 

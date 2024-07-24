@@ -9,6 +9,26 @@ use Vinkla\Hashids\Facades\Hashids;
 
 class NotificationController extends Controller
 {
+
+    public $user_info;
+    public function __construct()
+    {
+
+        $this->middleware(function ($request, $next) {
+            // Your auth here
+            $granted = false;
+            $user = auth()->user();
+            $granted = userAccess('NOTICE');
+
+            if ($granted) {
+                return $next($request);
+            }
+            abort(403);
+        });
+    }
+
+
+
     public function index()
     {
         $currentDate = now()->format('Y-m-d');
@@ -23,7 +43,7 @@ class NotificationController extends Controller
     {
         $notification->update(array('status' => 'read'));
         if ($notification->model == 'Ticket') {
-            $value =  $notification->ticket->request->client->id;
+            $value = $notification->ticket->request->client->id;
         } elseif ($notification->model == 'Order') {
             if (auth()->user()->super && auth()->user()->super->first() && auth()->user()->super->first()->role == 'superadmin') {
                 return redirect()->to("/admin/order/" . $notification->model_id);

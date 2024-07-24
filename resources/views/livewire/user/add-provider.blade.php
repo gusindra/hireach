@@ -22,7 +22,7 @@
                     <x-jet-action-message class="mr-3 text-red-500" on="exist">
                         {{ __('provider Already Exist.') }}
                     </x-jet-action-message>
-                    <x-add-button wire:click="actionShowModal">
+                    <x-add-button :disabled="!userAccess('USER', 'update')" wire:click="actionShowModal">
                         {{ __('Add provider') }}
                     </x-add-button>
                 </div>
@@ -47,7 +47,9 @@
                                                             </div>
                                                         </div>
                                                     </td>
-                                                    <td class="flex items-center justify-end px-4 py-3 text-right sm:px-6"></td>
+                                                    <td
+                                                        class="flex items-center justify-end px-4 py-3 text-right sm:px-6">
+                                                    </td>
                                                 </tr>
                                                 @foreach ($data as $item)
                                                     <tr>
@@ -75,10 +77,11 @@
                                                         <td
                                                             class="flex items-center justify-end px-4 py-3 text-right sm:px-6">
                                                             <div class="flex items-center">
-                                                                <button class="cursor-pointer ml-6 text-sm text-red-500"
+                                                                <x-jet-button :disabled="!userAccess('USER', 'delete')"
+                                                                    class="cursor-pointer ml-6 text-sm"
                                                                     wire:click="deleteShowModal('{{ $item->id }}')">
                                                                     {{ __('Delete') }}
-                                                                </button>
+                                                                </x-jet-button>
                                                             </div>
                                                         </td>
                                                     </tr>

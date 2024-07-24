@@ -17,8 +17,8 @@ class SettingController extends Controller
             // Your auth here
             $granted = false;
             $user = auth()->user();
-            $granted = userAccess('SETTING', $user);
-            if($granted){
+            $granted = userAccess('SETTING');
+            if ($granted) {
                 return $next($request);
             }
             abort(403);

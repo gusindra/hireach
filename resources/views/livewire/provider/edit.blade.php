@@ -1,4 +1,5 @@
 <div>
+
     <x-jet-form-section submit="update({{ $provider->id }})">
         <x-slot name="title">
             {{ __('Provider') }}
@@ -60,7 +61,7 @@
                 {{ __('Provider  Updated.') }}
             </x-jet-action-message>
 
-            <x-jet-button>
+            <x-jet-button :disabled="!userAccess('PROVIDER', 'update')">
                 {{ __('Save') }}
             </x-jet-button>
         </x-slot>
@@ -92,7 +93,7 @@
                 {{ __('Provider saved.') }}
             </x-jet-action-message>
 
-            <x-jet-button class="bg-red-600" wire:click="actionShowDeleteModal">
+            <x-jet-button :disabled="!userAccess('PROVIDER', 'delete')" class="bg-red-600" wire:click="actionShowDeleteModal">
                 {{ __('Delete Provider') }}
             </x-jet-button>
         </x-slot>

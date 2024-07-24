@@ -1,11 +1,12 @@
 <x-app-layout>
     <x-slot name="header"></x-slot>
     <div class="hidden">
-        @include('settings.navigation', ['page'=>$page])
+        @include('settings.navigation', ['page' => $page])
     </div>
     <div class="grid grid-cols-12">
 
-        @includeWhen(auth()->user()->isSuper || (auth()->user()->team && str_contains(auth()->user()->activeRole->role->name, 'Admin')),
+        @includeWhen(auth()->user()->isSuper ||
+                (auth()->user()->team && str_contains(auth()->user()->activeRole->role->name, 'Admin')),
             'menu.admin-menu-setting',
             []
         )
@@ -20,11 +21,11 @@
                     </div>
                     <!-- <div class="flex items-center justify-end px-4 py-3 text-right sm:px-6 right-5 mr-0">
                         <x-jet-button>
-                            {{__('Add New Role')}}
+                            {{ __('Add New Role') }}
                         </x-jet-button>
                     </div> -->
                     <div class="px-4 py-2">
-                    <livewire:table.permission searchable="name" />
+                        <livewire:table.permission searchable="name" />
                     </div>
                 </div>
             </div>

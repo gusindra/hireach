@@ -15,7 +15,8 @@
                 <x-jet-action-message class="mr-3" on="saved">
                     {{ __('Action saved.') }}
                 </x-jet-action-message>
-                <x-save-button show="{{ $data->status == 'draft' ? true : false }}" wire:click="showCreateModal">
+                <x-save-button :disabled="!userAccess('QUOTATION', 'update')" show="{{ $data->status == 'draft' ? true : false }}"
+                    wire:click="showCreateModal">
                     {{ __('Add Item') }}
                 </x-save-button>
             </div>

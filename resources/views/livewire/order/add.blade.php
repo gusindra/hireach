@@ -1,5 +1,5 @@
 <div>
-    <x-jet-button wire:click="actionShowModal">
+    <x-jet-button :disabled="!userAccess('ORDER', 'create')" wire:click="actionShowModal">
         Add Order
     </x-jet-button>
     <div class="flex items-center text-right">

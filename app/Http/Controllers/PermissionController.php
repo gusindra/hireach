@@ -2,22 +2,20 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Role;
-use Illuminate\Support\Facades\Auth;
+use Illuminate\Http\Request;
 
-class RoleController extends Controller
+class PermissionController extends Controller
 {
-
     public $user_info;
     public function __construct()
     {
 
+
         $this->middleware(function ($request, $next) {
             // Your auth here
             // $granted = false;
-            $user = auth()->user();
-            $granted = userAccess('ROLE');
-
+            // $user = auth()->user();
+            $granted = userAccess('PERMISSION');
 
             if ($granted) {
                 return $next($request);
@@ -25,15 +23,8 @@ class RoleController extends Controller
             abort(403);
         });
     }
-
-
     public function index()
     {
-        return view('role.role-table', ['page' => 'role']);
-    }
-
-    public function show(Role $role)
-    {
-        return view('role.role-detail', ['role' => $role]);
+        return view('permission.index', ['page' => 'permission']);
     }
 }

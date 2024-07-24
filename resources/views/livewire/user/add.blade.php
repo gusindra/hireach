@@ -1,10 +1,10 @@
 <div>
     @if ($role == 'admin')
-        <x-jet-button wire:click="actionShowModal">
+        <x-jet-button :disabled="!userAccess('USER', 'create')" wire:click="actionShowModal">
             Add Admin
         </x-jet-button>
     @else
-        <x-jet-button wire:click="actionShowModal">
+        <x-jet-button :disabled="!userAccess('USER', 'create')" wire:click="actionShowModal">
             Add User
         </x-jet-button>
     @endif

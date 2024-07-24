@@ -21,6 +21,7 @@ class Delete extends Component
     {
 
         $permission = Permission::find($id);
+        cache()->forget('permission-' . strtoupper($permission->model));
         if ($permission) {
             $permission->delete();
         }
