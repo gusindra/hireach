@@ -3,17 +3,18 @@
 namespace App\Http\Livewire\Order;
 
 use App\Models\Order;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Livewire\Component;
 
 class OrderProgress extends Component
 {
-
+    use AuthorizesRequests;
     public $orderId;
     public $status;
     public $order;
     public $errorMessage;
 
-    public  function mount($id)
+    public function mount($id)
     {
         $this->orderId = $id;
         $this->status = Order::where('id', $this->orderId)->first();
@@ -21,6 +22,7 @@ class OrderProgress extends Component
     }
     public function update()
     {
+        $this->authorize('UPDATE_ORDER', 'ORDER');
         $item = $this->order->items->count();
         $commission = $this->order->items->count();
 
@@ -45,7 +47,7 @@ class OrderProgress extends Component
 
         Order::find($this->orderId)
             ->update(['status' => 'unpaid']);
-            return redirect('admin/order/'.$this->orderId);
+        return redirect('admin/order/' . $this->orderId);
     }
     public function render()
     {

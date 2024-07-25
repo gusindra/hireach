@@ -3,11 +3,13 @@
 namespace App\Http\Livewire\Setting\General\ProductLine;
 
 use App\Models\Company;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Livewire\Component;
 use App\Models\ProductLine; // Import the ProductLine model
 
 class Add extends Component
 {
+    use AuthorizesRequests;
     public $name;
     public $company_id;
     public $company = [];
@@ -26,6 +28,7 @@ class Add extends Component
 
     public function create()
     {
+        $this->authorize('CREATE_SETTING', 'SETTING');
         $this->validate();
 
         ProductLine::create([

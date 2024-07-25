@@ -3,10 +3,12 @@
 namespace App\Http\Livewire\User;
 
 use App\Models\User;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Livewire\Component;
 
 class Edit extends Component
 {
+    use AuthorizesRequests;
     public $userId;
     public $user;
     public $inputuser;
@@ -23,12 +25,13 @@ class Edit extends Component
 
     public function updateUser($id)
     {
+        $this->authorize('UPDATE_USER', 'USER');
         $user = User::find($id);
         $user->update([
-            'name'      => $this->inputuser['name'],
-            'email'     => $this->inputuser['email'],
-            'nick'     => $this->inputuser['nick'],
-            'phone_no'     => $this->inputuser['phone_no'],
+            'name' => $this->inputuser['name'],
+            'email' => $this->inputuser['email'],
+            'nick' => $this->inputuser['nick'],
+            'phone_no' => $this->inputuser['phone_no'],
         ]);
         $this->emit('userSaved');
     }

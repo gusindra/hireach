@@ -3,10 +3,12 @@
 namespace App\Http\Livewire\Provider;
 
 use App\Models\Provider;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Livewire\Component;
 
 class Edit extends Component
 {
+    use AuthorizesRequests;
     public $provider;
     public $name;
     public $company;
@@ -54,10 +56,10 @@ class Edit extends Component
     public function modelData()
     {
         return [
-            'name'           => $this->name,
-            'code'           => $this->code,
-            'company'        => $this->company,
-            'channel'        => $this->channel
+            'name' => $this->name,
+            'code' => $this->code,
+            'company' => $this->company,
+            'channel' => $this->channel
         ];
     }
 
@@ -70,6 +72,7 @@ class Edit extends Component
      */
     public function update($id)
     {
+        $this->authorize('UPDATE_SETTING', 'SETTING');
         $this->validate();
         Provider::find($id)->update($this->modelData());
         $this->emit('saved');
@@ -92,6 +95,7 @@ class Edit extends Component
      */
     public function delete()
     {
+        $this->authorize('CDELETE_SETTING', 'SETTING');
         if ($this->provider) {
             $this->provider->delete();
         }

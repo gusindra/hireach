@@ -2,6 +2,7 @@
 
 namespace App\Http\Livewire\User;
 
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Livewire\Component;
 use App\Models\User;
 use App\Models\Client as ClientModel;
@@ -10,6 +11,7 @@ use Illuminate\Support\Str;
 
 class Client extends Component
 {
+    use AuthorizesRequests;
     public $name;
     public $email;
     public $phone;
@@ -34,7 +36,7 @@ class Client extends Component
 
     public function update()
     {
-
+        $this->authorize('UPDATE_USER', 'USER');
         $this->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users,email',

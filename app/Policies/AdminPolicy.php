@@ -90,11 +90,17 @@ class AdminPolicy
      * @param  \App\Models\Template  $template
      * @return mixed
      */
-    public function delete(User $user, $model, $modelId)
+    public function delete(User $user, $model)
     {
-        return true;
-
+        $model = strtoupper($model);
+        foreach ($user->activeRole->role->permission as $permission) {
+            if (stripos($permission->name, $model) !== false && stripos($permission->name, 'DELETE') !== false) {
+                return true;
+            }
+        }
+        return false;
     }
+
 
     /**
      * Determine whether the user can restore the model.

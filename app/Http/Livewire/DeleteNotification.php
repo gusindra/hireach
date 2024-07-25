@@ -3,10 +3,12 @@
 namespace App\Http\Livewire;
 
 use App\Models\Notice;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Livewire\Component;
 
 class DeleteNotification extends Component
 {
+    use AuthorizesRequests;
     public $notificationId;
     public $notification;
     public $modalDeleteVisible = false;
@@ -24,6 +26,7 @@ class DeleteNotification extends Component
 
     public function deleteNotification()
     {
+        $this->authorize('DELETE_NOTICE', 'NOTICE');
         $data = Notice::find($this->notificationId);
         $data->delete();
         $data->update(['status' => 'deleted']);

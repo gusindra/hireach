@@ -21,42 +21,43 @@ class QuotationToOrder extends Component
     public function modelData()
     {
         $data = [
-            'type'          => 'referral',
-            'status'        => 'draft',
-            'user_id'       => auth()->user()->id,
+            'type' => 'referral',
+            'status' => 'draft',
+            'user_id' => auth()->user()->id,
         ];
 
         //Quotation to Order
-        if($this->quotation){
-            $data['source']      = 'QUOTATION';
-            $data['source_id']   = $this->quotation->id;
-            if($this->quotation->model == 'PROJECT')
-                $data['entity_party']   = $this->quotation->project->entity_party;
-            $data['name']   = 'QUOTATION '.$this->quotation->title;
-            $data['no']   = $this->quotation->quote_no;
-            $data['date']   = date('Y-m-d H:i:s');
+        if ($this->quotation) {
+            $data['source'] = 'QUOTATION';
+            $data['source_id'] = $this->quotation->id;
+            if ($this->quotation->model == 'PROJECT')
+                $data['entity_party'] = $this->quotation->project->entity_party;
+            $data['name'] = 'QUOTATION ' . $this->quotation->title;
+            $data['no'] = $this->quotation->quote_no;
+            $data['date'] = date('Y-m-d H:i:s');
         }
         return $data;
     }
 
     public function convert()
     {
+        $this->authorize('CREATE_ORDER', 'ORDER');
         $this->authorize('create', new Order);
         $order = Order::create($this->modelData());
 
         // add order item
-        if($order && $this->quotation->items){
-            foreach($this->quotation->items as $item){
+        if ($order && $this->quotation->items) {
+            foreach ($this->quotation->items as $item) {
                 OrderProduct::create([
-                    'model_id'      => $order->id,
-                    'model'         => 'Order',
-                    'product_id'    => $item->id,
-                    'name'          => $item->name,
-                    'price'         => $item->price,
-                    'qty'           => $item->qty,
-                    'unit'          => $item->unit,
-                    'note'          => $item->note,
-                    'user_id'       => auth()->user()->id
+                    'model_id' => $order->id,
+                    'model' => 'Order',
+                    'product_id' => $item->id,
+                    'name' => $item->name,
+                    'price' => $item->price,
+                    'qty' => $item->qty,
+                    'unit' => $item->unit,
+                    'note' => $item->note,
+                    'user_id' => auth()->user()->id
                 ]);
             }
         }

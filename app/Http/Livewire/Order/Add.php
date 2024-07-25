@@ -36,7 +36,7 @@ class Add extends Component
     public function mount()
     {
         $this->customer = User::noadmin()->get();
-       }
+    }
 
     /**
      * rules
@@ -89,8 +89,7 @@ class Add extends Component
     {
         // $this->validate();
         $this->authorize('CREATE_ORDER', 'ORDER');
-
-        $order= Order::create($this->modelData());
+        $order = Order::create($this->modelData());
         $this->modalActionVisible = false;
         $this->resetForm();
         $this->emit('refreshLivewireDatatable');
@@ -105,7 +104,7 @@ class Add extends Component
     {
         $data = [
             'type' => $this->type ?? 'selling',
-            'name' => $this->name ??  'Topup from Admin :  ' . Auth::user()->name,
+            'name' => $this->name ?? 'Topup from Admin :  ' . Auth::user()->name,
             'entity_party' => $this->entity ?? '1',
             'no' => 'HAPP' . date("YmdHis"),
             'status' => 'draft',

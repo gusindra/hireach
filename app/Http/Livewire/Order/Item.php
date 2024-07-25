@@ -3,6 +3,7 @@
 namespace App\Http\Livewire\Order;
 
 use App\Models\Setting;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Livewire\Component;
 use App\Models\CommerceItem;
 use App\Models\Input;
@@ -12,6 +13,7 @@ use Illuminate\Support\Facades\Auth;
 
 class Item extends Component
 {
+    use AuthorizesRequests;
     public $data;
     public $products;
     public $item_id;
@@ -62,15 +64,15 @@ class Item extends Component
     public function modelData()
     {
         return [
-            'model_id'         => $this->data->id,
-            'model'            => 'Order',
-            'name'             => $this->data->type === 'topup' ? 'Topup' : $this->name,
-            'unit'             => $this->unit,
-            'qty'              => $this->qty,
-            'price'            => $this->price,
+            'model_id' => $this->data->id,
+            'model' => 'Order',
+            'name' => $this->data->type === 'topup' ? 'Topup' : $this->name,
+            'unit' => $this->unit,
+            'qty' => $this->qty,
+            'price' => $this->price,
             'total_percentage' => $this->percentage,
-            'note'             => $this->description,
-            'user_id'          => Auth::user()->id
+            'note' => $this->description,
+            'user_id' => Auth::user()->id
         ];
 
     }
@@ -87,18 +89,19 @@ class Item extends Component
     public function addProduct()
     {
         $this->validate();
+        $this->authorize('CREATE_ORDER', 'ORDER');
         $this->modalProductVisible = false;
         $product = CommerceItem::find($this->selectedProduct);
         OrderProduct::create([
-            'model_id'      => $this->data->id,
-            'model'         => 'Order',
-            'product_id'    => $product->id,
-            'name'          => $product->name,
-            'price'         => $product->unit_price,
-            'qty'           => $this->qty,
-            'unit'          => $this->unit,
-            'note'          => $this->description,
-            'user_id'       => Auth::user()->id
+            'model_id' => $this->data->id,
+            'model' => 'Order',
+            'product_id' => $product->id,
+            'name' => $product->name,
+            'price' => $product->unit_price,
+            'qty' => $this->qty,
+            'unit' => $this->unit,
+            'note' => $this->description,
+            'user_id' => Auth::user()->id
         ]);
         $this->resetForm();
         $this->emit('added');
@@ -111,6 +114,7 @@ class Item extends Component
      */
     public function update()
     {
+        $this->authorize('UPDATE_ORDER', 'ORDER');
         $this->validate();
         OrderProduct::find($this->item_id)->update([
             'name' => $this->name,
@@ -131,6 +135,7 @@ class Item extends Component
      */
     public function updateTax()
     {
+        $this->authorize('UPDATE_ORDER', 'ORDER');
         if (!$this->data || !$this->tax) {
             return;
         }
@@ -142,19 +147,21 @@ class Item extends Component
         }
 
         $orderProducts = OrderProduct::where('model_id', $order->id)
-        ->where('name', '!=', 'Tax')
-        ->get();
+            ->where('name', '!=', 'Tax')
+            ->get();
 
         $subTotal = $orderProducts->sum(function ($item) {
             return $item->price * $item->qty;
         });
 
-        $total=    $subTotal + ($subTotal * ($this->tax / 100));
+        $total = $subTotal + ($subTotal * ($this->tax / 100));
 
 
 
-        $order->update(['vat' => $this->tax,
-    'total'=>$total]);
+        $order->update([
+            'vat' => $this->tax,
+            'total' => $total
+        ]);
 
         OrderProduct::updateOrCreate(
             [
@@ -166,7 +173,7 @@ class Item extends Component
                 'qty' => 1,
                 'unit' => 1,
                 'price' => $subTotal * ($this->tax / 100),
-                'note' => 'VAT/PPN @ '.$this->tax.'%',
+                'note' => 'VAT/PPN @ ' . $this->tax . '%',
                 'user_id' => 0,
             ]
         );
@@ -259,10 +266,10 @@ class Item extends Component
     public function read()
     {
         $items = OrderProduct::orderBy('id', 'asc')
-        ->where('model', 'Order')
-        ->where('model_id', $this->data->id)
-        ->where('name', 'not like', '%Tax%')
-        ->get();
+            ->where('model', 'Order')
+            ->where('model_id', $this->data->id)
+            ->where('name', 'not like', '%Tax%')
+            ->get();
         $total = Order::find($this->data->id)->total;
 
         return [

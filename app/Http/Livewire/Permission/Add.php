@@ -3,11 +3,13 @@
 namespace App\Http\Livewire\Permission;
 
 use App\Models\Permission;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
 
 class Add extends Component
 {
+    use AuthorizesRequests;
     public $modalActionVisible = false;
     public $type;
     public $model;
@@ -22,6 +24,7 @@ class Add extends Component
 
     public function create()
     {
+        $this->authorize('CREATE_PERMISSION', 'PERMISSION');
         $this->validate();
         foreach ($this->type as $key => $menu) {
             Permission::create([
@@ -32,6 +35,7 @@ class Add extends Component
         $this->modalActionVisible = false;
         $this->resetForm();
         cache()->forget('permission-' . strtoupper($this->model));
+        cache()->forget('permissions');
         $this->emit('refreshLivewireDatatable');
     }
 

@@ -2,6 +2,7 @@
 
 namespace App\Http\Livewire\Role;
 
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Livewire\Component;
 use App\Models\Role;
 use App\Models\Permission;
@@ -10,6 +11,7 @@ use Illuminate\Support\Arr;
 
 class Permissions extends Component
 {
+    use AuthorizesRequests;
     public $permission;
     public $role;
     public $request = [];
@@ -31,6 +33,7 @@ class Permissions extends Component
 
     public function check($id)
     {
+        $this->authorize('CREATE_ROLE', 'ROLE');
         if ($this->role->permission()->find($id)) {
             $this->role->permission()->detach($id);
             // Arr::except($this->request,[$id]);
@@ -48,12 +51,14 @@ class Permissions extends Component
 
     public function checkAll()
     {
+        $this->authorize('UPDATE_ROLE', 'ROLE');
         $this->role->permission()->attach($this->permission);
         $this->emit('checked');
     }
 
     public function unCheckAll()
     {
+        $this->authorize('UPDATE_ROLE', 'ROLE');
         $this->role->permission()->detach($this->permission);
 
         foreach ($this->request as $key => $value) {

@@ -35,16 +35,18 @@ class AuthServiceProvider extends ServiceProvider
     {
         $this->registerPolicies();
         Gate::define('update-template', [TemplatePolicy::class, 'update']);
-        //
-        $per = Permission::get();
-        foreach($per as $p){
+
+        $per = cache()->remember('permissions', 1440, function () {
+            return Permission::all();
+        });
+        foreach ($per as $p) {
             if (stripos($p->name, "CREATE") !== false) {
                 Gate::define(str_replace(" ", "_", $p->name), [AdminPolicy::class, "create"]);
-            }elseif(stripos($p->name, "UPDATE") !== false){
+            } elseif (stripos($p->name, "UPDATE") !== false) {
                 Gate::define(str_replace(" ", "_", $p->name), [AdminPolicy::class, "update"]);
-            }elseif(stripos($p->name, "DELETE") !== false){
+            } elseif (stripos($p->name, "DELETE") !== false) {
                 Gate::define(str_replace(" ", "_", $p->name), [AdminPolicy::class, "delete"]);
-            }elseif(stripos($p->name, "VIEW") !== false){
+            } elseif (stripos($p->name, "VIEW") !== false) {
                 Gate::define(str_replace(" ", "_", $p->name), [AdminPolicy::class, "view"]);
             }
         }

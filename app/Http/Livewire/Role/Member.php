@@ -6,6 +6,7 @@ namespace App\Http\Livewire\Role;
 use App\Mail\RoleInvitation as MailRoleInvitation;
 use App\Models\RoleInvitation;
 use App\Models\RoleUser;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Livewire\Component;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\URL;
@@ -13,6 +14,7 @@ use Illuminate\Support\Facades\Log;
 
 class Member extends Component
 {
+    use AuthorizesRequests;
     public $team;
     public $role;
     public $inviteEmail;
@@ -28,6 +30,7 @@ class Member extends Component
 
     public function addRoleMember()
     {
+        $this->authorize('CREATE_ROLE', 'ROLE');
         $invitation = RoleInvitation::create([
             'email' => $this->inviteEmail,
             'role_id' => $this->role,
@@ -55,12 +58,14 @@ class Member extends Component
 
     public function cancelTeamInvitation($id)
     {
+        $this->authorize('DELETE_ROLE', 'ROLE');
         $this->inviteCancel = $id;
         $this->confirmingTeamMemberRemoval = true;
     }
 
     public function removeTeamMember()
     {
+        $this->authorize('UPDATE_ROLE', 'ROLE');
         RoleInvitation::find($this->inviteCancel)->delete();
         $this->confirmingTeamMemberRemoval = false;
         $this->inviteCancel = null;
