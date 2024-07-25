@@ -3,11 +3,7 @@
 
      <div class="bg-white shadow rounded-lg p-6">
          <h1 class="font-bold">Data General Setting</h1>
-         <div class="flex flex-row-reverse">
-             <x-add-button :disabled="!userAccess('SETTING', 'create ')" wire:click="showModalAdd">
-                 {{ __('Add Setting Key') }}
-             </x-add-button>
-         </div>
+
          <div class="overflow-x-auto mt-4">
              <table class="min-w-full bg-white shadow-md rounded-lg overflow-hidden">
                  <thead class="bg-gray-50 text-slate-600">
@@ -27,15 +23,15 @@
                                  <td class="py-2 px-4">{{ $setting->remark ? $setting->remark : '-' }}</td>
                                  <td class="py-2 px-4 text-center">
                                      <div class="flex items-center justify-center space-x-2">
-                                         <x-jet-button :disabled="!userAccess('SETTING', 'update')"
+                                         <x-link-button :disabled="!userAccess('SETTING', 'update')" class="py-1 px-3 hover:bg-slate-100"
                                              wire:click="showModalUpdate({{ $setting->id }})">
                                              {{ __('Edit') }}
-                                         </x-jet-button>
-                                         <x-jet-button :disabled="!userAccess('SETTING', 'delete')"
-                                             class="bg-red-500 text-white font-bold py-1 px-3 rounded hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-400"
+                                         </x-link-button>
+                                         <x-link-button :disabled="!userAccess('SETTING', 'delete')"
+                                             class="text-red-500 font-bold py-1 px-3 rounded hover:text-red-600 hover:bg-red-100 focus:outline-none focus:ring-2 focus:ring-red-400"
                                              wire:click="confirmDelete({{ $setting->id }})">
                                              Delete
-                                         </x-jet-button>
+                                         </x-link-button>
                                      </div>
                                  </td>
 
@@ -44,6 +40,12 @@
                      @endif
                  </tbody>
              </table>
+
+         </div>
+         <div class="flex justify-center mt-10">
+             <x-add-button :disabled="!userAccess('SETTING', 'create ')" wire:click="showModalAdd">
+                 {{ __('Add Setting Key') }}
+             </x-add-button>
          </div>
      </div>
 

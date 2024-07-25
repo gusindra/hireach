@@ -1,11 +1,7 @@
 <div>
-    @if ($role == 'admin')
-        <x-jet-button :disabled="!userAccess('USER', 'create')" wire:click="actionShowModal">
-            Add Admin
-        </x-jet-button>
-    @else
-        <x-jet-button :disabled="!userAccess('USER', 'create')" wire:click="actionShowModal">
-            Add User
+    @if (userAccess('USER', 'create'))
+        <x-jet-button :show="userAccess('USER', 'create')" :disabled="!userAccess('USER', 'create')" wire:click="actionShowModal">
+            {{$role == 'admin' ? 'Add Admin' : 'Add User'}}
         </x-jet-button>
     @endif
 

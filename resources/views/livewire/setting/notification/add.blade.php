@@ -1,7 +1,7 @@
 <div>
-    <x-jet-button :disabled="!userAccess('NOTICE', 'create')" wire:click="actionShowModal">
+    <x-add-button :disabled="!userAccess('NOTICE', 'create')" wire:click="actionShowModal">
         {{ __('Add Notification') }}
-    </x-jet-button>
+    </x-add-button>
 
     <!-- Form Action Modal -->
     <x-jet-dialog-modal wire:model="modalActionVisible">

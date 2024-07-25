@@ -3,9 +3,9 @@
         {{ __('Create') }}
     </a> -->
     <div class="flex items-center justify-end">
-        <x-jet-button :disabled="!userAccess('PERMISSION', 'create')" wire:click="actionShowModal">
+        <x-add-button :disabled="!userAccess('PERMISSION', 'create')" wire:click="actionShowModal">
             {{ __('Add Menu') }}
-        </x-jet-button>
+        </x-add-button>
     </div>
 
     <!-- Form Action Modal -->

@@ -1,10 +1,10 @@
 <x-app-layout>
     <header class="bg-white dark:bg-slate-900 dark:border-slate-600 border-b shadow">
-        <div class="flex justify-between pt-2 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex justify-between pt-2 max-w-9xl mx-auto px-4 sm:px-6 lg:ml-24">
             <div class="justify-end flex">
-                <div class="items-center justify-end px-2">
-                    <div class="space-x-1 sm:-my-px pb-3">
-                        <x-jet-nav-link href="{{ route('role.index') }}">
+                <div class="items-center justify-end px-2 mb-3">
+                    <div class="space-x-1 sm:-my-px">
+                    <x-jet-nav-link href="{{ route('role.index') }}">
                             {{ __('Role') }}
                         </x-jet-nav-link>
                         <span class="inline-flex items-center px-1 pt-1 text-xs font-medium leading-5 text-gray-900 ">
@@ -15,7 +15,6 @@
                                     clip-rule="evenodd" />
                             </svg>
                         </span>
-
                         <x-jet-nav-link href="#" :active="true">
                             {{ $role->name }}
                         </x-jet-nav-link>
@@ -24,15 +23,17 @@
             </div>
         </div>
     </header>
-
     @includeWhen(auth()->user()->isSuper || (auth()->user()->team && str_contains(auth()->user()->activeRole->role->name, 'Admin')),
         'menu.admin-menu-setting',
         []
     )
-
-    <div>
-        <div class="max-w-7xl mx-auto py-10 sm:px-6 lg:px-8">
-            @livewire('role.edit', ['uuid' => $role->id])
+    <div class="col-span-12 px-3 lg:ml-24 mt-2">
+        <div class="bg-white dark:bg-slate-600  overflow-hidden shadow-xl sm:rounded-lg">
+            <div class="mx-auto">
+                <div class="p-4">
+                    @livewire('role.edit', ['uuid' => $role->id])
+                </div>
+            </div>
         </div>
     </div>
 </x-app-layout>

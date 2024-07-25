@@ -1,7 +1,9 @@
 <div>
-    <x-jet-button :disabled="!userAccess('QUOTATION', 'create')" wire:click="actionShowModal">
-        Add Quotation
-    </x-jet-button>
+    <div class="flex flex-row-reverse">
+        <x-add-button :disabled="!userAccess('QUOTATION', 'create')" wire:click="actionShowModal">
+            Add Quotation
+        </x-add-button>
+    </div>
 
     <!-- Form Action Modal -->
     <x-jet-dialog-modal wire:model="modalActionVisible">
@@ -23,7 +25,7 @@
                 <x-jet-input-error for="price" class="mt-2" />
             </div>
 
-            <div>
+            <div class="col-span-6 sm:col-span-4 p-3">
                 <x-jet-label for="source" value="{{ __('Customer') }}" />
                 <select name="source" id="source"
                     class="border-gray-300 dark:bg-slate-800 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 rounded-md shadow-sm mt-1 block w-full"

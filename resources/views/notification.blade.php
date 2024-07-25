@@ -15,10 +15,10 @@
         <div class="col-span-12 px-3 ml-24 mt-2">
             <div class="bg-white dark:bg-slate-600 overflow-hidden shadow-xl sm:rounded-lg">
                 <div class="mx-auto p-4">
-                    <div class="flex gap-3">
+                    <div class="flex flex-row-reverse gap-3">
                         @livewire('setting.notification.add')
                         <a class="inline-flex items-center px-4 py-2 border border-transparent rounded-md font-semibold text-xs text-slate-900 dark:text-slate-300 uppercase tracking-widest hover:border-gray-700 active:bg-gray-900 focus:outline-none focus:border-gray-900 focus:shadow-outline-gray disabled:opacity-25 transition" href="{{route('notification.read.all')}}">
-                            Read All
+                            Set all Notification to Read
                         </a>
                     </div>
                     <div class="flex flex-col mb-4 mt-5">

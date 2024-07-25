@@ -1,8 +1,7 @@
-<div>
-
-    <x-jet-button :disabled="!userAccess('PERMISSION', 'delete')" class="bg-red-600" wire:click="actionShowDeleteModal">
+<div class="flex flex-row-reverse">
+    <x-link-button :disabled="!userAccess('PERMISSION', 'delete')" class="text-red-400 hover:text-red-600" wire:click="actionShowDeleteModal">
         {{ __('Delete Permissions') }}
-    </x-jet-button>
+    </x-link-button>
     <x-jet-dialog-modal class="text-left" wire:model="modalDeleteVisible">
         <x-slot name="title">
             {{ __('Delete Permissions') }}

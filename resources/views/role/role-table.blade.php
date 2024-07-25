@@ -14,10 +14,8 @@
         <div class="col-span-12 px-3 ml-24 mt-2">
             <div class="bg-white dark:bg-slate-600 overflow-hidden shadow-xl sm:rounded-lg">
                 <div class="mx-auto">
-                    <div class="flex justify-between">
-                        <div>
-                            @livewire('role.roles')
-                        </div>
+                    <div>
+                        @livewire('role.roles')
                     </div>
                     <!-- <div class="flex items-center justify-end px-4 py-3 text-right sm:px-6 right-5 mr-0">
                         <x-jet-button>
