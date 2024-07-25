@@ -6,6 +6,7 @@ use App\Models\Order;
 use App\Models\Permission;
 use App\Models\User;
 use Illuminate\Auth\Access\HandlesAuthorization;
+use Illuminate\Support\Facades\Auth;
 
 class AdminPolicy
 {
@@ -52,6 +53,11 @@ class AdminPolicy
      */
     public function create(User $user, $model)
     {
+        $auth = Auth::user();
+        if ($auth->super && $auth->super->isNotEmpty() && $auth->super->first()->role === 'superadmin') {
+            return true;
+        }
+
         foreach ($user->activeRole->role->permission as $permission) {
             if (stripos($permission->name, strtoupper($model)) !== false) {
                 if (stripos($permission->name, "CREATE") !== false) {
@@ -71,8 +77,11 @@ class AdminPolicy
      */
     public function update(User $user, $model)
     {
+        $auth = Auth::user();
         // return $user->id === $template->user_id;
-
+        if ($auth->super && $auth->super->isNotEmpty() && $auth->super->first()->role === 'superadmin') {
+            return true;
+        }
         foreach ($user->activeRole->role->permission as $permission) {
             if ($permission->model == strtoupper($model)) {
                 if (stripos($permission->name, "UPDATE") !== false) {
@@ -92,6 +101,10 @@ class AdminPolicy
      */
     public function delete(User $user, $model)
     {
+        $auth = Auth::user();
+        if ($auth->super && $auth->super->isNotEmpty() && $auth->super->first()->role === 'superadmin') {
+            return true;
+        }
         $model = strtoupper($model);
         foreach ($user->activeRole->role->permission as $permission) {
             if (stripos($permission->name, $model) !== false && stripos($permission->name, 'DELETE') !== false) {
