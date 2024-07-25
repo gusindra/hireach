@@ -31,22 +31,22 @@ class RoleSeeder extends Seeder
                 'description' => 'All permisison for the chat'
             ],
             [
-                'name' => 'Project Manager',
+                'name' => 'Admin Project Manager',
                 'role_for' => 'team',
                 'description' => 'All permisison for the project,'
             ],
             [
-                'name' => 'Operational Manager',
+                'name' => 'Admin Operational Manager',
                 'role_for' => 'team',
                 'description' => 'All permisison for the project operational'
             ],
             [
-                'name' => 'Commercial Manager',
+                'name' => 'Admin Commercial Manager',
                 'role_for' => 'team',
                 'description' => 'All permisison to for the project commercial'
             ],
             [
-                'name' => 'Accounting',
+                'name' => 'Admin Accounting',
                 'role_for' => 'team',
                 'description' => 'Permisison only for billing'
             ]

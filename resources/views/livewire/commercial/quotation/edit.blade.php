@@ -93,7 +93,7 @@
                 {{ __('Quotation saved.') }}
             </x-jet-action-message>
 
-            <x-save-button show="{{ $quote->status == 'draft' ? true : false }}">
+            <x-save-button :disabled="!userAccess('QUOTATION', 'update')" show="{{ $quote->status == 'draft' ? true : false }}">
                 {{ __('Save') }}
                 </x-jet-button>
         </x-slot>
@@ -166,7 +166,7 @@
                 {{ __('Quotation saved.') }}
             </x-jet-action-message>
 
-            <x-save-button show="{{ $quote->status == 'draft' ? true : false }}">
+            <x-save-button :disabled="!userAccess('QUOTATION', 'update')" show="{{ $quote->status == 'draft' ? true : false }}">
                 {{ __('Save') }}
                 </x-jet-button>
         </x-slot>
@@ -198,7 +198,7 @@
                 {{ __('Quotation saved.') }}
             </x-jet-action-message>
 
-            <x-save-button show="{{ $quote->status == 'draft' ? true : false }}">
+            <x-save-button :disabled="!userAccess('QUOTATION', 'update')" show="{{ $quote->status == 'draft' ? true : false }}">
                 {{ __('Save') }}
                 </x-jet-button>
         </x-slot>
@@ -232,7 +232,7 @@
                 {{ __('Quotation saved.') }}
             </x-jet-action-message>
 
-            <x-save-button show="{{ $quote->status == 'draft' ? true : false }}">
+            <x-save-button :disabled="!userAccess('QUOTATION', 'update')" show="{{ $quote->status == 'draft' ? true : false }}">
                 {{ __('Save') }}
                 </x-jet-button>
         </x-slot>
@@ -286,7 +286,7 @@
                 {{ __('Quotation saved.') }}
             </x-jet-action-message>
 
-            <x-save-button show="{{ $quote->status == 'draft' ? true : false }}">
+            <x-save-button :disabled="!userAccess('QUOTATION', 'update')" show="{{ $quote->status == 'draft' ? true : false }}">
                 {{ __('Save') }}
                 </x-jet-button>
         </x-slot>
@@ -315,7 +315,7 @@
                     {{ __('Quotation saved.') }}
                 </x-jet-action-message>
 
-                <x-jet-button class="bg-red-600" wire:click="actionShowDeleteModal">
+                <x-jet-button :disabled="!userAccess('QUOTATION', 'delete')" class="bg-red-600" wire:click="actionShowDeleteModal">
                     {{ __('Delete Quotation') }}
                 </x-jet-button>
             </x-slot>

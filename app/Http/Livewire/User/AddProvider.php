@@ -4,13 +4,13 @@ namespace App\Http\Livewire\User;
 
 use App\Models\Provider;
 use App\Models\ProviderUser;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Support\Facades\Cache;
 use Livewire\Component;
 
 class AddProvider extends Component
-
-
 {
+    use AuthorizesRequests;
     public $user;
     public $userId;
     public $actionId;
@@ -53,10 +53,10 @@ class AddProvider extends Component
     public function modelData()
     {
         $data = [
-            'provider_id'   => $this->provider_id,
-            'channel'       => $this->channel,
-            'from'          => $this->from,
-            'user_id'       => $this->userId
+            'provider_id' => $this->provider_id,
+            'channel' => $this->channel,
+            'from' => $this->from,
+            'user_id' => $this->userId
         ];
 
         return $data;
@@ -91,8 +91,8 @@ class AddProvider extends Component
     {
         return [
             'input.provider_id' => 'required',
-            'channel'           => 'required',
-            'userId'            => 'required',
+            'channel' => 'required',
+            'userId' => 'required',
         ];
     }
 
@@ -104,10 +104,10 @@ class AddProvider extends Component
     public function messages()
     {
         return [
-            'provider_id.required'  => 'The Provider field is required.',
-            'channel.required'      => 'The Channel field is required.',
-            'userId.required'       => 'The user field is required.',
-            'provider_id.unique'    => 'The Provider has already been taken.',
+            'provider_id.required' => 'The Provider field is required.',
+            'channel.required' => 'The Channel field is required.',
+            'userId.required' => 'The user field is required.',
+            'provider_id.unique' => 'The Provider has already been taken.',
         ];
     }
 
@@ -118,12 +118,13 @@ class AddProvider extends Component
      */
     public function create()
     {
+        $this->authorize('CREATE_USER', 'USER');
         $action = ProviderUser::firstOrCreate($this->modelData(), $this->modelData());
         $this->modalActionVisible = false;
         $this->resetForm();
         if ($action->wasRecentlyCreated) {
             $this->emit('added');
-            Cache::forget('provider-user-'.$this->userId);
+            Cache::forget('provider-user-' . $this->userId);
         } else {
             $this->emit('exist');
         }
@@ -140,18 +141,19 @@ class AddProvider extends Component
      */
     public function addProvider()
     {
+        $this->authorize('CREATE_USER', 'USER');
         $action = ProviderUser::firstOrCreate([
-            'provider_id'   => $this->input['provider_id'],
-            'channel'       => strtoupper($this->input['channel']),
-            'from'          => strtoupper($this->input['from']),
-            'user_id'       => $this->userId
+            'provider_id' => $this->input['provider_id'],
+            'channel' => strtoupper($this->input['channel']),
+            'from' => strtoupper($this->input['from']),
+            'user_id' => $this->userId
         ]);
 
         $this->modalActionVisible = false;
         $this->resetForm();
         if ($action->wasRecentlyCreated) {
             $this->emit('added');
-            Cache::forget('provider-user-'.$this->userId);
+            Cache::forget('provider-user-' . $this->userId);
         } else {
             $this->emit('exist');
         }
@@ -179,6 +181,7 @@ class AddProvider extends Component
      */
     public function delete()
     {
+        $this->authorize('UPDATE_USER', 'USER');
         $userClient = ProviderUser::findOrFail($this->actionId);
         $userClient->delete();
         $this->confirmingActionRemoval = false;

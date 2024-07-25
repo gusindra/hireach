@@ -1,7 +1,7 @@
 <div class="px-4 pt-6">
     <h1 class="font-bold">Data Product</h1>
     <div class="flex flex-row-reverse">
-        <x-add-button wire:click="actionShowModal">
+        <x-add-button :disabled="!userAccess('SETTING', 'create')" wire:click="actionShowModal">
             {{ __('Add Product Line') }}
         </x-add-button>
     </div>
@@ -16,8 +16,8 @@
             <div class="col-span-6 grid grid-cols-2">
                 <div class="col-span-12 sm:col-span-1 p-3">
                     <x-jet-label for="name" value="{{ __('Name') }}" />
-                    <x-jet-input id="name" type="text" class="mt-1 block w-full" wire:model.debounce.800ms="name"
-                        autofocus />
+                    <x-jet-input id="name" type="text" class="mt-1 block w-full"
+                        wire:model.debounce.800ms="name" autofocus />
                     <x-jet-input-error for="name" class="mt-2" />
                 </div>
                 <div class="col-span-12 sm:col-span-1 p-3">

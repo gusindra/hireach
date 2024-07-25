@@ -5,10 +5,12 @@ namespace App\Http\Livewire\Setting;
 use App\Models\Client;
 use App\Models\Company;
 use App\Models\Project;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Livewire\Component;
 
 class CompanyEdit extends Component
 {
+    use AuthorizesRequests;
     public $company;
     public $contract;
     public $input;
@@ -46,15 +48,16 @@ class CompanyEdit extends Component
     public function modelData()
     {
         return [
-            'name'  => $this->input['name'],
-            'code'  => $this->input['code'],
-            'tax_id'  => $this->input['tax_id'],
-            'person_in_charge'  => $this->input['person_in_charge']
+            'name' => $this->input['name'],
+            'code' => $this->input['code'],
+            'tax_id' => $this->input['tax_id'],
+            'person_in_charge' => $this->input['person_in_charge']
         ];
     }
 
     public function update($id)
     {
+        $this->authorize('UPDATE_SETTING', 'SETTING');
         $this->validate();
         Company::find($id)->update($this->modelData());
         $this->emit('saved');
@@ -73,6 +76,7 @@ class CompanyEdit extends Component
     }
     public function delete()
     {
+        $this->authorize('DELETE_SETTING', 'SETTING');
         if ($this->company) {
             $this->company->delete();
         }

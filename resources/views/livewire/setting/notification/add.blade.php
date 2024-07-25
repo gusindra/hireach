@@ -1,7 +1,7 @@
-<div> 
-    <x-jet-button wire:click="actionShowModal">
-        {{__('Add Notification')}}
-    </x-jet-button> 
+<div>
+    <x-add-button :disabled="!userAccess('NOTICE', 'create')" wire:click="actionShowModal">
+        {{ __('Add Notification') }}
+    </x-add-button>
 
     <!-- Form Action Modal -->
     <x-jet-dialog-modal wire:model="modalActionVisible">
@@ -13,12 +13,9 @@
             <div class="col-span-6 grid grid-cols-2">
                 <div class="col-span-12 sm:col-span-1 p-3">
                     <x-jet-label for="input.type" value="{{ __('Type') }}" />
-                    <select
-                        name="input.type"
-                        id="input.type"
+                    <select name="input.type" id="input.type"
                         class="border-gray-300 dark:bg-slate-800 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 rounded-md shadow-sm mt-1 block w-full"
-                        wire:model.debunce.800ms="input.type"
-                        >
+                        wire:model.debunce.800ms="input.type">
                         <option selected>-- Select --</option>
                         <option value="admin">Admin</option>
                         <option value="app">App</option>
@@ -28,12 +25,9 @@
                 </div>
                 <div class="col-span-12 sm:col-span-1 p-3">
                     <x-jet-label for="grouptype" value="{{ __('Retriver') }}" />
-                    <select
-                        name="grouptype"
-                        id="grouptype"
+                    <select name="grouptype" id="grouptype"
                         class="border-gray-300 dark:bg-slate-800 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 rounded-md shadow-sm mt-1 block w-full"
-                        wire:model.debunce.800ms="grouptype"
-                        >
+                        wire:model.debunce.800ms="grouptype">
                         <option selected>-- Select --</option>
                         <option value="role">Role</option>
                         <option value="team">Team</option>
@@ -44,22 +38,19 @@
             </div>
             <div class="col-span-12 sm:col-span-1 p-3">
                 <x-jet-label for="input.group" value="{{ __('Group') }}" />
-                <select
-                        name="input.group"
-                        id="input.group"
-                        class="border-gray-300 dark:bg-slate-800 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 rounded-md shadow-sm mt-1 block w-full"
-                        wire:model.debunce.800ms="input.group"
-                        multiple
-                        >
-                        @foreach($lists as $group)
-                        <option value="{{$group->id}}">{{$group->name}}</option>
-                        @endforeach
-                    </select>
+                <select name="input.group" id="input.group"
+                    class="border-gray-300 dark:bg-slate-800 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 rounded-md shadow-sm mt-1 block w-full"
+                    wire:model.debunce.800ms="input.group" multiple>
+                    @foreach ($lists as $group)
+                        <option value="{{ $group->id }}">{{ $group->name }}</option>
+                    @endforeach
+                </select>
                 <x-jet-input-error for="input.group" class="mt-2" />
             </div>
             <div class="col-span-12 sm:col-span-1 p-3">
                 <x-jet-label for="input.message" value="{{ __('Message') }}" />
-                <x-jet-input id="input.message" type="text" class="mt-1 block w-full" wire:model.debunce.800ms="input.message" autofocus />
+                <x-jet-input id="input.message" type="text" class="mt-1 block w-full"
+                    wire:model.debunce.800ms="input.message" autofocus />
                 <x-jet-input-error for="input.message" class="mt-2" />
             </div>
         </x-slot>
@@ -75,4 +66,3 @@
         </x-slot>
     </x-jet-dialog-modal>
 </div>
-

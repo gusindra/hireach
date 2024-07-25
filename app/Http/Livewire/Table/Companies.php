@@ -19,21 +19,26 @@ class Companies extends LivewireDatatable
     public function columns()
     {
         return [
-            Column::name('id')->label('ID'),
+            Column::callback(['name','id'], function ($name, $id) {
+                return view('datatables::link', [
+                    'href' => "/admin/setting/company/" . $id,
+                    'slot' => strtoupper($name)
+                ]);
+            })->label('Name')->searchable(),
+            // Column::name('id')->label('ID'),
             Column::name('logo')->callback('logo, name', function ($value, $name) {
                 if ($value) {
                     return '<img src="https://telixcel.s3.ap-southeast-1.amazonaws.com/' . $value . '" />';
                 }
                 return $name;
             })->label('Logo'),
-            Column::name('name')->label('Name'),
             Column::name('person_in_charge')->label('PIC'),
             Column::name('address')->label('Address'),
-            NumberColumn::name('id')->label('Detail')->sortBy('id')->callback('id', function ($value) {
-                return view('datatables::link', [
-                    'href' => "/admin/setting/company/" . $value,
-                    'slot' => 'View'
-                ]);
+            NumberColumn::name('id')->label('Action')->sortBy('id')->callback('id', function ($value) {
+                // return view('datatables::link', [
+                //     'href' => "/admin/setting/company/" . $value,
+                //     'slot' => 'View'
+                // ]);
             }),
 
         ];

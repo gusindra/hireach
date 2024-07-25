@@ -4,10 +4,12 @@ namespace App\Http\Livewire\Order;
 
 use App\Models\Client;
 use App\Models\Order;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Livewire\Component;
 
 class Invoice extends Component
 {
+    use AuthorizesRequests;
     public $input;
     public $order;
 
@@ -27,7 +29,7 @@ class Invoice extends Component
         $this->input['status'] = $this->order->status ?? '';
         $this->input['source'] = $this->order->source ?? '';
         $this->input['source_id'] = $this->order->source_id ?? '';
-        $this->input['date'] = $this->order->date ? $this->order->date->format('Y-m-d') :'';
+        $this->input['date'] = $this->order->date ? $this->order->date->format('Y-m-d') : '';
         $this->input['total'] = $this->order->total ?? '';
     }
 
@@ -41,25 +43,26 @@ class Invoice extends Component
     public function modelData()
     {
         return [
-            'name'              => $this->input['name'],
-            'status'            => $this->input['status'],
-            'no'                => $this->input['no'],
-            'date'              => $this->input['date'],
-            'customer_id'       => $this->input['customer_id'],
-            'type'              => $this->input['type'],
-            'model'             => $this->model,
-            'model_id'          => $this->model_id,
+            'name' => $this->input['name'],
+            'status' => $this->input['status'],
+            'no' => $this->input['no'],
+            'date' => $this->input['date'],
+            'customer_id' => $this->input['customer_id'],
+            'type' => $this->input['type'],
+            'model' => $this->model,
+            'model_id' => $this->model_id,
             'addressed_company' => $this->addressed_company,
-            'description'       => $this->description,
-            'created_by'        => $this->created_by,
-            'created_role'      => $this->created_role,
-            'addressed_name'    => $this->addressed_name,
-            'addressed_role'    => $this->addressed_role,
+            'description' => $this->description,
+            'created_by' => $this->created_by,
+            'created_role' => $this->created_role,
+            'addressed_name' => $this->addressed_name,
+            'addressed_role' => $this->addressed_role,
         ];
     }
 
     public function update($id)
     {
+        $this->authorize('UPDATE_ORDER', 'ORDER');
         $this->validate();
         Order::find($id)->update($this->modelData());
         $this->emit('saved');
@@ -67,6 +70,7 @@ class Invoice extends Component
 
     public function updateStatus($id)
     {
+        $this->authorize('UPDATE_ORDER', 'ORDER');
         Order::find($id)->update([
             'status' => $this->input['status']
         ]);
@@ -75,10 +79,11 @@ class Invoice extends Component
 
     public function onChangeModelId()
     {
-        if($this->model_id!=0){
+        $this->authorize('UPDATE_ORDER', 'ORDER');
+        if ($this->model_id != 0) {
             $this->addressed = $this->order->customer;
             $this->addressed_company = $this->addressed->name;
-        }else{
+        } else {
             $this->model = NULL;
             $this->model_id = NULL;
             $this->addressed_company = NULL;

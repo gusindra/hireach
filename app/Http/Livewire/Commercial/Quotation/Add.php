@@ -6,11 +6,13 @@ use App\Models\Client;
 use App\Models\Quotation;
 use App\Models\User;
 use Carbon\Carbon;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Livewire\Component;
 use Illuminate\Support\Facades\Auth;
 
 class Add extends Component
 {
+    use AuthorizesRequests;
     public $modalActionVisible = false;
     public $type;
     public $title;
@@ -39,6 +41,7 @@ class Add extends Component
 
     public function create()
     {
+        $this->authorize('CREATE_QUOTATION', 'QUOTATION');
 
         $this->validate();
 
@@ -55,17 +58,17 @@ class Add extends Component
     public function modelData()
     {
         $data = [
-            'type'          => $this->type,
-            'title'          => $this->title,
-            'valid_day'     => $this->valid_day,
-            'date'          => $this->date,
-            'user_id'       => Auth::user()->id,
+            'type' => $this->type,
+            'title' => $this->title,
+            'valid_day' => $this->valid_day,
+            'date' => $this->date,
+            'user_id' => Auth::user()->id,
         ];
 
 
         if ($this->source) {
-            $data['model']      = 'USER';
-            $data['model_id']   = $this->source;
+            $data['model'] = 'USER';
+            $data['model_id'] = $this->source;
         }
 
         return $data;

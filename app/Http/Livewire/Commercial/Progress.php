@@ -11,10 +11,12 @@ use App\Models\Order;
 use App\Models\OrderProduct;
 use App\Models\Project;
 use App\Models\Quotation;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Livewire\Component;
 
 class Progress extends Component
 {
+    use AuthorizesRequests;
     public $model;
     public $model_type;
     public $model_id;
@@ -51,6 +53,7 @@ class Progress extends Component
 
     public function activated()
     {
+        $this->authorize('UPDATE_QUOTATION', 'QUOTATION');
         $this->model->update([
             'status' => 'active'
         ]);
@@ -62,8 +65,8 @@ class Progress extends Component
 
     public function submit()
     {
-
-        $item =  $this->model->items->count();
+        $this->authorize('UPDATE_QUOTATION', 'QUOTATION');
+        $item = $this->model->items->count();
 
         $fields = [
             'title',
@@ -104,9 +107,10 @@ class Progress extends Component
 
     public function next($status = '')
     {
+        $this->authorize('UPDATE_QUOTATION', 'QUOTATION');
         $update_status = $status;
         // dd($this->model->approval);
-        $flow = FlowProcess::create(['model'=>$this->model_type, $this->model->approval]);
+        $flow = FlowProcess::create(['model' => $this->model_type, $this->model->approval]);
         //dd($flow);
 
         $flow->model_id = $this->model->id;
@@ -133,6 +137,7 @@ class Progress extends Component
 
     public function decline()
     {
+        $this->authorize('UPDATE_QUOTATION', 'QUOTATION');
         $this->model->update([
             'status' => 'revision'
         ]);
@@ -153,6 +158,7 @@ class Progress extends Component
 
     public function revise()
     {
+        $this->authorize('UPDATE_QUOTATION', 'QUOTATION');
         $this->model->update([
             'status' => 'draft'
         ]);

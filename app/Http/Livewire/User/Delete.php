@@ -3,11 +3,12 @@
 namespace App\Http\Livewire\User;
 
 use App\Models\User;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Livewire\Component;
 
 class Delete extends Component
 {
-
+    use AuthorizesRequests;
     public $userId;
     public $user;
     public $modalDeleteVisible = false;
@@ -25,11 +26,13 @@ class Delete extends Component
 
     public function confirmDelete()
     {
+        $this->authorize('DELETE_USER', 'USER');
         $this->modalDeleteVisible = true;
     }
 
     public function delete()
     {
+        $this->authorize('DELETE_USER', 'USER');
         $this->user->delete();
         $this->modalDeleteVisible = false;
         return redirect()->route('admin.user');

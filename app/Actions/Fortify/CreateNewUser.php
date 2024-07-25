@@ -48,7 +48,7 @@ class CreateNewUser implements CreatesNewUsers
             $newInvitation = RoleInvitation::where('email', $input['email'])->first();
             $newTeamMember = Jetstream::findUserByEmailOrFail($input['email']);
             if($newInvitation){
-                $role = 'editor';
+                $role = $newInvitation->role ? $newInvitation->role->name : 'admin';
                 $roleUser = RoleUser::where('user_id', $newTeamMember->id)->count();
                 if($roleUser==0){
                     RoleUser::create([

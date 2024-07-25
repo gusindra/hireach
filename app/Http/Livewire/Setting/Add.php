@@ -3,11 +3,13 @@
 namespace App\Http\Livewire\Setting;
 
 use App\Models\Setting;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Support\Facades\Cache;
 use Livewire\Component;
 
 class Add extends Component
 {
+    use AuthorizesRequests;
     public $key;
     public $value;
     public $remark;
@@ -27,6 +29,7 @@ class Add extends Component
 
     public function save()
     {
+        $this->authorize('CREATE_SETTING', 'SETTING');
         $this->validate([
             'key' => 'required',
             'value' => 'required',
@@ -56,6 +59,7 @@ class Add extends Component
 
     public function updateSetting()
     {
+        $this->authorize('UPDATE_SETTING', 'SETTING');
         $this->validate([
             'valueEdit' => 'required',
             'remarkEdit' => 'nullable|string',
@@ -89,7 +93,7 @@ class Add extends Component
         //$this->loadSettings();
     }
 
-        /**
+    /**
      * readSetting
      *
      * @return void

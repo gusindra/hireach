@@ -4,10 +4,12 @@ namespace App\Http\Livewire\User;
 
 use App\Models\Notice as ModelsNotification;
 use App\Models\SaldoUser;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Livewire\Component;
 
 class Balance extends Component
 {
+    use AuthorizesRequests;
     public $saldoUser;
     public $showMessage = false;
 
@@ -37,6 +39,7 @@ class Balance extends Component
 
     private function createNotification($userId, $message)
     {
+
         ModelsNotification::create([
             'type' => 'Top Up',
             'model_id' => $userId,

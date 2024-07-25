@@ -3,10 +3,12 @@
 namespace App\Http\Livewire\Provider;
 
 use App\Models\Provider;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Livewire\Component;
 
 class Add extends Component
 {
+    use AuthorizesRequests;
     public $modalActionVisible = false;
     public $code;
     public $name;
@@ -22,6 +24,7 @@ class Add extends Component
 
     public function create()
     {
+        $this->authorize('CREATE_SETTING', 'SETTING');
         $this->validate();
         Provider::create($this->modelData());
         $this->modalActionVisible = false;
@@ -32,8 +35,8 @@ class Add extends Component
     public function modelData()
     {
         return [
-            'code'          => strtoupper($this->code),
-            'name'          => $this->name,
+            'code' => strtoupper($this->code),
+            'name' => $this->name,
 
         ];
     }

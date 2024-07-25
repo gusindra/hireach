@@ -21,21 +21,21 @@
             <div class="col-span-6 sm:col-span-6">
                 <span class="text-gray-500 dark:text-slate-300 font-bold">Role Permissions</span>
             </div>
-            <button class="cursor-pointer ml-6 text-sm text-blue-500 focus:outline-none" wire:click="checkAll">
+            <x-jet-button :disabled="!userAccess('ROLE', 'update')" wire:click="checkAll">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 inline-block mr-1" fill="none"
                     viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
                 </svg>
                 {{ __('Select All') }}
-            </button>
+            </x-jet-button>
 
-            <button class="cursor-pointer ml-6 text-sm text-red-500 focus:outline-none" wire:click="unCheckAll">
+            <x-jet-button :disabled="!userAccess('ROLE', 'update')" wire:click="unCheckAll">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 inline-block mr-1" fill="none"
                     viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
                 </svg>
                 {{ __('Unselect All') }}
-            </button>
+            </x-jet-button>
 
 
 

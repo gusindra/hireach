@@ -1,10 +1,11 @@
 <div>
-    <x-jet-button wire:click="actionShowModal">
-        Add Order
-    </x-jet-button>
+    <div class="flex flex-row-reverse">
+        <x-add-button :disabled="!userAccess('ORDER', 'create')" wire:click="actionShowModal" test="1" test1="2" id="3">
+            Add Order
+        </x-add-button>
+    </div>
     <div class="flex items-center text-right">
-        <a
-            class="ml-2 cursor-pointer hidden inline-flex items-center px-2 py-1 bg-green-800 border border-transparent rounded-sm font-normal text-xs text-white 1g-widest hover:bg-green-700 active:bg-green-900 focus:outline-none focus:border-gray-900 focus:shadow-outline-gray disabled:opacity-25 transition">
+        <a class="ml-2 cursor-pointer hidden inline-flex items-center px-2 py-1 bg-green-800 border border-transparent rounded-sm font-normal text-xs text-white 1g-widest hover:bg-green-700 active:bg-green-900 focus:outline-none focus:border-gray-900 focus:shadow-outline-gray disabled:opacity-25 transition">
             {{ __('Import Order') }}
         </a>
     </div>

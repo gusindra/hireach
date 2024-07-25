@@ -16,6 +16,7 @@ use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 class Add extends Component
 {
     use AuthorizesRequests;
+
     public $modalActionVisible = false;
     public $type;
     public $entity;
@@ -35,7 +36,7 @@ class Add extends Component
     public function mount()
     {
         $this->customer = User::noadmin()->get();
-       }
+    }
 
     /**
      * rules
@@ -87,8 +88,8 @@ class Add extends Component
     public function create()
     {
         // $this->validate();
-
-       $order= Order::create($this->modelData());
+        $this->authorize('CREATE_ORDER', 'ORDER');
+        $order = Order::create($this->modelData());
         $this->modalActionVisible = false;
         $this->resetForm();
         $this->emit('refreshLivewireDatatable');
@@ -103,7 +104,7 @@ class Add extends Component
     {
         $data = [
             'type' => $this->type ?? 'selling',
-            'name' => $this->name ??  'Topup from Admin :  ' . Auth::user()->name,
+            'name' => $this->name ?? 'Topup from Admin :  ' . Auth::user()->name,
             'entity_party' => $this->entity ?? '1',
             'no' => 'HAPP' . date("YmdHis"),
             'status' => 'draft',
