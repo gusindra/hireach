@@ -18,29 +18,29 @@ use Illuminate\Support\Facades\Auth as FacadesAuth;
 
 class DashboardController extends Controller
 {
-    public $user_info;
-    public function __construct()
-    {
-        // $this->middleware(function ($request, $next) {
-        //     // Your auth here
-        //     // $this->user_info=Auth::user()->super->first();
-        //     // if($this->user_info && $this->user_info->role=='superadmin'){
-        //     //     return $next($request);
-        //     // }
-        //     // abort(404);
-        // });
-    }
+    // public $user_info;
+    // public function __construct()
+    // {
+    //     $this->middleware(function ($request, $next) {
+    //         // Your auth here
+    //         $granted = false;
+    //         $user = auth()->user();
+    //         $granted = userAccess('DASHBOARD');
+    //         if ($granted) {
+    //             return $next($request);
+    //         }
+    //         abort(403);
+    //     });
+    // }
 
     public function index(Request $request)
     {
         $userId = FacadesAuth::user()->id;
-
-        if (empty(auth()->user()->currentTeam)) {
+        if (empty(auth()->user()->listTeams)) {
             return redirect()->route('teams.create');
         }
 
         if ($request->has('v')) {
-
             $dateS = Carbon::now()->startOfMonth();
             $dateE = Carbon::now()->startOfMonth()->addMonth(1);
             $event = Contract::whereBetween('expired_at', [$dateS, $dateE])->get();
@@ -160,20 +160,23 @@ class DashboardController extends Controller
         $totalSuccessCount = $successRequest + $blastMessageSuccessCount;
         $totalFailCount = $failRequest + $blastMessageFailCount;
 
-        return view('dashboard.out-bound', compact(
-            'filterMonth',
-            'requestsCount',
-            'requestsClients',
-            'failRequest',
-            'successRequest',
-            'blastMessageCount',
-            'totalCount',
-            'totalFailCount',
-            'totalSuccessCount',
-            'blastMessageClientCount',
-            'blastMessageSuccessCount',
-            'blastMessageFailCount'
-        ));
+        return view(
+            'dashboard.out-bound',
+            compact(
+                'filterMonth',
+                'requestsCount',
+                'requestsClients',
+                'failRequest',
+                'successRequest',
+                'blastMessageCount',
+                'totalCount',
+                'totalFailCount',
+                'totalSuccessCount',
+                'blastMessageClientCount',
+                'blastMessageSuccessCount',
+                'blastMessageFailCount'
+            )
+        );
     }
 
     public function getInBound()
@@ -206,14 +209,17 @@ class DashboardController extends Controller
             ->whereIn('status', ['ACCEPTED', 'SENT', 'DELIVERED', 'READ', 'PENDING'])
             ->count();
 
-        return view('dashboard.in-bound', compact(
-            'filterMonth',
-            'requestsCount',
-            'requestsClients',
-            'failRequest',
-            'successRequest',
+        return view(
+            'dashboard.in-bound',
+            compact(
+                'filterMonth',
+                'requestsCount',
+                'requestsClients',
+                'failRequest',
+                'successRequest',
 
-        ));
+            )
+        );
     }
 
     public function activeUser()

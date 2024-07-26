@@ -6,6 +6,7 @@ use App\Models\BillingUser;
 use App\Models\Client;
 use App\Models\Team;
 use App\Models\User;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Laravel\Jetstream\Jetstream;
 use Livewire\Component;
 use Illuminate\Support\Facades\Hash;
@@ -14,6 +15,7 @@ use Laravel\Jetstream\Events\AddingTeam;
 
 class Add extends Component
 {
+    use AuthorizesRequests;
     public $modalActionVisible = false;
     public $input;
     public $inputclient;
@@ -37,9 +39,9 @@ class Add extends Component
     public function rules()
     {
         return [
-            'input.name'        => 'required',
-            'input.name'        => 'required',
-            'input.password'    => 'required',
+            'input.name' => 'required',
+            'input.name' => 'required',
+            'input.password' => 'required',
         ];
     }
 
@@ -55,6 +57,7 @@ class Add extends Component
 
     public function create()
     {
+        $this->authorize('CREATE_USER', 'USER');
         $this->validate();
 
         $user = User::create($this->modelData());
@@ -72,27 +75,27 @@ class Add extends Component
         ]));
 
         if ($this->showClients) {
-            $customer =  Client::create([
-                'title'     => $this->inputclient['title'],
-                'name'      => $this->inputclient['name'],
-                'phone'     => $this->inputclient['phone'],
-                'address'   => $this->inputclient['address'],
-                'note'      => $this->inputclient['notes'],
-                'email'     => $user->email,
-                'user_id'   => 0,
-                'uuid'      => Str::uuid()
+            $customer = Client::create([
+                'title' => $this->inputclient['title'],
+                'name' => $this->inputclient['name'],
+                'phone' => $this->inputclient['phone'],
+                'address' => $this->inputclient['address'],
+                'note' => $this->inputclient['notes'],
+                'email' => $user->email,
+                'user_id' => 0,
+                'uuid' => Str::uuid()
             ]);
             $team = Team::find(0);
             $customer->teams()->attach($team);
             if ($customer) {
                 $billing = BillingUser::create([
-                    'tax_id'        => $this->inputclient['tax_id'],
-                    'name'          => $this->inputclient['name'],
-                    'post_code'     => $this->inputclient['postcode'],
-                    'address'       => $this->inputclient['address'],
-                    'province'      => $this->inputclient['province'],
-                    'city'          => $this->inputclient['city'],
-                    'user_id'       => $user->id
+                    'tax_id' => $this->inputclient['tax_id'],
+                    'name' => $this->inputclient['name'],
+                    'post_code' => $this->inputclient['postcode'],
+                    'address' => $this->inputclient['address'],
+                    'province' => $this->inputclient['province'],
+                    'city' => $this->inputclient['city'],
+                    'user_id' => $user->id
                 ]);
             }
             return redirect(request()->header('Referer'));
@@ -136,15 +139,15 @@ class Add extends Component
     public function createFormUser()
     {
         dd(1);
-        $customer =  Client::create([
-            'title'     => $this->inputclient['title'],
-            'name'      => $this->inputclient['name'],
-            'phone'     => $this->inputclient['phone'],
-            'address'   => $this->inputclient['address'],
-            'note'      => $this->inputclient['notes'],
-            'email'     => $this->inputclient['email'],
-            'user_id'   => auth()->user()->id,
-            'uuid'      => Str::uuid()
+        $customer = Client::create([
+            'title' => $this->inputclient['title'],
+            'name' => $this->inputclient['name'],
+            'phone' => $this->inputclient['phone'],
+            'address' => $this->inputclient['address'],
+            'note' => $this->inputclient['notes'],
+            'email' => $this->inputclient['email'],
+            'user_id' => auth()->user()->id,
+            'uuid' => Str::uuid()
         ]);
         $team = Team::find(0);
         $customer->teams()->attach($team);

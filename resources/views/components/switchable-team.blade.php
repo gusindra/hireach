@@ -1,9 +1,10 @@
 <div>
     @props(['team','selection', 'component' => 'jet-dropdown-link'])
+
     <form>
         @method('PUT')
         @csrf
-        @foreach ($selection as $select)
+        @foreach (auth()->user()->listTeams as $select)
             @if($select->team)
                 <x-dynamic-component :component="$component" href="#" wire:click="updateTeam('{{$select->team_id}}')">
                     <div class="flex items-center">

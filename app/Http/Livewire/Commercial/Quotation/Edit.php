@@ -7,10 +7,12 @@ use App\Models\Company;
 use App\Models\Project;
 use App\Models\Quotation;
 use App\Models\User;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Livewire\Component;
 
 class Edit extends Component
 {
+    use AuthorizesRequests;
     public $quote;
     public $quoteNo;
     public $company;
@@ -115,20 +117,20 @@ class Edit extends Component
     public function modelData()
     {
         $data = [
-            'title'             => $this->name,
-            'status'            => $this->status,
-            'quote_no'          => $this->quoteNo,
-            'date'              => $this->date,
-            'valid_day'         => $this->valid_day,
-            'terms'             => $this->terms,
-            'model'             => $this->model,
-            'model_id'          => $this->model_id,
+            'title' => $this->name,
+            'status' => $this->status,
+            'quote_no' => $this->quoteNo,
+            'date' => $this->date,
+            'valid_day' => $this->valid_day,
+            'terms' => $this->terms,
+            'model' => $this->model,
+            'model_id' => $this->model_id,
             'addressed_company' => $this->addressed_company,
-            'description'       => $this->description,
-            'created_by'        => $this->created_by,
-            'created_role'      => $this->created_role,
-            'addressed_name'    => $this->addressed_name,
-            'addressed_role'    => $this->addressed_role,
+            'description' => $this->description,
+            'created_by' => $this->created_by,
+            'created_role' => $this->created_role,
+            'addressed_name' => $this->addressed_name,
+            'addressed_role' => $this->addressed_role,
         ];
 
         if ($this->source == 'project') {
@@ -147,6 +149,7 @@ class Edit extends Component
     }
     public function delete()
     {
+        $this->authorize('DELETE_QUOTATION', 'QUOTATION');
         if ($this->quote) {
             $this->quote->delete();
         }
@@ -157,6 +160,7 @@ class Edit extends Component
 
     public function update($id, $formName = 'basic')
     {
+        $this->authorize('UPDATE_QUOTATION', 'QUOTATION');
         $this->formName = $formName;
         $this->validate();
         Quotation::find($id)->update($this->modelData());
@@ -165,6 +169,7 @@ class Edit extends Component
 
     public function onChangeModelId()
     {
+        $this->authorize('UPDATE_QUOTATION', 'QUOTATION');
         if ($this->model_id != 0) {
             if ($this->type == 'project') {
                 $this->addressed = Project::find($this->model_id);

@@ -1,20 +1,27 @@
 <?php
 
+
 namespace App\Http\Livewire\Role;
 
 use App\Mail\RoleInvitation as MailRoleInvitation;
 use App\Models\RoleInvitation;
 use App\Models\RoleUser;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Livewire\Component;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\URL;
+use Illuminate\Support\Facades\Log;
 
 class Member extends Component
 {
+    use AuthorizesRequests;
     public $team;
     public $role;
     public $inviteEmail;
     public $inviteCancel;
     public $confirmingTeamMemberRemoval = false;
+    public $showCopyLinkModal = false;
+    public $inviteLink;
 
     public function mount($id)
     {
@@ -23,14 +30,21 @@ class Member extends Component
 
     public function addRoleMember()
     {
-
+        $this->authorize('CREATE_ROLE', 'ROLE');
         $invitation = RoleInvitation::create([
             'email' => $this->inviteEmail,
             'role_id' => $this->role,
             'team_id' => auth()->user()->current_team_id
         ]);
 
-        // Mail::to($this->inviteEmail)->send(new MailRoleInvitation($invitation));
+        $this->inviteLink = URL::signedRoute('role-invitations.accept', [
+            'invitation' => $invitation->id,
+        ]);
+
+        Log::debug($this->inviteLink);
+
+
+        $this->showCopyLinkModal = true;
 
         $this->resetForm();
 
@@ -44,12 +58,14 @@ class Member extends Component
 
     public function cancelTeamInvitation($id)
     {
+        $this->authorize('DELETE_ROLE', 'ROLE');
         $this->inviteCancel = $id;
         $this->confirmingTeamMemberRemoval = true;
     }
 
     public function removeTeamMember()
     {
+        $this->authorize('UPDATE_ROLE', 'ROLE');
         RoleInvitation::find($this->inviteCancel)->delete();
         $this->confirmingTeamMemberRemoval = false;
         $this->inviteCancel = null;

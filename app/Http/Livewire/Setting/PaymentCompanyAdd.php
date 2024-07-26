@@ -2,6 +2,7 @@
 
 namespace App\Http\Livewire\Setting;
 
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Livewire\Component;
 use App\Models\Company;
 use App\Models\CompanyPayment;
@@ -9,6 +10,7 @@ use Illuminate\Support\Facades\Auth;
 
 class PaymentCompanyAdd extends Component
 {
+    use AuthorizesRequests;
     public $company;
     public $item_id;
     public $account_number;
@@ -36,18 +38,19 @@ class PaymentCompanyAdd extends Component
     public function modelData()
     {
         return [
-            'method'            => $this->input['method'],
-            'provider_name'     => $this->input['provider_name'],
-            'account_number'    => $this->input['account_number'],
-            'account_name'      => $this->input['account_name'],
+            'method' => $this->input['method'],
+            'provider_name' => $this->input['provider_name'],
+            'account_number' => $this->input['account_number'],
+            'account_name' => $this->input['account_name'],
             'provider_location' => $this->input['provider_location'],
-            'notes'             => $this->input['notes'] ?? '',
-            'company_id'        => $this->company->id
+            'notes' => $this->input['notes'] ?? '',
+            'company_id' => $this->company->id
         ];
     }
 
     public function create()
     {
+        $this->authorize('CREATE_SETTING', 'SETTING');
         $this->validate();
         $this->modalVisible = false;
         CompanyPayment::create($this->modelData());
@@ -62,14 +65,15 @@ class PaymentCompanyAdd extends Component
      */
     public function update()
     {
+        $this->authorize('UPDATE_SETTING', 'SETTING');
         $this->validate();
         CompanyPayment::find($this->item_id)->update([
-            'method'            => $this->input['method'],
-            'provider_name'     => $this->input['provider_name'],
-            'account_number'    => $this->input['account_number'],
-            'account_name'      => $this->input['account_name'],
+            'method' => $this->input['method'],
+            'provider_name' => $this->input['provider_name'],
+            'account_number' => $this->input['account_number'],
+            'account_name' => $this->input['account_name'],
             'provider_location' => $this->input['provider_location'],
-            'notes'             => $this->input['notes'],
+            'notes' => $this->input['notes'],
         ]);
         $this->modalVisible = false;
 
@@ -83,6 +87,7 @@ class PaymentCompanyAdd extends Component
      */
     public function delete()
     {
+        $this->authorize('DELETE_SETTING', 'SETTING');
         $this->confirmingModalRemoval = false;
         CompanyPayment::destroy($this->item_id);
 
@@ -113,7 +118,7 @@ class PaymentCompanyAdd extends Component
     {
         $this->item_id = $id;
         $data = CompanyPayment::find($this->item_id);
-        $this->account_number = $data->account_name.' '.$data->account_number;
+        $this->account_number = $data->account_name . ' ' . $data->account_number;
         $this->confirmingModalRemoval = true;
     }
 

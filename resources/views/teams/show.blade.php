@@ -48,7 +48,7 @@
                         </div> -->
 
                         @livewire('teams.update-team-name-form', ['team' => $team])
-
+                        @livewire('team.invite-team-member-form', ['team' => $team])
                         @livewire('teams.team-member-manager', ['team' => $team])
 
                         @if (Gate::check('delete', $team) && ! $team->personal_team)
@@ -64,8 +64,5 @@
             </div>
         </div>
     </div>
-    <div class="grid grid-cols-12">
-
-
-    </div>
+    <div class="grid grid-cols-12"></div>
 </x-app-layout>

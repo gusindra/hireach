@@ -6,7 +6,7 @@
 
     <div class="grid grid-cols-12">
 
-        @includeWhen(auth()->user()->isSuper || (auth()->user()->team && auth()->user()->team->role == 'superadmin'),
+        @includeWhen(auth()->user()->isSuper || (auth()->user()->team && str_contains(auth()->user()->activeRole->role->name, 'Admin')),
             'menu.admin-menu-setting',
             []
         )
@@ -14,7 +14,7 @@
         <div class="col-span-12 px-3 ml-24 mt-2">
             <div class="bg-white dark:bg-slate-600 overflow-hidden shadow-xl sm:rounded-lg">
                 <div class="mx-auto">
-                    <div class="flex justify-between">
+                    <div class="flex justify-between flex-row-reverse">
                         <div class="p-4">
                             @livewire('provider.add')
                         </div>

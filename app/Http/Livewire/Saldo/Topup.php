@@ -4,11 +4,13 @@ namespace App\Http\Livewire\Saldo;
 
 use App\Models\SaldoUser;
 use App\Models\User;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Livewire\Component;
 use Illuminate\Support\Facades\Auth;
 
 class Topup extends Component
 {
+    use AuthorizesRequests;
     public $modalActionVisible = false;
     public $team;
     public $currency;
@@ -56,12 +58,12 @@ class Topup extends Component
     public function modelData()
     {
         $data = [
-            'team_id'       => $this->team,
-            'currency'      => $this->currency,
-            'amount'        => $this->amount,
-            'mutation'      => $this->mutation,
-            'description'   => $this->description,
-            'user_id'       => $this->user->id,
+            'team_id' => $this->team,
+            'currency' => $this->currency,
+            'amount' => $this->amount,
+            'mutation' => $this->mutation,
+            'description' => $this->description,
+            'user_id' => $this->user->id,
         ];
         return $data;
     }
@@ -77,6 +79,8 @@ class Topup extends Component
 
     public function actionShowModal()
     {
+
+        $this->authorize('UPDATE_USER', 'USER');
         $this->modalActionVisible = true;
     }
 

@@ -12,7 +12,7 @@
         <div class="col-span-6 sm:col-span-5">
             <x-jet-label for="slug" value="{{ __('Team Slug URL') }}" />
             <div >
-                <div class="mt-1 flex rounded-md shadow-sm">
+                <div class="mt-1 flex rounded-md">
                     <span class="inline-flex items-center px-3 rounded-l-md border border-r-0 dark:bg-slate-800 border-gray-300 bg-gray-50 text-gray-500 text-sm">
                         {{url('/')}}/chating/
                     </span>

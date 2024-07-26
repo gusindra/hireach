@@ -53,3 +53,4 @@
 
 @livewire('team.chat', ['team'=>$team])
 
+<x-jet-section-border />

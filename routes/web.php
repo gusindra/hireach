@@ -3,6 +3,7 @@
 use App\Http\Controllers\AdminSmsController;
 use App\Http\Controllers\ApiBulkSmsController;
 use App\Http\Controllers\ApiViGuardController;
+use App\Http\Controllers\PermissionController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\DevhookController;
 use App\Http\Controllers\WebhookController;
@@ -55,6 +56,11 @@ use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
+use Laravel\Jetstream\Http\Controllers\CurrentTeamController;
+use Laravel\Jetstream\Http\Controllers\Inertia\ApiTokenController;
+use Laravel\Jetstream\Http\Controllers\Inertia\TeamController;
+use Laravel\Jetstream\Http\Controllers\Inertia\UserProfileController;
+use Laravel\Jetstream\Jetstream;
 
 /*
 |--------------------------------------------------------------------------
@@ -116,9 +122,10 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
         Route::get('/settings/providers', [ProviderController::class, 'index'])->name('admin.settings.provider');
         Route::get('/settings/providers/{provider}', [ProviderController::class, 'show'])->name('admin.settings.provider.show');
 
-        Route::get('/permission', function () {
-            return view('permission.index', ['page' => 'permission']);
-        })->name('permission.index');
+        Route::get('/permission', [PermissionController::class, 'index'])->name('permission.index');
+
+
+
 
         Route::get('/flow/{model}', [FlowController::class, 'show'])->name('flow.show');
 
@@ -223,7 +230,7 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
     Route::get('/channel/{channel}', [ChannelController::class, 'show'])->name('channel.show');
     //Route::get('/channel/{channel}/{resource}', [ChannelController::class, 'view'])->name('channel.view');
 
-    Route::get('/assistant',  function () {
+    Route::get('/assistant', function () {
         return view('assistant.index');
     })->name('assistant');
 
@@ -541,24 +548,26 @@ Route::get('/tester', function (HttpRequest $request) {
             'minPurchase' => 10,
             'shortDescription' => "Test Produk Lagi",
             'description' => "Test HTMl Produk Lagi",
-            "variations" => array(array(
-                "sellingPrice" => array(
-                    "amount" => 20000,
-                    "currencyCode" => "IDR"
-                ),
-                "sku" => "2022007-001",
-                "stock" => array(
-                    "availableStock" => 10,
-                    "safetyAlert" => false,
-                    "safetyStock" => 0
-                ),
-                "status" => "ACTIVE",
-                "type" => "NORMAL",
-                "purchasePrice" => array(
-                    "amount" => 20000,
-                    "currencyCode" => "IDR"
-                ),
-            )),
+            "variations" => array(
+                array(
+                    "sellingPrice" => array(
+                        "amount" => 20000,
+                        "currencyCode" => "IDR"
+                    ),
+                    "sku" => "2022007-001",
+                    "stock" => array(
+                        "availableStock" => 10,
+                        "safetyAlert" => false,
+                        "safetyStock" => 0
+                    ),
+                    "status" => "ACTIVE",
+                    "type" => "NORMAL",
+                    "purchasePrice" => array(
+                        "amount" => 20000,
+                        "currencyCode" => "IDR"
+                    ),
+                )
+            ),
             "images" => [],
             "status" => "PENDING_REVIEW"
 
@@ -650,11 +659,11 @@ Route::get('/tester', function (HttpRequest $request) {
             foreach (explode(",", $request->post) as $key => $posts) {
                 $post = explode(":", $posts);
                 if (is_numeric($post[1])) {
-                    $POSTFIELDS[$post[0]] = (int)$post[1];
+                    $POSTFIELDS[$post[0]] = (int) $post[1];
                 } else {
                     $POSTFIELDS[$post[0]] = $post[1];
                 }
-                $POSTFIELDS[$post[0]] = is_numeric($post[1]) ? (int)$post[1] : $post[1];
+                $POSTFIELDS[$post[0]] = is_numeric($post[1]) ? (int) $post[1] : $post[1];
             }
         }
         $POSTFIELDS = json_encode($POSTFIELDS);
@@ -691,18 +700,21 @@ Route::get('/tester', function (HttpRequest $request) {
 
     $curl = curl_init();
 
-    curl_setopt_array($curl, array(
-        CURLOPT_URL => $ginee_url . $url,
-        CURLOPT_RETURNTRANSFER => true,
-        CURLOPT_ENCODING => '',
-        CURLOPT_MAXREDIRS => 10,
-        CURLOPT_TIMEOUT => 0,
-        CURLOPT_FOLLOWLOCATION => true,
-        CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-        CURLOPT_CUSTOMREQUEST => $method,
-        CURLOPT_POSTFIELDS => $POSTFIELDS,
-        CURLOPT_HTTPHEADER => $headers,
-    ));
+    curl_setopt_array(
+        $curl,
+        array(
+            CURLOPT_URL => $ginee_url . $url,
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_ENCODING => '',
+            CURLOPT_MAXREDIRS => 10,
+            CURLOPT_TIMEOUT => 0,
+            CURLOPT_FOLLOWLOCATION => true,
+            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+            CURLOPT_CUSTOMREQUEST => $method,
+            CURLOPT_POSTFIELDS => $POSTFIELDS,
+            CURLOPT_HTTPHEADER => $headers,
+        )
+    );
 
     $response = curl_exec($curl);
 
@@ -890,4 +902,24 @@ Route::get('/joymove', function (HttpRequest $request) {
     ]);
     return $response;
     return $request->all();
+});
+
+
+$authMiddleware = config('jetstream.guard')
+    ? 'auth:' . config('jetstream.guard')
+    : 'auth';
+
+$authSessionMiddleware = config('jetstream.auth_session', false)
+    ? config('jetstream.auth_session')
+    : null;
+
+Route::group(['middleware' => 'web'], function () {
+    // Teams...
+
+    Route::get('/team-invitations/{invitation}', [TeamInvitationController::class, 'accept'])
+        ->middleware(['signed'])
+        ->name('team-invitations.accept');
+    // Route::get('/team-invitations/{invitation}', function () {
+    //     return 1;
+    // });
 });

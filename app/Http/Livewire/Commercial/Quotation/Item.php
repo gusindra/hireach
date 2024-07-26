@@ -5,11 +5,13 @@ namespace App\Http\Livewire\Commercial\Quotation;
 use App\Models\CommerceItem;
 use App\Models\Input;
 use App\Models\OrderProduct;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Livewire\Component;
 use Illuminate\Support\Facades\Auth;
 
 class Item extends Component
 {
+    use AuthorizesRequests;
     public $data;
     public $products;
     public $item_id;
@@ -41,19 +43,20 @@ class Item extends Component
     public function modelData()
     {
         return [
-            'model_id'      => $this->data->id,
-            'model'         => 'Quotation',
-            'name'          => $this->name,
-            'qty'           => $this->qty,
-            'unit'          => $this->unit,
-            'price'         => $this->price,
-            'note'          => $this->description,
-            'user_id'       => Auth::user()->id
+            'model_id' => $this->data->id,
+            'model' => 'Quotation',
+            'name' => $this->name,
+            'qty' => $this->qty,
+            'unit' => $this->unit,
+            'price' => $this->price,
+            'note' => $this->description,
+            'user_id' => Auth::user()->id
         ];
     }
 
     public function create()
     {
+        $this->authorize('UPDATE_QUOTATION', 'QUOTATION');
         $this->validate();
         $this->modalVisible = false;
         OrderProduct::create($this->modelData());
@@ -63,19 +66,20 @@ class Item extends Component
 
     public function addProduct()
     {
+        $this->authorize('UPDATE_QUOTATION', 'QUOTATION');
         $this->validate();
         $this->modalProductVisible = false;
         $product = CommerceItem::find($this->selectedProduct);
         OrderProduct::create([
-            'model_id'      => $this->data->id,
-            'model'         => 'Quotation',
-            'product_id'    => $product->id,
-            'name'          => $product->name,
-            'price'         => $product->unit_price,
-            'qty'          => $this->qty,
-            'unit'          => $this->unit,
-            'note'          => $this->description,
-            'user_id'       => Auth::user()->id
+            'model_id' => $this->data->id,
+            'model' => 'Quotation',
+            'product_id' => $product->id,
+            'name' => $product->name,
+            'price' => $product->unit_price,
+            'qty' => $this->qty,
+            'unit' => $this->unit,
+            'note' => $this->description,
+            'user_id' => Auth::user()->id
         ]);
         $this->resetForm();
         $this->emit('added');
@@ -88,6 +92,7 @@ class Item extends Component
      */
     public function update()
     {
+        $this->authorize('UPDATE_QUOTATION', 'QUOTATION');
         $this->validate();
         OrderProduct::find($this->item_id)->update([
             'name' => $this->name,
@@ -108,6 +113,7 @@ class Item extends Component
      */
     public function delete()
     {
+        $this->authorize('DELETE_QUOTATION', 'QUOTATION');
         $this->confirmingModalRemoval = false;
         OrderProduct::destroy($this->item_id);
 

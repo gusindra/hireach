@@ -95,7 +95,7 @@
                 {{ __('Cancel') }}
             </x-jet-secondary-button>
 
-            <x-jet-button class="ml-2" wire:click="create" wire:loading.attr="disabled">
+            <x-jet-button :disabled="!userAccess('USER', 'create')" class="ml-2" wire:click="create" wire:loading.attr="disabled">
                 {{ __('Save') }}
             </x-jet-button>
         </x-slot>

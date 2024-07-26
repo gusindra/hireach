@@ -4,10 +4,12 @@ namespace App\Http\Livewire\Setting\General\CommerceItem;
 
 use App\Models\CommerceItem;
 use App\Models\ProductLine;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Livewire\Component;
 
 class Edit extends Component
 {
+    use AuthorizesRequests;
     public $commerceItem;
     public $productLines;
     public $modalActionVisible = false;
@@ -28,19 +30,19 @@ class Edit extends Component
         'user_id' => '',
     ];
     protected $rules = [
-        'input.sku'         => 'required|string|max:255',
-        'input.name'        => 'required|string|max:255',
-        'input.type'        => 'required|string|max:255',
-        'input.unit'        => 'required|max:50',
-        'input.status'      => 'required|string|max:50',
-        'input.unit_price'  => 'required|numeric',
-        'input.spec'        => 'nullable|string|max:255',
+        'input.sku' => 'required|string|max:255',
+        'input.name' => 'required|string|max:255',
+        'input.type' => 'required|string|max:255',
+        'input.unit' => 'required|max:50',
+        'input.status' => 'required|string|max:50',
+        'input.unit_price' => 'required|numeric',
+        'input.spec' => 'nullable|string|max:255',
         'input.description' => 'nullable|string',
         'input.general_discount' => 'nullable|numeric',
-        'input.fs_price'    => 'nullable|numeric',
-        'input.way_import'  => 'nullable|string|max:255',
+        'input.fs_price' => 'nullable|numeric',
+        'input.way_import' => 'nullable|string|max:255',
         // 'input.product_line' => 'integer|exists:product_lines,id',
-    ];    
+    ];
 
     /**
      * modalAction
@@ -50,8 +52,8 @@ class Edit extends Component
     public function modalAction()
     {
         $this->modalActionVisible = true;
-    }    
-    
+    }
+
     /**
      * mount
      *
@@ -77,7 +79,7 @@ class Edit extends Component
         $this->input['user_id'] = $this->commerceItem->user_id ?? '';
         $this->productLines = ProductLine::all();
     }
-    
+
     /**
      * modelData
      *
@@ -85,15 +87,15 @@ class Edit extends Component
      */
     public function modelData()
     {
-        if($this->input['type']!='nosku'){
+        if ($this->input['type'] != 'nosku') {
             $this->input['unit'] = 1;
         }
-        if($this->input['type']!='sku' || $this->input['type']!='nosku'){
+        if ($this->input['type'] != 'sku' || $this->input['type'] != 'nosku') {
             $this->input['way_import'] = 'none';
         }
         return $this->input;
     }
-    
+
     /**
      * update
      *
@@ -102,13 +104,14 @@ class Edit extends Component
      */
     public function update($id)
     {
+        $this->authorize('UPDATE_SETTING', 'SETTING');
         //dd($this->modelData());
         $this->validate();
         CommerceItem::findOrFail($id)->update($this->modelData());
 
         $this->emit('saved');
     }
-    
+
     /**
      * delete
      *
@@ -116,11 +119,12 @@ class Edit extends Component
      */
     public function delete()
     {
+        $this->authorize('DELETE_SETTING', 'SETTING');
         $this->commerceItem->delete();
         $this->modalActionVisible = false;
         return redirect()->route('settings.company');
     }
-    
+
     public function render()
     {
         return view('livewire.setting.general.commerce-item.edit');

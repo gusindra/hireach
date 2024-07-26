@@ -1,6 +1,7 @@
 <div>
-    @if (Gate::check('addTeamMember', $team) || ($this->user->team && $this->user->team->role == 'admin'))
+    {{-- @if (Gate::check('addTeamMember', $team) || ($this->user->team && $this->user->team->role == 'admin'))
         <x-jet-section-border />
+
 
         <!-- Add Team Member -->
         <div class="mt-10 sm:mt-0">
@@ -72,9 +73,9 @@
                 </x-slot>
             </x-jet-form-section>
         </div>
-    @endif
+    @endif --}}
 
-    @if ($team->teamInvitations->isNotEmpty() && (Gate::check('addTeamMember', $team) || ($this->user->team && $this->user->team->role == 'admin')))
+    {{-- @if ($team->teamInvitations->isNotEmpty() && (Gate::check('addTeamMember', $team) || ($this->user->team && $this->user->team->role == 'admin')))
         <x-jet-section-border />
 
         <!-- Team Member Invitations -->
@@ -109,7 +110,7 @@
                 </x-slot>
             </x-jet-action-section>
         </div>
-    @endif
+    @endif --}}
 
     @if ($team->users->isNotEmpty())
         <x-jet-section-border />

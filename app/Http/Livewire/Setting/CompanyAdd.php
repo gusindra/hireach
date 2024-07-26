@@ -3,11 +3,14 @@
 namespace App\Http\Livewire\Setting;
 
 use App\Models\Company;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
 
 class CompanyAdd extends Component
 {
+    use AuthorizesRequests;
+
     public $modalActionVisible = false;
     public $user;
     public $input;
@@ -28,7 +31,8 @@ class CompanyAdd extends Component
 
     public function create()
     {
-        $this->validate(); 
+        $this->authorize('CREATE_SETTING', 'SETTING');
+        $this->validate();
         $this->user = Auth::user()->id;
         if(@Auth::user()->super->first()->role == 'superadmin'){
             $this->user = 0;
@@ -44,7 +48,7 @@ class CompanyAdd extends Component
             'address'  => $this->input['address'],
             'person_in_charge'  => $this->input['person_in_charge'],
             'user_id'  => $this->user,
-        ]); 
+        ]);
         $this->modalActionVisible = false;
         $this->resetForm();
         $this->emit('refreshLivewireDatatable');

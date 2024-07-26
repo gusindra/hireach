@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\CommerceItem;
 use App\Models\Company;
+use App\Models\Permission;
 use App\Models\ProductLine;
 use Auth;
 
@@ -14,17 +15,13 @@ class SettingController extends Controller
     {
         $this->middleware(function ($request, $next) {
             // Your auth here
+            $granted = false;
             $user = auth()->user();
-
-            if ($user->super->first()) {
-                if ($user->super->first()->role == 'superadmin') {
-                    return $next($request);
-                }
-            }
-            if ((auth()->user()->activeRole && str_contains(auth()->user()->activeRole->role->name, "Admin"))) {
+            $granted = userAccess('SETTING');
+            if ($granted) {
                 return $next($request);
             }
-            abort(404);
+            abort(403);
         });
     }
 

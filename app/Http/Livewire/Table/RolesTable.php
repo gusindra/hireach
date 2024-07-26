@@ -21,15 +21,19 @@ class RolesTable extends LivewireDatatable
     public function columns()
     {
         return [
+            Column::callback(['name','id'], function ($name,$id) {
+                return view('datatables::link', [
+                    'href' => "/admin/roles/" . $id,
+                    'slot' => $name
+                ]);
+                //return $x;
+            })->label('Name')->searchable(),
             Column::name('name')->label('Name'),
             Column::name('description')->label('Description'),
             Column::name('type')->label('Type'),
             BooleanColumn::name('status')->label('Active'),
-            NumberColumn::name('id')->label('Detail')->sortBy('id')->callback('id', function ($value) {
-                return view('datatables::link', [
-                    'href' => 'roles/' . $value,
-                    'slot' => 'View'
-                ]);
+            NumberColumn::name('id')->label('Action')->sortBy('id')->callback('id', function ($value) {
+
             }),
 
         ];

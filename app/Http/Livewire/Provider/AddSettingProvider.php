@@ -4,10 +4,12 @@ namespace App\Http\Livewire\Provider;
 
 use App\Models\Provider;
 use App\Models\SettingProvider;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Livewire\Component;
 
 class AddSettingProvider extends Component
 {
+    use AuthorizesRequests;
     public $provider;
     public $providerId;
     public $key;
@@ -43,6 +45,7 @@ class AddSettingProvider extends Component
 
     public function create()
     {
+        $this->authorize('CREATE_SETTING', 'SETTING');
         $this->validate();
 
         $action = SettingProvider::firstOrCreate([
@@ -66,6 +69,7 @@ class AddSettingProvider extends Component
 
     public function delete()
     {
+        $this->authorize('DELETE_SETTING', 'SETTING');
         $settingProvider = SettingProvider::findOrFail($this->actionId);
         $settingProvider->delete();
 

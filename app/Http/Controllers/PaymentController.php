@@ -9,6 +9,23 @@ use Illuminate\Support\Facades\Auth;
 
 class PaymentController extends Controller
 {
+    // public $user_info;
+    // public function __construct()
+    // {
+
+
+    //     $this->middleware(function ($request, $next) {
+    //         // Your auth here
+    //         $granted = false;
+    //         $user = auth()->user();
+    //         $granted = userAccess('PAYMENT');
+
+    //         if ($granted) {
+    //             return $next($request);
+    //         }
+    //         abort(403);
+    //     });
+    // }
 
     public function index(Request $request)
     {

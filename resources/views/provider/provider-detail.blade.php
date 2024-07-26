@@ -4,7 +4,7 @@
             <div class="justify-end flex">
                 <div class="items-center justify-end px-2 mb-3">
                     <div class="space-x-1 sm:-my-px">
-                        <x-jet-nav-link href="{{ route('settings.show', 'company') }}">
+                        <x-jet-nav-link href="{{ route('settings.show', 'providers') }}">
                             {{ __('Provider') }}
                         </x-jet-nav-link>
                         <span class="inline-flex items-center px-1 pt-1 text-xs font-medium leading-5 text-gray-900 ">
@@ -23,7 +23,7 @@
             </div>
         </div>
     </header>
-    @includeWhen(auth()->user()->isSuper || (auth()->user()->team && auth()->user()->team->role == 'superadmin'),
+    @includeWhen(auth()->user()->isSuper || (auth()->user()->team && str_contains(auth()->user()->activeRole->role->name, 'Admin')),
         'menu.admin-menu-setting',
         []
     )

@@ -23,20 +23,29 @@ class AddTeamMember implements AddsTeamMembers
      */
     public function add($user, $team, string $email, string $role = null)
     {
-        dd(1);
-        Gate::forUser($user)->authorize('addTeamMember', $team);
+        if(auth()->user()->email == $email){
+            Gate::forUser($user)->authorize('addTeamMember', $team);
 
-        $this->validate($team, $email, $role);
+            $this->validate($team, $email, $role);
 
-        $newTeamMember = Jetstream::findUserByEmailOrFail($email);
+            $newTeamMember = Jetstream::findUserByEmailOrFail($email);
 
-        AddingTeamMember::dispatch($team, $newTeamMember);
+            AddingTeamMember::dispatch($team, $newTeamMember);
 
-        $team->users()->attach(
-            $newTeamMember, ['role' => $role]
-        );
+            $team->users()->attach(
+                $newTeamMember, ['role' => $role]
+            );
 
-        TeamMemberAdded::dispatch($team, $newTeamMember);
+            TeamMemberAdded::dispatch($team, $newTeamMember);
+        }else{
+            return function ($validator) use ($team, $email) {
+                $validator->errors()->addIf(
+                    $team->hasUserWithEmail($email),
+                    'email',
+                    __('Please login / register using email Invitation.')
+                );
+            };
+        }
     }
 
     /**

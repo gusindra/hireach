@@ -4,10 +4,12 @@ namespace App\Http\Livewire\Setting\General\ProductLine;
 
 use App\Models\Company;
 use App\Models\ProductLine;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Livewire\Component;
 
 class Edit extends Component
 {
+    use AuthorizesRequests;
     public $productLine;
     public $company;
     public $modalActionVisible = false;
@@ -41,6 +43,7 @@ class Edit extends Component
 
     public function updateProductLine($id)
     {
+        $this->authorize('UPDATE_SETTING', 'SETTING');
         $this->validate();
         $productLine = ProductLine::findOrFail($id);
         $productLine->update($this->input);
@@ -49,6 +52,7 @@ class Edit extends Component
     }
     public function delete()
     {
+        $this->authorize('DELETE_SETTING', 'SETTING');
         $this->productLine->delete();
         $this->modalActionVisible = false;
         return redirect()->route('settings.company');

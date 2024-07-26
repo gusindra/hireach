@@ -3,10 +3,12 @@
 namespace App\Http\Livewire\Setting;
 
 use App\Models\Setting;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Livewire\Component;
 
 class Edit extends Component
 {
+    use AuthorizesRequests;
     public $key;
     public $value;
     public $remark;
@@ -32,12 +34,14 @@ class Edit extends Component
         // $this->showModal = true;
     }
 
-    public function showModalUpdate($settingId){
+    public function showModalUpdate($settingId)
+    {
         dd($settingId);
     }
 
     public function update()
     {
+        $this->authorize('UPDATE_SETTING', 'SETTING');
         $this->validate();
 
         $setting = Setting::findOrFail($this->selectedSettingId);

@@ -34,6 +34,37 @@
     </head>
     <body class="font-sans antialiased" style="zoom:90%;">
         <x-jet-banner />
+        @if (session('message'))
+            <div x-data="{'show':true,'style':'success','message':null}" :class="{ 'bg-indigo-500': style == 'success', 'bg-red-700': style == 'danger' }" x-show="show" x-init="
+                document.addEventListener('message', event => {
+                    style = event.detail.style;
+                    message = event.detail.message;
+                    show = true;
+                });
+            ">
+                <div class="mx-auto py-2 px-3 sm:px-6 lg:px-8">
+                    <div class="flex items-center justify-between flex-wrap">
+                        <div class="w-0 flex-1 flex items-center min-w-0">
+                            <span class="flex p-2 rounded-lg bg-indigo-600" :class="{ 'bg-indigo-600': style == 'success', 'bg-red-600': style == 'danger' }">
+                                <svg class="h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                </svg>
+                            </span>
+
+                            <p class="ml-3 font-medium text-sm text-white truncate">{{ session('message') }}</p>
+                        </div>
+
+                        <div class="flex-shrink-0 sm:ml-3">
+                            <button type="button" class="-mr-1 flex p-2 rounded-md focus:outline-none sm:-mr-2 transition hover:bg-indigo-600 focus:bg-indigo-600" :class="{ 'hover:bg-indigo-600 focus:bg-indigo-600': style == 'success', 'hover:bg-red-600 focus:bg-red-600': style == 'danger' }" aria-label="Dismiss" x-on:click="show = false">
+                                <svg class="h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        @endif
         <div class="min-h-screen bg-white dark:bg-slate-900">
             {{-- <button x-cloak x-on:click="darkMode==='true' || darkMode==true ? darkMode=false : darkMode=true;" class="inline-flex right-10 md:right-0 m-5">
                 <!-- Icon Moon -->
@@ -119,17 +150,5 @@
             <source src="{{url('/assets/sound/notif.wav')}}" type="audio/wav">
             Your browser does not support the audio element.
         </audio>
-
-        <!-- <script>
-            (function(n,o,t,i,f) {
-                n[i] = {}; var m = ['init', 'on']; n[i]._c = [];m.forEach(me => n[i][me] = function() {n[i]._c.push([me, arguments])});
-                var elt = o.createElement(f); elt.type = "text/javascript"; elt.async = true; elt.src = t;
-                var before = o.getElementsByTagName(f)[0]; before.parentNode.insertBefore(elt, before);
-            })(window, document, 'https://embed.novu.co/embed.umd.min.js', 'novu', 'script');
-
-            novu.init('GmksWJkfvKlW', '#notification-bell', {
-                subscriberId: "on-boarding-subscriber-id-123",
-            });
-        </script> -->
     </body>
 </html>

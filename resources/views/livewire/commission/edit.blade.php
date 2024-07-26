@@ -77,7 +77,7 @@
                 {{ __('Agent removed.') }}
             </x-jet-action-message>
 
-            <x-save-button show="{{ $master->status == 'draft' ? true : false }}">
+            <x-save-button :disabled="!userAccess('ORDER', 'update')" show="{{ $master->status == 'draft' ? true : false }}">
                 {{ __('Save') }}
                 </x-jet-button>
         </x-slot>
