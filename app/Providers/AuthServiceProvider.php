@@ -46,7 +46,7 @@ class AuthServiceProvider extends ServiceProvider
 
         foreach ($per as $p) {
 
-            if ($p->for === 'admin' && !empty(auth()->user()->activeRole)) {
+            if ($p->for === 'admin') {
                 if (stripos($p->name, "CREATE") !== false) {
                     Gate::define(str_replace(" ", "_", $p->name), [AdminPolicy::class, "create"]);
                 } elseif (stripos($p->name, "UPDATE") !== false) {

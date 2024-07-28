@@ -60,7 +60,8 @@ class Edit extends Component
      */
     public function mount($campaign)
     {
-        $campaign = Campaign::where('id', $campaign)->where('user_id', Auth::id())->firstOrFail();
+
+        $campaign = Campaign::find($campaign);
         $this->campaign = $campaign;
         $this->campaign_id = $campaign->id;
         $this->template_id = $campaign->template_id;
@@ -454,7 +455,7 @@ class Edit extends Component
 
     public function render()
     {
-        $this->authorize('VIEW_CAMPAIGN', $this->campaign->user_id);
+        $this->authorize('VIEW_RESOURCE', $this->campaign->user_id);
         return view('livewire.campaign.edit');
     }
 }

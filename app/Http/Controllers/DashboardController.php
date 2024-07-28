@@ -181,7 +181,7 @@ class DashboardController extends Controller
 
     public function getInBound()
     {
-        $this->authorize('VIEW_DASHBOARD', 'DASHBOARD');
+
         $currentMonth = now()->format('Y-m');
         $filterMonth = request()->input('filterMonth', $currentMonth);
         $year = substr($filterMonth, 0, 4);

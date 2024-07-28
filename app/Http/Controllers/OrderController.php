@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Client;
 use App\Models\Order;
 use App\Models\OrderProduct;
 use App\Models\Quotation;
+use App\Models\User;
 use Illuminate\Support\Facades\Auth as FacadesAuth;
 
 class OrderController extends Controller
@@ -54,8 +56,10 @@ class OrderController extends Controller
     }
     public function showUserOrder(Order $order)
     {
+        $client = Client::where('uuid', $order->customer_id)->first();
+        $user = User::where('email', $client->email)->first();
 
-        $this->authorize('VIEW_ORDER', auth()->user()->id);
+        $this->authorize('VIEW_ORDER', $user->id);
         $orderProducts = OrderProduct::where('model_id', $order->id)
             ->where('name', '!=', 'Tax')
             ->get();
