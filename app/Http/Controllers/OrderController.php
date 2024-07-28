@@ -13,17 +13,17 @@ class OrderController extends Controller
     public function __construct()
     {
 
-        $this->middleware(function ($request, $next) {
-            // Your auth here
-            $granted = false;
-            $user = auth()->user();
-            $granted = userAccess('ORDER');
+        // $this->middleware(function ($request, $next) {
+        //     // Your auth here
+        //     $granted = false;
+        //     $user = auth()->user();
+        //     $granted = userAccess('ORDER');
 
-            if ($granted) {
-                return $next($request);
-            }
-            abort(403);
-        });
+        //     if ($granted) {
+        //         return $next($request);
+        //     }
+        //     abort(403);
+        // });
     }
 
 
@@ -54,6 +54,8 @@ class OrderController extends Controller
     }
     public function showUserOrder(Order $order)
     {
+
+        $this->authorize('VIEW_ORDER', auth()->user()->id);
         $orderProducts = OrderProduct::where('model_id', $order->id)
             ->where('name', '!=', 'Tax')
             ->get();

@@ -10,6 +10,7 @@ use App\Models\Campaign;
 use App\Models\CampaignSchedule;
 use App\Models\ProviderUser;
 use App\Models\Template;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Livewire\Component;
 use Illuminate\Support\Facades\Auth;
 use Maatwebsite\Excel\Facades\Excel;
@@ -22,7 +23,7 @@ use Livewire\WithFileUploads;
 
 class Edit extends Component
 {
-    use WithFileUploads;
+    use WithFileUploads, AuthorizesRequests;
 
     public $campaign_id;
     public $campaign;
@@ -370,9 +371,9 @@ class Edit extends Component
 
             if (empty($this->audience_id)) {
                 $this->audience = Audience::create([
-                    'name'        => $this->title,
+                    'name' => $this->title,
                     'description' => 'This Audience Created Automatically at Campaign',
-                    'user_id'     => auth()->user()->id,
+                    'user_id' => auth()->user()->id,
                 ]);
                 $this->audience_id = $this->audience->id; // Set audience_id to the created audience's ID
             }
@@ -453,6 +454,7 @@ class Edit extends Component
 
     public function render()
     {
+        $this->authorize('VIEW_CAMPAIGN', $this->campaign->user_id);
         return view('livewire.campaign.edit');
     }
 }

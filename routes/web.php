@@ -62,6 +62,7 @@ use Laravel\Jetstream\Http\Controllers\Inertia\TeamController;
 use Laravel\Jetstream\Http\Controllers\Inertia\UserProfileController;
 use Laravel\Jetstream\Jetstream;
 
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -203,9 +204,7 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
 
     Route::get('/client', [CustomerController::class, 'index'])->name('client');
 
-    Route::get('/template', function () {
-        return view('template.index');
-    })->name('template');
+    Route::get('/template', [TemplateController::class, 'index'])->name('template');
     Route::get('/template/helper/index', function () {
         return view('livewire.template.table-helper');
     })->name('template.helper');
@@ -237,9 +236,8 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
     Route::get('/payment/deposit', [PaymentController::class, 'index'])->name('payment.deposit');
     Route::get('/payment/topup', [PaymentController::class, 'topup'])->name('payment.topup');
     Route::get('/quotation', [PaymentController::class, 'quotation'])->name('quotation');
-    Route::get('/order', function () {
-        return view('assistant.invoice.index');
-    })->name('user.order');
+    Route::get('/order', [PaymentController::class, 'orderUSer'])->name('user.order');
+
     Route::get('/order/{order}', [OrderController::class, 'showUserOrder'])->name('order.show');
     Route::get('/quotation/{quotation}', [PaymentController::class, 'quotationShow'])->name('quotation.show');
 
@@ -397,7 +395,14 @@ Route::get('/saveAlarm', [ApiViGuardController::class, 'index']);
 //
 Route::get('/test', [WebhookController::class, 'index']);
 Route::get('/testing', function () {
-    return 1;
+
+
+
+    return !empty(auth()->user()->activeRole);
+
+
+
+    // return 1;
     // $lastError = SaldoUser::find(63);
     // $errors = SaldoUser::where('balance', '<', 0)->where('user_id', '=', 1)->orderBy('id', 'asc')->get();
 

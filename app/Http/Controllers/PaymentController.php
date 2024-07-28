@@ -42,11 +42,18 @@ class PaymentController extends Controller
 
     public function quotation()
     {
+        $this->authorize('VIEW_QUOTATION', auth()->user()->id);
         return view('payment.quotation');
+    }
+    public function orderUser()
+    {
+        $this->authorize('VIEW_ORDER', auth()->user()->id);
+        return view('assistant.invoice.index');
     }
 
     public function quotationShow($id)
     {
+        $this->authorize('VIEW_QUOTATION', auth()->user()->id);
         $data = Quotation::find($id);
         return view('payment.show-quotation', compact('data'));
     }
@@ -58,4 +65,6 @@ class PaymentController extends Controller
 
         return view('payment.pay', ['order' => $id]);
     }
+
+
 }

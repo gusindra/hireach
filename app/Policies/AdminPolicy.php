@@ -101,6 +101,7 @@ class AdminPolicy
      */
     public function delete(User $user, $model)
     {
+
         $auth = Auth::user();
         if ($auth->super && $auth->super->isNotEmpty() && $auth->super->first()->role === 'superadmin') {
             return true;
