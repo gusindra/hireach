@@ -8,7 +8,7 @@ class TemplateController extends Controller
 {
     public function index()
     {
-
+        $this->authorize('VIEW_ANY_CHAT_USR');
         return view('template.index');
     }
 

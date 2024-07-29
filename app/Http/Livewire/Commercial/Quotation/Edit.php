@@ -160,7 +160,7 @@ class Edit extends Component
 
     public function update($id, $formName = 'basic')
     {
-        // $this->authorize('UPDATE_QUOTATION', 'QUOTATION');
+        $this->authorize('UPDATE_QUOTATION', 'QUOTATION');
         $this->formName = $formName;
         $this->validate();
         Quotation::find($id)->update($this->modelData());

@@ -4,6 +4,10 @@ use App\Http\Controllers\AdminSmsController;
 use App\Http\Controllers\ApiBulkSmsController;
 use App\Http\Controllers\ApiViGuardController;
 use App\Http\Controllers\PermissionController;
+use App\Http\Controllers\UserChatController;
+use App\Http\Controllers\UserOrderController;
+use App\Http\Controllers\UserQuotationController;
+use Illuminate\Auth\Access\Gate;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\DevhookController;
 use App\Http\Controllers\WebhookController;
@@ -181,9 +185,7 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
      */
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
-    Route::get('/campaign', function () {
-        return view('campaign.index');
-    })->name('campaign.index');
+    Route::get('/campaign', [CampaignController::class, 'index'])->name('campaign.index');
     Route::get('/campaign/{campaign}', [CampaignController::class, 'show'])->name('campaign.show');
 
 
@@ -198,10 +200,8 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
         return view('new');
     })->name('new');
 
-    Route::get('/message', function () {
-        return view('message');
-    })->name('message');
 
+    Route::get('/message', [UserChatController::class, 'index'])->name('message');
     Route::get('/client', [CustomerController::class, 'index'])->name('client');
 
     Route::get('/template', [TemplateController::class, 'index'])->name('template');
@@ -235,11 +235,10 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
 
     Route::get('/payment/deposit', [PaymentController::class, 'index'])->name('payment.deposit');
     Route::get('/payment/topup', [PaymentController::class, 'topup'])->name('payment.topup');
-    Route::get('/quotation', [PaymentController::class, 'quotation'])->name('quotation');
-    Route::get('/order', [PaymentController::class, 'orderUSer'])->name('user.order');
-
-    Route::get('/order/{order}', [OrderController::class, 'showUserOrder'])->name('order.show');
-    Route::get('/quotation/{quotation}', [PaymentController::class, 'quotationShow'])->name('quotation.show');
+    Route::get('/quotation', [UserQuotationController::class, 'quotation'])->name('quotation');
+    Route::get('/order', [UserOrderController::class, 'orderUSer'])->name('user.order');
+    Route::get('/order/{order}', [UserOrderController::class, 'showUserOrder'])->name('order.show');
+    Route::get('/quotation/{quotation}', [UserQuotationController::class, 'quotationShow'])->name('quotation.show');
 
     Route::get('/payment/invoice/{id}', [PaymentController::class, 'invoice'])->name('invoice.topup');
 
@@ -396,9 +395,17 @@ Route::get('/saveAlarm', [ApiViGuardController::class, 'index']);
 Route::get('/test', [WebhookController::class, 'index']);
 Route::get('/testing', function () {
 
+    // $gates = app(Gate::class)->abilities();
+    // // echo implode("\n", array_keys($gates));
+    // dd($gates);
+    $user = auth()->user();
 
+    if ($user->isNoAdmin && $user->isNoAdmin->role === "agen") {
+        $currentRoute = request()->route()->getName();
+        dd($currentRoute = request()->route()->getName() === 'messagea');
+        return $currentRoute === 'message'; // Periksa apakah route saat ini adalah 'messages'
+    }
 
-    return !empty(auth()->user()->activeRole);
 
 
 
@@ -490,7 +497,7 @@ Route::get('/testing', function () {
     // curl_close($curl);
     // echo $response;
 
-});
+})->name('messagea');
 
 Route::get('/tester', function (HttpRequest $request) {
     // return auth()->user()->super->first()->role;

@@ -36,8 +36,10 @@ class AuthServiceProvider extends ServiceProvider
      */
     public function boot()
     {
+
         $this->registerPolicies();
         Gate::define('update-template', [TemplatePolicy::class, 'update']);
+        Gate::define('VIEW_ANY_CHAT_USR', [UserPolicy::class, 'viewAny']);
 
         $per = cache()->remember('permissions', 1440, function () {
             return Permission::all();
@@ -56,19 +58,18 @@ class AuthServiceProvider extends ServiceProvider
                 } elseif (stripos($p->name, "VIEW") !== false) {
                     Gate::define(str_replace(" ", "_", $p->name), [AdminPolicy::class, "view"]);
                 }
-            } else {
-
-                if (stripos($p->name, "CREATE") !== false) {
-                    Gate::define(str_replace(" ", "_", $p->name), [UserPolicy::class, "create"]);
-                } elseif (stripos($p->name, "UPDATE") !== false) {
-                    Gate::define(str_replace(" ", "_", $p->name), [UserPolicy::class, "update"]);
-                } elseif (stripos($p->name, "DELETE") !== false) {
-                    Gate::define(str_replace(" ", "_", $p->name), [UserPolicy::class, "delete"]);
-                } elseif (stripos($p->name, "VIEW") !== false) {
-                    Gate::define(str_replace(" ", "_", $p->name), [UserPolicy::class, "view"]);
-                }
-
             }
+
+            if (stripos($p->name, "CREATE") !== false) {
+                Gate::define(str_replace(" ", "_", $p->name) . "_" . "USR", [UserPolicy::class, "create"]);
+            } elseif (stripos($p->name, "UPDATE") !== false) {
+                Gate::define(str_replace(" ", "_", $p->name) . "_" . "USR", [UserPolicy::class, "update"]);
+            } elseif (stripos($p->name, "DELETE") !== false) {
+                Gate::define(str_replace(" ", "_", $p->name) . "_" . "USR", [UserPolicy::class, "delete"]);
+            } elseif (stripos($p->name, "VIEW") !== false) {
+                Gate::define(str_replace(" ", "_", $p->name) . "_" . "USR", [UserPolicy::class, "view"]);
+            }
+
         }
 
 

@@ -4,6 +4,7 @@ namespace App\Policies;
 
 use App\Models\User;
 use Illuminate\Auth\Access\HandlesAuthorization;
+use Illuminate\Support\Facades\Route;
 
 class UserPolicy
 {
@@ -21,11 +22,55 @@ class UserPolicy
     public function view(User $user, $model)
     {
 
-        if ($model === $user->id || $model === auth()->user()->currentTeam->user->id) {
+        if ($user->isNoAdmin->role === "agen") {
+            if (Route::currentRouteName() === 'message') {
+                return true;
+            }
+
+            return false;
+        }
+
+
+        if ($model == $user->id || $model == auth()->user()->currentTeam->user->id) {
             return true;
         }
+
         return false;
     }
+
+
+    /**
+     * Determine whether the user can view any models.
+     *
+     * @param  \App\Models\User  $user
+     * @return mixed
+     */
+    public function viewAny(User $user)
+    {
+
+        if (!auth()->check()) {
+            return false;
+        }
+
+
+        if (!$user->isNoAdmin) {
+            return false;
+        }
+
+        $currentRoute = request()->route()->getName();
+
+        if ($user->isNoAdmin->role === "agen") {
+            return $currentRoute === 'message';
+        }
+
+        return true;
+    }
+
+
+
+
+
+
 
     /**
      * Determine whether the user can create users.
@@ -39,6 +84,8 @@ class UserPolicy
         return true;
 
     }
+
+
 
     /**
      * Determine whether the user can update the user.

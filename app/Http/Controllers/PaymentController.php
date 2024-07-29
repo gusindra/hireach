@@ -29,6 +29,7 @@ class PaymentController extends Controller
 
     public function index(Request $request)
     {
+        $this->authorize('VIEW_ANY_CHAT_USR');
         if ($request->has('v')) {
             return view('main-side.payment-deposit');
         }
