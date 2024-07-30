@@ -4,8 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
+return new class extends Migration {
     /**
      * Run the migrations.
      *
@@ -13,8 +12,8 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::table('provider_user', function (Blueprint $table) {
-            $table->string('from')->nullable();
+        Schema::table('permissions', function (Blueprint $table) {
+            $table->string('for', 50)->default('admin');
         });
     }
 
@@ -25,8 +24,8 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::table('provider_user', function (Blueprint $table) {
-            $table->dropColumn('from');
+        Schema::table('permissions', function (Blueprint $table) {
+            $table->dropColumn('for');
         });
     }
 };

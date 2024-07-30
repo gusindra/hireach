@@ -53,7 +53,7 @@ class Progress extends Component
 
     public function activated()
     {
-        $this->authorize('UPDATE_QUOTATION', 'QUOTATION');
+        $this->authorize('UPDATE_QUOTATION', auth()->user()->id);
         $this->model->update([
             'status' => 'active'
         ]);

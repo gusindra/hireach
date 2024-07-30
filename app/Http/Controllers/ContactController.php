@@ -15,21 +15,22 @@ use App\Exports\ExportContact;
 
 class ContactController extends Controller
 {
-    public $user_info;
-    public function __construct()
-    {
-        $this->middleware(function ($request, $next) {
-            // Your auth here
-            $this->user_info = auth()->user();
-            if ($this->user_info) {
-                return $next($request);
-            }
-            abort(404);
-        });
-    }
+    // public $user_info;
+    // public function __construct()
+    // {
+    //     $this->middleware(function ($request, $next) {
+    //         // Your auth here
+    //         $this->user_info = auth()->user();
+    //         if ($this->user_info) {
+    //             return $next($request);
+    //         }
+    //         abort(404);
+    //     });
+    // }
 
     public function index(Request $request)
     {
+        $this->authorize('VIEW_ANY_CHAT_USR');
         // if($request->has('v')){
         //     return view('main-side.user');
         // }
@@ -179,7 +180,7 @@ class ContactController extends Controller
                     $exsist = Client::where('user_id', auth()->user()->id)->where('phone', $perData[0])->count();
                     if ($exsist == 0) {
                         Client::create([
-                            'uuid'      => Str::uuid(),
+                            'uuid' => Str::uuid(),
                             'phone' => $perData[0],
                             'email' => $perData[1],
                             'name' => $perData[2],

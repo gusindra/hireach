@@ -92,6 +92,7 @@ class ResourceController extends Controller
 
     public function index()
     {
+        $this->authorize('VIEW_ANY_CHAT_USR', ['resource']);
         return view('resource.index');
     }
     public function show()

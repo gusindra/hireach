@@ -18,20 +18,20 @@ use Illuminate\Support\Facades\Auth as FacadesAuth;
 
 class DashboardController extends Controller
 {
-    // public $user_info;
-    // public function __construct()
-    // {
-    //     $this->middleware(function ($request, $next) {
-    //         // Your auth here
-    //         $granted = false;
-    //         $user = auth()->user();
-    //         $granted = userAccess('DASHBOARD');
-    //         if ($granted) {
-    //             return $next($request);
-    //         }
-    //         abort(403);
-    //     });
-    // }
+    public $user_info;
+    public function __construct()
+    {
+        $this->middleware(function ($request, $next) {
+            // Your auth here
+            $granted = false;
+            $user = auth()->user();
+            $granted = userAccess('DASHBOARD');
+            if ($granted) {
+                return $next($request);
+            }
+            abort(403);
+        });
+    }
 
     public function index(Request $request)
     {
@@ -181,6 +181,7 @@ class DashboardController extends Controller
 
     public function getInBound()
     {
+
         $currentMonth = now()->format('Y-m');
         $filterMonth = request()->input('filterMonth', $currentMonth);
         $year = substr($filterMonth, 0, 4);

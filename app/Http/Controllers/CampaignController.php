@@ -7,6 +7,12 @@ use Illuminate\Http\Request;
 
 class CampaignController extends Controller
 {
+    public function index()
+    {
+        $this->authorize('VIEW_ANY_CHAT_USR');
+        return view('campaign.index');
+    }
+
     public function show($campaign)
     {
 

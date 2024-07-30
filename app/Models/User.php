@@ -31,7 +31,15 @@ class User extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'name', 'email', 'password', 'handling', 'phone_no', 'nick', 'current_team_id', 'status'
+        'name',
+        'email',
+        'password',
+        'handling',
+        'phone_no',
+        'nick',
+        'current_team_id',
+        'status',
+        'reff_team_id'
     ];
 
     /**
@@ -126,6 +134,12 @@ class User extends Authenticatable
         return $this->hasMany('App\Models\TeamUser', 'user_id')->where('team_id', env('IN_HOUSE_TEAM_ID'));
     }
 
+    public function isNoAdmin()
+    {
+        return $this->hasOne('App\Models\TeamUser', 'user_id')->where('team_id', '!=', env('IN_HOUSE_TEAM_ID'));
+    }
+
+
     /**
      * User is Superuser
      *
@@ -203,7 +217,8 @@ class User extends Authenticatable
     }
     public function activeRole()
     {
-        return $this->hasOne('App\Models\RoleUser', 'user_id')->orderBy('active', 'desc');;
+        return $this->hasOne('App\Models\RoleUser', 'user_id')->orderBy('active', 'desc');
+        ;
     }
 
     /**
@@ -326,7 +341,7 @@ class User extends Authenticatable
      */
     public function switchTeam($team)
     {
-        if (! $this->belongsToTeam($team)) {
+        if (!$this->belongsToTeam($team)) {
             return false;
         }
 
@@ -370,6 +385,6 @@ class User extends Authenticatable
             return $t->id === $team->id;
         }) || $team->users->pluck('id')->contains(function ($u) use ($user) {
             return $u === $user;
-        }) ;
+        });
     }
 }

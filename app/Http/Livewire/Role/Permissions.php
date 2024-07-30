@@ -33,7 +33,7 @@ class Permissions extends Component
 
     public function check($id)
     {
-        $this->authorize('CREATE_ROLE', 'ROLE');
+        $this->authorize('UPDATE_ROLE', 'ROLE');
         if ($this->role->permission()->find($id)) {
             $this->role->permission()->detach($id);
             // Arr::except($this->request,[$id]);

@@ -2,11 +2,13 @@
 
 namespace App\Http\Livewire\Template;
 
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Livewire\Component;
 use App\Models\Input;
 
 class AddInput extends Component
 {
+    use AuthorizesRequests;
     public $endpoint_id;
     public $input_id;
     public $name;
@@ -28,13 +30,14 @@ class AddInput extends Component
     public function modelData()
     {
         return [
-            'name'          => $this->name,
-            'endpoint_id'   => $this->endpoint_id
+            'name' => $this->name,
+            'endpoint_id' => $this->endpoint_id
         ];
     }
 
     public function create()
     {
+
         $this->validate();
         Input::create($this->modelData());
         $this->modalVisible = false;
@@ -50,6 +53,7 @@ class AddInput extends Component
      */
     public function update()
     {
+
         $this->validate();
         Input::find($this->input_id)->update([
             'name' => $this->name
@@ -66,6 +70,7 @@ class AddInput extends Component
      */
     public function delete()
     {
+
         Input::destroy($this->input_id);
         $this->confirmingModalRemoval = false;
 
