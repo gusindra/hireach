@@ -68,6 +68,7 @@ class AuthServiceProvider extends ServiceProvider
             } elseif (stripos($p->name, "DELETE") !== false) {
                 Gate::define(str_replace(" ", "_", $p->name) . "_" . "USR", [UserPolicy::class, "delete"]);
             } elseif (stripos($p->name, "VIEW") !== false) {
+                Gate::define('VIEW_ANY_'.str_replace(" ", "_", $p->name).'_USR', [UserPolicy::class, 'viewAny']);
                 Gate::define(str_replace(" ", "_", $p->name) . "_" . "USR", [UserPolicy::class, "view"]);
             } elseif (stripos($p->name, "DELETE") !== false) {
                 Gate::define(str_replace(" ", "_", $p->name) . "_" . "USR", [TeamPolicy::class, "delete"]);

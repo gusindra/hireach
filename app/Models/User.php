@@ -38,7 +38,8 @@ class User extends Authenticatable
         'phone_no',
         'nick',
         'current_team_id',
-        'status'
+        'status',
+        'reff_team_id'
     ];
 
     /**

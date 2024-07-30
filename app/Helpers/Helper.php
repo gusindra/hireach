@@ -369,7 +369,7 @@ function listProjects($status, $party)
     return $data->orderBy('id', 'asc')->get();
 }
 
-function addLog($data, $before)
+function addLog($data, $before=null)
 {
     $diff = '';
     $bs = json_decode($before, TRUE);
@@ -432,23 +432,29 @@ function userAccess($menu, $action = 'view', $level = '')
         }
     }
     //LEVEL 2
-    $gp = cache()->remember('permission-' . $menu, 14400, function () use ($menu) {
-        return Permission::where('model', $menu)->pluck('name')->toArray();
-    });
+    if(auth()->user()->activeRole){
+        $gp = cache()->remember('permission-' . $menu, 14400, function () use ($menu) {
+            return Permission::where('model', $menu)->pluck('name')->toArray();
+        });
 
-    foreach (auth()->user()->activeRole->role->permission as $permission) {
-        if (in_array($permission->name, $gp)) {
-            if (stripos($permission->name, strtoupper($action)) !== false) {
-                return true;
+        foreach (auth()->user()->activeRole->role->permission as $permission) {
+            if (in_array($permission->name, $gp)) {
+                if (stripos($permission->name, strtoupper($action)) !== false) {
+                    return true;
+                }
             }
         }
     }
     //LEVEL 3
     if ($level == 'admin') {
         if ((auth()->user()->activeRole && str_contains(auth()->user()->activeRole->role->name, "Admin"))) {
-
             return true;
         }
+    }
+    // dd($menu );
+    //LEVEL 4
+    if ($menu == 'DASHBOARD') {
+        return true;
     }
     return false;
 }

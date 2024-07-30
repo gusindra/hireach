@@ -57,12 +57,17 @@ class AdminPolicy
         if ($auth->super && $auth->super->isNotEmpty() && $auth->super->first()->role === 'superadmin') {
             return true;
         }
-
-        foreach ($user->activeRole->role->permission as $permission) {
-            if (stripos($permission->name, strtoupper($model)) !== false) {
-                if (stripos($permission->name, "CREATE") !== false) {
-                    return true;
+        if($user->activeRole){
+            foreach ($user->activeRole->role->permission as $permission) {
+                if (stripos($permission->name, strtoupper($model)) !== false) {
+                    if (stripos($permission->name, "CREATE") !== false) {
+                        return true;
+                    }
                 }
+            }
+        }else{
+            if ($user->isNoAdmin && $user->isNoAdmin->role == "admin") {
+                return true;
             }
         }
         return false;

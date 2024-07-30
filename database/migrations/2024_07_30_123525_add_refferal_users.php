@@ -13,8 +13,8 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::table('provider_user', function (Blueprint $table) {
-            $table->string('from')->nullable();
+        Schema::table('users', function (Blueprint $table) {
+            $table->bigInteger('reff_team_id')->nullable();
         });
     }
 
@@ -25,8 +25,8 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::table('provider_user', function (Blueprint $table) {
-            $table->dropColumn('from');
+        Schema::table('users', function (Blueprint $table) {
+            $table->dropColumn('reff_team_id');
         });
     }
 };

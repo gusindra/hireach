@@ -38,17 +38,20 @@ class PaymentController extends Controller
 
     public function topup()
     {
+        $this->authorize('VIEW_ANY_CHAT_USR');
         return view('payment.topup');
     }
 
     public function quotation()
     {
 
+        $this->authorize('VIEW_ANY_CHAT_USR');
         return view('payment.quotation');
     }
     public function orderUser()
     {
 
+        $this->authorize('VIEW_ANY_CHAT_USR');
         return view('assistant.invoice.index');
     }
 

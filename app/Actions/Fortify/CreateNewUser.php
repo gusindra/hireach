@@ -44,7 +44,7 @@ class CreateNewUser implements CreatesNewUsers
         });
 
         if($input['email'] && $registeruser){
-            $role = 'client';
+            $role = 'admin';
             $newInvitation = RoleInvitation::where('email', $input['email'])->first();
             $newTeamMember = Jetstream::findUserByEmailOrFail($input['email']);
             if($newInvitation){
@@ -65,7 +65,10 @@ class CreateNewUser implements CreatesNewUsers
             }else{
                 $newInvitation = TeamInvitation::where('email', $input['email'])->first();
                 $team = Team::find($newInvitation->team_id);
+                $newTeamMember->update(['reff_team_id'=>$newInvitation->team_id]);
+                $role = $newInvitation->role;
                 $newInvitation->delete();
+
             }
             $team->users()->attach(
                 $newTeamMember, ['role' => $role]

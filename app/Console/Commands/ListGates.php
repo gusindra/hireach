@@ -41,7 +41,7 @@ class ListGates extends Command
 
             $carry[] = [
                 'Gate Name' => $key,
-
+                'Closure Contents' => '',
             ];
 
             return $carry;

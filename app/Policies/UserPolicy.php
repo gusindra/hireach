@@ -43,27 +43,19 @@ class UserPolicy
      * Determine whether the user can view any models.
      *
      * @param  \App\Models\User  $user
+     * @param  mixed  $menu
      * @return mixed
      */
-    public function viewAny(User $user)
+    public function viewAny(User $user, $menu='')
     {
-
-        if (!auth()->check()) {
-            return false;
+        if($menu=='message'){
+            return true;
+        }
+        if ($user->isNoAdmin && $user->isNoAdmin->role == "admin") {
+            return true;
         }
 
-
-        if (!$user->isNoAdmin) {
-            return false;
-        }
-
-        $currentRoute = request()->route()->getName();
-
-        if ($user->isNoAdmin->role === "agen") {
-            return $currentRoute === 'message';
-        }
-
-        return true;
+        return false;
     }
 
 
