@@ -40,6 +40,7 @@ class AuthServiceProvider extends ServiceProvider
         $this->registerPolicies();
         Gate::define('update-template', [TemplatePolicy::class, 'update']);
         Gate::define('VIEW_ANY_CHAT_USR', [UserPolicy::class, 'viewAny']);
+        Gate::define('DELETE_TEAM', [TeamPolicy::class, 'delete']);
 
         $per = cache()->remember('permissions', 1440, function () {
             return Permission::all();
@@ -68,6 +69,8 @@ class AuthServiceProvider extends ServiceProvider
                 Gate::define(str_replace(" ", "_", $p->name) . "_" . "USR", [UserPolicy::class, "delete"]);
             } elseif (stripos($p->name, "VIEW") !== false) {
                 Gate::define(str_replace(" ", "_", $p->name) . "_" . "USR", [UserPolicy::class, "view"]);
+            } elseif (stripos($p->name, "DELETE") !== false) {
+                Gate::define(str_replace(" ", "_", $p->name) . "_" . "USR", [TeamPolicy::class, "delete"]);
             }
 
         }
