@@ -10,7 +10,7 @@ class UserChatController extends Controller
     {
 
 
-        $this->authorize('VIEW_ANY_CHAT_USR');
+        $this->authorize('VIEW_ANY_CHAT_USR', ['message']);
         return view('message');
     }
 }
