@@ -33,6 +33,7 @@ class Edit extends Component
             'nick' => $this->inputuser['nick'],
             'phone_no' => $this->inputuser['phone_no'],
         ]);
+        addLog(User::find($id), $user);
         $this->emit('userSaved');
     }
 

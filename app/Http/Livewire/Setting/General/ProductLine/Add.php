@@ -31,11 +31,11 @@ class Add extends Component
         $this->authorize('CREATE_SETTING', 'SETTING');
         $this->validate();
 
-        ProductLine::create([
+        $new = ProductLine::create([
             'name' => $this->name,
             'company_id' => $this->company_id,
         ]);
-
+        addLog($new);
         $this->reset();
         $this->emit('refreshLivewireDatatable');
         $this->modalActionVisible = false;

@@ -26,7 +26,8 @@ class Add extends Component
     {
         $this->authorize('CREATE_SETTING', 'SETTING');
         $this->validate();
-        Provider::create($this->modelData());
+        $new = Provider::create($this->modelData());
+        addLog($new);
         $this->modalActionVisible = false;
         $this->resetForm();
         $this->emit('refreshLivewireDatatable');

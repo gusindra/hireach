@@ -32,6 +32,7 @@ class Roles extends Component
         $this->authorize('CREATE_ROLE', 'ROLE');
         $this->validate();
         Role::create($this->modelData());
+        addLog(Role::create($this->modelData()));
         $this->modalActionVisible = false;
         $this->resetForm();
         $this->emit('refreshLivewireDatatable');

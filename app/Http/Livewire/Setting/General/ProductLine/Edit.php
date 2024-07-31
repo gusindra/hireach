@@ -45,15 +45,18 @@ class Edit extends Component
     {
         $this->authorize('UPDATE_SETTING', 'SETTING');
         $this->validate();
-        $productLine = ProductLine::findOrFail($id);
+        $productLine = ProductLine::find($id);
+        $oldProductLine = clone $productLine;
         $productLine->update($this->input);
-
+        addLog($productLine, $oldProductLine);
         $this->emit('saved');
     }
+
     public function delete()
     {
         $this->authorize('DELETE_SETTING', 'SETTING');
         $this->productLine->delete();
+        addLog(null, $this->productLine);
         $this->modalActionVisible = false;
         return redirect()->route('settings.company');
     }

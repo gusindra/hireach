@@ -152,18 +152,26 @@ class Edit extends Component
         $this->authorize('DELETE_QUOTATION', 'QUOTATION');
         if ($this->quote) {
             $this->quote->delete();
+            addLog(null, $this->quote);
         }
         $this->modalDeleteVisible = false;
         return redirect()->route('admin.quotation');
     }
-
 
     public function update($id, $formName = 'basic')
     {
         $this->authorize('UPDATE_QUOTATION', 'QUOTATION');
         $this->formName = $formName;
         $this->validate();
+
+        $oldData = Quotation::find($id);
+        $oldDataJson = $oldData ? json_encode($oldData->toArray()) : null;
+
         Quotation::find($id)->update($this->modelData());
+
+        $newData = Quotation::find($id);
+        addLog($newData, $oldDataJson);
+
         $this->emit('saved');
     }
 

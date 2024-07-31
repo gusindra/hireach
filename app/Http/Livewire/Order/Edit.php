@@ -180,10 +180,14 @@ class Edit extends Component
 
     public function update($id)
     {
-        $this->authorize('VIEW_ORDER', $this->customer->user_id);
+        // $this->authorize('VIEW_ORDER', $this->customer->user_id);
         $this->validate();
         // dd($this->modelData());
-        $order = Order::find($id)->update($this->modelData());
+        $oldOrder = Order::find($id);
+        Order::find($id)->update($this->modelData());
+        addLog(Order::find($id), $oldOrder);
+
+
 
         $bill = Billing::updateOrCreate([
             'uuid' => Str::uuid(),
@@ -193,7 +197,7 @@ class Edit extends Component
             'amount' => $this->nominal,
             'order_id' => $this->order->id,
         ]);
-
+        addLog($bill);
         $this->emit('saved');
     }
 
@@ -211,6 +215,8 @@ class Edit extends Component
 
         if ($this->order) {
             $this->order->delete();
+
+            addLog(null, $this->order);
         }
         $this->modalDeleteVisible = false;
         return redirect()->route('admin.order');

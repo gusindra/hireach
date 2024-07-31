@@ -54,6 +54,8 @@ class AddSettingProvider extends Component
             'value' => $this->value,
         ]);
 
+        addLog($action);
+
         $this->modalActionVisible = false;
         $this->resetForm();
 
@@ -72,7 +74,7 @@ class AddSettingProvider extends Component
         $this->authorize('DELETE_SETTING', 'SETTING');
         $settingProvider = SettingProvider::findOrFail($this->actionId);
         $settingProvider->delete();
-
+        addLog(null, $settingProvider);
         $this->confirmingActionRemoval = false;
 
         $this->dispatchBrowserEvent('event-notification', [

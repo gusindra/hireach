@@ -59,7 +59,9 @@ class CompanyEdit extends Component
     {
         $this->authorize('UPDATE_SETTING', 'SETTING');
         $this->validate();
+        $old = Company::find($id);
         Company::find($id)->update($this->modelData());
+        addLog(Company::find($id), $old);
         $this->emit('saved');
     }
 
@@ -79,6 +81,7 @@ class CompanyEdit extends Component
         $this->authorize('DELETE_SETTING', 'SETTING');
         if ($this->company) {
             $this->company->delete();
+            addLog(null, $this->company);
         }
         $this->modalDeleteVisible = false;
         return redirect()->route('settings.company');

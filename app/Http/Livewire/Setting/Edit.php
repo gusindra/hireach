@@ -49,7 +49,7 @@ class Edit extends Component
             'value' => $this->value,
             'remark' => $this->remark,
         ]);
-
+        addLog(Setting::find($this->selectedSettingId), $setting);
         $this->reset(['key', 'value', 'remark', 'selectedSettingId', 'showModal']);
     }
 

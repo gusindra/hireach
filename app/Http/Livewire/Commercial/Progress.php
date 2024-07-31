@@ -96,6 +96,8 @@ class Progress extends Component
         if ($this->errorMessage) {
             return;
         }
+
+
         $this->model->update([
             'status' => 'submit'
         ]);

@@ -48,6 +48,7 @@ class Topup extends Component
     {
         $this->validate();
         $saldoUser = SaldoUser::create($this->modelData());
+        addLog($saldoUser);
         $this->modalActionVisible = false;
         $this->resetForm();
         $this->saldoUser = $saldoUser;

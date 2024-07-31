@@ -34,6 +34,7 @@ class Delete extends Component
     {
         $this->authorize('DELETE_USER', 'USER');
         $this->user->delete();
+        addLog(null, $this->user);
         $this->modalDeleteVisible = false;
         return redirect()->route('admin.user');
     }

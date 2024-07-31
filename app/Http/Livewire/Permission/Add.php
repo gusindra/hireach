@@ -31,14 +31,17 @@ class Add extends Component
 
         foreach ($this->type as $key => $menu) {
 
-            Permission::create([
+            $newData = Permission::create([
                 'name' => strtoupper($key . ' ' . $this->model),
                 'model' => strtoupper($this->model),
 
                 'for' => $this->for
             ]);
-
+            addLog($newData);
         }
+
+
+
 
         $this->modalActionVisible = false;
         $this->resetForm();

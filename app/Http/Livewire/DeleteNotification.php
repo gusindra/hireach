@@ -30,7 +30,7 @@ class DeleteNotification extends Component
         $data = Notice::find($this->notificationId);
         $data->delete();
         $data->update(['status' => 'deleted']);
-
+        addLog(null, $data);
         $this->modalDeleteVisible = false;
 
         $this->emit('notificationDeleted');

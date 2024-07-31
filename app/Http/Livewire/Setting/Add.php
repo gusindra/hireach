@@ -36,12 +36,12 @@ class Add extends Component
             'remark' => 'nullable|string',
         ]);
 
-        Setting::create([
+        $new = Setting::create([
             'key' => $this->key,
             'value' => $this->value,
             'remark' => $this->remark,
         ]);
-
+        addLog($new);
         $this->reset(['key', 'value', 'remark']);
         $this->showAddModal = false;
         session()->flash('message', 'Setting added successfully.');
@@ -65,17 +65,26 @@ class Add extends Component
             'remarkEdit' => 'nullable|string',
         ]);
 
-        $setting = Setting::findOrFail($this->selectedSettingId);
-        $setting->update([
+
+        $oldSetting = Setting::findOrFail($this->selectedSettingId);
+        $oldData = $oldSetting->toJson();
+
+
+        $oldSetting->update([
             'value' => $this->valueEdit,
             'remark' => $this->remarkEdit,
         ]);
 
+        $newSetting = Setting::findOrFail($this->selectedSettingId);
+
+        addLog($newSetting, $oldData);
+
         $this->reset(['key', 'value', 'remark', 'selectedSettingId', 'showEditModal']);
 
-        // CLEAR CACHE
+
         Cache::forget('vat_setting');
     }
+
 
     public function confirmDelete($id)
     {
@@ -85,7 +94,9 @@ class Add extends Component
 
     public function delete()
     {
+        $old = Setting::findOrFail($this->selectedSettingId);
         Setting::findOrFail($this->selectedSettingId)->delete();
+        addLog(null, $old);
         $this->showDeleteModal = false;
         $this->selectedSettingId = null;
         session()->flash('message', 'Setting deleted successfully.');

@@ -34,21 +34,23 @@ class CompanyAdd extends Component
         $this->authorize('CREATE_SETTING', 'SETTING');
         $this->validate();
         $this->user = Auth::user()->id;
-        if(@Auth::user()->super->first()->role == 'superadmin'){
+        if (@Auth::user()->super->first()->role == 'superadmin') {
             $this->user = 0;
         }
 
-        Company::create([
-            'name'  => $this->input['name'],
-            'code'  => $this->input['code'],
-            'tax_id'  => $this->input['tax_id'],
-            'post_code'  => $this->input['post_code'],
-            'province'  => $this->input['province'],
-            'city'  => $this->input['city'],
-            'address'  => $this->input['address'],
-            'person_in_charge'  => $this->input['person_in_charge'],
-            'user_id'  => $this->user,
+        $new = Company::create([
+            'name' => $this->input['name'],
+            'code' => $this->input['code'],
+            'tax_id' => $this->input['tax_id'],
+            'post_code' => $this->input['post_code'],
+            'province' => $this->input['province'],
+            'city' => $this->input['city'],
+            'address' => $this->input['address'],
+            'person_in_charge' => $this->input['person_in_charge'],
+            'user_id' => $this->user,
         ]);
+
+        addLog($new);
         $this->modalActionVisible = false;
         $this->resetForm();
         $this->emit('refreshLivewireDatatable');

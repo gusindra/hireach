@@ -51,29 +51,37 @@ class Edit extends Component
 
     public function update($id)
     {
-
         $data = Commision::where('model', $this->model)->where('model_id', $id)->first();
+        $oldData = $data ? $data->toArray() : null;
 
         if ($data) {
             $data->update([
-                'type'     => $this->type,
-                'ratio'     => $this->rate,
-                'status'    => $this->status,
+                'type' => $this->type,
+                'ratio' => $this->rate,
+                'status' => $this->status,
                 'client_id' => $this->clientId
             ]);
         } else {
-
             Commision::create([
-                'model'     => $this->model,
-                'model_id'  => $id,
-                'type'      => $this->type,
-                'ratio'     => $this->rate,
-                'status'    => $this->status,
+                'model' => $this->model,
+                'model_id' => $id,
+                'type' => $this->type,
+                'ratio' => $this->rate,
+                'status' => $this->status,
                 'client_id' => $this->clientId,
             ]);
         }
+
+        $newData = Commision::where('model', $this->model)->where('model_id', $id)->first();
+
+
+        $oldDataJson = $oldData ? json_encode($oldData) : null;
+
+        addLog($newData, $oldDataJson);
+
         $this->emit('saved');
     }
+
 
     public function removeAgent()
     {

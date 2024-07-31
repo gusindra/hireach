@@ -120,6 +120,7 @@ class AddProvider extends Component
     {
         $this->authorize('CREATE_USER', 'USER');
         $action = ProviderUser::firstOrCreate($this->modelData(), $this->modelData());
+        addLog($action);
         $this->modalActionVisible = false;
         $this->resetForm();
         if ($action->wasRecentlyCreated) {
@@ -148,7 +149,7 @@ class AddProvider extends Component
             'from' => strtoupper($this->input['from']),
             'user_id' => $this->userId
         ]);
-
+        addLog($action);
         $this->modalActionVisible = false;
         $this->resetForm();
         if ($action->wasRecentlyCreated) {
@@ -184,6 +185,7 @@ class AddProvider extends Component
         $this->authorize('UPDATE_USER', 'USER');
         $userClient = ProviderUser::findOrFail($this->actionId);
         $userClient->delete();
+        addLog(null, $userClient);
         $this->confirmingActionRemoval = false;
 
         $this->dispatchBrowserEvent('event-notification', [

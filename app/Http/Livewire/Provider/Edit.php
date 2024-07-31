@@ -74,7 +74,10 @@ class Edit extends Component
     {
         $this->authorize('UPDATE_SETTING', 'SETTING');
         $this->validate();
+        $old = Provider::find($id);
+
         Provider::find($id)->update($this->modelData());
+        addLog(Provider::find($id), $old);
         $this->emit('saved');
     }
 
@@ -95,9 +98,10 @@ class Edit extends Component
      */
     public function delete()
     {
-        $this->authorize('CDELETE_SETTING', 'SETTING');
+        $this->authorize('DELETE_SETTING', 'SETTING');
         if ($this->provider) {
             $this->provider->delete();
+            addLog(null, $this->provider);
         }
         $this->modalDeleteVisible = false;
         return redirect()->route('admin.settings.provider');

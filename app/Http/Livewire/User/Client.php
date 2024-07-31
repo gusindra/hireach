@@ -50,7 +50,7 @@ class Client extends Component
             'phone_no' => $this->phone,
             'password' => Hash::make($this->password),
         ]);
-
+        addLog($newUser);
         return redirect()->route('user.show.client', ['user' => $this->user->id]);
     }
 

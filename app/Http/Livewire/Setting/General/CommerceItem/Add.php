@@ -46,7 +46,7 @@ class Add extends Component
         $this->authorize('CREATE_SETTING', 'SETTING');
         $this->validate();
 
-        CommerceItem::create([
+        $new = CommerceItem::create([
             'sku' => $this->sku,
             'name' => $this->name,
             'spec' => $this->spec,
@@ -56,7 +56,7 @@ class Add extends Component
             'product_line' => $this->product_line,
             'user_id' => Auth::id(),
         ]);
-
+        addLog($new);
         $this->reset();
         $this->emit('refreshLivewireDatatable');
         $this->modalActionVisible = false;

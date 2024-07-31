@@ -107,8 +107,9 @@ class Edit extends Component
         $this->authorize('UPDATE_SETTING', 'SETTING');
         //dd($this->modelData());
         $this->validate();
+        $old = CommerceItem::findOrFail($id);
         CommerceItem::findOrFail($id)->update($this->modelData());
-
+        addLog(CommerceItem::findOrFail($id), $old);
         $this->emit('saved');
     }
 
@@ -121,6 +122,7 @@ class Edit extends Component
     {
         $this->authorize('DELETE_SETTING', 'SETTING');
         $this->commerceItem->delete();
+        addLog(null, $this->commerceItem);
         $this->modalActionVisible = false;
         return redirect()->route('settings.company');
     }

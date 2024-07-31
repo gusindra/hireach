@@ -90,6 +90,7 @@ class Add extends Component
         // $this->validate();
         $this->authorize('CREATE_ORDER', 'ORDER');
         $order = Order::create($this->modelData());
+        addLog($order);
         $this->modalActionVisible = false;
         $this->resetForm();
         $this->emit('refreshLivewireDatatable');

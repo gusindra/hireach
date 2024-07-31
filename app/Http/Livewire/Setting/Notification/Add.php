@@ -63,7 +63,7 @@ class Add extends Component
     {
 
         $this->authorize('CREATE_NOTICE', 'NOTICE');
-        Notice::create([
+        $new = Notice::create([
             'type' => $type,
             'model' => null,
             'model_id' => null,
@@ -71,6 +71,8 @@ class Add extends Component
             'user_id' => $user,
             'status' => 'unread'
         ]);
+
+        addLog($new);
     }
 
     public function resetForm()

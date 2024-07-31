@@ -36,7 +36,7 @@ class Member extends Component
             'role_id' => $this->role,
             'team_id' => auth()->user()->current_team_id
         ]);
-
+        addLog($invitation);
         $this->inviteLink = URL::signedRoute('role-invitations.accept', [
             'invitation' => $invitation->id,
         ]);
@@ -66,7 +66,9 @@ class Member extends Component
     public function removeTeamMember()
     {
         $this->authorize('UPDATE_ROLE', 'ROLE');
+        $old = RoleInvitation::find($this->inviteCancel);
         RoleInvitation::find($this->inviteCancel)->delete();
+        addLog(null, $old);
         $this->confirmingTeamMemberRemoval = false;
         $this->inviteCancel = null;
         $this->emit('deleted');

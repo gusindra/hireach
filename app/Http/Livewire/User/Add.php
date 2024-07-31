@@ -49,7 +49,8 @@ class Add extends Component
     {
 
         $this->validate();
-        User::create($this->modelData());
+        $new = User::create($this->modelData());
+        addLog($new);
         $this->modalActionVisible = false;
         $this->resetForm();
         $this->emit('refreshLivewireDatatable');

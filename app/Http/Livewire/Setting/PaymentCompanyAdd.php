@@ -53,7 +53,8 @@ class PaymentCompanyAdd extends Component
         $this->authorize('CREATE_SETTING', 'SETTING');
         $this->validate();
         $this->modalVisible = false;
-        CompanyPayment::create($this->modelData());
+        $new = CompanyPayment::create($this->modelData());
+        addLog($new);
         $this->resetForm();
         $this->emit('added');
     }
@@ -89,8 +90,9 @@ class PaymentCompanyAdd extends Component
     {
         $this->authorize('DELETE_SETTING', 'SETTING');
         $this->confirmingModalRemoval = false;
+        $old = CompanyPayment::find($this->item_id);
         CompanyPayment::destroy($this->item_id);
-
+        addLog(null, $old);
         $this->dispatchBrowserEvent('event-notification', [
             'eventName' => 'Deleted Page',
             'eventMessage' => 'The page (' . $this->item_id . ') has been deleted!',

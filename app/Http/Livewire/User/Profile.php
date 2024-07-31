@@ -45,22 +45,32 @@ class Profile extends Component
 
     public function saveUser($id)
     {
-        // dd($id);
         $this->authorize('UPDATE_USER', 'USER');
         $user = User::find($id);
+
+        $beforeData = $user->replicate();
+
         if ($this->user->isClient && $user->email != $this->inputuser['email']) {
             $this->user->isClient->update([
                 'email' => $this->inputuser['email']
             ]);
         }
+
         $user->update([
             'name' => $this->inputuser['name'],
             'phone_no' => $this->inputuser['phone'],
             'email' => $this->inputuser['email'],
             'nick' => $this->inputuser['nick']
         ]);
+
+
+        $afterData = User::find($id);
+
+
+        addLog($afterData, $beforeData);
         $this->emit('user_saved');
     }
+
 
     public function saveClient()
     {

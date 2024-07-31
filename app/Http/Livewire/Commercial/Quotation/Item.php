@@ -59,7 +59,8 @@ class Item extends Component
         $this->authorize('CREATE_QUOTATION', 'QUOTATION');
         $this->validate();
         $this->modalVisible = false;
-        OrderProduct::create($this->modelData());
+        $new = OrderProduct::create($this->modelData());
+        addLog($new);
         $this->resetForm();
         $this->emit('added');
     }
@@ -70,7 +71,7 @@ class Item extends Component
         $this->validate();
         $this->modalProductVisible = false;
         $product = CommerceItem::find($this->selectedProduct);
-        OrderProduct::create([
+        $new = OrderProduct::create([
             'model_id' => $this->data->id,
             'model' => 'Quotation',
             'product_id' => $product->id,
@@ -81,6 +82,7 @@ class Item extends Component
             'note' => $this->description,
             'user_id' => Auth::user()->id
         ]);
+        addLog($new);
         $this->resetForm();
         $this->emit('added');
     }
@@ -115,8 +117,9 @@ class Item extends Component
     {
         $this->authorize('DELETE_QUOTATION', 'QUOTATION');
         $this->confirmingModalRemoval = false;
+        $old = OrderProduct::find($this->item_id);
         OrderProduct::destroy($this->item_id);
-
+        addLog(null, $old);
         $this->dispatchBrowserEvent('event-notification', [
             'eventName' => 'Deleted Page',
             'eventMessage' => 'The page (' . $this->item_id . ') has been deleted!',

@@ -35,9 +35,8 @@ class OrderProgress extends Component
             'customer_id',
         ];
         foreach ($fields as $field) {
-
             if (empty($this->order->$field) || $item == 0 || $commission == 0) {
-                $this->errorMessage = 'Please  fill in all fields !';
+                $this->errorMessage = 'Please fill in all fields!';
             }
         }
 
@@ -45,10 +44,18 @@ class OrderProgress extends Component
             return;
         }
 
-        Order::find($this->orderId)
-            ->update(['status' => 'unpaid']);
+        $order = Order::find($this->orderId);
+        $oldOrderData = $order->toArray();
+
+        $order->update(['status' => 'unpaid']);
+        $oldOrderJson = json_encode($oldOrderData);
+
+        addLog(Order::find($this->orderId), $oldOrderJson);
+
         return redirect('admin/order/' . $this->orderId);
     }
+
+
     public function render()
     {
         return view('livewire.order.order-progress');

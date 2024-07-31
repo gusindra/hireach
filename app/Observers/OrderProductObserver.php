@@ -46,7 +46,7 @@ class OrderProductObserver
             $taxPrice = $totalPrice * ($vatValue / 100);
 
 
-            OrderProduct::updateOrCreate(
+            $new = OrderProduct::updateOrCreate(
                 [
                     'model' => 'Order',
                     'model_id' => $request->model_id,
@@ -56,15 +56,17 @@ class OrderProductObserver
                     'qty' => 1,
                     'unit' => 1,
                     'price' => $taxPrice,
-                    'note' => 'VAT/PPN @ '.$vatValue.'%',
+                    'note' => 'VAT/PPN @ ' . $vatValue . '%',
                     'user_id' => 0,
                 ]
             );
 
+            addLog($new);
+
             $order = Order::find($request->model_id);
 
 
-            $tax=OrderProduct::where('model_id',$request->model_id)->where('name','Tax')->latest()->first();
+            $tax = OrderProduct::where('model_id', $request->model_id)->where('name', 'Tax')->latest()->first();
             $billing = Billing::where('order_id', $order->id)->first();
             $vat = cache('vat_setting');
 
@@ -80,7 +82,7 @@ class OrderProductObserver
                     if (count($order->items) == 0) {
                         $order->update([
                             'total' => 0,
-                            'vat' =>$vat->value
+                            'vat' => $vat->value
                         ]);
                     } else {
                         $total = 0;
@@ -90,8 +92,8 @@ class OrderProductObserver
                         }
 
                         $order->update([
-                            'total' => $totalPrice+$taxPrice,
-                            'vat' =>$vat->value
+                            'total' => $totalPrice + $taxPrice,
+                            'vat' => $vat->value
                         ]);
 
                     }
@@ -99,7 +101,7 @@ class OrderProductObserver
                 if ($billing) {
 
                     $billing->update([
-                        'amount' => $totalPrice+$taxPrice
+                        'amount' => $totalPrice + $taxPrice
                     ]);
                 }
             }
@@ -131,7 +133,7 @@ class OrderProductObserver
                 ->get();
 
 
-            $totalPrice = $orderProducts->sum(function($item) {
+            $totalPrice = $orderProducts->sum(function ($item) {
                 return $item->price * $item->qty;
             });
 

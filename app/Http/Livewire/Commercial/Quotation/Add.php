@@ -45,7 +45,8 @@ class Add extends Component
 
         $this->validate();
 
-        Quotation::create($this->modelData());
+        $new = Quotation::create($this->modelData());
+        addLog($new);
         $this->modalActionVisible = false;
         $this->resetForm();
         $this->emit('refreshLivewireDatatable');

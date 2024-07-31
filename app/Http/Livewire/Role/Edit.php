@@ -59,8 +59,9 @@ class Edit extends Component
     {
         $this->authorize('UPDATE_ROLE', 'ROLE');
         $this->validate();
+        $old = Role::find($id);
         Role::find($id)->update($this->modelData());
-
+        addLog(Role::find($id), $old);
         $this->emit('saved');
     }
 

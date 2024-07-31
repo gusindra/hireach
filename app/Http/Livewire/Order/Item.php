@@ -81,7 +81,8 @@ class Item extends Component
     {
         $this->validate();
         $this->modalVisible = false;
-        OrderProduct::create($this->modelData());
+        $new = OrderProduct::create($this->modelData());
+        addLog($new);
         $this->resetForm();
         $this->emit('added');
     }
@@ -92,7 +93,8 @@ class Item extends Component
         $this->authorize('CREATE_ORDER', 'ORDER');
         $this->modalProductVisible = false;
         $product = CommerceItem::find($this->selectedProduct);
-        OrderProduct::create([
+
+        $new = OrderProduct::create([
             'model_id' => $this->data->id,
             'model' => 'Order',
             'product_id' => $product->id,
@@ -103,6 +105,8 @@ class Item extends Component
             'note' => $this->description,
             'user_id' => Auth::user()->id
         ]);
+
+        addLog($new);
         $this->resetForm();
         $this->emit('added');
     }
@@ -116,6 +120,7 @@ class Item extends Component
     {
         $this->authorize('UPDATE_ORDER', 'ORDER');
         $this->validate();
+        $old = OrderProduct::find($this->item_id);
         OrderProduct::find($this->item_id)->update([
             'name' => $this->name,
             'price' => $this->price,
@@ -123,6 +128,8 @@ class Item extends Component
             'unit' => $this->unit,
             'note' => $this->description
         ]);
+
+        addLog(OrderProduct::find($this->item_id), $old);
         $this->modalVisible = false;
 
         $this->emit('saved');
@@ -191,8 +198,9 @@ class Item extends Component
     public function delete()
     {
         $this->confirmingModalRemoval = false;
+        $n = OrderProduct::find($this->item_id);
         OrderProduct::destroy($this->item_id);
-
+        addLog(null, $n);
         $this->dispatchBrowserEvent('event-notification', [
             'eventName' => 'Deleted Page',
             'eventMessage' => 'The page (' . $this->item_id . ') has been deleted!',
