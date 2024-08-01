@@ -180,7 +180,7 @@ class Edit extends Component
 
     public function update($id)
     {
-        $this->authorize('VIEW_ORDER', $this->customer->user_id);
+        $this->authorize('UPDATE_ORDER', $this->customer->user_id);
         $this->validate();
         // dd($this->modelData());
         $order = Order::find($id)->update($this->modelData());

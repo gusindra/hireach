@@ -369,28 +369,35 @@ function listProjects($status, $party)
     return $data->orderBy('id', 'asc')->get();
 }
 
-function addLog($data, $before=null)
+function addLog($model, $data, $before = null)
 {
     $diff = '';
-    $bs = json_decode($before, TRUE);
+    $bs = $before ? json_decode($before, TRUE) : [];
     $ds = json_decode($data, TRUE);
-    foreach ($ds as $key => $d) {
-        foreach ($bs as $k => $b) {
-            if ($key != 'updated_at' && $key == $k && $d != $b) {
-                $diff = $diff . '' . $key . ':' . $b . ' > ' . $d . ', ';
+
+    if (empty($before)) {
+        $diff = 'Created: ' . json_encode($ds);
+    } else if (empty($ds) || !array_intersect_assoc($ds, $bs)) {
+        $diff = 'Deleted: ' . json_encode($bs);
+    } else {
+        foreach ($ds as $key => $d) {
+            if (isset($bs[$key]) && $key != 'updated_at' && $d != $bs[$key]) {
+                $diff .= $key . ':' . $bs[$key] . ' > ' . $d . ', ';
             }
         }
     }
+
     if ($diff != '') {
         LogChange::create([
-            'model' => class_basename($data),
-            'model_id' => $data->id,
+            'model' => class_basename($model),
+            'model_id' => isset($ds['id']) ? $ds['id'] : $bs['id'],
             'before' => $before,
             'remark' => $diff,
             'user_id' => auth()->user()->id
         ]);
     }
 }
+
 
 function checkContentOtp($content)
 {
@@ -432,7 +439,7 @@ function userAccess($menu, $action = 'view', $level = '')
         }
     }
     //LEVEL 2
-    if(auth()->user()->activeRole){
+    if (auth()->user()->activeRole) {
         $gp = cache()->remember('permission-' . $menu, 14400, function () use ($menu) {
             return Permission::where('model', $menu)->pluck('name')->toArray();
         });
