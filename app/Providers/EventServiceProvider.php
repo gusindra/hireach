@@ -13,8 +13,10 @@ use App\Models\Contract;
 use App\Models\FlowProcess;
 use App\Models\Order;
 use App\Models\OrderProduct;
+use App\Models\PermissionRole;
 use App\Models\Project;
 use App\Models\Quotation;
+use App\Observers\PermissionRoleObserver;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
@@ -42,6 +44,7 @@ use App\Observers\SmsBlastObserver;
 use App\Observers\CommissionObserver;
 use App\Observers\TeamUserObserver;
 use Laravel\Jetstream\Events\TeamUpdated;
+
 
 class EventServiceProvider extends ServiceProvider
 {
@@ -83,5 +86,6 @@ class EventServiceProvider extends ServiceProvider
         FlowProcess::observe(ApprovalObserver::class);
         Billing::observe(BillingObserver::class);
         TeamUser::observe(TeamUserObserver::class);
+
     }
 }

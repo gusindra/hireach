@@ -93,6 +93,9 @@ class ResourceController extends Controller
     public function index()
     {
         $this->authorize('VIEW_ANY_CHAT_USR', ['resource']);
+        if (auth()->user()->isNoAdmin->role === "agen") {
+            return redirect()->route('template.helper');
+        }
         return view('resource.index');
     }
     public function show()

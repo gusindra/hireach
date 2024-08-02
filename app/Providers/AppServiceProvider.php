@@ -12,6 +12,7 @@ use App\Models\Permission;
 use App\Models\ProductLine;
 use App\Models\Provider;
 use App\Models\ProviderUser;
+use App\Models\RoleInvitation;
 use App\Models\Setting;
 use App\Models\SettingProvider;
 use App\Models\User;
@@ -33,6 +34,7 @@ use App\Observers\UserObserver;
 use Illuminate\Support\ServiceProvider;
 use App\Models\PermissionRole;
 use App\Observers\PermissionRoleObserver;
+use App\Observers\RoleInvitationObserver;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -66,7 +68,6 @@ class AppServiceProvider extends ServiceProvider
         CommerceItem::observe(CommerceItemObserver::class);
         Setting::observe(SettingObserver::class);
         User::observe(UserObserver::class);
-        Commision::observe(CommissionObserver::class);
-        PermissionRole::observe(PermissionRoleObserver::class);
+        RoleInvitation::observe(RoleInvitationObserver::class);
     }
 }

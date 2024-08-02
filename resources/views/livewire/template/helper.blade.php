@@ -1,9 +1,11 @@
 <div class="py-2">
-    <div class="flex items-center">
-        <x-jet-button wire:click="actionShowModalHelper">
-            {{ __('Add Helper') }}
-        </x-jet-button>
-    </div>
+    @if (auth()->user()->isNoAdmin->role !== 'agen')
+        <div class="flex items-center">
+            <x-jet-button wire:click="actionShowModalHelper">
+                {{ __('Add Helper') }}
+            </x-jet-button>
+        </div>
+    @endif
 
     <!-- Form Action Modal -->
     <x-jet-dialog-modal wire:model="modalActionVisible">

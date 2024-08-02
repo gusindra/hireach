@@ -19,6 +19,8 @@ class QuotationObserver
      */
     public function updated(Quotation $request)
     {
+        $before = $request->getOriginal();
+        addLog($request, json_encode($request->toArray()), json_encode($before));
         if ($request->status == 'submit') {
             FlowProcess::create([
                 'model' => 'QUOTATION',
