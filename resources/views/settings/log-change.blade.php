@@ -26,7 +26,9 @@
             <div class="bg-white dark:bg-slate-600  overflow-hidden shadow-xl sm:rounded-lg">
                 <div class="mx-auto">
                     <div class="p-4">
-                        @livewire('table.log-change-table')
+                        {{-- @livewire('table.log-change-table') --}}
+
+                        <livewire:table.log-change-table searchable="model,model_id" />
                     </div>
                 </div>
             </div>

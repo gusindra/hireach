@@ -11,7 +11,7 @@ class TemplateController extends Controller
         $this->authorize('VIEW_ANY_CHAT_USR', ['template']);
 
         if (auth()->user()->isNoAdmin->role === "agen") {
-            return redirect()->route('message');
+            return redirect()->route('template.helper');
         }
         return view('template.index');
     }

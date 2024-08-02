@@ -393,7 +393,7 @@ function addLog($model, $data, $before = null)
             'model_id' => isset($ds['id']) ? $ds['id'] : $bs['id'],
             'before' => $before,
             'remark' => $diff,
-            'user_id' => auth()->user()->id
+            'user_id' => auth()->check() ? auth()->user()->id : ''
         ]);
     }
 }
