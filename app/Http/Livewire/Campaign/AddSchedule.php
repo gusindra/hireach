@@ -145,28 +145,31 @@ class AddSchedule extends Component
      */
     public function addSchedule(){
         if($this->typeShedule=='daily'){
-            $this->month = "0";
+            $this->month = 0;
             $this->dateDay = "0";
         }elseif($this->typeShedule=='monthly'){
-            $this->month = "0";
+            $this->month = 0;
         }
         $this->validate([
             'dateDay' => 'required',
             'dateTime' => 'required',
             'month' => 'required',
         ]);
-        CampaignSchedule::updateOrCreate(
-            [
-                'campaign_id' => $this->campaign_id,
-                'day' => ucfirst($this->dateDay),
-                'month' => ucfirst($this->month),
-            ],
-            [
-                'time' => $this->dateTime,
-            ]
+        $data = [
+            'campaign_id' => $this->campaign_id,
+            'day' => ucfirst($this->dateDay),
+            'month' => (int)$this->month,
+            'time' => $this->dateTime,
+        ];
+        // dd($data);
+        $campaign = CampaignSchedule::create(
+            $data
         );
-        $this->loadExistingSchedules();
-        $this->emit('refreshLivewireDatatable');
+        // $this->loadExistingSchedules();
+        // $this->emit('refreshLivewireDatatable');
+        // dd('success');
+        // if($campaign)
+        return redirect(request()->header('Referer'));
     }
 
     /**
@@ -201,7 +204,7 @@ class AddSchedule extends Component
      * @return void
      */
     public function deleteSchedule($value){
-        // dd($value);
+        dd($value);
         $data = CampaignSchedule::find($value);
         if($data){
             // dd($data);
