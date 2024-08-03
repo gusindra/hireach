@@ -46,7 +46,7 @@
                 </div>
                 @if($typeShedule!='none')
                 <livewire:table.campaign-schedule-table hidden="delete" typeShedule="{{$typeShedule}}" canEdit="{{$campaign->status == 'pending' || $campaign->status == 'pause'}}" campaignId="{{ $campaign_id }}" />
-                <table class="min-w-full divide-y divide-gray-200 hidden">
+                <table class="min-w-full divide-y divide-gray-200 ">
                         <thead>
                             <tr>
                                 <th scope="col" class="px-6 py-3 bg-gray-50">
@@ -69,6 +69,7 @@
                             </tr>
                         </thead>
                         <tbody class="bg-white divide-y divide-gray-200">
+                            @if(false)
                             @foreach ($schedule as $sch)
                                 <tr>
                                     @if($typeShedule!='daily')
@@ -89,6 +90,7 @@
                                     </td>
                                 </tr>
                             @endforeach
+                            @endif
                             <tr>
                                 <td class="px-6 py-4 whitespace-nowrap text-center text-sm text-gray-500">
                                     <div class="flex">
