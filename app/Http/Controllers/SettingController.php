@@ -44,6 +44,11 @@ class SettingController extends Controller
     {
         return view('settings.company.companies');
     }
+    public function logChange()
+    {
+
+        return view('settings.log-change');
+    }
 
     public function companyShow(Company $company)
     {

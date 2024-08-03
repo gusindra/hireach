@@ -44,9 +44,9 @@ class UserPolicy
      * @param  mixed  $menu
      * @return mixed
      */
-    public function viewAny(User $user, $menu='')
+    public function viewAny(User $user, $menu = '')
     {
-        if($menu=='message'){
+        if ($menu == 'resource' || $menu == 'message' || $menu == 'resource' || $menu == 'template' || $menu == 'helper') {
             return true;
         }
         if ($user->isNoAdmin && $user->isNoAdmin->role == "admin") {

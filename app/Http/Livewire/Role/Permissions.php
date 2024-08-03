@@ -35,16 +35,21 @@ class Permissions extends Component
     {
         $this->authorize('UPDATE_ROLE', 'ROLE');
         if ($this->role->permission()->find($id)) {
+            $old = $this->role->permission()->find($id);
             $this->role->permission()->detach($id);
+            addLog($this->role, $this->role->permission()->find($id), $old);
             // Arr::except($this->request,[$id]);
             $this->request[$id] = false;
             // unset($this->request[$id]);
         } else {
+            $old = $this->role->permission()->find($id);
             $this->role->permission()->attach($id);
+            addLog($this->role, $this->role->permission()->find($id), $old);
             // $newCompete = array($id=>true);
             // array_push($this->request, $newCompete);
             $this->request[$id] = true;
         }
+
         $this->getPermission();
         $this->emit('saved');
     }
@@ -52,13 +57,23 @@ class Permissions extends Component
     public function checkAll()
     {
         $this->authorize('UPDATE_ROLE', 'ROLE');
+
         $this->role->permission()->attach($this->permission);
+        foreach ($this->permission as $per) {
+
+            addLog($this->role, $this->role->permission()->find($per->id));
+        }
+
         $this->emit('checked');
     }
 
     public function unCheckAll()
     {
         $this->authorize('UPDATE_ROLE', 'ROLE');
+        foreach ($this->permission as $per) {
+
+            addLog($this->role, null, $this->role->permission()->find($per->id));
+        }
         $this->role->permission()->detach($this->permission);
 
         foreach ($this->request as $key => $value) {

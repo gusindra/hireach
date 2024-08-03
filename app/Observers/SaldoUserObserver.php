@@ -17,6 +17,7 @@ class SaldoUserObserver
      */
     public function created(SaldoUser $request)
     {
+        addLog($request, json_encode($request->toArray()));
         Log::debug($request);
         $last = SaldoUser::where('id', '!=', $request->id)->where('user_id', $request->user_id)->where('team_id', $request->team_id)->orderBy('id', 'desc')->first();
         Log::debug($last);
@@ -34,12 +35,12 @@ class SaldoUserObserver
             $notif_count = Notice::where('model', 'Balance')->where('user_id', $request->user_id)->count();
             if (($notif_count == 1 && $request->balance <= 50000) || ($notif_count == 0 && $request->balance <= 100000)) {
                 $notif = Notice::create([
-                    'type'          => 'email',
-                    'model_id'      => $request->id,
-                    'model'         => 'Balance',
-                    'notification'  => 'Balance Alert. Your current balance remaining '.$request->currency.'.'. number_format($request->balance),
-                    'user_id'       => $request->user_id,
-                    'status'        => 'unread',
+                    'type' => 'email',
+                    'model_id' => $request->id,
+                    'model' => 'Balance',
+                    'notification' => 'Balance Alert. Your current balance remaining ' . $request->currency . '.' . number_format($request->balance),
+                    'user_id' => $request->user_id,
+                    'status' => 'unread',
                 ]);
 
                 if ($notif) {
@@ -57,8 +58,8 @@ class SaldoUserObserver
                 'type' => 'Top Up',
                 'model_id' => $request->id,
                 'model' => 'Balance',
-                'notification' => 'Top Up Successed your balance now '.$request->currency.'.'. number_format($request->balance),
-                'user_id' =>  $request->user_id,
+                'notification' => 'Top Up Successed your balance now ' . $request->currency . '.' . number_format($request->balance),
+                'user_id' => $request->user_id,
                 'status' => 'unread'
             ]);
         }

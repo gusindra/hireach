@@ -105,6 +105,7 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
         Route::get('/settings', [SettingController::class, 'index'])->name('admin.settings');
         Route::get('/settings/{page}', [SettingController::class, 'show'])->name('settings.show');
         Route::get('/settings/providers', [ProviderController::class, 'index'])->name('admin.settings.provider');
+        Route::get('/setting/log', [SettingController::class, 'logChange'])->name('settings.logChange');
         Route::get('/settings/providers/{provider}', [ProviderController::class, 'show'])->name('admin.settings.provider.show');
         Route::get('setting/product-line/{productLine}', [SettingController::class, 'productLineShow'])->name('settings.productLine.show');
         Route::get('setting/commerce-item/{commerceItem}', [SettingController::class, 'commerceItemShow'])->name('settings.commerceItem.show');
@@ -170,9 +171,7 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
     Route::get('/client', [CustomerController::class, 'index'])->name('client');
 
     Route::get('/template', [TemplateController::class, 'index'])->name('template');
-    Route::get('/template/helper/index', function () {
-        return view('livewire.template.table-helper');
-    })->name('template.helper');
+    Route::get('/template/helper/index', [TemplateController::class, 'templateHelper'])->name('template.helper');
     Route::get('/template/create', function () {
         return view('template.form-template');
     })->name('create.template');
@@ -236,6 +235,7 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
 
     Route::get('/dashboard/inbound', [DashboardController::class, 'getInBound'])->name('dashboard.inbound');
     Route::get('/dashboard/outbound', [DashboardController::class, 'getOutBound'])->name('dashboard.outbound');
+
 });
 
 Route::get('/role-invitations/{invitation}', [RoleInvitationController::class, 'accept'])->middleware(['signed'])->name('role-invitations.accept');

@@ -95,7 +95,7 @@ class Edit extends Component
      */
     public function delete()
     {
-        $this->authorize('CDELETE_SETTING', 'SETTING');
+        $this->authorize('DELETE_SETTING', 'SETTING');
         if ($this->provider) {
             $this->provider->delete();
         }

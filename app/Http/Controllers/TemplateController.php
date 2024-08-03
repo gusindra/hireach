@@ -8,7 +8,11 @@ class TemplateController extends Controller
 {
     public function index()
     {
-        $this->authorize('VIEW_ANY_CHAT_USR');
+        $this->authorize('VIEW_ANY_CHAT_USR', ['template']);
+
+        if (auth()->user()->isNoAdmin->role === "agen") {
+            return redirect()->route('template.helper');
+        }
         return view('template.index');
     }
 
@@ -104,4 +108,11 @@ class TemplateController extends Controller
     {
         return redirect()->to("/template/" . $template->uuid);
     }
+
+    public function templateHelper()
+    {
+        $this->authorize('VIEW_ANY_CHAT_USR', ['helper']);
+        return view('livewire.template.table-helper');
+    }
+
 }
