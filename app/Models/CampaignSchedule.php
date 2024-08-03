@@ -13,5 +13,7 @@ class CampaignSchedule extends Model
         'campaign_id',
         'day',
         'time',
+        'month',
+        'status',
     ];
 }

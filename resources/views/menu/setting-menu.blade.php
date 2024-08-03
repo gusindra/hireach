@@ -1,5 +1,5 @@
-<div class=" absolute bottom-0 left-0 justify-center p-4 w-full lg:bg-white dark:bg-gray-800 z-20 border-r border-gray-200 dark:border-gray-700">
-    <div class="pt-2 mt-2 space-y-2 border-t border-gray-200 dark:border-gray-700">
+<div class="absolute bottom-0 left-0 justify-center px-4 w-full lg:bg-white dark:bg-gray-800 z-20 border-r border-gray-200 dark:border-gray-700">
+    <div class="pt-4 mt-2 space-y-2 border-t border-gray-200 dark:border-gray-700">
         <div class="text-center flex justify-center items-center">
             <a href="{{ route('profile.show') }}"
                 class="w-full h-12 inline-justify-center p-2 text-gray-500 rounded cursor-pointer dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-600">

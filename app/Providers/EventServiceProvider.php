@@ -7,6 +7,7 @@ use App\Models\ApiCredential;
 use App\Models\Attachment;
 use App\Models\Billing;
 use App\Models\BlastMessage;
+use App\Models\CampaignModel;
 use App\Models\Client;
 use App\Models\Commision;
 use App\Models\Contract;
@@ -28,6 +29,7 @@ use App\Observers\ApiCredentialObserver;
 use App\Observers\ApprovalObserver;
 use App\Observers\AttachmentObserver;
 use App\Observers\BillingObserver;
+use App\Observers\CampaignModelObserver;
 use App\Observers\ClientObserver;
 use App\Observers\ContractObserver;
 use App\Observers\OrderObserver;
@@ -83,5 +85,6 @@ class EventServiceProvider extends ServiceProvider
         FlowProcess::observe(ApprovalObserver::class);
         Billing::observe(BillingObserver::class);
         TeamUser::observe(TeamUserObserver::class);
+        CampaignModel::observe(CampaignModelObserver::class);
     }
 }

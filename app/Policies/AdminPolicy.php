@@ -28,9 +28,9 @@ class AdminPolicy
      * @param  \App\Models\User  $user
      * @return mixed
      */
-    public function viewAny(User $user, $model, $modelId)
+    public function viewAny(User $user)
     {
-        //
+        if($user) return true;
     }
 
     /**
@@ -40,9 +40,9 @@ class AdminPolicy
      * @param  \App\Models\Template  $template
      * @return mixed
      */
-    public function view(User $user, $model, $modelId)
+    public function view(User $user)
     {
-        return true;
+        if($user) return true;
     }
 
     /**

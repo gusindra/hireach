@@ -15,6 +15,7 @@ return new class extends Migration
     {
         Schema::create('campaigns_schedules', function (Blueprint $table) {
             $table->id();
+            $table->string('month')->nullable();
             $table->string('day');
             $table->timeTz('time', precision: 0);
             $table->foreignId('campaign_id')->comment('own of table');

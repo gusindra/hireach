@@ -36,7 +36,6 @@ class AuthServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-
         $this->registerPolicies();
         Gate::define('update-template', [TemplatePolicy::class, 'update']);
         Gate::define('VIEW_ANY_CHAT_USR', [UserPolicy::class, 'viewAny']);
@@ -46,9 +45,7 @@ class AuthServiceProvider extends ServiceProvider
             return Permission::all();
         });
 
-
         foreach ($per as $p) {
-
             if ($p->for === 'admin') {
                 if (stripos($p->name, "CREATE") !== false) {
                     Gate::define(str_replace(" ", "_", $p->name), [AdminPolicy::class, "create"]);
@@ -73,12 +70,6 @@ class AuthServiceProvider extends ServiceProvider
             } elseif (stripos($p->name, "DELETE") !== false) {
                 Gate::define(str_replace(" ", "_", $p->name) . "_" . "USR", [TeamPolicy::class, "delete"]);
             }
-
         }
-
-
-
-
-
     }
 }

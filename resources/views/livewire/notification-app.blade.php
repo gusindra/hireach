@@ -1,11 +1,11 @@
-<div wire:poll.7500ms>
-    <div class="relative">
+<div wire:poll.visible>
+    <div class="absolute right-0 w-10">
         <x-jet-dropdown align="right" width="60">
             <x-slot name="trigger">
-                <span class="inline-flex rounded-md">
-                    <button type="button" class="inline-flex hover:bg-gray-50 items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 supports-backdrop-blur:bg-white/60 dark:bg-slate-800 dark:hover:bg-slate-600 hover:text-gray-700 focus:outline-none focus:bg-gray-50 active:bg-gray-50 transition">
+                <span class="inline-flex rounded-md mt-4">
+                    <button type="button" class="inline-flex hover:bg-gray-50 items-center px-2 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 supports-backdrop-blur:bg-white/60 dark:bg-slate-800 dark:hover:bg-slate-600 hover:text-gray-700 focus:outline-none focus:bg-gray-50 active:bg-gray-50 transition">
                         @if($data['count']>0)
-                            <span id="icon-notif" style="font-size: xx-small" class="absolute top-0 right-1 p-1 font-bold leading-none text-white transform bg-red-600 rounded-full">{{$data['count']}}</span>
+                            <span id="icon-notif" style="font-size: xx-small" class="absolute mt-3 mr-1 top-0 right-1 p-1 font-bold leading-none text-white transform bg-red-600 rounded-full">{{$data['count']}}</span>
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 dark:text-slate-300 dark:hover:text-slate-500 text-slate-600 hover:text-slate-800" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 0 1-2.25 2.25h-15a2.25 2.25 0 0 1-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25m19.5 0v.243a2.25 2.25 0 0 1-1.07 1.916l-7.5 4.615a2.25 2.25 0 0 1-2.36 0L3.32 8.91a2.25 2.25 0 0 1-1.07-1.916V6.75" />
                             </svg>
@@ -83,6 +83,7 @@
             </x-jet-secondary-button>
         </x-slot>
     </x-jet-dialog-modal>
+
     @if ($data['count'] > 0 && $data['status']=='Online')
         <style>
             .apply-shake {

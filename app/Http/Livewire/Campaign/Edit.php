@@ -12,11 +12,9 @@ use App\Models\ProviderUser;
 use App\Models\Template;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Livewire\Component;
-use Illuminate\Support\Facades\Auth;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Exports\ExportAudienceContact;
 use App\Jobs\importAudienceContact;
-use App\Models\Client;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Http;
 use Livewire\WithFileUploads;
@@ -60,7 +58,6 @@ class Edit extends Component
      */
     public function mount($campaign)
     {
-
         $campaign = Campaign::find($campaign);
         $this->campaign = $campaign;
         $this->campaign_id = $campaign->id;
@@ -259,65 +256,71 @@ class Edit extends Component
                 'to' => 'required',
             ]);
 
-            // if (!$this->hasSchedule) {
-            //     session()->flash('error', 'Campaign must have at least one schedule.');
-            //     $this->showModal = false;
-            //     return;
-            // }
 
+            //UPDATE STATUS
             $this->campaign->status = 'started';
             $this->campaign->save();
             $this->showModal = false;
 
-            $channel = $this->campaign->channel;
-            $provider = cache()->remember('provider-user-' . auth()->user()->id . '-' . $channel, $this->cacheDuration, function () use ($channel) {
-                return auth()->user()->providerUser->where('channel', strtoupper($channel))->first()->provider;
-            });
-            // START TO HIT CREATE CAMPAIGN API
-            if ($provider->code == 'provider3') {
-                //EXPORT FILE EXCEL AUDIENCE
-                Excel::store(new ExportAudienceContact($this->audience_id), $this->campaign_id . '_campaign.xlsx');
-                //RUN JOB CAMPAIGN API
-                $url = ENV('WTID_URL', '6005');
-                $response = Http::withOptions(['verify' => false,])
-                    ->withHeaders([
-                        'Client-Key' => ENV('WTID_CLIENT_KEY', 'MD--=='),
-                        'Client-Secret' => ENV('WTID_CLIENT_SECRET', 'MD--Q1')
-                    ])
-                    ->attach('campaign_receiver', file_get_contents(storage_path('app\\' . $this->campaign_id . '_campaign.xlsx')), $this->campaign_id . '_campaign.xlsx')
-                    ->post($url . 'api/campaign/create', [
-                        'campaign_name' => 'Testing API from HiReach',
-                        'campaign_text' => 'Hallo testing 1'
-                    ]);
-                $resData = json_decode($response, true);
-                Log::debug($resData);
-                if ($resData['status']) {
-                    // $response = Http::withOptions(['verify' => false,])->withHeaders(['Client-Key' => ENV('WTID_CLIENT_KEY', 'MDgxMjM0NTY3Ng=='), 'Client-Secret' => ENV('WTID_CLIENT_SECRET', 'MDgxMjM0NTY3NnwyMDI0LTAxLTMwIDEwOjIyOjIw')])->patch($url . 'api/campaign/ready/' . $resData['campaign_id']);
-                    // Log::debug($response);
-                    // $result = json_decode($response, true);
-                    // if ($result['status']) {
-                    //     Log::debug("WA is OK");
-                    // } else {
-                    //     Log::debug("WA is ERROR: " . $result['message']);
-                    // }
-                } else {
-                    Log::debug("Campaign WA is FAILED: " . $resData['message']);
+            //START EXECUTE SENDING MESSAGE IF NO SCHEDULE
+            if ($this->campaign->status == 'started' && $this->campaign->shedule_type=='none') {
+                // session()->flash('error', 'Campaign must have at least one schedule.');
+                // $this->showModal = false;
+                // return;
+                $this->campaign->status = 'processing';
+                $this->campaign->save();
+
+                $channel = $this->campaign->channel;
+                $provider = cache()->remember('provider-user-' . auth()->user()->id . '-' . $channel, $this->cacheDuration, function () use ($channel) {
+                    return auth()->user()->providerUser->where('channel', strtoupper($channel))->first()->provider;
+                });
+                // START TO HIT CREATE CAMPAIGN API
+                if ($provider->code == 'provider3') {
+                    //EXPORT FILE EXCEL AUDIENCE
+                    Excel::store(new ExportAudienceContact($this->audience_id), $this->campaign_id . '_campaign.xlsx');
+                    //RUN JOB CAMPAIGN API
+                    $url = ENV('WTID_URL', '6005');
+                    $response = Http::withOptions(['verify' => false,])
+                        ->withHeaders([
+                            'Client-Key' => ENV('WTID_CLIENT_KEY', 'MD--=='),
+                            'Client-Secret' => ENV('WTID_CLIENT_SECRET', 'MD--Q1')
+                        ])
+                        ->attach('campaign_receiver', file_get_contents(storage_path('app\\' . $this->campaign_id . '_campaign.xlsx')), $this->campaign_id . '_campaign.xlsx')
+                        ->post($url . 'api/campaign/create', [
+                            'campaign_name' => $this->campaign->title,
+                            'campaign_text' => $this->campaign->text,
+                        ]);
+                    $resData = json_decode($response, true);
+                    Log::debug($resData);
+                    if ($resData['status']) {
+                        $response = Http::withOptions(['verify' => false,])->withHeaders(['Client-Key' => ENV('WTID_CLIENT_KEY', 'MDg3Ng=='), 'Client-Secret' => ENV('WTID_CLIENT_SECRET', 'MDgxMjM0NTY')])->patch($url . 'api/campaign/ready/' . $resData['campaign_id']);
+                        // Log::debug($response);
+                        $result = json_decode($response, true);
+                        if ($result['status']) {
+                            Log::debug("Campaign is Ready to Publish");
+                        } else {
+                            Log::debug("Campaign WA is FAILED : " . $result['message']);
+                        }
+                    } else {
+                        Log::debug("Campaign WA is FAILED: " . $resData['message']);
+                    }
                 }
-            }
-            $audience = Audience::find($this->audience_id);
-            // ADD BLAST DATA TO HIREACH
-            foreach ($audience->audienceClients as $client) {
-                $data = [
-                    'provider' => $provider,
-                    'to' => $this->campaign->channel == 'email' ? $client->client->email : $client->client->phone,
-                    'type' => $this->campaign->type,
-                    'otp' => $this->campaign->is_otp,
-                    'text' => 'Campaign No:' . $this->campaign->id,
-                ];
-                $this->callJobResource($data);
-            }
-            // ALL OK START THE CAMPAIGN API
-            if ($provider->code == 'provider3') {
+                $audience = Audience::find($this->audience_id);
+                // ADD BLAST DATA TO HIREACH
+                foreach ($audience->audienceClients as $client) {
+                    $data = [
+                        'provider' => $provider,
+                        'to' => $this->campaign->channel == 'email' ? $client->client->email : $client->client->phone,
+                        'type' => $this->campaign->type,
+                        'otp' => $this->campaign->is_otp,
+                        'text' => 'Campaign No:' . $this->campaign->id,
+                    ];
+                    $this->callJobResource($data);
+                }
+                // ALL OK START THE CAMPAIGN API
+                if ($provider->code == 'provider3') {
+                }
+
             }
         } catch (\Illuminate\Validation\ValidationException $e) {
             $this->showModal = false;
@@ -345,7 +348,6 @@ class Edit extends Component
      */
     public function update($id, $formName = 'basic')
     {
-
         $this->formName = $formName;
         $this->validate();
         if ($this->file) {
@@ -412,6 +414,12 @@ class Edit extends Component
         }
     }
 
+    /**
+     * updatedTemplateId
+     *
+     * @param  mixed $value
+     * @return void
+     */
     public function updatedTemplateId($value)
     {
         $this->text = '';
@@ -448,14 +456,16 @@ class Edit extends Component
             } else {
                 ProcessWaApi::dispatch($data, auth()->user(), $this->campaign);
             }
-        } elseif ($this->campaign->channel == 'wa') {
-            //ProcessChatApi::dispatch($request->all(), auth()->user());
+        }elseif (strtolower($this->campaign->channel) == 'long_wa') {
+            ProcessWaApi::dispatch($data, auth()->user());
+        } elseif (strtolower($this->campaign->channel) == 'long_sms') {
+            ProcessSmsApi::dispatch($data, auth()->user());
         }
     }
 
     public function render()
     {
-        $this->authorize('VIEW_RESOURCE', $this->campaign->user_id);
+        $this->authorize('VIEW_RESOURCE_USR', $this->campaign->user_id);
         return view('livewire.campaign.edit');
     }
 }

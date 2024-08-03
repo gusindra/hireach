@@ -26,10 +26,8 @@ class UserPolicy
             if (Route::currentRouteName() === 'message') {
                 return true;
             }
-
             return false;
         }
-
 
         if ($model == $user->id || $model == auth()->user()->currentTeam->user->id) {
             return true;

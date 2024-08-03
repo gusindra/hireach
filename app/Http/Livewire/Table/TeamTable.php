@@ -14,21 +14,19 @@ class TeamTable extends LivewireDatatable
 
     public function builder()
     {
-        return Team::query()->groupBy('user_id');
+        return Team::query()->where('user_id', '=', auth()->user()->id);
     }
 
     public function columns()
     {
         return [
-    		Column::name('user_id')->filterable()->label('Name'),
-    		Column::name('user_id')->filterable()->label('Email'),
-    		DateColumn::name('created_at')->label('Register Date'),
-            NumberColumn::name('user_id')->label('Detail')->sortBy('user_id')->callback('user_id', function ($value) {
+            Column::callback(['name','id'], function ($name,$id) {
                 return view('datatables::link', [
-                    'href' => "/user/" . $value . '?month='.date('m').'&year='.date('Y'),
-                    'slot' => 'View'
+                    'href' => "/teams/" . $id,
+                    'slot' => $name
                 ]);
-            }),
+            })->label('Name')->searchable(),
+    		DateColumn::name('created_at')->label('Created Date'),
     	];
     }
 }
