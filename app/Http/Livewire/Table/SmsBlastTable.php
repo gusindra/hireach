@@ -48,7 +48,6 @@ class SmsBlastTable extends LivewireDatatable
             $query->whereYear('created_at', $year)
             ->whereMonth('created_at', $month);
         }
-
         return $query;
     }
 

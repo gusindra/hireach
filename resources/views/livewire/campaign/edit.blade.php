@@ -118,26 +118,16 @@
 
         <x-slot name="form">
             <div class="col-span-6 sm:col-span-4">
+                <x-jet-label for="channel" value="{{ __('Channel Provider') }}" />
+                <x-select wire:model="channel" :data="$listChannel" :selected="$channel"></x-select>
+                <x-jet-input-error for="channel" class="mt-2" />
+            </div>
+            <div class="col-span-6 sm:col-span-4 hidden">
                 <x-jet-label for="provider" value="{{ __('Provider') }}" />
-                <select id="provider"
-                    class="block w-full mt-1 rounded-md shadow-sm border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
-                    wire:model="provider" @if ($campaign->status == 'started') disabled @endif>
-                    <option value="">{{ __('Select Provider') }}</option>
-                    @foreach ($userProvider as $providerUser)
-                        <option value="{{ @$providerUser->provider->code }}">{{ @$providerUser->provider->code }} |
-                            {{ @$providerUser->provider->name }}</option>
-                    @endforeach
-                </select>
+                <div class="uppercase py-2">{{$provider}}</div>
                 <x-jet-input-error for="provider" class="mt-2" />
             </div>
 
-            <div class="col-span-6 sm:col-span-4">
-                <x-jet-label for="channel" value="{{ __('Channel') }}" />
-                <x-jet-input id="channel"
-                    disabled="{{ disableInput($campaign->status == 'pause' || $campaign->status == 'pending') }}"
-                    type="text" class="mt-1 block w-full" wire:model.defer="channel" />
-                <x-jet-input-error for="channel" class="mt-2" />
-            </div>
         </x-slot>
 
         <x-slot name="actions">
