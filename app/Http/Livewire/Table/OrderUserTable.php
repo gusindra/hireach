@@ -28,13 +28,11 @@ class OrderUserTable extends LivewireDatatable
         if ($isAdmin) {
             $client = Client::where('email', $user->email)->first();
         } else {
-
             $client = Client::where('email', $auth->email)->first();
-
         }
 
 
-        $query->where('customer_id', $client->uuid ?? '');
+        $query->where('customer_id', $client->uuid);
 
 
         $query->where('status', '!=', 'draft');

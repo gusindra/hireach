@@ -2,7 +2,6 @@
 
 namespace App\Http\Livewire\Template;
 
-use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Livewire\Component;
 use App\Models\Template;
 use Illuminate\Support\Facades\Auth;
@@ -10,8 +9,6 @@ use Illuminate\Support\Str;
 
 class Templates extends Component
 {
-    use AuthorizesRequests;
-
     public $modalActionVisible = false;
     public $way = 1;
     public $type;
@@ -29,7 +26,6 @@ class Templates extends Component
 
     public function create()
     {
-
         $this->validate();
         Template::create($this->modelData());
         $this->modalActionVisible = false;
@@ -40,12 +36,12 @@ class Templates extends Component
     public function modelData()
     {
         return [
-            'uuid' => Str::uuid(),
-            'type' => $this->way == 2 ? $this->type : 'text',
-            'name' => $this->name,
-            'resource' => $this->way,
-            'description' => $this->description,
-            'user_id' => Auth::user()->id,
+            'uuid'          => Str::uuid(),
+            'type'          => $this->way == 2 ? $this->type : 'text',
+            'name'          => $this->name,
+            'resource'      => $this->way,
+            'description'   => $this->description,
+            'user_id'       => Auth::user()->id,
         ];
     }
 

@@ -17,8 +17,7 @@ class Permission extends Model
      */
     protected $fillable = [
         'name',
-        'model',
-        'for'
+        'model'
     ];
 
     protected $guarded = [];

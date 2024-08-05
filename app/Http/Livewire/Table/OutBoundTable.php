@@ -44,11 +44,11 @@ class OutBoundTable extends LivewireDatatable
 
         return $query;
     }
-    
+
     /**
      * clientTbl
      *
-     * @return array
+     * @return void
      */
     private function clientTbl()
     {
@@ -70,11 +70,11 @@ class OutBoundTable extends LivewireDatatable
             Column::name('created_at')->label('Creation Date'),
         ];
     }
-    
+
     /**
      * adminTbl
      *
-     * @return array
+     * @return void
      */
     private function adminTbl()
     {

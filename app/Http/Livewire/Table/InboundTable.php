@@ -26,7 +26,7 @@ class InBoundTable extends LivewireDatatable
     {
         $year = substr($this->filterMonth, 0, 4);
         $month = substr($this->filterMonth, 5, 2);
-        
+
         $query = Request::query();
         if (auth()->user()->super && auth()->user()->super->first() && auth()->user()->super->first()->role == 'superadmin') {
             $query->where('requests.user_id', $this->userId);
@@ -38,14 +38,16 @@ class InBoundTable extends LivewireDatatable
         $query->where('requests.is_inbound', 1)
             ->with('agent', 'client')
             ->orderBy('requests.created_at', 'desc');
-        
+
+
+
         return $query;
     }
-    
+
     /**
      * clientTbl
      *
-     * @return array
+     * @return void
      */
     private function clientTbl()
     {
@@ -67,12 +69,7 @@ class InBoundTable extends LivewireDatatable
             Column::name('created_at')->label('Creation Date'),
         ];
     }
-    
-    /**
-     * adminTbl
-     *
-     * @return array
-     */
+
     private function adminTbl()
     {
         return [

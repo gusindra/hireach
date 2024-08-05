@@ -1,11 +1,10 @@
 <div>
-    <div wire:poll.visible="checkSchedule" class="flex items-center justify-between bg-white p-4 rounded-lg shadow-md">
+    <div wire:poll.5000ms="checkSchedule" class="flex items-center justify-between bg-white p-4 rounded-lg shadow-md">
         <span
             class="ml-2 inline-flex items-center uppercase px-2 py-1 rounded text-md
         {{ $campaign->status === 'pending' ? 'bg-yellow-200 text-yellow-800' : ($campaign->status === 'started' ? 'bg-green-200 text-green-800' : 'bg-red-200 text-red-800') }}">
             {{ $campaign->status }}
         </span>
-
         @if (session()->has('error'))
             <div x-data="{ show: true }" x-show="show" x-init="setTimeout(() => show = false, 3000)" class="alert alert-danger">
                 <span
@@ -14,6 +13,7 @@
                 </span>
             </div>
         @endif
+
 
         @if ($campaign->status == 'pending' || $campaign->status == 'pause')
             <x-jet-button wire:click="$set('showModal', true)">
@@ -26,6 +26,7 @@
             </button>
         @endif
     </div>
+
 
     <x-jet-section-border />
 
@@ -49,6 +50,8 @@
 
                 <x-jet-input-error for="title" class="mt-2" />
             </div>
+
+
 
             <!-- Campaign Type -->
             <div class="col-span-6 sm:col-span-4">
@@ -91,6 +94,7 @@
                     </div>
                 </div>
             </div>
+
         </x-slot>
 
         <x-slot name="actions">
@@ -117,18 +121,32 @@
         </x-slot>
 
         <x-slot name="form">
+
             <div class="col-span-6 sm:col-span-4">
-                <x-jet-label for="channel" value="{{ __('Channel Provider') }}" />
-                <x-select wire:model="channel" :data="$listChannel" :selected="$channel"></x-select>
-                <x-jet-input-error for="channel" class="mt-2" />
-            </div>
-            <div class="col-span-6 sm:col-span-4 hidden">
                 <x-jet-label for="provider" value="{{ __('Provider') }}" />
-                <div class="uppercase py-2">{{$provider}}</div>
+                <select id="provider"
+                    class="block w-full mt-1 rounded-md shadow-sm border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+                    wire:model="provider" @if ($campaign->status == 'started') disabled @endif>
+                    <option value="">{{ __('Select Provider') }}</option>
+                    @foreach ($userProvider as $providerUser)
+                        <option value="{{ @$providerUser->provider->code }}">{{ @$providerUser->provider->code }} |
+                            {{ @$providerUser->provider->name }}</option>
+                    @endforeach
+                </select>
                 <x-jet-input-error for="provider" class="mt-2" />
             </div>
 
+
+
+            <div class="col-span-6 sm:col-span-4">
+                <x-jet-label for="channel" value="{{ __('Channel') }}" />
+                <x-jet-input id="channel"
+                    disabled="{{ disableInput($campaign->status == 'pause' || $campaign->status == 'pending') }}"
+                    type="text" class="mt-1 block w-full" wire:model.defer="channel" />
+                <x-jet-input-error for="channel" class="mt-2" />
+            </div>
         </x-slot>
+
 
         <x-slot name="actions">
             <x-jet-action-message class="mr-3" on="savedProvider">
@@ -172,6 +190,7 @@
                 <x-jet-input-error for="template_id" class="mt-2" />
             </div>
 
+
             <div class="col-span-6 sm:col-span-6">
                 @if (empty($template_id) || $template_id == '0')
                     <x-jet-label for="text" value="{{ __('Message') }}" />
@@ -185,7 +204,10 @@
                     <div>{!! $text !!}</div>
                 @endif
             </div>
+
         </x-slot>
+
+
 
         <x-slot name="actions">
             <x-jet-action-message class="mr-3" on="savedContent">
@@ -213,7 +235,7 @@
 
         <x-slot name="form">
             <div class="col-span-6 sm:col-span-4">
-                <x-jet-label for="from" value="{{ __('Type') }}" />
+                <x-jet-label for="from" value="{{ __('From') }}" />
                 <select wire:model="from" id="from" @if ($campaign->status == 'started') disabled @endif
                     class="form-select block w-full mt-1 rounded-md shadow-sm border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
                     @foreach ($fromList as $froml)
@@ -247,6 +269,7 @@
                         </div>
                     </div>
 
+
                     <div class="p-4 sm:p-1 rounded border w-full sm:w-auto">
                         <div class="flex flex-col sm:flex-row items-center space-y-2 sm:space-y-0 sm:space-x-4">
                             <!-- Label for browsing -->
@@ -268,6 +291,9 @@
                             </div>
                         </div>
                     </div>
+
+
+
                 </div>
             @elseif ($selectTo === 'audience')
                 <div class="col-span-6 sm:col-span-4">
@@ -297,6 +323,10 @@
                     </div>
                 </div>
             @endif
+
+
+
+
         </x-slot>
 
         <x-slot name="actions">
@@ -312,14 +342,16 @@
         </x-slot>
     </x-jet-form-section>
 
+
     <x-jet-section-border />
-    @livewire('campaign.add-schedule', ['campaign' => $campaign])
+
+
+    @livewire('campaign.add-schedule', ['campaign_id' => $campaign_id])
     <x-jet-section-border />
 
     @if ($campaign->status === 'pending' || $campaign->status === 'pause')
         @livewire('campaign.delete', ['campaignId' => $campaign_id])
     @endif
-
     <x-jet-dialog-modal wire:model="showModal">
         <x-slot name="title">
             {{ __('Start Campaign') }}
@@ -339,7 +371,4 @@
             </x-jet-button>
         </x-slot>
     </x-jet-dialog-modal>
-
-    <x-jet-section-border />
-    <div class="mb-12" ></div>
 </div>

@@ -94,8 +94,6 @@ Route::get('/inbound-messages/{provider}',  [ApiTwoWayController::class, 'retriv
 //ViGuard API access
 Route::post('/get/saveAlarm', [ApiViGuardController::class, 'index']);
 Route::post('/saveAlarm', [ApiViGuardController::class, 'post']);
-Route::post('/getAllMonitoringDeviceList', [ApiViGuardController::class, 'getMonitoringDevice']);
-Route::post('/getAllDeptList', [ApiViGuardController::class, 'getDeptList']);
 
 //
 // TESTING ROUTE

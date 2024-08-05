@@ -2,13 +2,11 @@
 
 namespace App\Http\Livewire\Contact;
 
-use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Livewire\Component;
 use App\Models\Client;
 
 class Delete extends Component
 {
-    use AuthorizesRequests;
     public $modalDeleteVisible = false;
     public $contactId;
     public $contact;
@@ -31,7 +29,6 @@ class Delete extends Component
 
     public function delete()
     {
-        $this->authorize('DELETE_RESOURCE', $this->contact->user_id);
         if ($this->contact) {
             $this->contact->delete();
         }

@@ -120,15 +120,13 @@
 
         <!-- The offcanvas component -->
         <!-- FOR MOBILE USAGE DESIGN -->
-        <div class="{{ auth()->user()->isSuper || (auth()->user()->team && optional(auth()->user()->activeRole)->role && str_contains(optional(auth()->user()->activeRole->role)->name, 'Admin')) ? 'block' : '' }} block sm:hidden"
+        <div class="{{ auth()->user()->isSuper || (auth()->user()->team && str_contains(Auth::user()->activeRole->role->name, 'Admin')) ? 'block' : '' }} block sm:hidden"
             x-data="{ offcanvas: false }">
-            @if (auth()->user()->isSuper ||
-                    (auth()->user()->team &&
-                        optional(auth()->user()->activeRole)->role &&
-                        str_contains(optional(auth()->user()->activeRole->role)->name, 'Admin')))
+            @if (auth()->user()->isSuper || (auth()->user()->team && str_contains(Auth::user()->activeRole->role->name, 'Admin')))
                 <button class="fixed top-52 right-0 bg-blue-100 p-1 text-sm text-gray-400"
-                    @click="offcanvas = true">Approval</button>
+                    @click="offycanvas = true">Approval</button>
             @endif
+
             <section x-show="offcanvas" class="fixed inset-y-0 right-0 z-50 flex">
                 <div class="w-60 max-w-sm">
                     <div class="flex flex-col h-full divide-y divide-gray-200 bg-gray-100 dark:bg-slate-600">
@@ -259,17 +257,17 @@
         </div>
     @endif
 
-    <div class="{{ auth()->user()->isSuper || (auth()->user()->team && optional(auth()->user()->activeRole)->role && str_contains(optional(auth()->user()->activeRole->role)->name, 'Admin')) ? 'block' : '' }} block sm:hidden"
-        x-data="{ offcanvas: false }">
-        @if (auth()->user()->isSuper ||
-                (auth()->user()->team &&
-                    optional(auth()->user()->activeRole)->role &&
-                    str_contains(optional(auth()->user()->activeRole->role)->name, 'Admin')))
-            <button class="fixed top-52 right-0 bg-blue-100 p-1 text-sm text-gray-400"
-                @click="offcanvas = true">Approval</button>
-        @endif
-    </div>
-
+    @if (auth()->user()->isSuper ||
+            (auth()->user()->team &&
+                str_contains(Auth::user()->activeRole->role->name, 'Admin') &&
+                $model->status == 'approved'))
+        <div
+            class="px-4 py-5 bg-white text-center dark:bg-slate-600 sm:p-6 shadow sm:rounded-tl-md sm:rounded-tr-md mt-4">
+            <x-jet-button :disabled="!userAccess('QUOTATION', 'update')" wire:click="activated" class="hover:bg-green-700 bg-green-500 px-2">
+                {{ __('Activated') }}
+            </x-jet-button>
+        </div>
+    @endif
 
     @if ($model->status != 'draft' && $approval && $model->approval && empty($approval->status))
         @if ($model->status == 'submit' || $model->status == 'submit')

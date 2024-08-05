@@ -3,7 +3,6 @@
 namespace App\Http\Livewire\Contact;
 
 use App\Models\Client;
-use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Laravel\Jetstream\Jetstream;
 use Livewire\Component;
 use Illuminate\Support\Facades\Hash;
@@ -12,7 +11,6 @@ use Laravel\Jetstream\Events\AddingTeam;
 
 class Add extends Component
 {
-    use AuthorizesRequests;
     public $modalActionVisible = false;
     public $input;
     public $inputclient;
@@ -22,9 +20,9 @@ class Add extends Component
     public $showClients = false;
     public $is_modal = true;
 
-    public function mount($model = null)
+    public function mount($model=null)
     {
-        if ($model != null) {
+        if($model!=null){
             $this->showClients = true;
         }
     }
@@ -32,24 +30,23 @@ class Add extends Component
     public function rules()
     {
         return [
-            'input.title' => 'required',
-            'input.name' => 'required',
-            'input.email' => 'email',
-            'input.phone' => 'required',
+            'input.title'       => 'required',
+            'input.name'        => 'required',
+            'input.email'       => 'email' ,
+            'input.phone'       => 'required',
         ];
     }
 
     public function create()
     {
-
         $this->validate();
         Client::create([
-            'title' => $this->input['title'],
-            'name' => $this->input['name'],
-            'phone' => $this->input['phone'],
-            'email' => $this->input['email'],
-            'user_id' => auth()->user()->id,
-            'uuid' => Str::uuid()
+            'title'     => $this->input['title'],
+            'name'      => $this->input['name'],
+            'phone'     => $this->input['phone'],
+            'email'     => $this->input['email'],
+            'user_id'   => auth()->user()->id,
+            'uuid'      => Str::uuid()
         ]);
         return redirect(request()->header('Referer'));
 
@@ -95,7 +92,7 @@ class Add extends Component
 
     public function render()
     {
-        if ($this->is_modal == false) {
+        if($this->is_modal==false){
             return view('livewire.contact.form-add');
         }
         return view('livewire.contact.add');

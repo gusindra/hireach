@@ -26,6 +26,7 @@ class PermissionSeeder extends Seeder
             'TEAM',
             'PROJECT',
             'SETTING',
+
             "DASHBOARD",
             'PROVIDER',
             'ROLE',
@@ -34,9 +35,12 @@ class PermissionSeeder extends Seeder
             'PAYMENT',
             "REPORT",
             "QUOTATION",
-            'USER',
-            'RESOURCE',
-            'CONTENT'
+            'USER'
+
+
+
+
+
         );
         $functions = array(
             'VIEW',

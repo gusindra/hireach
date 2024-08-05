@@ -12,8 +12,6 @@ use Vinkla\Hashids\Facades\Hashids;
 use App\Jobs\ProcessSmsApi;
 use App\Jobs\ProcessEmailApi;
 use App\Jobs\ProcessWaApi;
-use App\Models\Department;
-use App\Models\Setting;
 
 class ApiViGuardController extends Controller
 {
@@ -135,20 +133,13 @@ class ApiViGuardController extends Controller
             'code' => 400
         ]);
     }
-        
-    /**
-     * convertText
-     *
-     * @param  mixed $request
-     * @param  mixed $action
-     * @return void
-     */
+    
     private function convertText($request, $action){
         $text = $action;
         $variable = [];
         foreach($request->all() as $key => $req){
             if($key=='image'){
-                $variable[$key] = '<img src="data:image/png;base64, '.$req.'" />';
+                $variable[$key] = '<img src="data:image/png;base64, '.$req.'" alt="Red dot" />';
             }else{
                 $variable[$key] = $req;
             }
@@ -168,7 +159,6 @@ class ApiViGuardController extends Controller
         $rules = [
             'createDate' => 'required',
             'uniqueTag' => 'required',
-            'deptId' => 'required',
             'monitoringDeviceName' => 'required',
             'aiModelId' => 'required',
             'aiModelName' => 'required',
@@ -186,188 +176,20 @@ class ApiViGuardController extends Controller
         }
 
         try{
-            //check by department
-            $dept = Department::where('source_id', $request->deptId)->first();
-            if($dept){
-                $customer = $dept->client;
-                if($customer || $customer->email || $customer->phone){
-                    if($customer->source=='email'){
-                        $channel = 'email';
-                        $to = $customer->email;
-                        $from = 'alert@hireach.archeeshop.com';
-                    }else{
-                        $channel = 'sms';
-                        $to = $customer->phone;
-                        $from = '081339668556';
-                    }
-                    $provider = cache()->remember('provider-user-'.$customer->user_id.'-'.$channel, 36000, function() use ($customer, $channel) {
-                        return $customer->theUser->providerUser->where('channel', strtoupper($channel))->first()->provider;
-                    });
-                    $template = Template::where('name', 'saveAlarm')->where('user_id', $customer->user_id)->first();
-                    if($template){
-                        foreach($template->actions as $key => $action){
-                            // send request using template prt action
-                            $data[$key] = [
-                                'channel' => $channel,
-                                'provider' => $provider,
-                                'to' => $to,
-                                'from' => $from,
-                                'type' => 0,
-                                'title' => $request->alarmDetails,
-                                'text' => $this->convertText($request, $action->message),
-                                'templateid' => $template->id,
-                                'otp' => checkContentOtp($action->message)
-                            ];
-        
-                            if($channel=='email'){
-                                $reqArr = json_encode($data[$key]);
-                                //THIS WILL QUEUE EMAIL JOB
-                                ProcessEmailApi::dispatch($data[$key], $customer->theUser, $reqArr);
-                            }elseif(strpos($channel, 'sms') !== false){
-                                ProcessSmsApi::dispatch($data[$key], $customer->theUser);
-                            }elseif($channel=='wa'){
-                                $credential = null;
-                                foreach($customer->theUser->credential as $cre){
-                                    if($cre->client=='api_wa_mk'){
-                                        $credential = $cre;
-                                    }
-                                }
-                                if($credential){
-                                    ProcessWaApi::dispatch($data[$key], $credential);
-                                }else{
-                                    return response()->json([
-                                        'msg' => "Invalid credential",
-                                        'code' => 401
-                                    ]);
-                                }
-                                    
-                            }
-                        }
-                        //Return API Respon
-                        return response()->json([
-                            'msg' => "Successful sending to ".$channel,
-                            'data' => $data,
-                            'code' => 0
-                        ]);
-                    }else{
-                        return response()->json([
-                            'msg' => "Template Not Found",
-                            'code' => 500
-                        ]);
-                    }
-                }elseif(!$customer){
-                    return response()->json([
-                        'msg' => "Phone Number Not Found",
-                        'code' => 500
-                    ]);
-                }
-            }else{
-                return response()->json([
-                    'msg' => "Dept Not Found, please contact Administration",
-                    'code' => 500
-                ]);
-            }
-        }catch(\Exception $e){
-            return response()->json([
-                'msg' => $e->getMessage(),
-                'code' => 500
-            ]);
-        }
-        // show result on progress
-        return response()->json([
-            'msg' => "Error! Nothing to save.",
-            'code' => 500
-        ]);
-    }
-    
-    /**
-     * getDeptList
-     *
-     * @param  mixed $request
-     * @return void
-     */
-    public function getDeptList(Request $request){
-        // cache()->forget('viguard_id');
-        if(cache('viguard_id')){
-            $userId = cache('viguard_id');
-        }else{
-            $userId = cache()->remember('viguard_id', 6000, function (){
-                return Setting::where('key', 'viguard')->latest()->first()->value;
-            });
-        }
-
-        try{
-            foreach($request->all() as $r){
-                // return $r['deptId'];
-                Department::updateOrCreate(
-                    [
-                        'source_id' => $r['deptId'],
-                        'user_id' => $userId
-                    ],
-                    [
-                        'parent' => $r['parentId'],
-                        'ancestors' => $r['ancestors'],
-                        'name' => $r['deptName']
-                    ]
-                );
-            }
-            return response()->json([
-                'msg' => "Successful sending to update depertment",
-                'code' => 200
-            ]);
-        }catch(\Exception $e){
-            return response()->json([
-                'msg' => $e->getMessage(),
-                'code' => 500
-            ]);
-        }
-    }
-    
-    /**
-     * getMonitoringDevice
-     *
-     * @param  mixed $request
-     * @return void
-     */
-    public function getMonitoringDevice(Request $request){
-        //get the request & validate parameters
-        $rules = [
-            'createDate' => 'required',
-            'uniqueTag' => 'required',
-            'imei' => 'required',
-            'name' => 'required',
-            'iframeUrl' => 'required',
-            'streamingAddress' => 'required'
-        ];
-
-        /*$fields = $request->validate($rules);*/
-        $validator = \Validator::make($request->all(), $rules);
-
-        if ($validator->fails()) {
-            return response()->json([
-                'msg' => $validator->messages(),
-                'code' => 400
-            ]);
-        }
-
-        try{
             $customer = Client::where('tag', $request->uniqueTag)->first();
-
-            
             if($customer){
                 if($customer->source=='email'){
-                    $channel = 'email'; 
+                    $channel = 'email';
+                    $provider = 'provider1';
                     $to = $customer->email;
                     $from = 'alert@hireach.archeeshop.com';
                 }else{
-                    $channel = 'sms'; 
+                    $channel = 'sms';
+                    $provider = 'provider1';
                     $to = $customer->phone;
                     $from = '081339668556';
                 }
-                $provider = cache()->remember('provider-user-'.$customer->user_id.'-'.$channel, 36000, function() use ($customer, $channel) {
-                    return $customer->theUser->providerUser->where('channel', strtoupper($channel))->first()->provider;
-                });
-                $template = Template::where('name', 'getAllMonitoingDeviceList')->where('user_id', $customer->user_id)->first();
+                $template = Template::where('trigger', $request->uniqueTag)->where('user_id', $customer->user_id)->first();
                 if($template){
                     foreach($template->actions as $key => $action){
                         // send request using template prt action
@@ -432,7 +254,7 @@ class ApiViGuardController extends Controller
             }
         }catch(\Exception $e){
             return response()->json([
-                'msg' => $e->getMessage(),
+                'msg' => "Invalid input",
                 'code' => 500
             ]);
         }
