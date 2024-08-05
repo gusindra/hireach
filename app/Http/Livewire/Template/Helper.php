@@ -3,7 +3,6 @@
 namespace App\Http\Livewire\Template;
 
 use App\Models\Template;
-use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Livewire\Component;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
@@ -11,7 +10,6 @@ use Illuminate\Support\Str;
 
 class Helper extends Component
 {
-    use AuthorizesRequests;
     public $modalActionVisible = false;
     public $way = 2;
     public $type = 'helper';
@@ -30,7 +28,6 @@ class Helper extends Component
 
     public function create()
     {
-
         $this->validate();
         Template::create($this->modelData());
         $this->modalActionVisible = false;
@@ -41,12 +38,12 @@ class Helper extends Component
     public function modelData()
     {
         return [
-            'uuid' => Str::uuid(),
-            'type' => $this->type,
-            'name' => $this->name,
-            'resource' => $this->way,
-            'description' => $this->description,
-            'user_id' => Auth::user()->id,
+            'uuid'          => Str::uuid(),
+            'type'          => $this->type,
+            'name'          => $this->name,
+            'resource'      => $this->way,
+            'description'   => $this->description,
+            'user_id'       => Auth::user()->id,
         ];
     }
 

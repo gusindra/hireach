@@ -23,15 +23,12 @@ class BillingController extends Controller
 
     public function index(Request $request)
     {
-
         if(empty(auth()->user()->currentTeam)){
             return redirect()->route('teams.create');
         }
         if($request->has('v')){
             return view('main-side.billing');
         }
-
-
         return view('billing');
 
     }

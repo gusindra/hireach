@@ -2,13 +2,11 @@
 
 namespace App\Http\Livewire\Template;
 
-use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Livewire\Component;
 use App\Models\Template;
 
 class EditTrigger extends Component
 {
-    use AuthorizesRequests;
     public $template;
     public $templateId;
     public $trigger;
@@ -34,7 +32,7 @@ class EditTrigger extends Component
     public function modelData()
     {
         return [
-            'trigger' => $this->trigger,
+            'trigger'           => $this->trigger,
             'trigger_condition' => $this->trigger_condition
         ];
     }
@@ -46,7 +44,6 @@ class EditTrigger extends Component
      */
     public function updateTrigger()
     {
-        $this->authorize('UPDATE_CONTENT', $this->template->user_id);
         $this->validate();
         Template::find($this->templateId)->update($this->modelData());
         $this->emit('saved');

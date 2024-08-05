@@ -134,9 +134,4 @@ class Client extends Model
     {
         return $this->hasMany(AudienceClient::class, 'client_id', 'uuid');
     }
-    
-    public function department()
-    {
-        return $this->hasMany('App\Models\Department', 'client_id');
-    }
 }

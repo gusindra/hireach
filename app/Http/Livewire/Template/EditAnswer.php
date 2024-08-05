@@ -2,7 +2,6 @@
 
 namespace App\Http\Livewire\Template;
 
-use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Livewire\Component;
 use App\Models\Template;
 use Illuminate\Support\Facades\Auth;
@@ -10,7 +9,6 @@ use Illuminate\Support\Str;
 
 class EditAnswer extends Component
 {
-    use AuthorizesRequests;
     public $template;
     public $templateId;
     public $actionId;
@@ -43,15 +41,15 @@ class EditAnswer extends Component
     public function modelData()
     {
         return [
-            'uuid' => Str::uuid(),
-            'type' => $this->type,
-            'name' => $this->name,
-            'description' => $this->description,
+            'uuid'              => Str::uuid(),
+            'type'              => $this->type,
+            'name'              => $this->name,
+            'description'       => $this->description,
             'trigger_condition' => 'equal',
-            'trigger' => $this->trigger,
-            'order' => $this->orderAction(),
-            'template_id' => $this->templateId,
-            'user_id' => Auth::user()->id,
+            'trigger'           => $this->trigger,
+            'order'             => $this->orderAction(),
+            'template_id'       => $this->templateId,
+            'user_id'           => Auth::user()->id,
         ];
     }
 
@@ -67,7 +65,6 @@ class EditAnswer extends Component
      */
     public function create()
     {
-
         $this->validate();
         Template::create($this->modelData());
         $this->modalCreateVisible = false;
@@ -110,7 +107,6 @@ class EditAnswer extends Component
      */
     public function delete()
     {
-        $this->authorize('DELETE_CONTENT', $this->template->user_id);
         $choosen = Template::find($this->selectedTemplate);
         $choosen->template_id = NULL;
         $choosen->save();
@@ -155,7 +151,7 @@ class EditAnswer extends Component
         $this->actionId = null;
     }
 
-    /**
+     /**
      * The read function.
      *
      * @return void

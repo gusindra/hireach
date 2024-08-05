@@ -4,7 +4,6 @@ namespace App\Models;
 
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -32,15 +31,7 @@ class User extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'name',
-        'email',
-        'password',
-        'handling',
-        'phone_no',
-        'nick',
-        'current_team_id',
-        'status',
-        'reff_team_id'
+        'name', 'email', 'password', 'handling', 'phone_no', 'nick', 'current_team_id', 'status'
     ];
 
     /**
@@ -128,18 +119,12 @@ class User extends Authenticatable
     /**
      * User Has many Team
      *
-     * @return TeamUser
+     * @return void
      */
     public function super()
     {
         return $this->hasMany('App\Models\TeamUser', 'user_id')->where('team_id', env('IN_HOUSE_TEAM_ID'));
     }
-
-    public function isNoAdmin()
-    {
-        return $this->hasOne('App\Models\TeamUser', 'user_id')->where('team_id', '!=', env('IN_HOUSE_TEAM_ID'));
-    }
-
 
     /**
      * User is Superuser
@@ -156,6 +141,8 @@ class User extends Authenticatable
     {
         return $query->where('current_team_id', '!=', env('IN_HOUSE_TEAM_ID'))->orWhere('current_team_id', NULL);
     }
+
+
 
     /**
      * teams
@@ -216,8 +203,7 @@ class User extends Authenticatable
     }
     public function activeRole()
     {
-        return $this->hasOne('App\Models\RoleUser', 'user_id')->orderBy('active', 'desc');
-        ;
+        return $this->hasOne('App\Models\RoleUser', 'user_id')->orderBy('active', 'desc');;
     }
 
     /**
@@ -232,12 +218,7 @@ class User extends Authenticatable
         }
         return $this->hasMany('App\Models\SaldoUser', 'user_id')->orderBy('id', 'desc');
     }
-    
-    /**
-     * balanceTeam
-     *
-     * @return void
-     */
+
     public function balanceTeam()
     {
         return $this->hasMany('App\Models\SaldoUser', 'user_id')->orderBy('created_at', 'desc');
@@ -318,11 +299,6 @@ class User extends Authenticatable
     {
         return $this->hasMany('App\Models\BrowserSession', 'user_id');
     }
-    
-    public function department()
-    {
-        return $this->hasMany('App\Models\Department', 'user_id');
-    }
 
     //=============
     //FROM TRAIT
@@ -350,7 +326,7 @@ class User extends Authenticatable
      */
     public function switchTeam($team)
     {
-        if (!$this->belongsToTeam($team)) {
+        if (! $this->belongsToTeam($team)) {
             return false;
         }
 
@@ -394,6 +370,6 @@ class User extends Authenticatable
             return $t->id === $team->id;
         }) || $team->users->pluck('id')->contains(function ($u) use ($user) {
             return $u === $user;
-        });
+        }) ;
     }
 }

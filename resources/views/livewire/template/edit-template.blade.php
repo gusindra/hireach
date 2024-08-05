@@ -217,7 +217,7 @@
                             {{ __('Template saved.') }}
                         </x-jet-action-message>
 
-                        <x-jet-button :disabled="!Gate::check('update-template', $template)">
+                        <x-jet-button :disabled="! Gate::check('update-template', $template)">
                             {{ __('Save') }}
                         </x-jet-button>
                     </x-slot>
@@ -341,8 +341,9 @@
 
             @if ($template)
                 <div>
-                    <x-jet-danger-button wire:click="$emitTo('template.delete', 'confirmDelete', {{ $template->id }})"
-                        :disabled="!Gate::check('update-template', $template)">
+                    <x-jet-danger-button
+                        wire:click="$emitTo('template.delete', 'confirmDelete', {{ $template->id }})"
+                        :disabled="! Gate::check('update-template', $template)">
                         {{ __('Delete Template') }}
                     </x-jet-danger-button>
                 </div>

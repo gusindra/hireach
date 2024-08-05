@@ -77,11 +77,11 @@
                                                         <td
                                                             class="flex items-center justify-end px-4 py-3 text-right sm:px-6">
                                                             <div class="flex items-center">
-                                                                <x-link-button :disabled="!userAccess('USER', 'delete')"
+                                                                <x-jet-button :disabled="!userAccess('USER', 'delete')"
                                                                     class="cursor-pointer ml-6 text-sm"
                                                                     wire:click="deleteShowModal('{{ $item->id }}')">
                                                                     {{ __('Delete') }}
-                                                                </x-link-button>
+                                                                </x-jet-button>
                                                             </div>
                                                         </td>
                                                     </tr>
@@ -142,6 +142,33 @@
                         wire:model.debunce.800ms="input.from" autofocus />
                     <x-jet-input-error for="from" class="mt-2" />
                 </div>
+
+
+                {{-- <div>
+
+                    <x-jet-label for="input.channel" value="{{ __('input.Channel') }}" />
+                    <select name="input.channel" id="input.channel"
+                        class="border-gray-300 dark:bg-slate-800 dark:text-slate-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 rounded-md shadow-sm mt-1 block w-full"
+                        wire:model.debunce.800ms="input.channel">
+                        <option selected value="text">--Select input.channel--</option>
+                        @if ($input['provider_id'] == 1)
+                            <option value="SMSOTP">SMS OTP</option>
+                            <option value="SMSOTP">WABA</option>
+                        @endif
+                        @if ($input['provider_id'] == 2)
+                            <option value="SMSNONOTP">SMS NON OTP</option>
+                            <option value="SMSOTP">WABA</option>
+                        @endif
+                        @if ($input['provider_id'] == 3)
+                            <option value="EMAIL">EMAIL</option>
+                        @endif
+                        @if ($input['provider_id'] == 4)
+                            <option value="SMSLN">SMS LONGNUMBER</option>
+                            <option value="WALN">WA LONGNUMBER</option>
+                        @endif
+                    </select>
+                    <x-jet-input-error for="channel" class="mt-2" />
+                </div> --}}
             </div>
 
         </x-slot>
@@ -170,6 +197,7 @@
 
         <x-slot name="content">
             {{ __('Are you sure you would like to remove this provider?') }}<br>
+
         </x-slot>
 
         <x-slot name="footer">

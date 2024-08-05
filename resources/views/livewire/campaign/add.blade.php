@@ -23,14 +23,12 @@
 
             <div class="col-span-6 sm:col-span-4 p-3">
                 <x-jet-label for="way_type" value="{{ __('Way Type') }}" />
-                <x-select name="way_type" wire:model="way_type" :data="[[1,'One Way'],[2,'Two Way']]" placeholder="Select Type Way" :selected="$way_type"></x-select>
-
-                {{-- <select id="way_type" wire:model.defer="way_type"
+                <select id="way_type" wire:model.defer="way_type"
                     class="form-multiselect block w-full mt-1 rounded-md shadow-sm border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
                     <option selected value="">Select Type Way</option>
                     <option value="1">One Way</option>
                     <option value="2">Two Way</option>
-                </select> --}}
+                </select>
                 <x-jet-input-error for="way_type" class="mt-2" />
             </div>
         </x-slot>

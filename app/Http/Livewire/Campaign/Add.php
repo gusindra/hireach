@@ -12,9 +12,7 @@ class Add extends Component
     public $modalActionVisible = false;
     public $title;
     public $way_type;
-    public $selectType = ['One Way', 'Two Way'];
-    public $cacheDuration = 3600;
-
+    PUBLIC $cacheDuration = 3600;
 
     protected $rules = [
         'title' => 'required|string|max:255',

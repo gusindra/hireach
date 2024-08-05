@@ -2,14 +2,12 @@
 
 namespace App\Http\Livewire\Template;
 
-use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Livewire\Component;
 use App\Models\Action;
 use App\Models\DataAction;
 
 class AddDataAction extends Component
 {
-    use AuthorizesRequests;
     public $action;
     public $actionId;
     public $dataId;
@@ -40,9 +38,9 @@ class AddDataAction extends Component
     public function modelData()
     {
         return [
-            'name' => $this->name,
-            'value' => $this->value,
-            'action_id' => $this->actionId
+            'name'          => $this->name,
+            'value'         => $this->value,
+            'action_id'     => $this->actionId
         ];
     }
 
@@ -50,9 +48,9 @@ class AddDataAction extends Component
     {
         foreach ($this->dataArray as $data) {
             DataAction::create([
-                'name' => $data['name'],
-                'value' => $data['value'],
-                'action_id' => $id
+                'name'          => $data['name'],
+                'value'         => $data['value'],
+                'action_id'     => $id
             ]);
         }
     }
@@ -69,14 +67,13 @@ class AddDataAction extends Component
 
     public function create()
     {
-
         $this->validate();
         $data = DataAction::create($this->modelData());
         foreach ($this->read() as $variable) {
             $this->dataArray[$variable->id] = [
-                'name' => $variable->name,
-                'value' => $variable->value,
-                'action_id' => $variable->id
+                'name'          => $variable->name,
+                'value'         => $variable->value,
+                'action_id'     => $variable->id
             ];
         }
         $this->resetForm();
@@ -86,7 +83,6 @@ class AddDataAction extends Component
 
     public function insert()
     {
-        $this->authorize('UPDATE_CONTENT', $this->template->user_id);
         $this->validate();
         array_push($this->dataArray, $this->modelData());
         $this->resetForm();
@@ -101,7 +97,6 @@ class AddDataAction extends Component
      */
     public function delete($id)
     {
-        $this->authorize('DELETE_CONTENT', $this->template->user_id);
 
         DataAction::destroy($id);
 
@@ -113,7 +108,6 @@ class AddDataAction extends Component
 
     public function remove($id)
     {
-        $this->authorize('DELETE_CONTENT', $this->template->user_id);
         unset($this->dataArray[$id]);
     }
 
@@ -128,7 +122,7 @@ class AddDataAction extends Component
     public function render()
     {
         return view('livewire.template.add-data-action', [
-            'data' => $this->read(),
+            'data'  => $this->read(),
             'array' => $this->dataArray,
         ]);
     }

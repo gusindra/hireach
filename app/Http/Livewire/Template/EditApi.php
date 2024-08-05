@@ -2,13 +2,11 @@
 
 namespace App\Http\Livewire\Template;
 
-use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Livewire\Component;
 use App\Models\Endpoint;
 
 class EditApi extends Component
 {
-    use AuthorizesRequests;
     public $data;
     public $template;
     public $templateId;
@@ -19,7 +17,7 @@ class EditApi extends Component
     {
         $this->template = $template;
         $this->templateId = $this->template->id;
-        $this->data = Endpoint::where('template_id', $this->templateId)->first();
+        $this->data = Endpoint::where('template_id',$this->templateId)->first();
         //dd($template->id);
         //$this->data = Endpoint::find($this->templateId);
         $this->endpoint = $this->data->endpoint ?? '';
@@ -37,9 +35,9 @@ class EditApi extends Component
     public function modelData()
     {
         return [
-            'request' => $this->request,
-            'endpoint' => $this->endpoint,
-            'template_id' => $this->templateId,
+            'request'       => $this->request,
+            'endpoint'      => $this->endpoint,
+            'template_id'   => $this->templateId,
         ];
     }
 
@@ -50,7 +48,6 @@ class EditApi extends Component
      */
     public function create()
     {
-
         $this->validate();
         Endpoint::create($this->modelData());
         $this->emit('saved');
@@ -63,10 +60,9 @@ class EditApi extends Component
      */
     public function update()
     {
-        $this->authorize('UPDATE_CONTENT', $this->template->user_id);
         $this->validate();
         //dd($this->templateId);
-        $endpoint = Endpoint::where('template_id', $this->templateId)->first();
+        $endpoint = Endpoint::where('template_id',$this->templateId)->first();
         $endpoint->update($this->modelData());
         $this->emit('saved');
     }

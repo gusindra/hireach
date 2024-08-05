@@ -1,14 +1,13 @@
 <div>
     <x-jet-dialog-modal wire:model="modalDeleteVisible">
         <x-slot name="title">
-            <span class="text-red-600 dark:text-white">{{ __('Are You Sure?') }}</span>
+            <span class="text-red-600">{{ __('Are You Sure?') }}</span>
         </x-slot>
 
         <x-slot name="content">
             @if ($contact)
-                <p class="text-gray-600 dark:text-slate-200">
-                    Do you really want to delete the audience named <strong>{{ __(' `:name` ', ['name' => $contact->name]) }}</strong> ?
-                </p>
+                <p class="text-gray-600">
+                Do you really want to delete the audience named <strong>{{ __(' `:name` ', ['name' => $contact->name]) }}</strong> ?</p>
             @endif
         </x-slot>
 
