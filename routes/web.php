@@ -357,8 +357,11 @@ Route::get('campaign-schedule', [ScheduleController::class, 'index'])->name('sch
 Route::get('campaign-schedule-reset', [ScheduleController::class, 'reset'])->name('schedule.reset');
 // ==================================
 // END CRON JOB URL
-// ==================================
-Route::get('/saveAlarm', [ApiViGuardController::class, 'index']);
+// // ==================================
+// Route::get('/saveAlarm', [ApiViGuardController::class, 'index']);
+Route::post('/saveAlarm', [ApiViGuardController::class, 'post']);
+Route::post('/getAllMonitoringDeviceList', [ApiViGuardController::class, 'getMonitoringDevice']);
+Route::post('/getAllDeptList', [ApiViGuardController::class, 'getDeptList']);
 
 //
 //

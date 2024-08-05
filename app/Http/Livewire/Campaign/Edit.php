@@ -38,6 +38,8 @@ class Edit extends Component
     public $audience_id;
     public $audience;
     public $selectTo = 'manual';
+    public $listProvider;
+    public $listChannel;
     public $userProvider;
     public $selectedProviderCode;
     public $templates;
@@ -78,23 +80,30 @@ class Edit extends Component
             $this->selectTo = 'audience';
         }
 
-
         $this->audience = Audience::withCount('audienceClients')->get();
 
         $this->userProvider = ProviderUser::with('provider')
             ->where('user_id', auth()->user()->id)
             ->get();
-
+        
+        $selectProvider = [];
+        $selectChannel = [];
+        foreach($this->userProvider as $key => $up){
+            $selectProvider[$key] = [$up->provider->code, $up->provider->name];
+            $selectChannel[$key] = [$up->channel, $up->provider->code];
+        }
+        $this->listProvider = $selectProvider;
+        $this->listChannel = $selectChannel;
+        
         $this->userProvider->firstWhere('provider.code', $this->provider);
 
         $this->selectedProviderCode = $this->provider;
-
+        
         $userTemplates = Template::with('question')
             ->where('user_id', auth()->user()->id)
             ->get();
 
         $this->templates = $userTemplates->isEmpty() ? collect() : $userTemplates;
-
 
         $this->hasSchedule = CampaignSchedule::where('campaign_id', $this->campaign_id)->exists();
 
@@ -179,8 +188,25 @@ class Edit extends Component
     public function updatedProvider($providerCode)
     {
 
-        $selectedProvider = $this->userProvider->firstWhere('provider.code', $providerCode);
-        $this->channel = $selectedProvider ? $selectedProvider->channel : '';
+        // // dd($providerCode);
+        // $selectedProvider = $this->userProvider->firstWhere('provider.code', $providerCode);
+        // // dd($this->listProvider);
+        // $this->channel = $selectedProvider ? $selectedProvider->channel : '';
+        // $this->loadAudienceContacts();
+        // $this->getFrom();
+    }
+
+    /**
+     * updatedProvider
+     *
+     * @param  mixed $providerCode
+     * @return void
+     */
+    public function updatedChannel($channel)
+    {
+        $selectedProvider = $this->userProvider->firstWhere('channel', $channel);
+        // dd($selectedProvider);
+        $this->provider = $selectedProvider ? $selectedProvider->provider->code : '';
         $this->loadAudienceContacts();
         $this->getFrom();
     }

@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -127,7 +128,7 @@ class User extends Authenticatable
     /**
      * User Has many Team
      *
-     * @return void
+     * @return TeamUser
      */
     public function super()
     {
@@ -155,8 +156,6 @@ class User extends Authenticatable
     {
         return $query->where('current_team_id', '!=', env('IN_HOUSE_TEAM_ID'))->orWhere('current_team_id', NULL);
     }
-
-
 
     /**
      * teams
@@ -233,7 +232,12 @@ class User extends Authenticatable
         }
         return $this->hasMany('App\Models\SaldoUser', 'user_id')->orderBy('id', 'desc');
     }
-
+    
+    /**
+     * balanceTeam
+     *
+     * @return void
+     */
     public function balanceTeam()
     {
         return $this->hasMany('App\Models\SaldoUser', 'user_id')->orderBy('created_at', 'desc');
@@ -313,6 +317,11 @@ class User extends Authenticatable
     public function browserSessionUser()
     {
         return $this->hasMany('App\Models\BrowserSession', 'user_id');
+    }
+    
+    public function department()
+    {
+        return $this->hasMany('App\Models\Department', 'user_id');
     }
 
     //=============
