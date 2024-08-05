@@ -94,7 +94,7 @@ class AddAction extends Component
      */
     public function update()
     {
-        $this->authorize('UPDATE_CONTENT', $this->template->user_id);
+        $this->authorize('UPDATE_CONTENT_USR', $this->template->user_id);
         $this->validate();
 
         if ($this->link_attachment == '') {
@@ -131,7 +131,7 @@ class AddAction extends Component
      */
     public function delete()
     {
-        $this->authorize('DELETE_CONTENT', $this->template->user_id);
+        $this->authorize('DELETE_CONTENT_USR', $this->template->user_id);
         Action::destroy($this->actionId);
         $this->actionId = null;
         $this->confirmingActionRemoval = false;

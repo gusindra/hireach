@@ -22,7 +22,7 @@ class DeleteAccountTest extends TestCase
 
         $this->actingAs($user = User::create([
             'name' => 'User Delete',
-            'email' => 'usesr1@hireach.com',
+            'email' => 'uasesr1@hireach.com',
             'password' => Hash::make('12345678'),
             'current_team_id' => 0
         ]));

@@ -43,13 +43,7 @@ class ContactTest extends TestCase
 
         $user = User::find(2);
 
-        $client = Client::create([
-            'inputuser.name' => 'lala',
-            'inputuser.email' => 'lala@gmail.com',
-            'inputuser.phone' => '263926',
-            'uuid'      => Str::uuid()
-
-        ]);
+        $client = Client::latest()->first();
 
         Livewire::actingAs($user)
             ->test('contact.profile', ['user' => $client->id])
@@ -72,7 +66,7 @@ class ContactTest extends TestCase
     public function test_can_delete_contact()
     {
         $user = User::find(2);
-        $client = Client::factory()->create();
+        $client = Client::latest()->first();
         Livewire::actingAs($user)
             ->test('contact.delete', ['contactId' => $client->id])
             ->call('confirmDelete', $client->id)

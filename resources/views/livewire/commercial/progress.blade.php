@@ -1,6 +1,6 @@
 <div wire:poll>
     @if ($model->status == 'draft' || ($model->status == 'unpaid' && $model_type == 'commission'))
-        @if (auth()->user()->isSuper || (auth()->user()->team && str_contains(Auth::user()->activeRole->role->name, 'Admin')))
+        @if (auth()->user()->isSuper || (auth()->user()->team && str_contains((auth()->user()->activeRole->role->name, '')))
             <div class="px-4 py-5 bg-white dark:bg-slate-600 sm:p-6 shadow sm:rounded-md">
 
                 <div class="sm:px-0">

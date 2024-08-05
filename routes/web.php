@@ -103,8 +103,8 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
         Route::get('/roles/{role}', [RoleController::class, 'show'])->name('role.show');
 
         Route::get('/settings', [SettingController::class, 'index'])->name('admin.settings');
-        Route::get('/settings/{page}', [SettingController::class, 'show'])->name('settings.show');
         Route::get('/settings/providers', [ProviderController::class, 'index'])->name('admin.settings.provider');
+        Route::get('/settings/{page}', [SettingController::class, 'show'])->name('settings.show');
         Route::get('/setting/log', [SettingController::class, 'logChange'])->name('settings.logChange');
         Route::get('/settings/providers/{provider}', [ProviderController::class, 'show'])->name('admin.settings.provider.show');
         Route::get('setting/product-line/{productLine}', [SettingController::class, 'productLineShow'])->name('settings.productLine.show');
@@ -385,41 +385,43 @@ Route::get('/testing', function () {
     $currentTime = Carbon::now(); // SET GMT di config
     $scheduleNow = explode(':', $currentTime);
     //return $scheduleNow[0];
-    foreach($c->schedule as $s){
+    foreach ($c->schedule as $s) {
         // echo $s;
         //CHECK MONTH
-        if($c->shedule_type=='yearly'){
+        if ($c->shedule_type == 'yearly') {
             $pass = false;
-            if($s->month == $currentTime->format('m')){
-                if($s->day == $currentTime->format('l')){
+            if ($s->month == $currentTime->format('m')) {
+                if ($s->day == $currentTime->format('l')) {
                     $pass = true;
-                }elseif( $s->day == $currentTime->format('j')){
+                } elseif ($s->day == $currentTime->format('j')) {
                     $pass = true;
                 }
             }
         }
         //CHECK DAY
-        if($c->shedule_type=='monhly'){
+        if ($c->shedule_type == 'monhly') {
             $pass = false;
-            if($s->day == $currentTime->format('l')){
-                $pass = true; echo 'll';
-            }elseif( $s->day == $currentTime->format('j')){
-                $pass = true; echo 'jj';
+            if ($s->day == $currentTime->format('l')) {
+                $pass = true;
+                echo 'll';
+            } elseif ($s->day == $currentTime->format('j')) {
+                $pass = true;
+                echo 'jj';
             }
         }
         //CHECK TIME
         //CHECK DAY
-        if($c->shedule_type=='daily'){
+        if ($c->shedule_type == 'daily') {
             $pass = true;
         }
-        if($pass){
-            $scheduleDb = explode(':',$s->time);
-            $scheduleNow = explode(':',$currentTime->format('H:i'));
-            if($s->status == 0 && $scheduleDb[0] >= $scheduleNow[0]){
+        if ($pass) {
+            $scheduleDb = explode(':', $s->time);
+            $scheduleNow = explode(':', $currentTime->format('H:i'));
+            if ($s->status == 0 && $scheduleDb[0] >= $scheduleNow[0]) {
                 $count = $count + 1;
-                if($c->provider=='provider3'){
+                if ($c->provider == 'provider3') {
                     echo $s;
-                }else{
+                } else {
                     echo $s;
                 }
             }

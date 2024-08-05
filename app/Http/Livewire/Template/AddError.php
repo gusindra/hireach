@@ -114,7 +114,7 @@ class AddError extends Component
     public function delete()
     {
         $choosen = Template::find($this->templateId);
-        $this->authorize('DELETE_CONTENT', $this->template->user_id);
+        $this->authorize('DELETE_CONTENT_USR', $this->template->user_id);
         $choosen->error_template_id = NULL;
         $choosen->save();
 

@@ -110,7 +110,7 @@ class EditAnswer extends Component
      */
     public function delete()
     {
-        $this->authorize('DELETE_CONTENT', $this->template->user_id);
+        $this->authorize('DELETE_CONTENT_USR', $this->template->user_id);
         $choosen = Template::find($this->selectedTemplate);
         $choosen->template_id = NULL;
         $choosen->save();

@@ -10,6 +10,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Livewire\Livewire;
 use Tests\TestCase;
+use Illuminate\Support\Facades\Cache;
 
 class SettingTest extends TestCase
 {
@@ -37,20 +38,29 @@ class SettingTest extends TestCase
         ]);
     }
 
-    public function test_it_can_update_setting()
+    public function test_it_updates_settings()
     {
-        $setting = Setting::latest()->first();
+        $setting = Setting::create([
+            'key' => 'test_key',
+            'value' => 'original_value',
+            'remark' => 'original_remark',
+        ]);
 
-        Livewire::test(Edit::class, ['settingId' => $setting->id])
-            ->set('value', 'updated_value')
-            ->set('remark', 'updated_remark')
-            ->call('update');
+        $updatedValue = 'updated_value';
+        $updatedRemark = 'updated_remark';
+
+        Livewire::test(Add::class)
+            ->call('showModalUpdate', $setting->id)
+            ->set('valueEdit', $updatedValue)
+            ->set('remarkEdit', $updatedRemark)
+            ->call('updateSetting');
 
         $this->assertDatabaseHas('setting', [
             'id' => $setting->id,
-            'value' => 'updated_value',
-            'remark' => 'updated_remark',
+            'value' => $updatedValue,
+            'remark' => $updatedRemark,
         ]);
+        $this->assertNull(Cache::get('vat_setting'));
     }
 
     public function test_it_can_delete_a_setting()
