@@ -2,6 +2,7 @@
 
 namespace App\Jobs;
 
+use App\Exports\ExportAudienceContact;
 use App\Models\CampaignModel;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -10,6 +11,7 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
+use Maatwebsite\Excel\Facades\Excel;
 
 class ProcessCampaignApi implements ShouldQueue
 {
@@ -73,27 +75,29 @@ class ProcessCampaignApi implements ShouldQueue
             Log::debug($resData);
         } else {
             // Production environment: make the actual API call
+            Excel::store(new ExportAudienceContact($this->campaign->audience_id), $this->campaign->id . '_campaign.xlsx');
             $response = Http::withOptions(['verify' => false,])
             ->withHeaders([
                 'Client-Key' => ENV('WTID_CLIENT_KEY', 'MD=='),
                 'Client-Secret' => ENV('WTID_CLIENT_SECRET', 'MD==jIw')])
-            ->attach('campaign_receiver', file_get_contents(storage_path('app\template_contact_wetalk.xlsx')), 'template_contact_wetalk.xlsx')
+            ->attach('campaign_receiver', file_get_contents(storage_path('app\\' . $this->campaign->id . '_campaign.xlsx')), $this->campaign->id . '_campaign.xlsx')
+            // ->attach('campaign_receiver', file_get_contents(storage_path('app\template_contact_wetalk.xlsx')), 'template_contact_wetalk.xlsx')
             ->post($url . 'api/campaign/create', [
-                'campaign_name' => 'Testing API from HiReach',
-                'campaign_text' => 'Hallo testing 1',
+                'campaign_name' => $this->campaign->title,
+                'campaign_text' => $this->campaign->text,
                 // 'campaign_receiver' => new CURLFile(storage_path('app\template_contact_wetalk.xlsx'))
             ]);
             $resData = json_decode($response, true);
             Log::debug($resData);
             if ($resData['status']) {
-                // $response = Http::withOptions(['verify' => false,])->withHeaders(['Client-Key' => ENV('WTID_CLIENT_KEY', 'MDgxMjM0NTY3Ng=='), 'Client-Secret' => ENV('WTID_CLIENT_SECRET', 'MDgxMjM0NTY3NnwyMDI0LTAxLTMwIDEwOjIyOjIw')])->patch($url . 'api/campaign/ready/' . $resData['campaign_id']);
-                // Log::debug($response);
-                // $result = json_decode($response, true);
-                // if ($result['status']) {
-                //     Log::debug("WA is OK");
-                // } else {
-                //     Log::debug("WA is ERROR: " . $result['message']);
-                // }
+                $response = Http::withOptions(['verify' => false,])->withHeaders(['Client-Key' => ENV('WTID_CLIENT_KEY', 'MDgx=='), 'Client-Secret' => ENV('WTID_CLIENT_SECRET', 'MDgxMjM0OjIw')])->patch($url . 'api/campaign/ready/' . $resData['campaign_id']);
+                Log::debug($response);
+                $result = json_decode($response, true);
+                if ($result['status']) {
+                    Log::debug("Campaign WA is Ready");
+                } else {
+                    Log::debug("Campaign WA is ERROR: " . $result['message']);
+                }
             } else {
                 Log::debug("Campaign WA is FAILED: " . $resData['message']);
             }

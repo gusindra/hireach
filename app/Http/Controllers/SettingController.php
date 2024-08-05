@@ -17,7 +17,7 @@ class SettingController extends Controller
             // Your auth here
             $granted = false;
             $user = auth()->user();
-            $granted = userAccess('SETTING');
+            $granted = userAccess('SETTINGS');
             if ($granted) {
                 return $next($request);
             }
@@ -43,6 +43,11 @@ class SettingController extends Controller
     public function company()
     {
         return view('settings.company.companies');
+    }
+    public function logChange()
+    {
+
+        return view('settings.log-change');
     }
 
     public function companyShow(Company $company)

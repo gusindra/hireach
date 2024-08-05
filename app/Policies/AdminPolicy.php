@@ -28,9 +28,9 @@ class AdminPolicy
      * @param  \App\Models\User  $user
      * @return mixed
      */
-    public function viewAny(User $user, $model, $modelId)
+    public function viewAny(User $user)
     {
-        //
+        if($user) return true;
     }
 
     /**
@@ -40,9 +40,9 @@ class AdminPolicy
      * @param  \App\Models\Template  $template
      * @return mixed
      */
-    public function view(User $user, $model, $modelId)
+    public function view(User $user)
     {
-        return true;
+        if($user) return true;
     }
 
     /**
@@ -57,12 +57,17 @@ class AdminPolicy
         if ($auth->super && $auth->super->isNotEmpty() && $auth->super->first()->role === 'superadmin') {
             return true;
         }
-
-        foreach ($user->activeRole->role->permission as $permission) {
-            if (stripos($permission->name, strtoupper($model)) !== false) {
-                if (stripos($permission->name, "CREATE") !== false) {
-                    return true;
+        if($user->activeRole){
+            foreach ($user->activeRole->role->permission as $permission) {
+                if (stripos($permission->name, strtoupper($model)) !== false) {
+                    if (stripos($permission->name, "CREATE") !== false) {
+                        return true;
+                    }
                 }
+            }
+        }else{
+            if ($user->isNoAdmin && $user->isNoAdmin->role == "admin") {
+                return true;
             }
         }
         return false;
@@ -101,6 +106,7 @@ class AdminPolicy
      */
     public function delete(User $user, $model)
     {
+
         $auth = Auth::user();
         if ($auth->super && $auth->super->isNotEmpty() && $auth->super->first()->role === 'superadmin') {
             return true;

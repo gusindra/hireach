@@ -19,21 +19,23 @@ class QuotationObserver
      */
     public function updated(Quotation $request)
     {
+        $before = $request->getOriginal();
+        addLog($request, json_encode($request->toArray()), json_encode($before));
         if ($request->status == 'submit') {
             FlowProcess::create([
-                'model'     => 'QUOTATION',
-                'model_id'  => $request->id,
-                'user_id'   => Auth::user()->id,
-                'status'    => 'submited'
+                'model' => 'QUOTATION',
+                'model_id' => $request->id,
+                'user_id' => Auth::user()->id,
+                'status' => 'submited'
             ]);
 
             Notice::create([
-                'type'          => 'Quotation',
-                'model_id'      => $request->id,
-                'model'         => 'Quotation',
-                'notification'  => 'Hallo User, You Have New Quotation, Please Review',
-                'user_id'       => $request->model_id,
-                'status'        => 'unread',
+                'type' => 'Quotation',
+                'model_id' => $request->id,
+                'model' => 'Quotation',
+                'notification' => 'Hallo User, You Have New Quotation, Please Review',
+                'user_id' => $request->model_id,
+                'status' => 'unread',
             ]);
             // FlowProcess::create([
             //     'model'     => 'QUOTATION',
@@ -46,10 +48,10 @@ class QuotationObserver
             $flow = FlowSetting::where('model', 'QUOTATION')->where('team_id', auth()->user()->currentTeam->id)->get();
             foreach ($flow as $key => $value) {
                 FlowProcess::create([
-                    'model'     => $value->model,
-                    'model_id'  => $request->id,
-                    'role_id'   => $value->role_id,
-                    'task'      => $value->description,
+                    'model' => $value->model,
+                    'model_id' => $request->id,
+                    'role_id' => $value->role_id,
+                    'task' => $value->description,
                 ]);
             }
             //Log::debug('create flow '. $flow);
@@ -58,34 +60,34 @@ class QuotationObserver
 
         if ($request->status == 'approved') {
             Notice::create([
-                'type'          => 'Quotation',
-                'model_id'      => $request->id,
-                'model'         => 'Quotation',
-                'notification'  => 'Hallo Admin The Quotation ' .  $request->title . 'Has Been Approved',
-                'user_id'       => $request->user_id,
-                'status'        => 'unread',
+                'type' => 'Quotation',
+                'model_id' => $request->id,
+                'model' => 'Quotation',
+                'notification' => 'Hallo Admin The Quotation ' . $request->title . 'Has Been Approved',
+                'user_id' => $request->user_id,
+                'status' => 'unread',
             ]);
         }
         if ($request->status == 'active') {
             Notice::create([
-                'type'          => 'Quotation',
-                'model_id'      => $request->id,
-                'model'         => 'Quotation',
-                'notification'  => 'Hallo Admin The Quotation ' .  $request->title . 'Actived',
-                'user_id'       => $request->model_id,
-                'status'        => 'unread',
+                'type' => 'Quotation',
+                'model_id' => $request->id,
+                'model' => 'Quotation',
+                'notification' => 'Hallo Admin The Quotation ' . $request->title . 'Actived',
+                'user_id' => $request->model_id,
+                'status' => 'unread',
             ]);
         }
 
 
         if ($request->status == 'revision') {
             Notice::create([
-                'type'          => 'Quotation',
-                'model_id'      => $request->id,
-                'model'         => 'Quotation',
-                'notification'  => 'Hallo Admin, the Quotation ' . $request->title . ' has been rejected',
-                'user_id'       => $request->user_id,
-                'status'        => 'unread',
+                'type' => 'Quotation',
+                'model_id' => $request->id,
+                'model' => 'Quotation',
+                'notification' => 'Hallo Admin, the Quotation ' . $request->title . ' has been rejected',
+                'user_id' => $request->user_id,
+                'status' => 'unread',
             ]);
         }
 
@@ -111,5 +113,14 @@ class QuotationObserver
         //         'task'      => 'Releasor'
         //     ]);
         // }
+    }
+
+    public function created(Quotation $quotation)
+    {
+        addLog($quotation, json_encode($quotation->toArray()));
+    }
+    public function deleted(Quotation $quotation)
+    {
+        addLog($quotation, null, json_encode($quotation->toArray()));
     }
 }

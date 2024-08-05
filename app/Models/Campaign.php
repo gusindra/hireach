@@ -52,4 +52,13 @@ class Campaign extends Model
     {
         return $this->belongsTo('App\Models\Template', 'template_id');
     }
+
+    /**
+     * Get the all that stock
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function schedule(){
+        return $this->hasMany('App\Models\CampaignSchedule', 'campaign_id');
+    }
 }

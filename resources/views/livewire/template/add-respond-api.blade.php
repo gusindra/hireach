@@ -26,9 +26,9 @@
                             {{ __('Add respond answers') }}
                         </x-jet-button>
                     @else
-                        <x-jet-button wire:click="createShowModal">
+                        <x-add-button wire:click="createShowModal">
                             {{ __('Add respond answers') }}
-                        </x-jet-button>
+                        </x-add-button>
                     @endif
                 </div>
 

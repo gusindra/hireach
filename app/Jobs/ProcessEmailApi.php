@@ -28,9 +28,14 @@ class ProcessEmailApi implements ShouldQueue
     public $log;
     public $campaign;
 
+
     /**
-     * Create a new job instance.
+     * __construct
      *
+     * @param  mixed $request
+     * @param  mixed $user
+     * @param  mixed $log
+     * @param  mixed $campaign
      * @return void
      */
     public function __construct($request, $user, $log = null, $campaign = null)
@@ -48,8 +53,6 @@ class ProcessEmailApi implements ShouldQueue
      */
     public function handle()
     {
-        // Log::debug($this->data);
-        // Log::debug($this->user);
         //filter OTP & Non OTP
         $provider = $this->data['provider'];
         if ($provider->code == 'provider1') {
@@ -59,6 +62,12 @@ class ProcessEmailApi implements ShouldQueue
         }
     }
 
+    /**
+     * sendEmail
+     *
+     * @param  mixed $request
+     * @return void
+     */
     private function sendEmail($request)
     {
         if ($request['type'] >= "0") {
@@ -74,7 +83,7 @@ class ProcessEmailApi implements ShouldQueue
                 "https://api.smtp2go.com/v3/email/send"
             );
             curl_setopt($curl, CURLOPT_POSTFIELDS, json_encode(array(
-                "api_key" => env('SMTP2GO_API_KEY', 'A'), //"api-DC84566695C24F1E81D5B0EAAA0B1F50",
+                "api_key" => env('SMTP2GO_API_KEY', 'A'),
                 "sender" => $request['from'] == '' ? $request['from'] : "noreply@hireach.archeeshop.com",
                 "to" => array(
                     0 => $request['to']
@@ -96,7 +105,6 @@ class ProcessEmailApi implements ShouldQueue
      */
     private function FreeProvider($request)
     {
-
         $msg    = '';
         // if(array_key_exists('servid', $request)){
         //     $serve  = $request['servid'];
@@ -155,7 +163,7 @@ class ProcessEmailApi implements ShouldQueue
                     'provider' => $this->data['provider']->id
                 ];
                 // Log::debug($modelData);
-                if ($this->data['resource'] == 2) {
+                if (array_key_exists('resource', $this->data) && $this->data['resource'] == 2) {
                     $bm = Request::create([
                         'source_id' => 'emailchat_' . Hashids::encode($client->id),
                         'reply'     => $request['text'],
@@ -181,6 +189,12 @@ class ProcessEmailApi implements ShouldQueue
         }
     }
 
+    /**
+     * PaidProvider
+     *
+     * @param  mixed $request
+     * @return void
+     */
     private function PaidProvider($request)
     {
         $msg = $this->saveResult('progress');
@@ -339,6 +353,12 @@ class ProcessEmailApi implements ShouldQueue
         return $client;
     }
 
+    /**
+     * synCampaign
+     *
+     * @param  mixed $blast
+     * @return void
+     */
     private function synCampaign($blast)
     {
         if ($blast && !is_null($this->campaign)) {
