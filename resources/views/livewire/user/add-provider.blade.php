@@ -52,39 +52,41 @@
                                                     </td>
                                                 </tr>
                                                 @foreach ($data as $item)
-                                                    <tr>
-                                                        <td class="w-full px-6 py-4 text-sm whitespace-no-wrap">
-                                                            <div class="">
-                                                                <div class="grid grid-cols-4 gap-4">
-                                                                    <span>
-                                                                        {{ $item->provider->code }}
-                                                                    </span>
+                                                    @if($item)
+                                                        <tr>
+                                                            <td class="w-full px-6 py-4 text-sm whitespace-no-wrap">
+                                                                <div class="">
+                                                                    <div class="grid grid-cols-4 gap-4">
+                                                                        <span>
+                                                                            {{ $item->provider ? $item->provider->code : '-' }}
+                                                                        </span>
 
-                                                                    <span>
-                                                                        {{ $item->provider->name }}
-                                                                    </span>
+                                                                        <span>
+                                                                            {{ $item->provider ? $item->provider->name : '-' }}
+                                                                        </span>
 
-                                                                    <span>
-                                                                        {{ $item->channel }}
-                                                                    </span>
+                                                                        <span>
+                                                                            {{ $item->channel }}
+                                                                        </span>
 
-                                                                    <span>
-                                                                        {{ $item->from }}
-                                                                    </span>
+                                                                        <span>
+                                                                            {{ $item->from }}
+                                                                        </span>
+                                                                    </div>
                                                                 </div>
-                                                            </div>
-                                                        </td>
-                                                        <td
-                                                            class="flex items-center justify-end px-4 py-3 text-right sm:px-6">
-                                                            <div class="flex items-center">
-                                                                <x-jet-button :disabled="!userAccess('USER', 'delete')"
-                                                                    class="cursor-pointer ml-6 text-sm"
-                                                                    wire:click="deleteShowModal('{{ $item->id }}')">
-                                                                    {{ __('Delete') }}
-                                                                </x-jet-button>
-                                                            </div>
-                                                        </td>
-                                                    </tr>
+                                                            </td>
+                                                            <td
+                                                                class="flex items-center justify-end px-4 py-3 text-right sm:px-6">
+                                                                <div class="flex items-center">
+                                                                    <x-jet-button :disabled="!userAccess('USER', 'delete')"
+                                                                        class="cursor-pointer ml-6 text-sm"
+                                                                        wire:click="deleteShowModal('{{ $item->id }}')">
+                                                                        {{ __('Delete') }}
+                                                                    </x-jet-button>
+                                                                </div>
+                                                            </td>
+                                                        </tr>
+                                                    @endif
                                                 @endforeach
                                             </tbody>
                                         </table>
