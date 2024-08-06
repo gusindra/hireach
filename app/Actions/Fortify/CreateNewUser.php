@@ -39,11 +39,10 @@ class CreateNewUser implements CreatesNewUsers
                 'password' => Hash::make($input['password']),
             ]), function (User $user) {
                 //$this->createTeam($user);
-
             });
         });
 
-        if($input['email'] && $registeruser){
+        if ($input['email'] && $registeruser) {
             $role = 'admin';
             $team = 0;
             $newTeamMember = Jetstream::findUserByEmailOrFail($input['email']);
@@ -53,13 +52,13 @@ class CreateNewUser implements CreatesNewUsers
             if($newInvitation){
                 $role = $newInvitation->role ? $newInvitation->role->name : 'admin';
                 $roleUser = RoleUser::where('user_id', $newTeamMember->id)->count();
-                if($roleUser==0){
+                if ($roleUser == 0) {
                     RoleUser::create([
                         'user_id' => $newTeamMember->id,
                         'role_id' => $newInvitation->role_id,
                         'team_id' => $newInvitation->team_id
                     ]);
-                    $newTeamMember->update(['current_team_id'=>$newInvitation->team_id]);
+                    $newTeamMember->update(['current_team_id' => $newInvitation->team_id]);
                 }
                 $newInvitation->delete();
             }
@@ -85,6 +84,7 @@ class CreateNewUser implements CreatesNewUsers
 
         return $registeruser;
     }
+
 
     /**
      * Create a personal team for the user.
