@@ -10,8 +10,6 @@ class UserPolicy
 {
     use HandlesAuthorization;
 
-
-
     /**
      * Determine whether the user can view the user.
      *
@@ -36,7 +34,6 @@ class UserPolicy
         return false;
     }
 
-
     /**
      * Determine whether the user can view any models.
      *
@@ -46,7 +43,7 @@ class UserPolicy
      */
     public function viewAny(User $user, $menu = '')
     {
-        if ($menu == 'resource' || $menu == 'message' || $menu == 'resource' || $menu == 'template' || $menu == 'helper') {
+        if ($menu == 'resource' || $menu == 'message' || $menu == 'content' || $menu == 'template' || $menu == 'helper' || $menu == 'billing') {
             return true;
         }
         if ($user->isNoAdmin && $user->isNoAdmin->role == "admin") {
@@ -55,12 +52,6 @@ class UserPolicy
 
         return false;
     }
-
-
-
-
-
-
 
     /**
      * Determine whether the user can create users.
@@ -74,8 +65,6 @@ class UserPolicy
         return true;
 
     }
-
-
 
     /**
      * Determine whether the user can update the user.

@@ -99,8 +99,6 @@ class TemplateController extends Controller
 
     public function show($uuid)
     {
-
-
         return view('template.show', ['uuid' => $uuid]);
     }
 

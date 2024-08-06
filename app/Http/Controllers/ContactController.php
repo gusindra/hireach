@@ -35,13 +35,13 @@ class ContactController extends Controller
         //     return view('main-side.user');
         // }
         //return view('user.company-table');
+        return view('resource.contact');
         $client = Client::latest()->paginate(15);
         if ($request->has('v')) {
 
             return view('contact.index', ['client' => $client]);
         }
 
-        return view('resource.contact');
     }
 
     public function show(Request $request, $client)
