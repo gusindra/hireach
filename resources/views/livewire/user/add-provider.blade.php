@@ -75,18 +75,19 @@
                                                                     </div>
                                                                 </div>
                                                             </div>
-                                                        </td>
-                                                        <td
-                                                             class="flex items-center justify-end px-4 py-3 text-right sm:px-6">
-                                                            <div class="flex items-center">
-                                                                <x-link-button :disabled="!userAccess('USER', 'delete')"
-                                                                    class="cursor-pointer ml-6 text-sm"
-                                                                    wire:click="deleteShowModal('{{ $item->id }}')">
-                                                                    {{ __('Delete') }}
-                                                                </x-link-button>
-                                                            </div>
-                                                        </td>
-                                                    </tr>
+                                                            </td>
+                                                            <td
+                                                                class="flex items-center justify-end px-4 py-3 text-right sm:px-6">
+                                                                <div class="flex items-center">
+                                                                    <x-link-button :disabled="!userAccess('USER', 'delete')"
+                                                                        class="cursor-pointer ml-6 text-sm"
+                                                                        wire:click="deleteShowModal('{{ $item->id }}')">
+                                                                        {{ __('Delete') }}
+                                                                    </x-link-button>
+                                                                </div>
+                                                            </td>
+                                                        </tr>
+                                                    @endif
                                                 @endforeach
                                             </tbody>
                                         </table>
