@@ -53,7 +53,6 @@ class OrderAdminTest extends TestCase
 
     public function test_can_update_edit_component()
     {
-
         $user = User::find(1);
         $order = Order::where('name', 'Sample Order')->first();
         $customer = User::find(2);
