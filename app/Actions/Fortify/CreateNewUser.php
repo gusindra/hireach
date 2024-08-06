@@ -44,10 +44,12 @@ class CreateNewUser implements CreatesNewUsers
 
         if ($input['email'] && $registeruser) {
             $role = 'admin';
-            $newInvitation = RoleInvitation::where('email', $input['email'])->first();
+            $team = 0;
             $newTeamMember = Jetstream::findUserByEmailOrFail($input['email']);
 
-            if ($newInvitation) {
+            // ADMIN INVITATION
+            $newInvitation = RoleInvitation::where('email', $input['email'])->first();
+            if($newInvitation){
                 $role = $newInvitation->role ? $newInvitation->role->name : 'admin';
                 $roleUser = RoleUser::where('user_id', $newTeamMember->id)->count();
                 if ($roleUser == 0) {
@@ -60,23 +62,20 @@ class CreateNewUser implements CreatesNewUsers
                 }
                 $newInvitation->delete();
             }
-
-            if ($newInvitation && $newInvitation->team_id) {
+            // IF ADMIN INVITATION
+            // ELSE USER TEAM INVITATION
+            if($newInvitation && $newInvitation->team_id){
                 $team = Team::find($newInvitation->team_id);
-            } else {
+            }else{
                 $newInvitation = TeamInvitation::where('email', $input['email'])->first();
-                if ($newInvitation && $newInvitation->team_id) {
+                if($newInvitation){
                     $team = Team::find($newInvitation->team_id);
-                    $newTeamMember->update(['reff_team_id' => $newInvitation->team_id]);
+                    $newTeamMember->update(['reff_team_id'=>$newInvitation->team_id]);
                     $role = $newInvitation->role;
                     $newInvitation->delete();
-                } else {
-
-                    $team = null;
                 }
             }
-
-            if ($team) {
+            if($newInvitation && $team){
                 $team->users()->attach(
                     $newTeamMember, ['role' => $role]
                 );
