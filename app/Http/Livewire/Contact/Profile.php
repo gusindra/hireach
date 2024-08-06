@@ -20,8 +20,7 @@ class Profile extends Component
 
     public function mount($user)
     {
-
-        $this->user = Client::find($user);
+        $this->user = $user;
 
         $this->inputuser = [
             'name' => $this->user->name ?? '',
