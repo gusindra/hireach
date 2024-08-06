@@ -31,67 +31,50 @@
                     <div class="flex flex-col">
                         <div class="-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
                             <div class="py-2 align-middle inline-block min-w-full sm:px-6 lg:px-8">
-                                @if ($data->count())
+                              @if ($data->count())
                                     <div class="shadow overflow-hidden border-b border-gray-200 sm:rounded-lg">
                                         <table class="min-w-full divide-y divide-gray-200 mt-2">
-
                                             <tbody class="bg-white dark:bg-slate-700 divide-y divide-gray-200">
                                                 <tr>
                                                     <td class="w-full px-6 py-4 text-sm whitespace-no-wrap">
-                                                        <div class="">
-                                                            <div class="grid grid-cols-4 gap-4">
-                                                                <b>Provider Code</b>
-                                                                <b>Name</b>
-                                                                <b>Channel</b>
-                                                                <b>From / Sender ID</b>
-                                                            </div>
+                                                        <div class="grid grid-cols-4 gap-4">
+                                                            <b>Provider Code</b>
+                                                            <b>Name</b>
+                                                            <b>Channel</b>
+                                                            <b>From / Sender ID</b>
                                                         </div>
                                                     </td>
-                                                    <td
-                                                        class="flex items-center justify-end px-4 py-3 text-right sm:px-6">
+                                                    <td class="flex items-center justify-end px-4 py-3 text-right sm:px-6">
                                                     </td>
                                                 </tr>
                                                 @foreach ($data as $item)
                                                     @if($item)
                                                         <tr>
                                                             <td class="w-full px-6 py-4 text-sm whitespace-no-wrap">
-                                                                <div class="">
-                                                                    <div class="grid grid-cols-4 gap-4">
-                                                                        <span>
-                                                                            {{ $item->provider ? $item->provider->code : '-' }}
-                                                                        </span>
-
-                                                                        <span>
-                                                                            {{ $item->provider ? $item->provider->name : '-' }}
-                                                                        </span>
-
-                                                                        <span>
-                                                                            {{ $item->channel }}
-                                                                        </span>
-
-                                                                        <span>
-                                                                            {{ $item->from }}
-                                                                        </span>
-                                                                    </div>
+                                                                <div class="grid grid-cols-4 gap-4">
+                                                                    <span>{{ $item->provider ? $item->provider->code : '-' }}</span>
+                                                                    <span>{{ $item->provider ? $item->provider->name : '-' }}</span>
+                                                                    <span>{{ $item->channel }}</span>
+                                                                    <span>{{ $item->from }}</span>
                                                                 </div>
-                                                            </div>
-                                                        </td>
-                                                        <td
-                                                            class="flex items-center justify-end px-4 py-3 text-right sm:px-6">
-                                                            <div class="flex items-center">
-                                                                <x-link-button :disabled="!userAccess('USER', 'delete')"
-                                                                    class="cursor-pointer ml-6 text-sm"
-                                                                    wire:click="deleteShowModal('{{ $item->id }}')">
-                                                                    {{ __('Delete') }}
-                                                                </x-link-button>
-                                                            </div>
-                                                        </td>
-                                                    </tr>
+                                                            </td>
+                                                            <td class="flex items-center justify-end px-4 py-3 text-right sm:px-6">
+                                                                <div class="flex items-center">
+                                                                    <x-link-button :disabled="!userAccess('USER', 'delete')"
+                                                                        class="cursor-pointer ml-6 text-sm"
+                                                                        wire:click="deleteShowModal('{{ $item->id }}')">
+                                                                        {{ __('Delete') }}
+                                                                    </x-link-button>
+                                                                </div>
+                                                            </td>
+                                                        </tr>
+                                                    @endif
                                                 @endforeach
                                             </tbody>
                                         </table>
                                     </div>
                                 @endif
+
                             </div>
                         </div>
                     </div>
