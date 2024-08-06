@@ -56,7 +56,7 @@ class Item extends Component
 
     public function create()
     {
-        $this->authorize('CREATE_QUOTATION', 'QUOTATION');
+        $this->authorize('UPDATE_QUOTATION', 'QUOTATION');
         $this->validate();
         $this->modalVisible = false;
         OrderProduct::create($this->modelData());

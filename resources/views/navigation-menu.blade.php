@@ -105,21 +105,24 @@
                 </div>
             </div>
 
-            <div class="hidden sm:flex sm:items-center sm:ml-6 flex-auto justify-end space-x-1 mr-6">
+            <div class="hidden sm:flex sm:items-center sm:ml-6 flex-auto justify-end space-x-1">
                 <!-- Global Search -->
                 @if (auth()->user()->currentTeam && auth()->user()->currentTeam->id == env('IN_HOUSE_TEAM_ID'))
                     @livewire('search.all')
                 @endif
+
+                <!-- Notification Dropdown -->
+                @livewire('notification-app', ['client_id' => Auth::user()->id], key(Auth::user()->id))
 
                 <!-- Teams Dropdown -->
                 @if (!empty(auth()->user()->listTeams) && Laravel\Jetstream\Jetstream::hasTeamFeatures())
                     <div class="ml-3 relative">
                         <x-jet-dropdown align="right" width="60">
                             <x-slot name="trigger">
-                                <span class="inline-flex rounded-sm">
+                                <span class="inline-flex rounded-md">
                                     <button type="button"
-                                        class="inline-flex items-center px-3 py-2 border rounded-sm text-sm leading-4 font-medium rounded-md text-gray-500 dark:text-slate-300 bg-white supports-backdrop-blur:bg-white/60 dark:bg-slate-800 hover:bg-gray-50 hover:text-gray-700 focus:outline-none focus:bg-gray-50 active:bg-gray-50 transition">
-                                        Team: {{ Auth::user()->currentTeam ? Auth::user()->currentTeam->name : '' }}
+                                        class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 dark:text-slate-300 bg-white supports-backdrop-blur:bg-white/60 dark:bg-slate-800 hover:bg-gray-50 hover:text-gray-700 focus:outline-none focus:bg-gray-50 active:bg-gray-50 transition">
+                                        {{ Auth::user()->currentTeam ? Auth::user()->currentTeam->name : '' }}
 
                                         <svg class="ml-2 -mr-0.5 h-4 w-4" xmlns="http://www.w3.org/2000/svg"
                                             viewBox="0 0 20 20" fill="currentColor">
@@ -175,10 +178,9 @@
                         <x-slot name="trigger">
                             @if (Laravel\Jetstream\Jetstream::managesProfilePhotos())
                                 <button
-                                    class="flex text-sm border-2 border-slate-200 rounded-sm focus:outline-none focus:border-gray-300 dark:bg-slate-700 transition">
-                                    <img class="h-8 w-8 rounded-sm object-cover"
-                                        src="{{ Auth::user()->profile_photo_url }}" title="{{ Auth::user()->name }}" alt="{{ Auth::user()->name }}" />
-                                        <small class="text-xs my-auto mx-2">{{ Auth::user()->name }}</small>
+                                    class="flex text-sm border-2 border-slate-200 rounded-full focus:outline-none focus:border-gray-300 dark:bg-slate-700 transition">
+                                    <img class="h-8 w-8 rounded-full object-cover"
+                                        src="{{ Auth::user()->profile_photo_url }}" alt="{{ Auth::user()->name }}" />
                                     @if (Auth::user()->activeRole)
                                         <span class="m-2 text-xs">{{ Auth::user()->activeRole->role->name }}</span>
                                     @endif
@@ -466,7 +468,4 @@
             </div>
         </div>
     </div>
-
-    <!-- Notification Dropdown -->
 </nav>
-@livewire('notification-app', ['client_id' => Auth::user()->id], key(Auth::user()->id))

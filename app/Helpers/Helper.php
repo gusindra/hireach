@@ -369,35 +369,28 @@ function listProjects($status, $party)
     return $data->orderBy('id', 'asc')->get();
 }
 
-function addLog($model, $data, $before = null)
+function addLog($data, $before)
 {
     $diff = '';
-    $bs = $before ? json_decode($before, TRUE) : [];
+    $bs = json_decode($before, TRUE);
     $ds = json_decode($data, TRUE);
-
-    if (empty($before)) {
-        $diff = 'Created: ' . json_encode($ds);
-    } else if (empty($ds) || !array_intersect_assoc($ds, $bs)) {
-        $diff = 'Deleted: ' . json_encode($bs);
-    } else {
-        foreach ($ds as $key => $d) {
-            if (isset($bs[$key]) && $key != 'updated_at' && $d != $bs[$key]) {
-                $diff .= $key . ':' . $bs[$key] . ' > ' . $d . ', ';
+    foreach ($ds as $key => $d) {
+        foreach ($bs as $k => $b) {
+            if ($key != 'updated_at' && $key == $k && $d != $b) {
+                $diff = $diff . '' . $key . ':' . $b . ' > ' . $d . ', ';
             }
         }
     }
-
     if ($diff != '') {
         LogChange::create([
-            'model' => class_basename($model),
-            'model_id' => isset($ds['id']) ? $ds['id'] : $bs['id'],
+            'model' => class_basename($data),
+            'model_id' => $data->id,
             'before' => $before,
             'remark' => $diff,
-            'user_id' => auth()->check() ? auth()->user()->id : ''
+            'user_id' => auth()->user()->id
         ]);
     }
 }
-
 
 function checkContentOtp($content)
 {
@@ -439,29 +432,23 @@ function userAccess($menu, $action = 'view', $level = '')
         }
     }
     //LEVEL 2
-    if (auth()->user()->activeRole) {
-        $gp = cache()->remember('permission-' . $menu, 14400, function () use ($menu) {
-            return Permission::where('model', $menu)->pluck('name')->toArray();
-        });
+    $gp = cache()->remember('permission-' . $menu, 14400, function () use ($menu) {
+        return Permission::where('model', $menu)->pluck('name')->toArray();
+    });
 
-        foreach (auth()->user()->activeRole->role->permission as $permission) {
-            if (in_array($permission->name, $gp)) {
-                if (stripos($permission->name, strtoupper($action)) !== false) {
-                    return true;
-                }
+    foreach (auth()->user()->activeRole->role->permission as $permission) {
+        if (in_array($permission->name, $gp)) {
+            if (stripos($permission->name, strtoupper($action)) !== false) {
+                return true;
             }
         }
     }
     //LEVEL 3
     if ($level == 'admin') {
         if ((auth()->user()->activeRole && str_contains(auth()->user()->activeRole->role->name, "Admin"))) {
+
             return true;
         }
-    }
-    // dd($menu );
-    //LEVEL 4
-    if ($menu == 'DASHBOARD') {
-        return true;
     }
     return false;
 }

@@ -3,12 +3,10 @@
 namespace App\Http\Livewire\Template;
 
 use App\Models\Template;
-use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Livewire\Component;
 
 class Delete extends Component
 {
-    use AuthorizesRequests;
     public $modalDeleteVisible = false;
     public $templateId;
     public $template;
@@ -31,7 +29,6 @@ class Delete extends Component
 
     public function delete()
     {
-
         if ($this->template) {
             $this->template->delete();
             $this->authorize('DELETE_CONTENT_USR', $this->template->id);

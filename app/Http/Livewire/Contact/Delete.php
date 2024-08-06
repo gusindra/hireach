@@ -2,13 +2,11 @@
 
 namespace App\Http\Livewire\Contact;
 
-use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Livewire\Component;
 use App\Models\Client;
 
 class Delete extends Component
 {
-    use AuthorizesRequests;
     public $modalDeleteVisible = false;
     public $contactId;
     public $contact;

@@ -3,14 +3,12 @@
 namespace App\Http\Livewire\Template;
 
 use App\Models\Template;
-use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
 use Illuminate\Support\Str;
 
 class OneWay extends Component
 {
-    use AuthorizesRequests;
     public $modalActionVisible = false;
     public $way = 1;
     public $type;
@@ -25,7 +23,6 @@ class OneWay extends Component
 
     public function create()
     {
-
         $this->validate();
 
         Template::create($this->modelData());
@@ -37,7 +34,6 @@ class OneWay extends Component
 
     public function update()
     {
-
         $this->validate();
 
         $template = Template::findOrFail($this->selectedItemId);
@@ -74,12 +70,12 @@ class OneWay extends Component
     public function modelData()
     {
         return [
-            'uuid' => Str::uuid(),
-            'type' => $this->way == 2 ? $this->type : 'text',
-            'name' => $this->name,
-            'resource' => $this->way,
-            'description' => $this->description,
-            'user_id' => Auth::user()->id,
+            'uuid'          => Str::uuid(),
+            'type'          => $this->way == 2 ? $this->type : 'text',
+            'name'          => $this->name,
+            'resource'      => $this->way,
+            'description'   => $this->description,
+            'user_id'       => Auth::user()->id,
         ];
     }
 

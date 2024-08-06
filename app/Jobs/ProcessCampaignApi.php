@@ -2,7 +2,6 @@
 
 namespace App\Jobs;
 
-use App\Exports\ExportAudienceContact;
 use App\Models\CampaignModel;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -11,7 +10,6 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
-use Maatwebsite\Excel\Facades\Excel;
 
 class ProcessCampaignApi implements ShouldQueue
 {
@@ -76,7 +74,6 @@ class ProcessCampaignApi implements ShouldQueue
             Log::debug($resData);
         } else {
             // Production environment: make the actual API call
-            Excel::store(new ExportAudienceContact($this->campaign->audience_id), $this->campaign->id . '_campaign.xlsx');
             $response = Http::withOptions(['verify' => false,])
                 ->withHeaders([
                     'Client-Key' => ENV('WTID_CLIENT_KEY', 'MD=='),
@@ -92,14 +89,14 @@ class ProcessCampaignApi implements ShouldQueue
             $resData = json_decode($response, true);
             Log::debug($resData);
             if ($resData['status']) {
-                $response = Http::withOptions(['verify' => false,])->withHeaders(['Client-Key' => ENV('WTID_CLIENT_KEY', 'MDgx=='), 'Client-Secret' => ENV('WTID_CLIENT_SECRET', 'MDgxMjM0OjIw')])->patch($url . 'api/campaign/ready/' . $resData['campaign_id']);
-                Log::debug($response);
-                $result = json_decode($response, true);
-                if ($result['status']) {
-                    Log::debug("Campaign WA is Ready");
-                } else {
-                    Log::debug("Campaign WA is ERROR: " . $result['message']);
-                }
+                // $response = Http::withOptions(['verify' => false,])->withHeaders(['Client-Key' => ENV('WTID_CLIENT_KEY', 'MDgxMjM0NTY3Ng=='), 'Client-Secret' => ENV('WTID_CLIENT_SECRET', 'MDgxMjM0NTY3NnwyMDI0LTAxLTMwIDEwOjIyOjIw')])->patch($url . 'api/campaign/ready/' . $resData['campaign_id']);
+                // Log::debug($response);
+                // $result = json_decode($response, true);
+                // if ($result['status']) {
+                //     Log::debug("WA is OK");
+                // } else {
+                //     Log::debug("WA is ERROR: " . $result['message']);
+                // }
             } else {
                 Log::debug("Campaign WA is FAILED: " . $resData['message']);
             }

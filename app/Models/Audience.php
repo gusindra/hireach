@@ -26,31 +26,11 @@ class Audience extends Model
 
     protected $appends = ['total_clients'];
 
-    /**
-     * audienceClients
-     *
-     * @return void
-     */
     public function audienceClients()
     {
         return $this->hasMany(AudienceClient::class);
     }
 
-    /**
-     * lastClient
-     *
-     * @return void
-     */
-    public function lastClient()
-    {
-       return $this->hasOne(AudienceClient::class)->latest();
-    }
-
-    /**
-     * getTotalClientsAttribute
-     *
-     * @return void
-     */
     public function getTotalClientsAttribute()
     {
         return $this->audienceClients->count();

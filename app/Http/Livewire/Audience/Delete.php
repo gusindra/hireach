@@ -3,12 +3,10 @@
 namespace App\Http\Livewire\Audience;
 
 use App\Models\Audience;
-use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Livewire\Component;
 
 class Delete extends Component
 {
-    use AuthorizesRequests;
     public $modalDeleteVisible = false;
     public $audienceId;
     public $audience;

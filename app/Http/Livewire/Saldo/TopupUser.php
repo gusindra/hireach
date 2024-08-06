@@ -5,7 +5,6 @@ namespace App\Http\Livewire\Saldo;
 use App\Models\Order;
 use App\Models\OrderProduct;
 use App\Models\Setting;
-use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Livewire\Component;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
@@ -16,7 +15,6 @@ use Illuminate\Support\Facades\Cache;
 
 class TopupUser extends Component
 {
-    use AuthorizesRequests;
     public $nominal = '100000';
     public $nominal_view;
 
@@ -112,7 +110,7 @@ class TopupUser extends Component
                         'qty' => 1,
                         'unit' => 1,
                         'price' => $this->nominal * ($vat->value / 100),
-                        'note' => 'VAT/PPN @ ' . $vat->value . '%',
+                        'note' => 'VAT/PPN @ '.$vat->value.'%',
                         'user_id' => 0,
                     ]
                 );

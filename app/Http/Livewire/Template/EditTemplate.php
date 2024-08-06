@@ -2,13 +2,11 @@
 
 namespace App\Http\Livewire\Template;
 
-use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Livewire\Component;
 use App\Models\Template;
 
 class EditTemplate extends Component
 {
-    use AuthorizesRequests;
     public $template;
     public $templateId;
     public $name;
@@ -19,13 +17,12 @@ class EditTemplate extends Component
 
     public function mount($uuid)
     {
-
         $this->template = Template::with('question')->where('uuid', $uuid)->first();
-        $this->name = $this->template ? $this->template->name : '';
-        $this->description = $this->template ? $this->template->description : '';
-        $this->is_enabled = $this->template ? $this->template->is_enabled : '';
-        $this->is_waiting = $this->template ? $this->template->is_wait_for_chat : '';
-        $this->templateId = $this->template ? $this->template->id : '';
+        $this->name = $this->template ? $this->template->name :'';
+        $this->description = $this->template ?$this->template->description:'';
+        $this->is_enabled = $this->template ?$this->template->is_enabled:'';
+        $this->is_waiting = $this->template ?$this->template->is_wait_for_chat:'';
+        $this->templateId = $this->template ?$this->template->id:'';
     }
 
     public function rules()
@@ -39,10 +36,10 @@ class EditTemplate extends Component
     public function modelData()
     {
         return [
-            'name' => $this->name,
-            'description' => $this->description,
-            'is_enabled' => $this->is_enabled,
-            'is_wait_for_chat' => $this->is_waiting,
+            'name'                  => $this->name,
+            'description'           => $this->description,
+            'is_enabled'            => $this->is_enabled,
+            'is_wait_for_chat'      => $this->is_waiting,
         ];
     }
 
@@ -61,8 +58,7 @@ class EditTemplate extends Component
 
     public function render()
     {
-        $this->authorize('VIEW_CONTENT', $this->template->user_id);
         return view('livewire.template.edit-template')
-            ->layout('template.show');
+                    ->layout('template.show');
     }
 }

@@ -2,7 +2,6 @@
 
 namespace App\Http\Livewire\Template;
 
-use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Livewire\Component;
 use App\Models\Template;
 use App\Models\Action;
@@ -10,7 +9,6 @@ use App\Models\DataAction;
 
 class AddAction extends Component
 {
-    use AuthorizesRequests;
     public $template;
     public $templateId;
     public $actionId;
@@ -48,10 +46,10 @@ class AddAction extends Component
     {
         $template = Template::find($this->templateId);
         $data = [
-            'message' => $this->message,
-            'order' => $this->orderAction(),
-            'template_id' => $this->templateId,
-            'type' => $this->content
+            'message'       => $this->message,
+            'order'         => $this->orderAction(),
+            'template_id'   => $this->templateId,
+            'type'          => $this->content
         ];
 
         if ($template && $template->question && $template->question->type == 'api') {
@@ -99,19 +97,19 @@ class AddAction extends Component
 
         if ($this->link_attachment == '') {
             $data = [
-                'message' => $this->message,
-                'is_multidata' => $this->is_multidata,
-                'array_data' => $this->array_data,
-                'type' => 'text'
+                'message'       => $this->message,
+                'is_multidata'  => $this->is_multidata,
+                'array_data'    => $this->array_data,
+                'type'          => 'text'
             ];
         } else {
             $ext = attachmentExt($this->link_attachment);
             if ($ext) {
                 $data = [
-                    'message' => $this->link_attachment,
-                    'is_multidata' => $this->is_multidata,
-                    'array_data' => $this->array_data,
-                    'type' => $ext
+                    'message'       => $this->link_attachment,
+                    'is_multidata'  => $this->is_multidata,
+                    'array_data'    => $this->array_data,
+                    'type'          => $ext
                 ];
             } else {
                 dd('format false');
@@ -191,16 +189,16 @@ class AddAction extends Component
     {
         $data = Action::find($this->actionId);
 
-        $this->type = false;
+        $this->type             = false;
         if ($data->type == 'text') {
-            $this->message = $data->message;
+            $this->message          = $data->message;
         } else {
-            $this->type = true;
-            $this->link_attachment = $data->message;
-            $this->message = '';
+            $this->type             = true;
+            $this->link_attachment  = $data->message;
+            $this->message          = '';
         }
         $this->is_multidata = $data->is_multidata;
-        $this->array_data = $data->array_data;
+        $this->array_data   = $data->array_data;
     }
 
     public function deleteShowModal($id)
