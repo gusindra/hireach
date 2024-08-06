@@ -31,7 +31,7 @@ class Delete extends Component
 
     public function delete()
     {
-        $this->authorize('DELETE_RESOURCE', $this->contact->user_id);
+        $this->authorize('DELETE_RESOURCE_USR', $this->contact->user_id);
         if ($this->contact) {
             $this->contact->delete();
         }

@@ -8,21 +8,21 @@ use Vinkla\Hashids\Facades\Hashids;
 
 class ChatController extends Controller
 {
-    public $user_info;
-    public function __construct()
-    {
-        $this->middleware(function ($request, $next) {
-            // Your auth here
-            $granted = false;
-            $user = auth()->user();
-            $granted = userAccess('CHAT');
+    // public $user_info;
+    // public function __construct()
+    // {
+    //     $this->middleware(function ($request, $next) {
+    //         // Your auth here
+    //         $granted = false;
+    //         $user = auth()->user();
+    //         $granted = userAccess('CHAT');
 
-            if ($granted) {
-                return $next($request);
-            }
-            abort(403);
-        });
-    }
+    //         if ($granted) {
+    //             return $next($request);
+    //         }
+    //         abort(403);
+    //     });
+    // }
     public function index()
     {
         return resource_path('views');

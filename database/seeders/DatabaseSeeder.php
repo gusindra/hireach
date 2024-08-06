@@ -27,7 +27,8 @@ class DatabaseSeeder extends Seeder
             ProviderTableSeeder::class,
             CompaniesTableSeeder::class,
             ProviderUserSeeder::class,
-            SettingVatSeeder::class
+            SettingVatSeeder::class,
+            SaldoUserSeeder::class
 
         ]);
     }

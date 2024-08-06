@@ -68,7 +68,7 @@ class ProviderAdminTest extends TestCase
         ]);
 
 
-        Livewire::test(AddProvider::class, ['user' => $user])
+        Livewire::actingAs($user)->test(AddProvider::class, ['user' => $user])
             ->set('input.provider_id', $provider->id)
             ->set('input.channel', 'email')
             ->call('addProvider')

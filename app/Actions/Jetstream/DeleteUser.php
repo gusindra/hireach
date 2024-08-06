@@ -36,7 +36,7 @@ class DeleteUser implements DeletesUsers
      */
     public function delete($user)
     {
-        $this->authorize("DELETE_USER", $user);
+        $this->authorize("DELETE_USER_USR", $user->id);
         DB::transaction(function () use ($user) {
             $this->deleteTeams($user);
             $user->deleteProfilePhoto();
