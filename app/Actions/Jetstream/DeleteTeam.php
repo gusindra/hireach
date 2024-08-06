@@ -2,10 +2,12 @@
 
 namespace App\Actions\Jetstream;
 
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Laravel\Jetstream\Contracts\DeletesTeams;
 
 class DeleteTeam implements DeletesTeams
 {
+    use AuthorizesRequests;
     /**
      * Delete the given team.
      *
@@ -14,6 +16,8 @@ class DeleteTeam implements DeletesTeams
      */
     public function delete($team)
     {
+
+        $this->authorize('DELETE_TEAM_USR', $team->user_id);
         $team->purge();
     }
 }

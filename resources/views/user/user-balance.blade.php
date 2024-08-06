@@ -24,11 +24,12 @@
             @livewire('saldo.topup', ['user' => $user, 'id' => $id])
         </div>
     </header> --}}
-    
-    @includeWhen(auth()->user()->super->first() && auth()->user()->super->first()->role == 'superadmin',
-        'menu.admin-menu-user-profile',
-        ['user' => $user]
+
+    @includeWhen(auth()->user()->isSuper || (auth()->user()->team && str_contains(auth()->user()->activeRole->role->name, 'Admin')),
+            'menu.admin-menu-user-profile',
+            ['user' => $user]
     )
+    
     <!-- Team Dashboard -->
     <div class="col-span-12 px-3 ml-24 mt-2 space-y-3">
         <div class="bg-white col-8 mt-3">

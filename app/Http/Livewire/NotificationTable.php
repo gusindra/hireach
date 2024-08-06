@@ -2,7 +2,7 @@
 
 namespace App\Http\Livewire;
 
-use App\Models\Notification;
+use App\Models\Notice;
 use Mediconesystems\LivewireDatatables\Http\Livewire\LivewireDatatable;
 use Mediconesystems\LivewireDatatables\Column;
 use Mediconesystems\LivewireDatatables\NumberColumn;
@@ -10,19 +10,19 @@ use Mediconesystems\LivewireDatatables\DateColumn;
 
 class NotificationTable extends LivewireDatatable
 {
-    public $model = Notification::class;
+    public $model = Notice::class;
 
     public function builder()
     {
-        return Notification::query()->where('user_id', auth()->user()->id)->orderBy('created_at', 'DESC');
+        return Notice::query()->where('user_id', auth()->user()->id)->orderBy('created_at', 'DESC');
     }
 
     public function columns()
     {
         return [
-    		Column::name('type')->label('Name'),
-    		Column::name('notification')->label('Description'),
-    		DateColumn::name('created_at')->label('Date'),
+            Column::name('type')->label('Name'),
+            Column::name('notification')->label('Description'),
+            DateColumn::name('created_at')->label('Date'),
             Column::callback(['status'], function ($type) {
                 return view('template.label', ['type' => $type]);
             }),
@@ -32,6 +32,6 @@ class NotificationTable extends LivewireDatatable
                     'slot' => 'View'
                 ]);
             }),
-    	];
+        ];
     }
 }

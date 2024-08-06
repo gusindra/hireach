@@ -2,6 +2,7 @@
 
 namespace App\Http\Livewire\Template;
 
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Livewire\Component;
 use App\Models\Template;
 use Illuminate\Support\Facades\Auth;
@@ -9,6 +10,7 @@ use Illuminate\Support\Str;
 
 class AddError extends Component
 {
+    use AuthorizesRequests;
     public $errorTemplate;
     public string $errorUuid;
     public $errorName;
@@ -59,6 +61,7 @@ class AddError extends Component
      */
     public function create()
     {
+
         $this->validate();
         $addError = Template::create($this->modelData());
         $this->resetForm();
@@ -111,6 +114,7 @@ class AddError extends Component
     public function delete()
     {
         $choosen = Template::find($this->templateId);
+        $this->authorize('DELETE_CONTENT_USR', $this->template->user_id);
         $choosen->error_template_id = NULL;
         $choosen->save();
 
@@ -133,11 +137,11 @@ class AddError extends Component
     public function modelData()
     {
         return [
-            'uuid'              => Str::uuid(),
-            'type'              => $this->type,
-            'name'              => $this->name,
-            'description'       => $this->description,
-            'user_id'           => Auth::user()->id,
+            'uuid' => Str::uuid(),
+            'type' => $this->type,
+            'name' => $this->name,
+            'description' => $this->description,
+            'user_id' => Auth::user()->id,
         ];
     }
 

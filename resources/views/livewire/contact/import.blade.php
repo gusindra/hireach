@@ -13,10 +13,10 @@
 
         <x-slot name="content">
             <div class="col-span-6 sm:col-span-3 grid grid-cols-3 gap-2 space-y-2 p-2">
-                <form action="{{ route('contact.import') }}" method="POST" enctype="multipart/form-data">
+                <form x-ref="myForm" action="{{ route('contact.import') }}" method="POST" enctype="multipart/form-data">
                     @csrf
                     <input type="file" name="file" accept=".csv">
-                    <button type="submit">Import CSV</button>
+                    <br><br>
                 </form>
             </div>
         </x-slot>
@@ -25,7 +25,9 @@
             <x-jet-secondary-button wire:click="$toggle('modalActionVisible')" wire:loading.attr="disabled">
                 {{ __('Cancel') }}
             </x-jet-secondary-button>
-
+            <x-jet-button x-on:click="$refs.myForm.submit()">
+                Import CSV
+            </x-jet-button>
         </x-slot>
     </x-jet-dialog-modal>
 </div>

@@ -7,18 +7,25 @@ use Illuminate\Support\Facades\Auth;
 
 class RoleController extends Controller
 {
+
     public $user_info;
     public function __construct()
     {
+
         $this->middleware(function ($request, $next) {
             // Your auth here
-            $this->user_info = Auth::user()->super->first();
-            if ($this->user_info && $this->user_info->role == 'superadmin') {
+            // $granted = false;
+            $user = auth()->user();
+            $granted = userAccess('ROLE');
+
+
+            if ($granted) {
                 return $next($request);
             }
-            abort(404);
+            abort(403);
         });
     }
+
 
     public function index()
     {

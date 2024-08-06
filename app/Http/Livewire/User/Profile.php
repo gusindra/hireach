@@ -6,11 +6,13 @@ use App\Models\BillingUser;
 use App\Models\Client;
 use App\Models\Team;
 use App\Models\User;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Livewire\Component;
 use Illuminate\Support\Str;
 
 class Profile extends Component
 {
+    use AuthorizesRequests;
     public $user;
     public $client;
     public $inputuser;
@@ -25,7 +27,7 @@ class Profile extends Component
         $this->inputuser['email'] = $this->user->email ?? '';
         $this->inputuser['phone'] = $this->user->phone_no ?? '';
         // dd($this->inputuser);
-        if($this->user->isClient){
+        if ($this->user->isClient) {
             $this->inputclient['title'] = $this->user->isClient->title ?? '';
             $this->inputclient['name'] = $this->user->isClient->name ?? '';
             $this->inputclient['phone'] = $this->user->isClient->phone ?? '';
@@ -44,74 +46,76 @@ class Profile extends Component
     public function saveUser($id)
     {
         // dd($id);
+        $this->authorize('UPDATE_USER', 'USER');
         $user = User::find($id);
-        if($this->user->isClient && $user->email != $this->inputuser['email']){
+        if ($this->user->isClient && $user->email != $this->inputuser['email']) {
             $this->user->isClient->update([
                 'email' => $this->inputuser['email']
             ]);
         }
         $user->update([
-            'name'      => $this->inputuser['name'],
-            'phone_no'  => $this->inputuser['phone'],
-            'email'     => $this->inputuser['email'],
-            'nick'      => $this->inputuser['nick']
+            'name' => $this->inputuser['name'],
+            'phone_no' => $this->inputuser['phone'],
+            'email' => $this->inputuser['email'],
+            'nick' => $this->inputuser['nick']
         ]);
         $this->emit('user_saved');
     }
 
     public function saveClient()
     {
+        $this->authorize('UPDATE_USER', 'USER');
         // dd($this->user);
-        if($this->user->isClient){
+        if ($this->user->isClient) {
             $this->user->isClient->update([
-                'title'     => $this->inputclient['title'],
-                'name'      => $this->inputclient['name'],
-                'phone'     => $this->inputclient['phone'],
-                'address'   => $this->inputclient['address'],
-                'note'      => $this->inputclient['notes'],
+                'title' => $this->inputclient['title'],
+                'name' => $this->inputclient['name'],
+                'phone' => $this->inputclient['phone'],
+                'address' => $this->inputclient['address'],
+                'note' => $this->inputclient['notes'],
             ]);
-            if(!$this->user->userBilling){
+            if (!$this->user->userBilling) {
                 $billing = BillingUser::create([
-                    'tax_id'        => $this->inputclient['tax_id'],
-                    'name'          => $this->inputclient['name'],
-                    'post_code'     => $this->inputclient['postcode'],
-                    'address'       => $this->inputclient['address'],
-                    'province'      => $this->inputclient['province'],
-                    'city'          => $this->inputclient['city'],
-                    'user_id'       => $this->user->id
+                    'tax_id' => $this->inputclient['tax_id'],
+                    'name' => $this->inputclient['name'],
+                    'post_code' => $this->inputclient['postcode'],
+                    'address' => $this->inputclient['address'],
+                    'province' => $this->inputclient['province'],
+                    'city' => $this->inputclient['city'],
+                    'user_id' => $this->user->id
                 ]);
-            }else{
+            } else {
                 $this->user->userBilling->update([
-                    'tax_id'        => $this->inputclient['tax_id'],
-                    'name'          => $this->inputclient['name'],
-                    'post_code'     => $this->inputclient['postcode'],
-                    'address'       => $this->inputclient['address'],
-                    'province'      => $this->inputclient['province'],
-                    'city'          => $this->inputclient['city'],
+                    'tax_id' => $this->inputclient['tax_id'],
+                    'name' => $this->inputclient['name'],
+                    'post_code' => $this->inputclient['postcode'],
+                    'address' => $this->inputclient['address'],
+                    'province' => $this->inputclient['province'],
+                    'city' => $this->inputclient['city'],
                 ]);
             }
-        }else{
-            $customer =  Client::create([
-                'title'     => $this->inputclient['title'],
-                'name'      => $this->inputclient['name'],
-                'phone'     => $this->inputclient['phone'],
-                'address'   => $this->inputclient['address'],
-                'note'      => $this->inputclient['notes'],
-                'email'     => $this->user->email,
-                'user_id'   => 0,
-                'uuid'      => Str::uuid()
+        } else {
+            $customer = Client::create([
+                'title' => $this->inputclient['title'],
+                'name' => $this->inputclient['name'],
+                'phone' => $this->inputclient['phone'],
+                'address' => $this->inputclient['address'],
+                'note' => $this->inputclient['notes'],
+                'email' => $this->user->email,
+                'user_id' => 0,
+                'uuid' => Str::uuid()
             ]);
             $team = Team::find(0);
             $customer->teams()->attach($team);
-            if($customer){
+            if ($customer) {
                 $billing = BillingUser::create([
-                    'tax_id'        => $this->inputclient['tax_id'],
-                    'name'          => $this->inputclient['name'],
-                    'post_code'     => $this->inputclient['postcode'],
-                    'address'       => $this->inputclient['address'],
-                    'province'      => $this->inputclient['province'],
-                    'city'          => $this->inputclient['city'],
-                    'user_id'       => $this->user->id
+                    'tax_id' => $this->inputclient['tax_id'],
+                    'name' => $this->inputclient['name'],
+                    'post_code' => $this->inputclient['postcode'],
+                    'address' => $this->inputclient['address'],
+                    'province' => $this->inputclient['province'],
+                    'city' => $this->inputclient['city'],
+                    'user_id' => $this->user->id
                 ]);
             }
         }

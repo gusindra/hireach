@@ -1,11 +1,11 @@
 <div wire:poll.visible>
-    <div class="relative">
+    <div class="absolute right-0 w-10">
         <x-jet-dropdown align="right" width="60">
             <x-slot name="trigger">
-                <span class="inline-flex rounded-md">
-                    <button type="button" class="inline-flex hover:bg-gray-50 items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 supports-backdrop-blur:bg-white/60 dark:bg-slate-800 dark:hover:bg-slate-600 hover:text-gray-700 focus:outline-none focus:bg-gray-50 active:bg-gray-50 transition">
+                <span class="inline-flex rounded-md mt-4">
+                    <button type="button" class="inline-flex hover:bg-gray-50 items-center px-2 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 supports-backdrop-blur:bg-white/60 dark:bg-slate-800 dark:hover:bg-slate-600 hover:text-gray-700 focus:outline-none focus:bg-gray-50 active:bg-gray-50 transition">
                         @if($data['count']>0)
-                            <span id="icon-notif" style="font-size: xx-small" class="absolute top-0 right-1 p-1 font-bold leading-none text-white transform bg-red-600 rounded-full">{{$data['count']}}</span>
+                            <span id="icon-notif" style="font-size: xx-small" class="absolute mt-3 mr-1 top-0 right-1 p-1 font-bold leading-none text-white transform bg-red-600 rounded-full">{{$data['count']}}</span>
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 dark:text-slate-300 dark:hover:text-slate-500 text-slate-600 hover:text-slate-800" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 0 1-2.25 2.25h-15a2.25 2.25 0 0 1-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25m19.5 0v.243a2.25 2.25 0 0 1-1.07 1.916l-7.5 4.615a2.25 2.25 0 0 1-2.36 0L3.32 8.91a2.25 2.25 0 0 1-1.07-1.916V6.75" />
                             </svg>
@@ -24,6 +24,7 @@
                     <div class="block px-4 py-2 text-xs text-gray-400">
                         {{ __('Notification') }}
                     </div>
+
                     @foreach ($data['waiting'] as $wait)
                         <a class="block px-4 py-2 text-sm font-bold leading-5 bg-pink-400 text-white hover:bg-pink-300 focus:outline-none focus:bg-pink-600 transition"
                             href="{{ route('message') }}?id={{ Hashids::encode($wait->id) }}">
@@ -36,6 +37,7 @@
                             </div>
                         </a>
                     @endforeach
+
                     @if ($data['notif']->count() > 0)
                         @foreach ($data['notif'] as $item)
                             <a class="block px-4 py-2 text-sm leading-5 text-gray-700 dark:bg-blue-600  dark:text-slate-800 {{ $item->status == 'unread' ? 'bg-green-200' : '' }} {{ $item->status == 'new' ? 'bg-gray-200' : '' }} hover:bg-gray-300 focus:outline-none focus:bg-gray-100 transition"
@@ -81,7 +83,8 @@
             </x-jet-secondary-button>
         </x-slot>
     </x-jet-dialog-modal>
-    @if ($data['count'] > 0)
+
+    @if ($data['count'] > 0 && $data['status']=='Online')
         <style>
             .apply-shake {
                 animation: shake 1s;
@@ -139,11 +142,10 @@
                 window.addEventListener('event-notification', event => {
                     var d = document.getElementById("icon-notif");
                     document.getElementById('sound').play();
-                    console.log(1);
                     setTimeout((e) => {
                         var d = document.getElementById("icon-notif");
                         d.classList.add("apply-shake");
-                    }, 3000);
+                    }, 10000);
                     d.classList.remove("apply-shake");
                 });
             });

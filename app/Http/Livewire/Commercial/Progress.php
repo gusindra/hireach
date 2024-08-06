@@ -11,10 +11,12 @@ use App\Models\Order;
 use App\Models\OrderProduct;
 use App\Models\Project;
 use App\Models\Quotation;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Livewire\Component;
 
 class Progress extends Component
 {
+    use AuthorizesRequests;
     public $model;
     public $model_type;
     public $model_id;
@@ -25,6 +27,7 @@ class Progress extends Component
 
     public function mount($model, $id)
     {
+
         $this->model_type = $model;
         $this->model_id = $id;
         if ($model == 'project') {
@@ -51,6 +54,7 @@ class Progress extends Component
 
     public function activated()
     {
+        $this->authorize('UPDATE_QUOTATION', auth()->user()->id);
         $this->model->update([
             'status' => 'active'
         ]);
@@ -62,8 +66,8 @@ class Progress extends Component
 
     public function submit()
     {
-
-        $item =  $this->model->items->count();
+        $this->authorize('UPDATE_QUOTATION', 'QUOTATION');
+        $item = $this->model->items->count();
 
         $fields = [
             'title',
@@ -82,9 +86,7 @@ class Progress extends Component
             'addressed_role',
         ];
 
-
         $this->errorMessage = '';
-
 
         foreach ($fields as $field) {
 
@@ -99,17 +101,25 @@ class Progress extends Component
             'status' => 'submit'
         ]);
 
-
         $this->emit('saved');
-
 
         return redirect(request()->header('Referer'));
     }
 
     public function next($status = '')
     {
+
+        if (auth()->user()->activeRole == null) {
+            $this->authorize('VIEW_QUOTATION_USR', $this->model->model_id);
+        } else {
+            $this->authorize('UPDATE_QUOTATION', 'QUOTATION');
+        }
+
+
         $update_status = $status;
-        $flow = FlowProcess::create([$this->model->approval]);
+        // dd($this->model->approval);
+        $flow = FlowProcess::create(['model' => $this->model_type, $this->model->approval]);
+        //dd($flow);
 
         $flow->model_id = $this->model->id;
         $setting = FlowSetting::where('description', $flow->task)->where('role_id', $flow->role_id)->first();
@@ -135,6 +145,12 @@ class Progress extends Component
 
     public function decline()
     {
+        if (auth()->user()->activeRole == null) {
+            $this->authorize('VIEW_QUOTATION_USR', $this->model->model_id);
+        } else {
+            $this->authorize('UPDATE_QUOTATION', 'QUOTATION');
+        }
+
         $this->model->update([
             'status' => 'revision'
         ]);
@@ -155,6 +171,7 @@ class Progress extends Component
 
     public function revise()
     {
+        $this->authorize('UPDATE_QUOTATION', 'QUOTATION');
         $this->model->update([
             'status' => 'draft'
         ]);
@@ -165,11 +182,11 @@ class Progress extends Component
 
     public function render()
     {
-        if ($this->theme == 1) {
-            return view('livewire.commercial.theme.progress', [
-                'approvals' => $this->read()
-            ]);
-        }
+        // if ($this->theme == 1) {
+        //     return view('livewire.commercial.theme.progress', [
+        //         'approvals' => $this->read()
+        //     ]);
+        // }
         return view('livewire.commercial.progress', [
             'approvals' => $this->read()
         ]);

@@ -9,7 +9,7 @@ class TemplateObserver
     /**
      * Handle the Request "created" event.
      *
-     * @param  \App\Models\Request  $request
+     * @param  Template  $request
      * @return void
      */
     public function created(Template $request)
@@ -21,14 +21,14 @@ class TemplateObserver
     /**
      * Handle the Template "deleted" event.
      *
-     * @param  \App\Template  $request
+     * @param  Template  $request
      * @return void
      */
     public function deleted(Template $request)
     {
+
         $team = auth()->user()->currentTeam;
+        // dd($team);
         $request->teams()->detach($team);
     }
 }
-
-

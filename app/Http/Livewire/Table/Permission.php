@@ -13,6 +13,9 @@ use Mediconesystems\LivewireDatatables\DateColumn;
 class Permission extends LivewireDatatable
 {
     public $model = ModelsPermission::class;
+    public $modalDeleteVisible = false;
+
+
 
     public function builder()
     {
@@ -27,7 +30,9 @@ class Permission extends LivewireDatatable
     public function columns()
     {
         return [
-            Column::name('name')->label('Name'),
+            Column::name('model')->searchable()->label('Menu'),
+            Column::name('name')->searchable()->label('Permission'),
+            Column::name('type')->label('Type'),
             // Column::callback('model', function ($value) {
             //     return view('datatables::link', [
             //         'href' => "/flow/" . Str::lower($value),
@@ -40,9 +45,10 @@ class Permission extends LivewireDatatable
             //         'slot' => 'View'
             //     ]);
             // }),
-            Column::callback(['id'], function ($id) {
-                return view('livewire.permission.delete', ['id' => $id]);
-            })->label('Actions'),
+            // Column::callback(['id'], function ($id) {
+            //     return view('tables.delete-modal', ['id' => $id]);
+            // })->label('Actions'),
+
         ];
     }
 }

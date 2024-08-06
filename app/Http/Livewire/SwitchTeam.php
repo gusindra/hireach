@@ -19,8 +19,6 @@ class SwitchTeam extends Component
     {
         if(auth()->user()->listTeams){
             $this->haveTeams = count(auth()->user()->listTeams);
-        }else{
-            //dd(2);
         }
     }
 
@@ -40,19 +38,24 @@ class SwitchTeam extends Component
 
         $team = Team::find($id);
         $switch = auth()->user()->switchTeam($team);
-        //dd($switch);
+        // dd($switch);
         //reset status TeamUser
-        TeamUser::where('user_id', auth()->user()->id)->update([
-            'status' => NULL
-        ]);
-        $teamuser = TeamUser::where('team_id', empty(auth()->user()->currentTeam)?1:auth()->user()->currentTeam->id)->where('user_id', auth()->user()->id)->first();
-        if($teamuser){
-            $teamuser->update([
-                'status' => 'Online'
+        if($switch){
+            TeamUser::where('user_id', auth()->user()->id)->update([
+                'status' => NULL
             ]);
+            $teamuser = TeamUser::where('team_id', empty(auth()->user()->currentTeam)?1:auth()->user()->currentTeam->id)->where('user_id', auth()->user()->id)->first();
+            if($teamuser){
+                $teamuser->update([
+                    'status' => 'Online'
+                ]);
+            }
+            session()->flash('message', 'Succsess switch team' );
+            return redirect(request()->header('Referer'))->route('dashboard');
+        }else{
+            session()->flash('message', 'Sorry! You dont have authorize in to this team.' );
+            return redirect(request()->header('Referer'))->route('dashboard');
         }
-
-        return redirect(request()->header('Referer'))->route('dashboard');
     }
     public function render()
     {

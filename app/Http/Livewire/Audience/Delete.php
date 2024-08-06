@@ -3,10 +3,12 @@
 namespace App\Http\Livewire\Audience;
 
 use App\Models\Audience;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Livewire\Component;
 
 class Delete extends Component
 {
+    use AuthorizesRequests;
     public $modalDeleteVisible = false;
     public $audienceId;
     public $audience;
@@ -31,6 +33,7 @@ class Delete extends Component
     {
         if ($this->audience) {
             $this->audience->delete();
+            $this->authorize('DELETE_RESOURCE_USR', $this->audience->user_id);
         }
         $this->modalDeleteVisible = false;
         return redirect()->route('audience.index')->with('message', 'Audience deleted successfully.');

@@ -5,24 +5,26 @@ namespace App\Http\Livewire\Commercial;
 use App\Models\CommerceItem;
 use App\Models\ProductLine;
 use App\Models\Project;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Livewire\Component;
 
 class ProductLines extends Component
 {
+    use AuthorizesRequests;
     public $master;
     public $product_line;
     public $selected_product_line;
     public $disabled;
 
-    public function mount($model, $data, $disabled=false)
+    public function mount($model, $data, $disabled = false)
     {
         $this->selected_product_line = '';
-        if($model=='product'){
+        if ($model == 'product') {
             $this->master = CommerceItem::find($data->id);
-        }elseif($model=='project'){
+        } elseif ($model == 'project') {
             $this->master = Project::find($data->id);
         }
-        if($this->master){
+        if ($this->master) {
             $line = ProductLine::find($this->master->product_line);
             $this->selected_product_line = $line ? $line->name : '';
         }
@@ -31,6 +33,7 @@ class ProductLines extends Component
 
     public function update()
     {
+        $this->authorize('UPDATE_SETTING', 'SETTING');
         $this->master->update([
             'product_line' => $this->product_line
         ]);
@@ -38,9 +41,9 @@ class ProductLines extends Component
 
     public function addProduct()
     {
+        $this->authorize('UPDATE_QUOTATION', 'QUOTATION');
         $line = ProductLine::create([
-            'name' => $this->product_line,
-            'user_id' => auth()->user()->id
+            'name' => $this->product_line
         ]);
 
         $this->master->update([
@@ -49,7 +52,6 @@ class ProductLines extends Component
 
         $this->selected_product_line = $this->product_line;
         $this->product_line = "";
-
     }
 
     public function selectProduct($id)
@@ -79,10 +81,10 @@ class ProductLines extends Component
     {
         $data = [];
 
-        if($this->product_line!=''){
-            $keyword =  $this->product_line;
-            $data['quick'] = ProductLine::where('user_id', auth()->user()->id)->where('name','LIKE',"%{$keyword}%")->get();
-        }else{
+        if ($this->product_line != '') {
+            $keyword = $this->product_line;
+            $data['quick'] = ProductLine::where('name', 'LIKE', "%{$keyword}%")->get();
+        } else {
             $data['quick'] = [];
         }
         return $data;

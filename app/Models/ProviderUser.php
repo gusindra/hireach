@@ -14,11 +14,12 @@ class ProviderUser extends Model
         'provider_id',
         'user_id',
         'channel',
+        'from',
     ];
 
     public function provider()
     {
-        return $this->belongsTo(Provider::class);
+        return $this->belongsTo(Provider::class, 'provider_id');
     }
 
     public function user()

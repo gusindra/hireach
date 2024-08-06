@@ -3,22 +3,24 @@
 namespace App\Observers;
 
 use App\Jobs\ProcessEmail;
-use App\Models\Notification;
+use App\Models\Notice;
 use App\Models\SaldoUser;
+use Illuminate\Support\Facades\Log;
 
 class SaldoUserObserver
 {
     /**
      * Handle the SaldoUser "created" event.
      *
-     * @param  \App\Models\Request  $request
+     * @param  SaldoUser  $request
      * @return void
      */
     public function created(SaldoUser $request)
     {
-
+        addLog($request, json_encode($request->toArray()));
+        Log::debug($request);
         $last = SaldoUser::where('id', '!=', $request->id)->where('user_id', $request->user_id)->where('team_id', $request->team_id)->orderBy('id', 'desc')->first();
-
+        Log::debug($last);
         if ($last) {
             $amount = $last->balance + $request->amount;
             if ($request->mutation == 'debit') {
@@ -30,15 +32,15 @@ class SaldoUserObserver
         }
 
         if ($request->mutation == 'debit') {
-            $notif_count = Notification::where('model', 'Balance')->where('user_id', $request->user_id)->count();
+            $notif_count = Notice::where('model', 'Balance')->where('user_id', $request->user_id)->count();
             if (($notif_count == 1 && $request->balance <= 50000) || ($notif_count == 0 && $request->balance <= 100000)) {
-                $notif = Notification::create([
-                    'type'          => 'email',
-                    'model_id'      => $request->id,
-                    'model'         => 'Balance',
-                    'notification'  => 'Balance Alert. Your current balance remaining Rp' . number_format($request->balance),
-                    'user_id'       => $request->user_id,
-                    'status'        => 'unread',
+                $notif = Notice::create([
+                    'type' => 'email',
+                    'model_id' => $request->id,
+                    'model' => 'Balance',
+                    'notification' => 'Balance Alert. Your current balance remaining ' . $request->currency . '.' . number_format($request->balance),
+                    'user_id' => $request->user_id,
+                    'status' => 'unread',
                 ]);
 
                 if ($notif) {
@@ -47,17 +49,17 @@ class SaldoUserObserver
             }
         }
         if ($request->mutation == 'credit') {
-            Notification::where('type', 'email')->where('model', 'Balance')->where('user_id', $request->user_id)->delete();
+            Notice::where('type', 'email')->where('model', 'Balance')->where('user_id', $request->user_id)->delete();
         }
 
         if ($request->mutation == 'credit') {
 
-            Notification::create([
+            Notice::create([
                 'type' => 'Top Up',
                 'model_id' => $request->id,
                 'model' => 'Balance',
-                'notification' => 'Top Up Successed your balnce now Rp.' . number_format($request->balance),
-                'user_id' =>  $request->user_id,
+                'notification' => 'Top Up Successed your balance now ' . $request->currency . '.' . number_format($request->balance),
+                'user_id' => $request->user_id,
                 'status' => 'unread'
             ]);
         }
@@ -66,7 +68,7 @@ class SaldoUserObserver
     /**
      * Handle the SaldoUser "deleted" event.
      *
-     * @param  \App\SaldoUser  $request
+     * @param  SaldoUser $request
      * @return void
      */
     public function deleted()

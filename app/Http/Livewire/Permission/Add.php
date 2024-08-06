@@ -3,34 +3,46 @@
 namespace App\Http\Livewire\Permission;
 
 use App\Models\Permission;
-use Illuminate\Support\Facades\Auth;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Livewire\Component;
 
 class Add extends Component
 {
+    use AuthorizesRequests;
+
     public $modalActionVisible = false;
     public $type;
     public $model;
+    public $for;
 
     public function rules()
     {
         return [
             'type' => 'required',
             'model' => 'required',
+            'for' => 'required',
         ];
     }
 
     public function create()
     {
+        $this->authorize('CREATE_PERMISSION', 'PERMISSION');
         $this->validate();
-        foreach($this->type as $key => $menu){
+
+        foreach ($this->type as $key => $menu) {
+
             Permission::create([
-                'name'  => strtoupper($key.' '.$this->model),
-                'model'  => strtoupper($this->model)
+                'name' => strtoupper($key . ' ' . $this->model),
+                'model' => strtoupper($this->model),
+                'for' => $this->for
             ]);
+
         }
+
         $this->modalActionVisible = false;
         $this->resetForm();
+        cache()->forget('permission-' . strtoupper($this->model));
+        cache()->forget('permissions');
         $this->emit('refreshLivewireDatatable');
     }
 
@@ -38,13 +50,9 @@ class Add extends Component
     {
         $this->type = null;
         $this->model = null;
+
     }
 
-    /**
-     * createShowModal
-     *
-     * @return void
-     */
     public function actionShowModal()
     {
         $this->modalActionVisible = true;

@@ -8,6 +8,8 @@ use App\Models\Order;
 use App\Models\Commision;
 use App\Models\ProductLine;
 use App\Models\Project;
+use App\Models\Role;
+use App\Models\User;
 use Livewire\Component;
 
 class Edit extends Component
@@ -22,23 +24,26 @@ class Edit extends Component
     public $status;
     public $total;
     public $commission;
+    public $commisionId;
 
-    public function mount($model, $data, $disabled=false)
+
+    public function mount($model, $data, $disabled = false)
     {
+
         $this->model = $model;
-        if($model=='order'){
+        if ($model == 'order') {
             $this->master = Order::find($data->id);
-        }elseif($model=='project'){
+        } elseif ($model == 'project') {
             $this->master = Project::find($data->id);
-        }elseif($model=='product'){
+        } elseif ($model == 'product') {
             $this->master = CommerceItem::find($data->id);
         }
         $this->commission = Commision::where('model', $this->model)->where('model_id', $data->id)->first();
-        if($this->commission){
+        if ($this->commission) {
             $this->rate = $this->commission->ratio;
             $this->clientId = $this->commission->client_id;
             $this->type = $this->commission->type;
-            $this->total = 'Rp'.number_format($this->commission->total);
+            $this->total = 'Rp' . number_format($this->commission->total);
         }
         $this->disabled = $disabled;
         $this->status = 'draft';
@@ -46,16 +51,18 @@ class Edit extends Component
 
     public function update($id)
     {
-        // dd($id);
+
         $data = Commision::where('model', $this->model)->where('model_id', $id)->first();
-        if($data){
+
+        if ($data) {
             $data->update([
                 'type'     => $this->type,
                 'ratio'     => $this->rate,
                 'status'    => $this->status,
                 'client_id' => $this->clientId
             ]);
-        }else{
+        } else {
+
             Commision::create([
                 'model'     => $this->model,
                 'model_id'  => $id,
@@ -70,8 +77,8 @@ class Edit extends Component
 
     public function removeAgent()
     {
-        // dd($this->commission);
-        $this->commission->delete();
+
+        Commision::destroy($this->commission->id);
         $this->rate = null;
         $this->clientId = null;
         $this->emit('removed');
@@ -79,7 +86,11 @@ class Edit extends Component
 
     public function read()
     {
-        $data = Client::where('user_id', auth()->user()->currentTeam->user_id)->pluck('name', 'id');
+        $sales = Role::where('name', 'LIKE', 'sales')->value('id');
+
+        $data = User::whereHas('activeRole', function ($query) use ($sales) {
+            $query->where('role_id', $sales);
+        })->get();
         return $data;
     }
 

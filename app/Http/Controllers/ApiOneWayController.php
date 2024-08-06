@@ -2,8 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\CampaignResource;
 use App\Http\Resources\OneWayResource;
 use App\Http\Resources\SmsResource;
+use App\Jobs\importAudienceContact;
+use App\Jobs\ProcessCampaignApi;
 use App\Models\BlastMessage;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
@@ -12,20 +15,29 @@ use App\Jobs\ProcessSmsApi;
 use App\Jobs\ProcessEmailApi;
 use App\Jobs\ProcessWaApi;
 use App\Models\ApiCredential;
+use App\Models\Audience;
+use App\Models\Campaign;
 use App\Models\Client;
+use App\Models\ProviderUser;
 use Illuminate\Support\Str;
+use Maatwebsite\Excel\Facades\Excel;
 
 class ApiOneWayController extends Controller
 {
     /**
-     * get all record sms
+     * Set default cache duration
      *
-     * @return void
+     * @var int
+     */
+    public $cacheDuration = 1440;
+
+    /**
+     * This to get all record made from one way
+     *
+     * @return json App\Http\Resources\OneWayResource
      */
     public function index(Request $request)
     {
-        //return $request;
-        //$data = BlastMessage::where('user_id', '=', auth()->user()->id)->get();
         $skip = $request->page*$request->pageSize;
         $data = BlastMessage::skip($skip)->where('user_id', '=', auth()->user()->id)->take($request->pageSize);
         if($request->order=='id'){
@@ -48,35 +60,64 @@ class ApiOneWayController extends Controller
     }
 
     /**
-     * show record sms by phone number
+     * This to show record filter by phone number
      *
      * @param  mixed $phone
      * @return void
      */
-    public function show($phone)
+    public function show(Request $request)
     {
-        return $request;
-        $customer = Client::where('phone', $phone)->where('user_id', auth()->user()->id)->first();
-        if($customer){
-            $data = BlastMessage::where('user_id', '=', auth()->user()->id)->where('client_id', $customer->uuid)->get();
+        if(is_numeric($request->value)){
+            $customer = Client::where('phone', $request->value)->where('user_id', auth()->user()->id)->first();
+            if($customer){
+                $data = BlastMessage::where('user_id', '=', auth()->user()->id)->where('client_id', $customer->uuid)->get();
 
+                return response()->json([
+                    'code' => 200,
+                    'message' => "Successful",
+                    'response' => SmsResource::collection($data),
+                ]);
+            }
             return response()->json([
-                'code' => 200,
-                'message' => "Successful",
-                'response' => SmsResource::collection($data),
+                'code' => 404,
+                'message' => "Client not found"
+            ]);
+        }elseif(strpos($request->value, '@')){
+            $customer = Client::where('email', $request->value)->where('user_id', auth()->user()->id)->first();
+            if($customer){
+                $data = BlastMessage::where('user_id', '=', auth()->user()->id)->where('client_id', $customer->uuid)->get();
+
+                return response()->json([
+                    'code' => 200,
+                    'message' => "Successful",
+                    'response' => SmsResource::collection($data),
+                ]);
+            }
+            return response()->json([
+                'code' => 404,
+                'message' => "Client not found"
+            ]);
+        }else{
+            $data = Campaign::where('uuid', $request->value)->where('user_id', auth()->user()->id)->first();
+            if($data){
+                return response()->json([
+                    'code' => 200,
+                    'message' => "Successful",
+                    'response' => CampaignResource::make($data)
+                ]);
+            }
+            return response()->json([
+                'code' => 404,
+                'message' => "Campaign not found"
             ]);
         }
-        return response()->json([
-            'code' => 404,
-            'message' => "User not found"
-        ]);
     }
 
     /**
-     * post new sms
+     * This to post new request one way
      *
      * @param  mixed $request
-     * @return void
+     * @return json
      */
     public function post(Request $request)
     {
@@ -89,301 +130,418 @@ class ApiOneWayController extends Controller
             'provider'  => 'required|string',
             'text'      => 'required|string',
             'detail'    => 'string',
-            'otp'       => 'boolean'
+            // 'otp'       => 'boolean'
         ];
-        if(strpos( $request->channel, 'sms' ) !== false){
+        if(strpos( strtolower($request->channel), 'sms' ) !== false){
             $validateArr['from'] = 'alpha_num|required_if:channel,sms_otp_sid|required_if:channel,sms_notp_sid';
-        }elseif($request->channel == 'email'){
+        }elseif(strpos( strtolower($request->channel), 'email' ) !== false){
             $validateArr['from'] = 'required';
         }
-        $fields = $request->validate($validateArr); 
-        // return response()->json([
-        //     'message' => "Successful",
-        //     'code' => 200
-        // ]);
-        //return $request->provider;
+        $request->validate($validateArr);
+
         try{
             //$userCredention = ApiCredential::where("user_id", auth()->user()->id)->where("client", "api_sms_mk")->where("is_enabled", 1)->first();
             //Log::channel('apilog')->info($request, [
             //    'auth' => auth()->user()->name,
             //]);
-            // ProcessSmsApi::dispatch($request->all(), auth()->user());
-            //auto check otp / non otp type base on text
+            $provider = cache()->remember('provider-user-'.auth()->user()->id.'-'.$request->channel, $this->cacheDuration, function() use ($request) {
+                return auth()->user()->providerUser->where('channel', strtoupper($request->channel))->first()->provider;
+            });
 
-            $retriver = explode(",", $request->to);
-            $allretriver = $request->to;
-            $balance = (int)balance(auth()->user());
-            if($balance>500 && count($retriver)<$balance/1){
-                //CHECK OTP
-                if(strpos($request->channel, 'sms') !== false){
-                    $checkString = $request->text;
-                    $otpWord = ['Angka Rahasia', 'Authorisation', 'Authorise', 'Authorization', 'Authorized', 'Code', 'Harap masukkan', 'Kata Sandi', 'Kode',' Kode aktivasi', 'konfirmasi', 'otentikasi', 'Otorisasi', 'Rahasia', 'Sandi', 'trx', 'unik', 'Venfikasi', 'KodeOTP', 'NewOtp', 'One-Time Password', 'Otorisasi', 'OTP', 'Pass', 'Passcode', 'PassKey', 'Password', 'PIN', 'verifikasi', 'insert current code', 'Security', 'This code is valid', 'Token', 'Passcode', 'Valid OTP', 'verification','Verification', 'login code', 'registration code', 'secunty code'];
-                    if($request->otp){
-                        $request->merge([
-                            'otp' => 1
-                        ]);
-                    }elseif(Str::contains($checkString, $otpWord)){
-                        $request->merge([
-                            'otp' => 1
-                        ]);
-                    }else{
-                        $request->merge([
-                            'otp' => 0
-                        ]);
-                    }
-                }
-                
-                if($request->channel=='wa'){
-                    $credential = null;
-                    foreach(auth()->user()->credential as $cre){
-                        if($cre->client=='api_wa_mk'){
-                            $credential = $cre;
-                        }
-                    }
-                }
-                //THIS WILL QUEUE SMS JOB
-                //COUNT PHONE NUMBER REQUESTED
-                $phones = $retriver;
-                // GROUP RETRIVER
-                if(count($phones)>1){
-                    //GROUP RETRIVER
-                    foreach($phones as $p){
-                        $data = array(
-                            'type' => $request->type,
-                            'to' => trim($p),
-                            'from' => $request->from,
-                            'text' => $request->text,
-                            'servid' => $request->servid,
-                            'title' => $request->title,
-                            'otp' => $request->otp,
-                            'provider' => $request->provider,
-                        );
-                        if($request->has('templateid')){
-                            $data['templateid'] = $request->templateid;
-                        }
-                        if($request->channel=='email'){
-                            //THIS WILL QUEUE EMAIL JOB
-                            //return $data;
-                            $reqArr = json_encode($request->all());
-                            ProcessEmailApi::dispatch($data, auth()->user(), $reqArr);
-                        }elseif(strpos($request->channel, 'sms') !== false){
-                            ProcessSmsApi::dispatch($data, auth()->user());
-                        }elseif($request->channel=='wa'){
-                            if($credential){
-                                ProcessWaApi::dispatch($data, $credential);
-                            }else{
-                                return response()->json([
-                                    'message' => "Invalid credential",
-                                    'code' => 401
-                                ]);
-                            }
-                        }elseif($request->channel=='wa'){
-                            //ProcessChatApi::dispatch($request->all(), auth()->user());
-                        }
-                    }
-                }else{
-                    //SINGLE RETRIVER
-                    if($request->channel=='email'){
-                        $reqArr = json_encode($request->all());
-                        //THIS WILL QUEUE EMAIL JOB
-                        ProcessEmailApi::dispatch($request->all(), auth()->user(), $reqArr);
-                    }elseif(strpos($request->channel, 'sms') !== false){
-                        ProcessSmsApi::dispatch($request->all(), auth()->user());
-                    }elseif($request->channel=='wa'){
-                        if($credential){
-                            ProcessWaApi::dispatch($request->all(), $credential);
+            $request->merge([
+                'provider' => $provider
+            ]);
+
+            if($provider){
+                $retriver = explode(",", $request->to);
+                Log::debug('retrive'. $retriver);
+                $allretriver = $request->to;
+                $balance = (int)balance(auth()->user());
+                if($balance>500 && count($retriver)<$balance/1){
+                    //CHECK OTP
+                    //auto check otp / non otp type base on text
+                    if(strpos(strtolower($request->channel), 'sms') !== false){
+                        $checkString = $request->text;
+                        $otpWord = ['Angka Rahasia', 'Authorisation', 'Authorise', 'Authorization', 'Authorized', 'Code', 'Harap masukkan', 'Kata Sandi', 'Kode',' Kode aktivasi', 'konfirmasi', 'otentikasi', 'Otorisasi', 'Rahasia', 'Sandi', 'trx', 'unik', 'Venfikasi', 'KodeOTP', 'NewOtp', 'One-Time Password', 'Otorisasi', 'OTP', 'Pass', 'Passcode', 'PassKey', 'Password', 'PIN', 'verifikasi', 'insert current code', 'Security', 'This code is valid', 'Token', 'Passcode', 'Valid OTP', 'verification','Verification', 'login code', 'registration code', 'secunty code'];
+                        if($request->otp){
+                            $request->merge([
+                                'otp' => 1
+                            ]);
+                        }elseif(Str::contains($checkString, $otpWord)){
+                            $request->merge([
+                                'otp' => 1
+                            ]);
                         }else{
-                            return response()->json([
-                                'message' => "Invalid credential",
-                                'code' => 401
+                            $request->merge([
+                                'otp' => 0
                             ]);
                         }
-                            
                     }
+                    //GET CREDENTIAL MK
+                    if(strtolower($request->channel)=='wa'){
+                        $credential = null;
+                        foreach(auth()->user()->credential as $cre){
+                            if($cre->client=='api_wa_mk'){
+                                $credential = $cre;
+                            }
+                        }
+                    }
+                    //ADD CAMPAIGN API
+                    $campaign = $this->campaignAdd($request);
+                    //THIS WILL QUEUE SMS JOB
+                    //COUNT PHONE NUMBER REQUESTED
+                    //GROUP RETRIVER
+
+                    $phones = $retriver;
+                    if(count($phones)>1){
+
+                        Log::info('masuk sini kalau phone >1');
+                        //GROUP RETRIVER
+                        foreach($phones as $p){
+                            $data = array(
+                                'type' => $request->type,
+                                'to' => trim($p),
+                                'from' => $request->from,
+                                'text' => $request->text,
+                                'servid' => $request->servid,
+                                'title' => $request->title,
+                                'otp' => $request->otp,
+                                'provider' => $provider,
+                            );
+                            if($request->has('templateid')){
+                                $data['templateid'] = $request->templateid;
+                            }
+                            if(strtolower($request->channel)=='email'){
+                                //THIS WILL QUEUE EMAIL JOB
+                                //return $data;
+                                $reqArr = json_encode($request->all());
+                                ProcessEmailApi::dispatch($data, auth()->user(), $reqArr);
+                            }elseif(strpos(strtolower($request->channel), 'sms') !== false){
+                                ProcessSmsApi::dispatch($data, auth()->user());
+                            }elseif(strtolower($request->channel)=='wa'){
+                                if($credential){
+                                    ProcessWaApi::dispatch($data, $credential);
+                                }else{
+                                    return response()->json([
+                                        'code'          => 401,
+                                        'campaign_id'   => $campaign->uuid,
+                                        'message'       => "Campaign successful create, but invalid credential",
+                                    ]);
+                                }
+                            }elseif(strtolower($request->channel)=='long_wa'){
+                                $request->merge([
+                                    'provider' => $provider
+                                ]);
+                                ProcessWaApi::dispatch($request->all(), auth()->user());
+                            }elseif(strtolower($request->channel)=='long_sms'){
+                                $request->merge([
+                                    'provider' => $provider
+                                ]);
+                                ProcessSmsApi::dispatch($request->all(), auth()->user());
+                            }
+                        }
+                    }else{
+                        //SINGLE RETRIVER
+                        if(strtolower($request->channel)=='email'){
+                            $reqArr = json_encode($request->all());
+                            //THIS WILL QUEUE EMAIL JOB
+                            ProcessEmailApi::dispatch($request->all(), auth()->user(), $reqArr, $campaign);
+                        }elseif(strpos(strtolower($request->channel), 'sms') !== false){
+                            //THIS WILL QUEUE SMS JOB
+                            ProcessSmsApi::dispatch($request->all(), auth()->user(), $campaign);
+                        }elseif(strtolower($request->channel)=='wa'){
+                            if($credential){
+                                //THIS WILL QUEUE WA JOB
+                                ProcessWaApi::dispatch($request->all(), $credential,$campaign);
+                            }else{
+                                return response()->json([
+                                    'code'          => 401,
+                                    'campaign_id'   => $campaign->uuid,
+                                    'message'       => "Campaign successful create, but invalid provider credential!"
+                                ]);
+                            }
+                        }elseif($request->channel=='long_wa'){
+                            $request->merge([
+                                'provider' => $provider
+                            ]);
+                            //THIS WILL QUEUE WALN JOB
+                            ProcessWaApi::dispatch($request->all(), auth()->user(), $campaign);
+                        }elseif(strtolower($request->channel)=='long_sms'){
+                            $request->merge([
+                                'provider' => $provider
+                            ]);
+                            //THIS WILL QUEUE SMSLN JOB
+                            ProcessSmsApi::dispatch($request->all(), auth()->user(), $campaign);
+                        }
+                    }
+
+                    // show result on progress
+                    return response()->json([
+                        'code'          => 200,
+                        'campaign_id'   => $campaign->uuid,
+                        'message'       => "Campaign successful create, prepare sending notification to ".count($phones)." contact.",
+                    ]);
+                }else{
+                    return response()->json([
+                        'code'      => 405,
+                        'message'   => "Campaign fail to created, Insufficient Balance!",
+                    ]);
                 }
             }else{
                 return response()->json([
-                    'message' => "Insufficient Balance",
-                    'code' => 405
+                    'code'      => 405,
+                    'message'   => "Campaign fail to created, please check your provider or ask Administrator!"
                 ]);
             }
-
             //$this->sendSMS($request->all());
         }catch(\Exception $e){
             return response()->json([
-                'message' => $e->getMessage(),
-                'code' => 400
+                'code'      => 400,
+                'message'   => $e->getMessage()
             ]);
         }
-        // show result on progress
-        return response()->json([
-            'message' => "Successful, prepare sending notification to ".count($phones)." contact",
-            'code' => 200,
-        ]);
     }
 
     /**
-     * send Bulk sms
+     * This to add campaign default create by API
+     *
+     * @param  mixed $request
+     * @return object $campaign
+     */
+    private function campaignAdd($request, $audience_id=null){
+        return Campaign::create([
+            'title'         => $request->title,
+            'channel'       => strtoupper($request->channel),
+            'provider'      => $request->provider->code,
+            'from'          => $request->from,
+            'to'            => $audience_id ? 'Audience:'.$audience_id : $request->to,
+            'audience_id'   => $audience_id,
+            'text'          => $request->text,
+            'is_otp'        => $request->otp ?? '',
+            'request_type'  => 'api',
+            'status'        => 'starting',
+            'way_type'      => 1,
+            'type'          => $request->type,
+            'template_id'   => $request->templateid,
+            'user_id'       => auth()->user()->id,
+            'uuid'          => Str::uuid()
+        ]);
+    }
+
+
+    /**
+     * This for sending sendBulk message using file contact
      *
      * @param  mixed $request
      * @return void
      */
     public function sendBulk(Request $request)
     {
-        Log::channel('apilog')->info($request, [
-            'auth' => auth()->user()->name,
-        ]);
-        $totalPhone = 0;
-        try{
-            foreach($request->all() as $sms){
-                $checkString = $sms->text;
-                $otpWord = ['Angka Rahasia', 'Authorisation', 'Authorise', 'Authorization', 'Authorized', 'Code', 'Harap masukkan', 'Kata Sandi', 'Kode',' Kode aktivasi', 'konfirmasi', 'otentikasi', 'Otorisasi', 'Rahasia', 'Sandi', 'trx', 'unik', 'Venfikasi', 'KodeOTP', 'NewOtp', 'One-Time Password', 'Otorisasi', 'OTP', 'Pass', 'Passcode', 'PassKey', 'Password', 'PIN', 'verifikasi', 'insert current code', 'Security', 'This code is valid', 'Token', 'Passcode', 'Valid OTP', 'verification','Verification', 'login code', 'registration code', 'secunty code'];
-                if($request->otp == 1){
-                    $request->merge([
-                        'otp' => 1
-                    ]);
-                }elseif(Str::contains($checkString, $otpWord)){
-                    $request->merge([
-                        'otp' => 1
-                    ]);
-                }else{
-                    $request->merge([
-                        'otp' => 0
+        $validateArr = [
+            'channel'   => 'required',
+            'type'      => 'required|numeric',
+            'title'     => 'required|string',
+            'text'      => 'required|string',
+            'from'      => 'required|string',
+            'provider'  => 'required|string',
+            'contact'   => 'required|file',
+        ];
+
+        if (strpos(strtolower($request->channel), 'sms') !== false) {
+            $validateArr['from'] = 'alpha_num|required_if:channel,sms_otp_sid|required_if:channel,sms_notp_sid';
+        } elseif (strpos(strtolower($request->channel), 'email') !== false) {
+            $validateArr['from'] = 'required';
+        }
+
+        $request->validate($validateArr);
+
+        try {
+            $provider = cache()->remember('provider-user-' . auth()->user()->id . '-' . $request->channel, $this->cacheDuration, function() use ($request) {
+                return auth()->user()->providerUser->where('channel', strtoupper($request->channel))->first()->provider;
+            });
+
+            $request->merge(['provider' => $provider]);
+
+            if ($provider) {
+
+                $audience = $this->importContact($request);
+                $audience_id = $audience['audience_id'];
+                $retriver = array_column($audience['data'], 0);
+
+                $filteredContact = array_filter($retriver, function($phones) {
+                    return !empty($phones);
+                });
+
+                $allPhones = [];
+                foreach ($filteredContact as $phones) {
+                    $phonesArray = explode(',', $phones);
+                    $allPhones = array_merge($allPhones, $phonesArray);
+                }
+
+                if (empty($retriver)) {
+                    return response()->json([
+                        'code'      => 406,
+                        'message'   => "No valid phone numbers found in the imported contacts."
                     ]);
                 }
 
-                $phones = explode(",", $sms->to);
-                $balance = (int)balance(auth()->user());
-                if($balance>500 && count($phones)<$balance/520){
-                    if(count($phones)>1){
-                        foreach($phones as $p){
-                            $data = array(
-                                'type' => $sms->type,
-                                'to' => trim($p),
-                                'from' => $sms->from,
-                                'text' => $sms->text,
-                                'servid' => $sms->servid,
-                                'title' => $sms->title,
-                                'otp' => $sms->otp,
-                            );
-                            ProcessSmsApi::dispatch($data, auth()->user());
-                            $totalPhone += 1;
+                // check balance minimum for 3K contact or 1,5 juta
+                $balance = (int) balance(auth()->user());
+                if ($balance > 150000 && count($retriver) < $balance / 1) {
+                    // Auto check OTP
+                    //Log::info('Auto check OTP');
+                    if (strpos(strtolower($request->channel), 'sms') !== false) {
+                        $otpWord = ['Angka Rahasia', 'Authorisation', 'Authorise', 'Authorization', 'Authorized', 'Code', 'Harap masukkan', 'Kata Sandi', 'Kode', 'Kode aktivasi', 'konfirmasi', 'otentikasi', 'Otorisasi', 'Rahasia', 'Sandi', 'trx', 'unik', 'Venfikasi', 'KodeOTP', 'NewOtp', 'One-Time Password', 'Otorisasi', 'OTP', 'Pass', 'Passcode', 'PassKey', 'Password', 'PIN', 'verifikasi', 'insert current code', 'Security', 'This code is valid', 'Token', 'Passcode', 'Valid OTP', 'verification', 'Verification', 'login code', 'registration code', 'security code'];
+                        if ($request->otp) {
+                            $request->merge(['otp' => 1]);
+                        } elseif (Str::contains($request->text, $otpWord)) {
+                            $request->merge(['otp' => 1]);
+                        } else {
+                            $request->merge(['otp' => 0]);
                         }
-                    }else{
-                        ProcessSmsApi::dispatch($sms, auth()->user());
-                        $totalPhone += 1;
                     }
-                }else{
+
+                    // Get credential for WhatsApp
+                    $credential = null;
+                    if (strtolower($request->channel) == 'wa') {
+                        $credential = auth()->user()->credential->firstWhere('client', 'api_wa_mk');
+                    }
+
+                    // Add campaign API
+                    $campaign = $this->campaignAdd($request,$audience_id);
+
+                    // Process sending messages
+                    $phones = $allPhones;
+
+                    if (count($phones) > env('MIN_CAMPAIGN_CONTACT', 3000)) {
+
+                        if($provider->code=='provider3'){
+                            ProcessCampaignApi::dispatch($request->except('contact'), auth()->user(),$campaign);
+                        }else{
+                        foreach ($phones as $p) {
+                            //Log::info('Processing phone: ' . $p);
+                            $data = [
+                                'type' => $request->type,
+                                'to' => trim($p),
+                                'from' => $request->from,
+                                'text' => $request->text,
+                                'servid' => $request->servid,
+                                'title' => $request->title,
+                                'otp' => $request->otp,
+                                'provider' => $provider,
+                            ];
+
+                            if ($request->has('templateid')) {
+                                $data['templateid'] = $request->templateid;
+                            }
+
+                            if (strtolower($request->channel) == 'email') {
+                                $reqArr = json_encode($request->all());
+                                ProcessEmailApi::dispatch($data, auth()->user(), $reqArr);
+                            } elseif (strpos(strtolower($request->channel), 'sms') !== false) {
+                                ProcessSmsApi::dispatch($data, auth()->user());
+                            } elseif (strtolower($request->channel) == 'wa') {
+                                if ($credential) {
+                                    ProcessWaApi::dispatch($data, $credential);
+                                } else {
+                                    return response()->json([
+                                        'code'          => 401,
+                                        'campaign_id'   => $campaign->uuid,
+                                        'message'       => "Campaign successful create, but invalid credential",
+                                    ]);
+                                }
+                            } elseif (strtolower($request->channel) == 'long_wa') {
+                                ProcessWaApi::dispatch($request->all(), auth()->user());
+                            } elseif (strtolower($request->channel) == 'long_sms') {
+                                ProcessSmsApi::dispatch($request->all(), auth()->user());
+                            }
+                        }}
+                    } else {
+                        return response()->json([
+                            'code'      => 406,
+                            'message'   => "Minimum contact 3000 to sending bulk message"
+                        ]);
+                    }
+
                     return response()->json([
-                        'message' => "Insufficient Balance",
-                        'code' => 405
+                        'code'          => 200,
+                        'campaign_id'   => $campaign->uuid,
+                        'message'       => "Campaign successful create, prepare sending notification to " . count($phones) . " contact.",
+                    ]);
+                } else {
+                    return response()->json([
+                        'code'      => 405,
+                        'message'   => "Campaign fail to created, Insufficient Balance!",
                     ]);
                 }
+            } else {
+                return response()->json([
+                    'code'      => 405,
+                    'message'   => "Campaign fail to created, please check your provider or ask Administrator!"
+                ]);
             }
-        }catch(\Exception $e){
+        } catch (\Exception $e) {
             return response()->json([
-                'message' => $e->getMessage(),
-                'code' => 400
+                'code'      => 400,
+                'message'   => $e->getMessage()
             ]);
         }
-        // show result on progress
-        return response()->json([
-            'message' => "Successful, prepare sending ".count($sms)." text to ".$totalPhone." msisdn.",
-            'code' => 200
-        ]);
     }
 
-    private function sendSMS($request)
+    private function importContact($input)
     {
+        $data = [];
 
-        $user   = 'TCI01';
-        $pass   = 'IFc21bL+';
-        $serve  = 'mes01';
-        $msg    = "";
+        if ($input->contact) {
+            $filePath = $input->contact->getRealPath();
+            $mimeType = $input->contact->getClientMimeType();
 
-        // if(array_key_exists('servid', $request)){
-        //     $serve  = $request['servid'];
-        // }
-        if($serve==$request['servid']){
-            // $url = 'http://www.etracker.cc/bulksms/mesapi.aspx';
-            $url = 'http://telixcel.com/api/send/smsbulk';
+            if ($mimeType == 'text/csv') {
+                $fileContents = file($filePath);
+                foreach ($fileContents as $key => $line) {
+                    if ($key > 0) {
+                        $data[] = str_getcsv($line);
+                    }
+                }
+            } else {
+                $rows = Excel::toArray([], $filePath)[0];
+                foreach ($rows as $key => $row) {
+                    if ($key > 0) {
+                        $data[] = $row;
+                    }
+                }
+            }
 
-            $response = '';
-            if($request['type']=="0"){
-                //accept('application/json')->
-                $response = Http::get($url, [
-                    'user'  => $user,
-                    'pass'  => $pass,
-                    'type'  => $request['type'],
-                    'to'    => $request['to'],
-                    'from'  => $request['from'],
-                    'text'  => $request['text'],
-                    'servid' => $serve,
-                    'title' => $request['title'],
-                    'detail' => 1,
+            if (empty($input->audience_id)) {
+                $input->audience = Audience::create([
+                    'name'        => $input->title,
+                    'description' => 'This Audience Created Automatically from Campaign',
+                    'user_id'     => auth()->user()->id,
                 ]);
             }
 
-            // check response code
-            if($response=='400'){
-                $msg = "Missing parameter or invalid field type";
-            }elseif($response=='401'){
-                $msg = "Invalid username, password or ServID";
-            }elseif($response=='402'){
-                $msg = "Invalid Account Type (when call using postpaid client’s account)";
-            }elseif($response=='403'){
-                $msg = "Invalid Email Format";
-            }elseif($response=='404'){
-                $msg = "Invalid MSISDN Format";
-            }elseif($response=='405'){
-                $msg = "Invalid Balance Tier Format";
-            }elseif($response=='500'){
-                $msg = "System Error";
-            }else{
-                //Log::debug('process array result');
-                $array_res = [];
-                $res = explode("|", $response);
-                $res_end = [];
-                //Log::debug('array start');
-                foreach($res as $k1 => $data){
-                    $data_res = explode (",", $data);
-                    foreach($data_res as $k2 => $data){
-                        if(count($res)==$k1+1){
-                            $res_end[$k2] = $data;
-                        }else{
-                            $array_res[$k1][$k2] = $data;
-                        }
-                    }
-                }
-                // Log::debug($res_end);
-                foreach ($array_res as $msg_msis){
-                    // Log::debug($this->chechClient("200", $msg_msis[0]));
-                    $modelData = [
-                        'msg_id'    => $msg_msis[1],
-                        'user_id'   => auth()->user()->id,
-                        'client_id' => $this->chechClient("200", $msg_msis[0]),
-                        'type'      => $request['type'],
-                        'status'    => "PROCESSED",
-                        'code'      => $msg_msis[2],
-                        'message_content'  => $request['text'],
-                        'currency'  => $msg_msis[3],
-                        'price'     => $msg_msis[4],
-                        'balance'   => $res_end[0],
-                        'msisdn'    => $msg_msis[0],
-                    ];
-                    // Log::debug($modelData);
-                    BlastMessage::create($modelData);
-                }
-            }
-        }else{
-            abort(404, "Serve ID is wrong");
+            $audience_id = $input->audience->id;
+            importAudienceContact::dispatch($data, $audience_id, auth()->user()->id);
         }
 
-        if($msg!=''){
-            $this->saveResult($msg, $request);
-        }
+            return [
+                'data' => $data,
+                'audience_id' => $audience_id
+            ];
     }
 
+
+    // ===========================================
+    // Function below to testing in Controller
+    // ===========================================
+
+    /**
+     * saveResult
+     *
+     * @param  mixed $msg
+     * @param  mixed $request
+     * @return void
+     */
     private function saveResult($msg, $request)
     {
         $user_id = auth()->user()->id;
@@ -402,6 +560,14 @@ class ApiOneWayController extends Controller
         BlastMessage::create($modelData);
     }
 
+    /**
+     * chechClient
+     *
+     * @param  mixed $status
+     * @param  mixed $msisdn
+     * @param  mixed $request
+     * @return void
+     */
     private function chechClient($status, $msisdn=null, $request=null)
     {
         $user_id = auth()->user()->id;

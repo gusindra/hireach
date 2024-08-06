@@ -12,7 +12,7 @@
         <div class="col-span-6 sm:col-span-5">
             <x-jet-label for="slug" value="{{ __('Team Slug URL') }}" />
             <div >
-                <div class="mt-1 flex rounded-md shadow-sm">
+                <div class="mt-1 flex rounded-md">
                     <span class="inline-flex items-center px-3 rounded-l-md border border-r-0 dark:bg-slate-800 border-gray-300 bg-gray-50 text-gray-500 text-sm">
                         {{url('/')}}/chating/
                     </span>
@@ -33,16 +33,7 @@
         </div>
         <!-- Chat Embed Script -->
         <div class="col-span-6 sm:col-span-5">
-            <x-jet-label for="slug" value="{{ __('Embed Script to Website') }}" />
-            <div>
-                <div class="mt-1 flex rounded-md shadow-sm">
-                    <textarea class="dark:text-slate-300 dark:bg-slate-700 w-full h-40" readonly="true"><!--Start of Telixcel Chat Script-->
-<div style="position: fixed;bottom: 0;padding: 10px;z-index: 99;text-align: right;"><div id="frame" data-id="{{$dataId}}" style="position: fixed;bottom: -15px;width: auto;right: 10px;"></div></div>
-<script src="https://telixcel.s3.ap-southeast-1.amazonaws.com/assets/telixcel-chat.min.js" type="text/javascript"></script>
-<!--End of Telixcel Chat Script--></textarea>
-                </div>
-                <small class="dark:text-slate-400">put this script inside the body</small>
-            </div>
+            @livewire('team.embed', ['id' => $dataId])
 
             <x-jet-input-error for="name" class="mt-2" />
         </div>
@@ -59,3 +50,4 @@
         </x-slot>
     @endif
 </x-jet-form-section>
+

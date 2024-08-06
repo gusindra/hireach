@@ -2,16 +2,18 @@
 
 namespace App\Http\Livewire\Setting\Notification;
 
-use App\Models\Notification;
+use App\Models\Notice;
 use App\Models\Role;
 use App\Models\RoleUser;
 use App\Models\Team;
 use App\Models\TeamUser;
 use App\Models\User;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Livewire\Component;
 
 class Add extends Component
 {
+    use AuthorizesRequests;
     public $modalActionVisible = false;
     public $user;
     public $input;
@@ -32,22 +34,22 @@ class Add extends Component
     {
         $this->validate();
         $this->user = auth()->user()->id;
-        if(auth()->user()->super->first()->role == 'superadmin'){
+        if (auth()->user()->isSuper || (auth()->user()->team && str_contains(Auth::user()->activeRole->role->name, 'Admin'))) {
             $this->user = 0;
         }
-        if($this->grouptype=='user'){
-            foreach($this->input['group'] as $group){
+        if ($this->grouptype == 'user') {
+            foreach ($this->input['group'] as $group) {
                 $this->create($this->input['type'], $this->input['message'], $group);
             }
-        }else{
-            if($this->grouptype=='role'){
+        } else {
+            if ($this->grouptype == 'role') {
                 $roles = RoleUser::whereIn('role_id', $this->input['group'])->groupBy('user_id')->get();
-                foreach($roles as $role){
+                foreach ($roles as $role) {
                     $this->create($this->input['type'], $this->input['message'], $role->user_id);
                 }
-            }elseif($this->grouptype=='team'){
+            } elseif ($this->grouptype == 'team') {
                 $teams = TeamUser::whereIn('team_id', $this->input['group'])->groupBy('user_id')->get();
-                foreach($teams as $team){
+                foreach ($teams as $team) {
                     $this->create($this->input['type'], $this->input['message'], $team->user_id);
                 }
             }
@@ -57,8 +59,11 @@ class Add extends Component
         $this->emit('refreshLivewireDatatable');
     }
 
-    private function create($type, $msg, $user){
-        Notification::create([
+    private function create($type, $msg, $user)
+    {
+
+        $this->authorize('CREATE_NOTICE', 'NOTICE');
+        Notice::create([
             'type' => $type,
             'model' => null,
             'model_id' => null,
@@ -79,11 +84,11 @@ class Add extends Component
     public function readLists()
     {
         $type = $this->grouptype;
-        if($type=='team'){
+        if ($type == 'team') {
             $this->groups = Team::get();
-        }elseif($type=='role'){
+        } elseif ($type == 'role') {
             $this->groups = Role::get();
-        }else{
+        } else {
             $this->groups = User::get();
         }
         return $this->groups;

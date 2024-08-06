@@ -9,8 +9,15 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="csrf-token" content="{{ csrf_token() }}">
+        <title>{{ config('app.name', 'HiReach') }}</title>
 
-        <title>{{ config('app.name', 'Telixcel') }}</title>
+        <!--Favicon-->
+        <link rel="manifest" href="{{url('frontend/images/webmanifest.json')}}">
+        <link rel="apple-touch-icon" sizes="180x180" href="{{url('frontend/images/apple-touch-icon.png')}}">
+        <link rel="icon" type="image/png" sizes="32x32" href="{{url('frontend/images/favicon-32x32.png')}}">
+        <link rel="icon" type="image/png" sizes="16x16" href="{{url('frontend/images/favicon-16x16.png')}}">
+        <meta name="msapplication-TileColor" content="#ffffff">
+        <meta name="msapplication-TileImage" content="{{url('frontend/images/android-chrome-512x512.png')}}">
 
         <!-- Fonts -->
         <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap">
@@ -23,22 +30,6 @@
         <link rel="stylesheet" href="{{ url('js/emoji/docs/assets/css/style.css') }}">
         @trixassets
         @livewireStyles
-        <link rel="apple-touch-icon" sizes="57x57" href="{{url('favicon/apple-icon-57x57.png')}}">
-        <link rel="apple-touch-icon" sizes="60x60" href="{{url('favicon/apple-icon-60x60.png')}}">
-        <link rel="apple-touch-icon" sizes="72x72" href="{{url('favicon/apple-icon-72x72.png')}}">
-        <link rel="apple-touch-icon" sizes="76x76" href="{{url('favicon/apple-icon-76x76.png')}}">
-        <link rel="apple-touch-icon" sizes="114x114" href="{{url('favicon/apple-icon-114x114.png')}}">
-        <link rel="apple-touch-icon" sizes="120x120" href="{{url('favicon/apple-icon-120x120.png')}}">
-        <link rel="apple-touch-icon" sizes="144x144" href="{{url('favicon/apple-icon-144x144.png')}}">
-        <link rel="apple-touch-icon" sizes="152x152" href="{{url('favicon/apple-icon-152x152.png')}}">
-        <link rel="apple-touch-icon" sizes="180x180" href="{{url('favicon/apple-icon-180x180.png')}}">
-        <!--<link rel="icon" type="image/png" sizes="192x192"  href="{{url('android-icon-192x192.png')}}">-->
-        <link rel="icon" type="image/png" sizes="32x32" href="{{url('favicon/favicon-32x32.png')}}">
-        <link rel="icon" type="image/png" sizes="96x96" href="{{url('favicon/favicon-96x96.png')}}">
-        <link rel="icon" type="image/png" sizes="16x16" href="{{url('favicon/favicon-16x16.png')}}">
-        <!--<link rel="manifest" href="/manifest.json">-->
-        <meta name="msapplication-TileColor" content="#ffffff">
-        <meta name="msapplication-TileImage" content="/ms-icon-144x144.png">
         <!-- Scripts -->
         <script src="https://telixcel.s3.ap-southeast-1.amazonaws.com/assets/app.js" defer></script>
         <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
@@ -47,7 +38,7 @@
     <body class="font-sans antialiased">
         <x-jet-banner />
 
-        <div class="min-h-screen bg-gray-100 dark:bg-slate-700">
+        <div class="min-h-screen bg-gray-100 dark:bg-slate-800">
 
             <!-- Page Heading -->
             @if (isset($header))
@@ -65,12 +56,12 @@
             </main>
         </div>
 
-        @stack('modals')
+        <!-- @stack('modals') -->
 
         @livewireScripts
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-        <script src="{{ url('backend/js/socket.js')}}"></script>
-        @stack('chat-websocket')
+        <!-- <script src="{{ url('backend/js/socket.js')}}"></script> -->
+        <!-- @stack('chat-websocket') -->
         <script>
             // Initial load of the page
             window.addEventListener("load", function() {
@@ -91,7 +82,12 @@
                     switchMode(mode)
                 }
             });
-    
+
+            /**
+             * switchMode
+             *
+             * @return void
+             */
             function switchMode(mode) {
                 if (localStorage.dark === 'true') {
                     document.documentElement.classList.add('dark')
@@ -100,7 +96,7 @@
                 }
                 Livewire.emitTo('dark', 'ModeView', mode)
             }
-    
+
             // this emitted from Livewire to change the Class DarkMoe on and Off.
             window.addEventListener('view-mode', event => {
                 localStorage.dark = event.detail.newMode;

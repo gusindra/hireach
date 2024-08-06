@@ -25,7 +25,18 @@ class PermissionSeeder extends Seeder
             'TEMPLATE',
             'TEAM',
             'PROJECT',
-            'SETTING'
+            'SETTING',
+            "DASHBOARD",
+            'PROVIDER',
+            'ROLE',
+            'PERMISSION',
+            'NOTICE',
+            'PAYMENT',
+            "REPORT",
+            "QUOTATION",
+            'USER',
+            'RESOURCE',
+            'CONTENT'
         );
         $functions = array(
             'VIEW',
@@ -37,7 +48,7 @@ class PermissionSeeder extends Seeder
         foreach ($data as $menu) {
             foreach ($functions as $action) {
                 \App\Models\Permission::create([
-                    'name' => $action. ' ' .$menu,
+                    'name' => $action . ' ' . $menu,
                     'model' => $menu
                 ]);
             }

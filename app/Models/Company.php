@@ -4,10 +4,11 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Company extends Model
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes;
 
     /**
      * The attributes that are mass assignable.
@@ -27,7 +28,7 @@ class Company extends Model
         'user_id',
     ];
 
-	protected $table = 'companies';
+    protected $table = 'companies';
 
     protected $guarded = [];
 
@@ -46,7 +47,8 @@ class Company extends Model
      *
      * @return void
      */
-    public function img_logo(){
+    public function img_logo()
+    {
         return $this->hasOne('App\Models\Attachment', 'model_id')->where('model', 'company');
     }
 
@@ -55,8 +57,9 @@ class Company extends Model
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-    public function payable(){
-    	return $this->hasMany(CompanyPayment::class, 'company_id');
+    public function payable()
+    {
+        return $this->hasMany(CompanyPayment::class, 'company_id');
     }
 
     /**
@@ -64,8 +67,9 @@ class Company extends Model
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-    public function projects(){
-    	return $this->hasMany(Project::class, 'party_b');
+    public function projects()
+    {
+        return $this->hasMany(Project::class, 'party_b');
     }
 
     /**
@@ -73,8 +77,9 @@ class Company extends Model
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-    public function lastProjects(){
-    	return $this->hasMany(Project::class, 'party_b')->orderBy('updated_at', 'desc')->take(4);
+    public function lastProjects()
+    {
+        return $this->hasMany(Project::class, 'party_b')->orderBy('updated_at', 'desc')->take(4);
     }
 
     /**
@@ -82,7 +87,8 @@ class Company extends Model
      *
      * @return void
      */
-    public function clientCompany(){
-    	return $this->hasOne('App\Models\ClientCompanies', 'company_id');
+    public function clientCompany()
+    {
+        return $this->hasOne('App\Models\ClientCompanies', 'company_id');
     }
 }

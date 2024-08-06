@@ -24,8 +24,6 @@
         <div class="max-w-7xl mx-auto py-3 px-4 sm:px-6 lg:px-8 justify-between flex">
             @livewire('saldo.topup', ['user' => $user, 'id' => $id])
 
-
-
             <div>
                 <div class="items-center justify-end px-2 text-right">
                     <x-jet-dropdown align="right" width="60">
@@ -63,15 +61,14 @@
         </div>
     </header> --}}
 
-    
+
     <div class="grid grid-cols-12">
-        
-        @includeWhen(auth()->user()->super->first() && auth()->user()->super->first()->role == 'superadmin',
+        @includeWhen(auth()->user()->isSuper || (auth()->user()->team && str_contains(auth()->user()->activeRole->role->name, 'Admin')),
             'menu.admin-menu-user-profile',
             ['user' => $user]
-            )
+        )
 
-        <div class="col-span-12 px-3 ml-24 mt-2 space-y-3">
+        <div class="col-span-12 px-3 lg:ml-24 mt-2 space-y-3">
             <div class="bg-white col-8 mt-3">
                 <div class="px-6 py-4 mx-auto my-3 rounded-lg shadow">
                     @livewire('saldo.topup', ['user' => $user, 'id' => $id])
@@ -245,6 +242,7 @@
                                                     </path>
                                                 </svg>
                                             </a>
+                                            @if($user->currentTeam)
                                             <div
                                                 class="ml-4 text-gray-600 dark:text-slate-300 leading-7 font-semibold text-3xl">
                                                 <span>{{ $user->currentTeam->callApi(app('request')->input('month'), app('request')->input('year'))->count() }}</span>
@@ -252,6 +250,7 @@
                                                     <a href="http://telixcel.com/message"> API Call</a>
                                                 </div>
                                             </div>
+                                            @endif
                                         </div>
                                     </div>
 
@@ -342,7 +341,7 @@
                                     </div>
                                 </div>
                             </div>
-                            
+
                             <div
                                 class="bg-white dark:bg-slate-600 overflow-hidden shadow-xl sm:rounded-sm col-span-3">
                                 <div class="p-2 border-b border-gray-200">
@@ -410,7 +409,7 @@
                                     </div>
                                 </div>
                             </div>
-                            
+
                         @endif
                     </div>
                 </div>

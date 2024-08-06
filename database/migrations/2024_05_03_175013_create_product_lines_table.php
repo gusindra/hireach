@@ -17,12 +17,9 @@ return new class extends Migration
             $table->id();
             $table->string('name', 255);
             $table->string('type', 255)->nullable()->comment('Item, Service');
-            $table->unsignedBigInteger('user_id');
+            $table->unsignedBigInteger('company_id');
             $table->timestamps();
             $table->softDeletes();
-
-            // Foreign key constraint
-            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
         });
     }
 

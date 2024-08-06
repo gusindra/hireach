@@ -6,9 +6,10 @@ use Illuminate\Database\Eloquent\Model;
 
 class PermissionRole extends Model
 {
-    protected $guarded = array();
-    public static $rules = array();
+    protected $guarded = [];
+
     protected $table = 'permission_role';
+
     public $timestamps = false;
     /**
      * The attributes that are mass assignable.
@@ -16,7 +17,8 @@ class PermissionRole extends Model
      * @var array
      */
     protected $fillable = [
-        'role_id','permission_id'
+        'role_id',
+        'permission_id'
     ];
 
     /**

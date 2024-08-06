@@ -14,6 +14,7 @@ class InBoundTable extends LivewireDatatable
     public $model = Request::class;
     public $hideable = 'select';
     public $filterMonth;
+    public $userId;
 
     public function __construct($id = null)
     {
@@ -23,25 +24,32 @@ class InBoundTable extends LivewireDatatable
 
     public function builder()
     {
-        $query = Request::query()
-            ->where('requests.user_id', auth()->user()->currentTeam->user_id)
-            ->where('requests.is_inbound', 1)
-            ->with('agent', 'client')
-            ->orderBy('requests.created_at', 'desc');
-
         $year = substr($this->filterMonth, 0, 4);
         $month = substr($this->filterMonth, 5, 2);
-
-        $query->whereYear('requests.created_at', $year)
-            ->whereMonth('requests.created_at', $month);
-
+        
+        $query = Request::query();
+        if (auth()->user()->super && auth()->user()->super->first() && auth()->user()->super->first()->role == 'superadmin') {
+            $query->where('requests.user_id', $this->userId);
+        } else {
+            $query->where('requests.user_id', auth()->user()->currentTeam->user_id);
+            $query->whereYear('requests.created_at', $year)
+                ->whereMonth('requests.created_at', $month);
+        }
+        $query->where('requests.is_inbound', 1)
+            ->with('agent', 'client')
+            ->orderBy('requests.created_at', 'desc');
+        
         return $query;
     }
-
-    public function columns()
+    
+    /**
+     * clientTbl
+     *
+     * @return array
+     */
+    private function clientTbl()
     {
         return [
-
             Column::callback(['from'], function ($from) {
                 if ($from == 'bot') {
                     return 'BOT';
@@ -58,5 +66,39 @@ class InBoundTable extends LivewireDatatable
             })->label('Type'),
             Column::name('created_at')->label('Creation Date'),
         ];
+    }
+    
+    /**
+     * adminTbl
+     *
+     * @return array
+     */
+    private function adminTbl()
+    {
+        return [
+            Column::callback(['from'], function ($from) {
+                if ($from == 'bot') {
+                    return 'BOT';
+                }
+                if ($from == 'api') {
+                    return 'API';
+                }
+                return $from;
+            })->label('Agent'),
+            Column::name('client_id')->label('Client'),
+            Column::name('reply')->label('Message'),
+            Column::callback(['type'], function ($y) {
+                return view('label.type', ['type' => $y]);
+            })->label('Type'),
+            Column::name('created_at')->label('Creation Date'),
+        ];
+    }
+
+    public function columns()
+    {
+        if ((auth()->user()->super && auth()->user()->super->first() && auth()->user()->super->first()->role == 'superadmin') || (auth()->user()->activeRole && str_contains(auth()->user()->activeRole->role->name, "Admin"))) {
+            return $this->adminTbl();
+        }
+        return $this->clientTbl();
     }
 }

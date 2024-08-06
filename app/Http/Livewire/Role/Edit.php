@@ -4,10 +4,12 @@ namespace App\Http\Livewire\Role;
 
 use App\Models\Template;
 use App\Models\Role;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Livewire\Component;
 
 class Edit extends Component
 {
+    use AuthorizesRequests;
     public $role;
     public $templateId;
     public $name;
@@ -16,6 +18,7 @@ class Edit extends Component
     public $type;
     public $role_for;
     public $uuid;
+    public $roleId;
 
     public function mount($uuid)
     {
@@ -39,11 +42,11 @@ class Edit extends Component
     public function modelData()
     {
         return [
-            'name'                  => $this->name,
-            'description'           => $this->description,
-            'status'                => $this->status,
-            'type'                  => $this->type,
-            'role_for'              => $this->role_for,
+            'name' => $this->name,
+            'description' => $this->description,
+            'status' => $this->status,
+            'type' => $this->type,
+            'role_for' => $this->role_for,
         ];
     }
 
@@ -54,8 +57,10 @@ class Edit extends Component
      */
     public function update($id)
     {
+        $this->authorize('UPDATE_ROLE', 'ROLE');
         $this->validate();
         Role::find($id)->update($this->modelData());
+
         $this->emit('saved');
     }
 

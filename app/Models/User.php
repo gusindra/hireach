@@ -4,12 +4,14 @@ namespace App\Models;
 
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Fortify\TwoFactorAuthenticatable;
 use Laravel\Jetstream\HasProfilePhoto;
 use Laravel\Jetstream\HasTeams;
+use Laravel\Jetstream\Jetstream;
 use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable
@@ -30,7 +32,15 @@ class User extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'name', 'email', 'password', 'handling', 'phone_no', 'nick', 'current_team_id'
+        'name',
+        'email',
+        'password',
+        'handling',
+        'phone_no',
+        'nick',
+        'current_team_id',
+        'status',
+        'reff_team_id'
     ];
 
     /**
@@ -118,12 +128,18 @@ class User extends Authenticatable
     /**
      * User Has many Team
      *
-     * @return void
+     * @return TeamUser
      */
     public function super()
     {
         return $this->hasMany('App\Models\TeamUser', 'user_id')->where('team_id', env('IN_HOUSE_TEAM_ID'));
     }
+
+    public function isNoAdmin()
+    {
+        return $this->hasOne('App\Models\TeamUser', 'user_id')->where('team_id', '!=', env('IN_HOUSE_TEAM_ID'));
+    }
+
 
     /**
      * User is Superuser
@@ -140,8 +156,6 @@ class User extends Authenticatable
     {
         return $query->where('current_team_id', '!=', env('IN_HOUSE_TEAM_ID'))->orWhere('current_team_id', NULL);
     }
-
-
 
     /**
      * teams
@@ -202,7 +216,8 @@ class User extends Authenticatable
     }
     public function activeRole()
     {
-        return $this->hasOne('App\Models\RoleUser', 'user_id')->orderBy('active', 'desc');;
+        return $this->hasOne('App\Models\RoleUser', 'user_id')->orderBy('active', 'desc');
+        ;
     }
 
     /**
@@ -216,6 +231,16 @@ class User extends Authenticatable
             return $this->hasMany('App\Models\SaldoUser', 'user_id')->where('team_id', $team_id)->orderBy('id', 'desc');
         }
         return $this->hasMany('App\Models\SaldoUser', 'user_id')->orderBy('id', 'desc');
+    }
+    
+    /**
+     * balanceTeam
+     *
+     * @return void
+     */
+    public function balanceTeam()
+    {
+        return $this->hasMany('App\Models\SaldoUser', 'user_id')->orderBy('created_at', 'desc');
     }
 
     /**
@@ -282,5 +307,93 @@ class User extends Authenticatable
     public function credential()
     {
         return $this->hasMany('App\Models\ApiCredential', 'user_id');
+    }
+
+    public function providerUser()
+    {
+        return $this->hasMany('App\Models\ProviderUser', 'user_id');
+    }
+
+    public function browserSessionUser()
+    {
+        return $this->hasMany('App\Models\BrowserSession', 'user_id');
+    }
+    
+    public function department()
+    {
+        return $this->hasMany('App\Models\Department', 'user_id');
+    }
+
+    //=============
+    //FROM TRAIT
+    //=============
+
+    /**
+     * Get the current team of the user's context.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function currentTeam()
+    {
+        if (is_null($this->current_team_id) && $this->id) {
+            $this->switchTeam($this->personalTeam());
+        }
+
+        return $this->belongsTo(Jetstream::teamModel(), 'current_team_id');
+    }
+
+    /**
+     * Switch the user's context to the given team.
+     *
+     * @param  mixed  $team
+     * @return bool
+     */
+    public function switchTeam($team)
+    {
+        if (!$this->belongsToTeam($team)) {
+            return false;
+        }
+
+        $this->forceFill([
+            'current_team_id' => $team->id,
+        ])->save();
+
+        $this->setRelation('currentTeam', $team);
+
+        return true;
+    }
+
+    /**
+     * Determine if the user owns the given team.
+     *
+     * @param  mixed  $team
+     * @return bool
+     */
+    public function ownsTeam($team)
+    {
+        if (is_null($team)) {
+            return false;
+        }
+
+        return $this->id == $team->{$this->getForeignKey()};
+    }
+
+    /**
+     * Determine if the user belongs to the given team.
+     *
+     * @param  mixed  $team
+     * @return bool
+     */
+    public function belongsToTeam($team)
+    {
+        if (is_null($team)) {
+            return false;
+        }
+        $user = auth()->user()->id;
+        return $this->ownsTeam($team) || $this->teams->contains(function ($t) use ($team) {
+            return $t->id === $team->id;
+        }) || $team->users->pluck('id')->contains(function ($u) use ($user) {
+            return $u === $user;
+        });
     }
 }

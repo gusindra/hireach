@@ -11,6 +11,7 @@ class Chat extends Component
     public $team;
     public $slug;
     public $dataId;
+    public $modalActionVisible = true;
 
     public function mount($team)
     {
@@ -20,9 +21,20 @@ class Chat extends Component
         // dd($this->team);
     }
 
-    public function updateChatTeam(){
-        Team::find($this->team->id)->update(['slug'=>$this->slug]);
+    public function updateChatTeam()
+    {
+        Team::find($this->team->id)->update(['slug' => $this->slug]);
         $this->emit('saved');
+    }
+
+    /**
+     * createShowModal
+     *
+     * @return void
+     */
+    public function actionShowModal()
+    {
+        $this->modalActionVisible = true;
     }
 
     public function render()

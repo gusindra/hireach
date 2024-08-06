@@ -43,7 +43,7 @@ class Order extends Model
         'date' => 'datetime',
     ];
 
-    public static $searchable=[
+    public static $searchable = [
         "name",
         "no"
     ];
@@ -51,27 +51,34 @@ class Order extends Model
     /**
      * Get all of the permission that are assigned this role.
      */
-    public function customer(){
-    	return $this->belongsTo('App\Models\Client', 'customer_id', 'uuid');
+    public function customer()
+    {
+        return $this->belongsTo('App\Models\Client', 'customer_id', 'uuid');
     }
 
-    public function user(){
-    	return $this->belongsTo('App\Models\User', 'user_id');
+    public function user()
+    {
+        return $this->belongsTo('App\Models\Client', 'customer_id', 'uuid');
+
     }
 
-    public function company(){
-    	return $this->belongsTo('App\Models\Company', 'entity_party');
+    public function company()
+    {
+        return $this->belongsTo('App\Models\Company', 'entity_party');
     }
 
-    public function project(){
-    	return $this->belongsTo('App\Models\Project', 'source_id');
+    public function project()
+    {
+        return $this->belongsTo('App\Models\Project', 'source_id');
     }
 
-    public function invoice(){
+    public function invoice()
+    {
         return $this->hasMany('App\Models\Billing', 'order_id');
     }
 
-    public function lastInvoice(){
+    public function lastInvoice()
+    {
         return $this->hasOne('App\Models\Billing', 'order_id')->orderBy('period', 'desc');
     }
 
@@ -80,7 +87,8 @@ class Order extends Model
      *
      * @return void
      */
-    public function items(){
+    public function items()
+    {
         return $this->hasMany('App\Models\OrderProduct', 'model_id')->where('model', 'Order');
     }
 
@@ -89,11 +97,12 @@ class Order extends Model
      *
      * @return void
      */
-    public function notifications($status=null){
-        if(!is_null($status)){
-            return $this->hasMany('App\Models\Notification', 'model_id')->where('model', 'Order')->where('status', $status);
+    public function notifications($status = null)
+    {
+        if (!is_null($status)) {
+            return $this->hasMany('App\Models\Notice', 'model_id')->where('model', 'Order')->where('status', $status);
         }
-        return $this->hasMany('App\Models\Notification', 'model_id')->where('model', 'Order');
+        return $this->hasMany('App\Models\Notice', 'model_id')->where('model', 'Order');
     }
 
     /**
@@ -101,29 +110,32 @@ class Order extends Model
      *
      * @return void
      */
-    public function attachments(){
+    public function attachments()
+    {
         return $this->hasMany('App\Models\Attachment', 'model_id')->where('model', 'order');
     }
 
     /**
      * Get invoice data
      */
-    public function bill(){
-    	return $this->hasOne('App\Models\Billing', 'order_id');
+    public function bill()
+    {
+        return $this->hasOne('App\Models\Billing', 'order_id');
     }
 
     /**
      * Get next approval.
      */
-    public function approval(){
-    	return $this->hasOne('App\Models\FlowProcess', 'model_id')->where('model', 'ORDER')->whereNull('status');
+    public function approval()
+    {
+        return $this->hasOne('App\Models\FlowProcess', 'model_id')->where('model', 'ORDER')->whereNull('status');
     }
 
     /**
      * Get all of team.
      */
-    public function commission(){
-    	return $this->hasOne('App\Models\Commision', 'model_id')->where('model', 'order');
+    public function commission()
+    {
+        return $this->hasOne('App\Models\Commision', 'model_id')->where('model', 'order');
     }
-
 }

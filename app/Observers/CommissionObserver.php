@@ -12,27 +12,29 @@ class CommissionObserver
     /**
      * Handle the Project "updated" event.
      *
-     * @param  \App\Models\Request  $request
+     * @param  \App\Models\Commision  $request
      * @return void
      */
     public function updated(Commision $request)
     {
-        if($request->status == 'submit')
-        {
+        $before = $request->getOriginal();
+        addLog($request, json_encode($request->toArray()), json_encode($before));
+
+        if ($request->status == 'submit') {
             FlowProcess::create([
-                'model'     => 'COMMISSION',
-                'model_id'  => $request->id,
-                'user_id'   => Auth::user()->id,
-                'status'    => 'submited'
+                'model' => 'COMMISSION',
+                'model_id' => $request->id,
+                'user_id' => Auth::user()->id,
+                'status' => 'submited'
             ]);
 
             $flow = FlowSetting::where('model', 'COMMISSION')->where('team_id', auth()->user()->currentTeam->id)->get();
-            foreach($flow as $key => $value){
+            foreach ($flow as $key => $value) {
                 FlowProcess::create([
-                    'model'     => $value->model,
-                    'model_id'  => $request->id,
-                    'role_id'   => $value->role_id,
-                    'task'      => $value->description,
+                    'model' => $value->model,
+                    'model_id' => $request->id,
+                    'role_id' => $value->role_id,
+                    'task' => $value->description,
                 ]);
             }
 
@@ -54,5 +56,18 @@ class CommissionObserver
         //         'task'      => 'Releasor'
         //     ]);
         // }
+    }
+
+    public function created(Commision $commission)
+    {
+
+        addLog($commission, json_encode($commission->toArray()));
+    }
+
+
+
+    public function deleted(Commision $commission)
+    {
+        addLog($commission, null, json_encode($commission->toArray()));
     }
 }

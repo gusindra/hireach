@@ -1,12 +1,20 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" x-cloak x-init="$watch('darkMode', (val) => localStorage.setItem('dark',val))" x-data="{darkMode: localStorage.getItem('dark')}" :class="darkMode==='true' || darkMode==true ? 'dark' : ''" :data-dark="darkMode">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" x-cloak x-init="$watch('darkMode', (val) => localStorage.setItem('dark',val))" x-data="{darkMode: localStorage.getItem('dark')}" :class="darkMode ? '' : ''" :data-dark="darkMode">
 
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="csrf-token" content="{{ csrf_token() }}">
 
-        <title>{{ config('app.name', 'Telixcel') }}</title>
+        <title>{{ config('app.name', 'HiReach') }}</title>
+
+        <!--Favicon-->
+        <link rel="manifest" href="{{url('frontend/images/webmanifest.json')}}">
+        <link rel="apple-touch-icon" sizes="180x180" href="{{url('frontend/images/apple-touch-icon.png')}}">
+        <link rel="icon" type="image/png" sizes="32x32" href="{{url('frontend/images/favicon-32x32.png')}}">
+        <link rel="icon" type="image/png" sizes="16x16" href="{{url('frontend/images/favicon-16x16.png')}}">
+        <meta name="msapplication-TileColor" content="#ffffff">
+        <meta name="msapplication-TileImage" content="{{url('frontend/images/android-chrome-512x512.png')}}">
 
         <!-- Fonts -->
         <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap">
@@ -15,22 +23,6 @@
         <!--<link rel="stylesheet" href="https://telixcel.s3.ap-southeast-1.amazonaws.com/assets/app.min.css">-->
         <link rel="stylesheet" href="https://telixcel.s3.ap-southeast-1.amazonaws.com/assets/2022/app.min.css">
         <link rel="stylesheet" href="https://telixcel.s3.ap-southeast-1.amazonaws.com/assets/2022/tail.min.css">
-        <link rel="apple-touch-icon" sizes="57x57" href="{{url('favicon/apple-icon-57x57.png')}}">
-        <link rel="apple-touch-icon" sizes="60x60" href="{{url('favicon/apple-icon-60x60.png')}}">
-        <link rel="apple-touch-icon" sizes="72x72" href="{{url('favicon/apple-icon-72x72.png')}}">
-        <link rel="apple-touch-icon" sizes="76x76" href="{{url('favicon/apple-icon-76x76.png')}}">
-        <link rel="apple-touch-icon" sizes="114x114" href="{{url('favicon/apple-icon-114x114.png')}}">
-        <link rel="apple-touch-icon" sizes="120x120" href="{{url('favicon/apple-icon-120x120.png')}}">
-        <link rel="apple-touch-icon" sizes="144x144" href="{{url('favicon/apple-icon-144x144.png')}}">
-        <link rel="apple-touch-icon" sizes="152x152" href="{{url('favicon/apple-icon-152x152.png')}}">
-        <link rel="apple-touch-icon" sizes="180x180" href="{{url('favicon/apple-icon-180x180.png')}}">
-        <!--<link rel="icon" type="image/png" sizes="192x192"  href="{{url('android-icon-192x192.png')}}">-->
-        <link rel="icon" type="image/png" sizes="32x32" href="{{url('favicon/favicon-32x32.png')}}">
-        <link rel="icon" type="image/png" sizes="96x96" href="{{url('favicon/favicon-96x96.png')}}">
-        <link rel="icon" type="image/png" sizes="16x16" href="{{url('favicon/favicon-16x16.png')}}">
-        <!--<link rel="manifest" href="/manifest.json">-->
-        <meta name="msapplication-TileColor" content="#ffffff">
-        <meta name="msapplication-TileImage" content="/ms-icon-144x144.png">
         <style>
             #livewire-error {width: 100% !important;height: 100% !important;}
         </style>
@@ -42,6 +34,37 @@
     </head>
     <body class="font-sans antialiased" style="zoom:90%;">
         <x-jet-banner />
+        @if (session('message'))
+            <div x-data="{'show':true,'style':'success','message':null}" :class="{ 'bg-indigo-500': style == 'success', 'bg-red-700': style == 'danger' }" x-show="show" x-init="
+                document.addEventListener('message', event => {
+                    style = event.detail.style;
+                    message = event.detail.message;
+                    show = true;
+                });
+            ">
+                <div class="mx-auto py-2 px-3 sm:px-6 lg:px-8">
+                    <div class="flex items-center justify-between flex-wrap">
+                        <div class="w-0 flex-1 flex items-center min-w-0">
+                            <span class="flex p-2 rounded-lg bg-indigo-600" :class="{ 'bg-indigo-600': style == 'success', 'bg-red-600': style == 'danger' }">
+                                <svg class="h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                </svg>
+                            </span>
+
+                            <p class="ml-3 font-medium text-sm text-white truncate">{{ session('message') }}</p>
+                        </div>
+
+                        <div class="flex-shrink-0 sm:ml-3">
+                            <button type="button" class="-mr-1 flex p-2 rounded-md focus:outline-none sm:-mr-2 transition hover:bg-indigo-600 focus:bg-indigo-600" :class="{ 'hover:bg-indigo-600 focus:bg-indigo-600': style == 'success', 'hover:bg-red-600 focus:bg-red-600': style == 'danger' }" aria-label="Dismiss" x-on:click="show = false">
+                                <svg class="h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        @endif
         <div class="min-h-screen bg-white dark:bg-slate-900">
             {{-- <button x-cloak x-on:click="darkMode==='true' || darkMode==true ? darkMode=false : darkMode=true;" class="inline-flex right-10 md:right-0 m-5">
                 <!-- Icon Moon -->
@@ -53,7 +76,7 @@
                     <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
                 </svg>
             </button> --}}
-            
+
             @livewire('navigation-menu')
 
             <!-- Page Heading -->
@@ -83,8 +106,9 @@
         <script src="{{ url('backend/js/socket.js')}}"></script>
         @stack('chat-websocket')
         @stack('charts')
-        @stack('chat-box')
+        <!-- @stack('chat-box') -->
         @stack('chat-waweb')
+
         <script>
             // Initial load of the page
             window.addEventListener("load", function() {
@@ -105,36 +129,26 @@
                     switchMode(mode)
                 }
             });
-    
+
             function switchMode(mode) {
-                if (localStorage.dark === 'true') {
+                if (localStorage.dark === 'true' || localStorage.dark==1) {
                     document.documentElement.classList.add('dark')
                 } else {
                     document.documentElement.classList.remove('dark')
                 }
                 Livewire.emitTo('dark', 'ModeView', mode)
             }
-    
+
             // this emitted from Livewire to change the Class DarkMoe on and Off.
             window.addEventListener('view-mode', event => {
                 localStorage.dark = event.detail.newMode;
                 switchMode(event.detail.newMode);
             });
         </script>
+
         <audio id="sound" class="hidden" controls>
             <source src="{{url('/assets/sound/notif.wav')}}" type="audio/wav">
             Your browser does not support the audio element.
         </audio>
-        <script>
-            (function(n,o,t,i,f) {
-                n[i] = {}; var m = ['init', 'on']; n[i]._c = [];m.forEach(me => n[i][me] = function() {n[i]._c.push([me, arguments])});
-                var elt = o.createElement(f); elt.type = "text/javascript"; elt.async = true; elt.src = t;
-                var before = o.getElementsByTagName(f)[0]; before.parentNode.insertBefore(elt, before);
-            })(window, document, 'https://embed.novu.co/embed.umd.min.js', 'novu', 'script');
-
-            novu.init('GmksWJkfvKlW', '#notification-bell', {
-                subscriberId: "on-boarding-subscriber-id-123",
-            });
-        </script>   
     </body>
 </html>

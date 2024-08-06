@@ -28,11 +28,13 @@ class Role extends Model
     /**
      * Get all of the permission that are assigned this role.
      */
-    public function permission(){
-    	return $this->belongsToMany('App\Models\Permission');
+    public function permission()
+    {
+        return $this->belongsToMany('App\Models\Permission');
     }
-    
-    public function permission_by_model(){
-    	return $this->belongsToMany('App\Models\Permission')->groupBy('model')->orderBy('id');
+
+    public function permission_by_model()
+    {
+        return $this->belongsToMany('App\Models\Permission')->groupBy('model')->orderBy('id');
     }
 }

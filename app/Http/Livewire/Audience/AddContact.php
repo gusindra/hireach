@@ -2,13 +2,12 @@
 
 namespace App\Http\Livewire\Audience;
 
+use App\Exports\ExportAudienceContact;
 use App\Models\AudienceClient;
 use Livewire\Component;
-use App\Models\Template;
-use App\Models\Action;
-use App\Models\Audience;
 use App\Models\Client;
-use App\Models\DataAction;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Exports\ExportContact;
 
 class AddContact extends Component
 {
@@ -24,6 +23,12 @@ class AddContact extends Component
     public $type;
     public $content = 'text';
 
+    /**
+     * mount
+     *
+     * @param  mixed $audience
+     * @return void
+     */
     public function mount($audience)
     {
         $this->audience = $audience;
@@ -31,8 +36,11 @@ class AddContact extends Component
         $this->type = false;
     }
 
-
-
+    /**
+     * modelData
+     *
+     * @return void
+     */
     public function modelData()
     {
         $data = [
@@ -42,6 +50,11 @@ class AddContact extends Component
         return $data;
     }
 
+    /**
+     * rules
+     *
+     * @return void
+     */
     public function rules()
     {
         return [
@@ -50,6 +63,11 @@ class AddContact extends Component
         ];
     }
 
+    /**
+     * messages
+     *
+     * @return void
+     */
     public function messages()
     {
         return [
@@ -59,10 +77,13 @@ class AddContact extends Component
         ];
     }
 
-
+    /**
+     * create
+     *
+     * @return void
+     */
     public function create()
     {
-        // dd($this->modelData());
         $this->validate();
         $action = AudienceClient::firstOrCreate($this->modelData(), $this->modelData());
         $this->modalActionVisible = false;
@@ -77,14 +98,12 @@ class AddContact extends Component
         $this->actionId = null;
     }
 
-
     public function dehydrate()
     {
         if (!$this->modalActionVisible) {
             $this->resetForm();
         }
     }
-
 
     /**
      * The delete function.
@@ -103,19 +122,39 @@ class AddContact extends Component
         ]);
     }
 
-
+    /**
+     * resetForm
+     *
+     * @return void
+     */
     public function resetForm()
     {
         $this->contactId = null;
     }
 
-
+    /**
+     * actionShowModal
+     *
+     * @return void
+     */
     public function actionShowModal()
     {
-        $this->array_data = Client::where('user_id', auth()->user()->currentTeam->user_id)->get();
+        // $this->array_data = Client::where('user_id', auth()->user()->currentTeam->user_id)->get();
         $this->modalActionVisible = true;
         $this->resetForm();
+        $this->emit('refreshLivewireDatatable');
         $this->actionId = null;
+    }
+
+    /**
+     * exportContact
+     *
+     * @return void
+     */
+    public function exportContact()
+    {
+        Excel::store(new ExportAudienceContact($this->audience->id), $this->audience->id . '_client.xlsx');
+        return Excel::download(new ExportAudienceContact($this->audience->id), $this->audience->name . '_client.xlsx');
     }
 
     /**
@@ -126,8 +165,15 @@ class AddContact extends Component
     public function read()
     {
         return AudienceClient::where('audience_id', $this->audienceId)->get();
+        $this->emit('refreshLivewireDatatable');
     }
 
+    /**
+     * updateShowModal
+     *
+     * @param  mixed $id
+     * @return void
+     */
     public function updateShowModal($id)
     {
         $this->resetValidation();
@@ -149,6 +195,12 @@ class AddContact extends Component
         $this->contactId    = $data->contact_id;
     }
 
+    /**
+     * deleteShowModal
+     *
+     * @param  mixed $id
+     * @return void
+     */
     public function deleteShowModal($id)
     {
         $this->actionId = $id;

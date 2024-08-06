@@ -19,6 +19,8 @@ return new class extends Migration
             $table->string('model_id', 50)->nullable()->comment('address to id');
             $table->string('client_id');
             $table->string('ratio');
+            $table->string('type');
+
             $table->string('status');
             $table->timestamps();
         });

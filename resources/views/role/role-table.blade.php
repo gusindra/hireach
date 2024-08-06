@@ -6,15 +6,16 @@
 
     <div class="grid grid-cols-12">
 
-        @includeWhen(auth()->user()->super->first() && auth()->user()->super->first()->role == 'superadmin', 'menu.admin-menu-setting', [])
+        @includeWhen(auth()->user()->isSuper || (auth()->user()->team && str_contains(auth()->user()->activeRole->role->name, 'Admin')),
+            'menu.admin-menu-setting',
+            []
+        )
 
         <div class="col-span-12 px-3 ml-24 mt-2">
             <div class="bg-white dark:bg-slate-600 overflow-hidden shadow-xl sm:rounded-lg">
-                <div class="container mx-auto">
-                    <div class="flex justify-between">
-                        <div class="p-4">
-                            @livewire('role.roles')
-                        </div>
+                <div class="mx-auto">
+                    <div>
+                        @livewire('role.roles')
                     </div>
                     <!-- <div class="flex items-center justify-end px-4 py-3 text-right sm:px-6 right-5 mr-0">
                         <x-jet-button>

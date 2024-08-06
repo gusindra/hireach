@@ -1,25 +1,24 @@
 <div wire:poll>
     @if ($model->status == 'draft' || ($model->status == 'unpaid' && $model_type == 'commission'))
-        @if (auth()->user()->super->first() && auth()->user()->super->first()->role == 'superadmin')
-            <div class="px-4 py-5 bg-white dark:bg-slate-600 sm:p-6 shadow sm:rounded-md">
+        @if (auth()->user()->isSuper || (auth()->user()->team && str_contains(auth()->user()->isNoAdmin->role, 'admin')))
+        <div class="px-4 py-5 bg-white dark:bg-slate-600 sm:p-6 shadow sm:rounded-md">
 
-                <div class="sm:px-0">
-                    <h3 class="text-base font-bold text-gray-900 dark:text-slate-300">Submission Process</h3>
-                </div>
-                <div class="w-auto text-center mt-4">
-                    <x-jet-button wire:click="submit" class="hover:bg-green-700 bg-green-700">
-                        {{ $approvals->count() > 0 ? __('Re-Submit') : __('Submit') }}
-                    </x-jet-button>
-                </div>
-                @if ($errorMessage)
-                    <div class="text-red-500 p-2">
-                        {!! $errorMessage !!}
-                    </div>
-                @endif
+            <div class="sm:px-0">
+                <h3 class="text-base font-bold text-gray-900 dark:text-slate-300">Submission Process</h3>
             </div>
-            <br>
-
-        @endif
+            <div class="w-auto text-center mt-4">
+                <x-jet-button :disabled="!userAccess('QUOTATION', 'update')" wire:click="submit" class="hover:bg-green-700 bg-green-700">
+                    {{ $approvals->count() > 0 ? __('Re-Submit') : __('Submit') }}
+                </x-jet-button>
+            </div>
+            @if ($errorMessage)
+                <div class="text-red-500 p-2">
+                    {!! $errorMessage !!}
+                </div>
+            @endif
+        </div>
+        <br>
+    @endif
 
     @endif
 
@@ -93,6 +92,7 @@
                             @endif
                         </li>
                     @endforeach
+
                     @if ($approval->status != null)
                         <li class="ml-5 mb-6">
                             <div
@@ -120,13 +120,16 @@
         </div>
 
         <!-- The offcanvas component -->
-        <div class="{{ auth()->user()->super->first() && auth()->user()->super->first()->role == 'superadmin' ? 'block' : '' }} block sm:hidden"
+        <!-- FOR MOBILE USAGE DESIGN -->
+        <div class="{{ auth()->user()->isSuper || (auth()->user()->team && optional(auth()->user()->activeRole)->role && str_contains(optional(auth()->user()->activeRole->role)->name, 'Admin')) ? 'block' : '' }} block sm:hidden"
             x-data="{ offcanvas: false }">
-            @if (auth()->user()->super->first() && auth()->user()->super->first()->role == 'superadmin')
+            @if (auth()->user()->isSuper ||
+                    (auth()->user()->team &&
+                        optional(auth()->user()->activeRole)->role &&
+                        str_contains(optional(auth()->user()->activeRole->role)->name, 'Admin')))
                 <button class="fixed top-52 right-0 bg-blue-100 p-1 text-sm text-gray-400"
-                    @click="offycanvas = true">Approval</button>
+                    @click="offcanvas = true">Approval</button>
             @endif
-
             <section x-show="offcanvas" class="fixed inset-y-0 right-0 z-50 flex">
                 <div class="w-60 max-w-sm">
                     <div class="flex flex-col h-full divide-y divide-gray-200 bg-gray-100 dark:bg-slate-600">
@@ -185,6 +188,7 @@
                                                         </svg>
                                                     </div>
                                                 @endif
+
                                                 <div class="flex gap-2">
                                                     <h3
                                                         class="mt-0 text-sm font-semibold text-gray-900 dark:text-white">
@@ -194,6 +198,7 @@
                                                         class="mt-0 text-sm font-semibolde text-gray-900 dark:text-gray-500 capitalize">
                                                         {{ $approval->status }}</p>
                                                 </div>
+
                                                 @if ($approval->status != null)
                                                     <div class="flex justify-end">
                                                         @if ($approval->user_id)
@@ -219,6 +224,7 @@
                                                 @endif
                                             </li>
                                         @endforeach
+
                                         @if ($approval->status != null)
                                             <li class="ml-5 mb-6">
                                                 <div
@@ -237,7 +243,8 @@
                                                         @foreach ($approvals->groupBy('user_id') as $approval)
                                                             <li
                                                                 class="mb-2 mt-1 text-xs font-normal leading-none text-gray-400 dark:text-gray-300 capitalize">
-                                                                {{ $approval[0]->user->name }}</li>
+                                                                {{ $approval[0]->user->name }}
+                                                            </li>
                                                         @endforeach
                                                     </ul>
                                                 </div>
@@ -252,20 +259,22 @@
             </section>
         </div>
     @endif
-    @if (auth()->user()->super->first() &&
-            auth()->user()->super->first()->role == 'superadmin' &&
-            $model->status == 'approved')
-        <div
-            class="px-4 py-5 bg-white text-center dark:bg-slate-600 sm:p-6 shadow sm:rounded-tl-md sm:rounded-tr-md mt-4">
-            <x-jet-button wire:click="activated" class="hover:bg-green-700 bg-green-500 px-2">
-                {{ __('Activated') }}
-            </x-jet-button>
-        </div>
-    @endif
+
+    <div class="{{ auth()->user()->isSuper || (auth()->user()->team && optional(auth()->user()->activeRole)->role && str_contains(optional(auth()->user()->activeRole->role)->name, 'Admin')) ? 'block' : '' }} block sm:hidden"
+        x-data="{ offcanvas: false }">
+        @if (auth()->user()->isSuper ||
+                (auth()->user()->team &&
+                    optional(auth()->user()->activeRole)->role &&
+                    str_contains(optional(auth()->user()->activeRole->role)->name, 'Admin')))
+            <button class="fixed top-52 right-0 bg-blue-100 p-1 text-sm text-gray-400"
+                @click="offcanvas = true">Approval</button>
+        @endif
+    </div>
 
 
     @if ($model->status != 'draft' && $approval && $model->approval && empty($approval->status))
-        @if ($model->status == 'submit')
+        @if ($model->status == 'submit' || $model->status == 'submit')
+            <!--  -->
             <div class="px-4 py-5 bg-white dark:bg-slate-600 sm:p-6 shadow sm:rounded-tl-md sm:rounded-tr-md mt-4">
                 <div class="sm:px-0">
                     <h3 class="text-base font-medium text-gray-900 dark:text-slate-300">

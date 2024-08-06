@@ -1,5 +1,8 @@
 <nav x-data="{ open: false }"
-    class="w-full bg-white dark:text-white border-b border-gray-100 dark:border-slate-50/[0.06] supports-backdrop-blur:bg-white/60 dark:bg-slate-800 fixed">
+    class="w-full bg-slate-100 lg:bg-white dark:text-white border-b border-gray-100 dark:border-slate-50/[0.06] supports-backdrop-blur:bg-slate-100/60 dark:bg-slate-800 fixed">
+    <!-- Primary Navigation Menu -->
+    <!-- Primary Navigation Menu -->
+    <!-- Primary Navigation Menu -->
     <!-- Primary Navigation Menu -->
     <div class="mx-auto px-4 sm:px-6 lg:px-4">
         <div class="flex justify-between h-16">
@@ -9,15 +12,15 @@
                     <a class="navbar-brand" href="/">
                         <img class="hidden" src="https://hireach.archeeshop.com/frontend/images/logo-trans.png"
                             title="{{ env('APP_NAME') }}" style="width: 150px;" />
-                        <img style="height:50px;" src="{{url('/assets/img/logos/logo2.png')}}" />
+                        <img style="height:50px;" src="{{url('/assets/img/logos/logo2.svg')}}" />
                     </a>
                 </div>
 
                 <!-- Navigation Links -->
                 <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
-                    @if (Auth::user()->activeRole && str_contains(Auth::user()->activeRole->role->name, 'Admin'))
+                    @if (Auth::user()->activeRole && str_contains(auth()->user()->activeRole->role->name, 'Admin'))
                         <x-jet-nav-link href="{{ route('admin') }}" :active="request()->routeIs('admin')">
-                            {{ __('Admin') }}
+                            {{ __('Dashboard') }}
                         </x-jet-nav-link>
                         <x-jet-nav-link href="{{ route('admin.user') }}" :active="request()->routeIs('admin.user')">
                             {{ __('User') }}
@@ -49,7 +52,7 @@
                             </x-jet-nav-link>
                         @elseif(false)
                             @if (@Auth::user()->role || Auth::user()->super->first())
-                                @if (Auth::user()->activeRole && str_contains(Auth::user()->activeRole->role->name, 'Admin'))
+                                @if (Auth::user()->activeRole && str_contains(auth()->user()->activeRole->role->name, 'Admin'))
                                     <x-jet-nav-link href="{{ route('admin.user') }}" :active="request()->routeIs('admin.user')">
                                         {{ __('Users') }}
                                     </x-jet-nav-link>
@@ -99,28 +102,24 @@
                             {{ __('Billing') }}
                         </x-jet-nav-link>
                     @endif
-
                 </div>
             </div>
 
-            <div class="hidden sm:flex sm:items-center sm:ml-6 flex-auto justify-end space-x-1">
+            <div class="hidden sm:flex sm:items-center sm:ml-6 flex-auto justify-end space-x-1 mr-6">
                 <!-- Global Search -->
                 @if (auth()->user()->currentTeam && auth()->user()->currentTeam->id == env('IN_HOUSE_TEAM_ID'))
                     @livewire('search.all')
                 @endif
 
-                <!-- Notification Dropdown -->
-                @livewire('notification-app', ['client_id' => Auth::user()->id], key(Auth::user()->id))
-
                 <!-- Teams Dropdown -->
-                @if (Auth::user()->currentTeam && Laravel\Jetstream\Jetstream::hasTeamFeatures())
+                @if (!empty(auth()->user()->listTeams) && Laravel\Jetstream\Jetstream::hasTeamFeatures())
                     <div class="ml-3 relative">
                         <x-jet-dropdown align="right" width="60">
                             <x-slot name="trigger">
-                                <span class="inline-flex rounded-md">
+                                <span class="inline-flex rounded-sm">
                                     <button type="button"
-                                        class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 dark:text-slate-300 bg-white supports-backdrop-blur:bg-white/60 dark:bg-slate-800 hover:bg-gray-50 hover:text-gray-700 focus:outline-none focus:bg-gray-50 active:bg-gray-50 transition">
-                                        {{ Auth::user()->currentTeam->name }}
+                                        class="inline-flex items-center px-3 py-2 border rounded-sm text-sm leading-4 font-medium rounded-md text-gray-500 dark:text-slate-300 bg-white supports-backdrop-blur:bg-white/60 dark:bg-slate-800 hover:bg-gray-50 hover:text-gray-700 focus:outline-none focus:bg-gray-50 active:bg-gray-50 transition">
+                                        Team: {{ Auth::user()->currentTeam ? Auth::user()->currentTeam->name : '' }}
 
                                         <svg class="ml-2 -mr-0.5 h-4 w-4" xmlns="http://www.w3.org/2000/svg"
                                             viewBox="0 0 20 20" fill="currentColor">
@@ -139,20 +138,21 @@
                                         {{ __('Manage Team') }}
                                     </div>
 
-                                    @if (Auth::user()->currentTeam->id !== 1)
+                                    @if (Auth::user()->currentTeam && Auth::user()->currentTeam->id !== 1)
                                         <!-- Team Settings -->
                                         <x-jet-dropdown-link
                                             href="{{ route('teams.show', Auth::user()->currentTeam->id) }}">
                                             {{ __('Team Settings') }}
                                         </x-jet-dropdown-link>
                                     @endif
-                                    @can('create', Laravel\Jetstream\Jetstream::newTeamModel())
-                                        <x-jet-dropdown-link href="{{ route('teams.create') }}">
-                                            {{ __('Create New Team') }}
-                                        </x-jet-dropdown-link>
-                                    @endcan
 
                                     @if (@Auth::user()->isSuper->role == 'superadmin')
+                                        @can('create', Laravel\Jetstream\Jetstream::newTeamModel())
+                                            <x-jet-dropdown-link href="{{ route('teams.create') }}">
+                                                {{ __('Create New Team') }}
+                                            </x-jet-dropdown-link>
+                                        @endcan
+                                    @else
                                         @can('create', Laravel\Jetstream\Jetstream::newTeamModel())
                                             <x-jet-dropdown-link href="{{ route('teams.create') }}">
                                                 {{ __('Create New Team') }}
@@ -162,7 +162,7 @@
 
                                     <div class="border-t border-gray-100"></div>
 
-                                    @livewire('switch-team')
+                                    @livewire('switch-team', ['totalTeam' => empty(auth()->user()->listTeams)])
                                 </div>
                             </x-slot>
                         </x-jet-dropdown>
@@ -175,9 +175,10 @@
                         <x-slot name="trigger">
                             @if (Laravel\Jetstream\Jetstream::managesProfilePhotos())
                                 <button
-                                    class="flex text-sm border-2 border-slate-200 rounded-full focus:outline-none focus:border-gray-300 dark:bg-slate-700 transition">
-                                    <img class="h-8 w-8 rounded-full object-cover"
-                                        src="{{ Auth::user()->profile_photo_url }}" alt="{{ Auth::user()->name }}" />
+                                    class="flex text-sm border-2 border-slate-200 rounded-sm focus:outline-none focus:border-gray-300 dark:bg-slate-700 transition">
+                                    <img class="h-8 w-8 rounded-sm object-cover"
+                                        src="{{ Auth::user()->profile_photo_url }}" title="{{ Auth::user()->name }}" alt="{{ Auth::user()->name }}" />
+                                        <small class="text-xs my-auto mx-2">{{ Auth::user()->name }}</small>
                                     @if (Auth::user()->activeRole)
                                         <span class="m-2 text-xs">{{ Auth::user()->activeRole->role->name }}</span>
                                     @endif
@@ -274,9 +275,95 @@
     </div>
 
     <!-- Responsive Navigation Menu -->
+    <!-- Responsive Navigation Menu -->
+    <!-- Responsive Navigation Menu -->
+    <!-- Responsive Navigation Menu -->
     <div :class="{ 'block': open, 'hidden': !open }" class="hidden sm:hidden">
-        <div class="pt-2 pb-3 space-y-1">
-            <x-jet-responsive-nav-link href="{{ route('dashboard') }}" :active="request()->routeIs('dashboard')">
+        <div class="pt-2 pb-3 space-y-1 bg-slate-300 lg:bg-white">
+            @if (Auth::user()->activeRole && str_contains(auth()->user()->activeRole->role->name, 'Admin'))
+                <x-jet-responsive-nav-link href="{{ route('admin') }}" :active="request()->routeIs('admin')">
+                    {{ __('Dashboard') }}
+                </x-jet-responsive-nav-link>
+                <x-jet-responsive-nav-link href="{{ route('admin.user') }}" :active="request()->routeIs('admin.user')">
+                    {{ __('User') }}
+                </x-jet-responsive-nav-link>
+                <x-jet-responsive-nav-link href="{{ route('admin.order') }}" :active="request()->routeIs('admin.order')">
+                    {{ __('Order') }}
+                </x-jet-responsive-nav-link>
+                <x-jet-responsive-nav-link href="{{ route('admin.settings') }}" :active="request()->routeIs('admin.settings')">
+                    {{ __('Setting') }}
+                </x-jet-responsive-nav-link>
+            @else
+                <x-jet-responsive-nav-link href="{{ route('dashboard') }}" :active="request()->routeIs('dashboard')">
+                    {{ __('Dashboard') }}
+                </x-jet-responsive-nav-link>
+
+                @if (request()->routeIs('assistant') ||
+                        request()->routeIs('project') ||
+                        request()->routeIs('commercial') ||
+                        request()->routeIs('order') ||
+                        request()->routeIs('commercial.show'))
+                    <x-jet-responsive-nav-link href="{{ route('project') }}" :active="request()->routeIs('project')">
+                        {{ __('Project') }}
+                    </x-jet-responsive-nav-link>
+                    <x-jet-responsive-nav-link href="{{ route('commercial') }}" :active="request()->routeIs('commercial')">
+                        {{ __('Commercial') }}
+                    </x-jet-responsive-nav-link>
+                    <x-jet-responsive-nav-link href="{{ route('order') }}" :active="request()->routeIs('order')">
+                        {{ __('Order') }}
+                    </x-jet-responsive-nav-link>
+                @elseif(false)
+                    @if (@Auth::user()->role || Auth::user()->super->first())
+                        @if (Auth::user()->activeRole && str_contains(auth()->user()->activeRole->role->name, 'Admin'))
+                            <x-jet-responsive-nav-link href="{{ route('admin.user') }}" :active="request()->routeIs('admin.user')">
+                                {{ __('Users') }}
+                            </x-jet-responsive-nav-link>
+                            <!--<x-jet-responsive-nav-link href="{{ route('user.billing.index') }}" :active="request()->routeIs('user.billing.index')">-->
+                            <!--    {{ __('Master Billing') }}-->
+                            <!--</x-jet-responsive-nav-link>-->
+                            <x-jet-responsive-nav-link href="{{ route('billing') }}" :active="request()->routeIs('billing')">
+                                {{ __('Billing') }}
+                            </x-jet-responsive-nav-link>
+                        @endif
+                    @endif
+
+                    @if (Auth::user()->activeRole)
+                        <x-jet-responsive-nav-link href="{{ route('assistant') }}" :active="request()->routeIs('assistant')">
+                            {{ __('Assistant') }}
+                        </x-jet-responsive-nav-link>
+                    @else
+                        <x-jet-responsive-nav-link href="{{ route('client') }}" :active="request()->routeIs('client')">
+                            {{ __('Customers') }}
+                        </x-jet-responsive-nav-link>
+                        <x-jet-responsive-nav-link href="{{ route('template') }}" :active="request()->routeIs('template')">
+                            {{ __('Templates') }}
+                        </x-jet-responsive-nav-link>
+                        @if (Auth::user()->currentTeam && Auth::user()->currentTeam->user_id == Auth::user()->id)
+                            <x-jet-responsive-nav-link href="{{ route('billing') }}" :active="request()->routeIs('billing')">
+                                {{ __('Report') }}
+                            </x-jet-responsive-nav-link>
+                        @endif
+                    @endif
+
+                    @if (Auth::user()->activeRole && str_contains(Auth::user()->activeRole->role->name, 'Super Admin'))
+                        <x-jet-responsive-nav-link href="{{ route('settings') }}" :active="request()->routeIs('settings')">
+                            {{ __('Settings') }}
+                        </x-jet-responsive-nav-link>
+                    @endif
+                @endif
+                <x-jet-responsive-nav-link href="{{ route('resources.index') }}" :active="request()->routeIs('resources')">
+                    {{ __('Resource') }}
+                </x-jet-responsive-nav-link>
+
+                <x-jet-responsive-nav-link href="{{ route('template') }}" :active="request()->routeIs('contents')">
+                    {{ __('Content') }}
+                </x-jet-responsive-nav-link>
+
+                <x-jet-responsive-nav-link href="{{ route('payment.deposit') }}" :active="request()->routeIs('payment.deposit')">
+                    {{ __('Billing') }}
+                </x-jet-responsive-nav-link>
+            @endif
+            <!-- <x-jet-responsive-nav-link href="{{ route('dashboard') }}" :active="request()->routeIs('dashboard')">
                 {{ __('Dashboard') }}
             </x-jet-responsive-nav-link>
             <x-jet-responsive-nav-link href="{{ route('resources.index') }}" :active="request()->routeIs('resources.index')">
@@ -284,7 +371,7 @@
             </x-jet-responsive-nav-link>
             <x-jet-responsive-nav-link href="{{ route('template') }}" :active="request()->routeIs('contents')">
                 {{ __('Content') }}
-            </x-jet-responsive-nav-link>
+            </x-jet-responsive-nav-link> -->
             <!-- <x-jet-responsive-nav-link href="{{ route('message') }}" :active="request()->routeIs('message')">
                 {{ __('Chat Area') }}
             </x-jet-responsive-nav-link> -->
@@ -305,7 +392,7 @@
 
         <!-- Responsive Settings Options -->
         <div class="pt-1 pb-1 border-t border-gray-200">
-            <div>
+            <div class="bg-slate-300 lg:bg-white">
                 <!-- Team Management -->
                 @if (Auth::user()->currentTeam && Laravel\Jetstream\Jetstream::hasTeamFeatures())
 
@@ -341,7 +428,7 @@
 
                 <div class="border-t border-gray-200 my-4"></div>
 
-                <div class="flex items-center px-4">
+                <div class="hidden lg:flex items-center px-4">
                     @if (Laravel\Jetstream\Jetstream::managesProfilePhotos())
                         <div class="flex-shrink-0 mr-3">
                             <img class="h-10 w-10 rounded-full object-cover"
@@ -379,4 +466,7 @@
             </div>
         </div>
     </div>
+
+    <!-- Notification Dropdown -->
 </nav>
+@livewire('notification-app', ['client_id' => Auth::user()->id], key(Auth::user()->id))

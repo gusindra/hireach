@@ -19,6 +19,8 @@ class UserTableSeeder extends Seeder
         User::create([
             'name' => 'Admin Hireach',
             'email' => 'admin@hireach.com',
+            'phone_no' => '99999999',
+
             'password' => Hash::make('12345678'),
             'current_team_id' => 1
         ]);
@@ -26,7 +28,16 @@ class UserTableSeeder extends Seeder
         User::create([
             'name' => 'User Hireach',
             'email' => 'user@hireach.com',
-            'password' => Hash::make('12345678')
+            'phone_no' => '99888888',
+            'password' => Hash::make('12345678'),
+            'current_team_id' => 2
+        ]);
+
+        User::create([
+            'name' => 'User',
+            'email' => 'user1@hireach.com',
+            'password' => Hash::make('12345678'),
+            'current_team_id' => 0
         ]);
     }
 }

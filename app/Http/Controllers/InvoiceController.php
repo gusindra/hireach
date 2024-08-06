@@ -9,16 +9,17 @@ class InvoiceController extends Controller
     // public $user_info;
     // public function __construct()
     // {
+
     //     $this->middleware(function ($request, $next) {
     //         // Your auth here
-    //         $permission = false;
-    //         $id = array("ORDER");
-    //         $permission = checkPermisissions($id);
+    //         $granted = false;
+    //         $user = auth()->user();
+    //         $granted = userAccess('PAYMENT');
 
-    //         if($permission){
+    //         if ($granted) {
     //             return $next($request);
     //         }
-    //         abort(404);
+    //         abort(403);
     //     });
     // }
 
@@ -29,6 +30,7 @@ class InvoiceController extends Controller
 
     public function show(Billing $invoice)
     {
-        return view('assistant.invoice.show', ['invoice'=>$invoice, 'order'=>$invoice->order]);
+
+        return view('assistant.invoice.show', ['invoice' => $invoice, 'order' => $invoice->order]);
     }
 }

@@ -6,13 +6,12 @@
     </x-slot>
 
     <div class="grid grid-cols-12">
-
-        @includeWhen(auth()->user()->super->first() && auth()->user()->super->first()->role == 'superadmin',
+        @includeWhen(auth()->user()->isSuper || str_contains(auth()->user()->activeRole->role->name, 'Admin'),
             'menu.admin-menu-user',
             []
         )
 
-        <div class="col-span-12 px-3 ml-24 mt-2">
+        <div class="col-span-12 px-3 lg:ml-24 mt-2">
             <div class="bg-white dark:bg-slate-600 overflow-hidden shadow-xl sm:rounded-lg">
                 <div class="mx-auto">
                     <div class="flex justify-between">

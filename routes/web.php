@@ -3,14 +3,17 @@
 use App\Http\Controllers\AdminSmsController;
 use App\Http\Controllers\ApiBulkSmsController;
 use App\Http\Controllers\ApiViGuardController;
+use App\Http\Controllers\PermissionController;
+use App\Http\Controllers\UserOrderController;
+use App\Http\Controllers\UserQuotationController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\DevhookController;
 use App\Http\Controllers\WebhookController;
-use App\Http\Livewire\ShowTemplate;
 use App\Http\Controllers\ApiWaController;
 use App\Http\Controllers\ChatController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BillingController;
+use App\Http\Controllers\CampaignController;
 use App\Http\Controllers\ChannelController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\RoleController;
@@ -29,30 +32,19 @@ use App\Http\Controllers\OrderController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\RoleInvitationController;
-use App\Http\Controllers\SynProductController;
 use App\Http\Controllers\TeamInvitationController;
 use App\Http\Controllers\TemplateController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ProviderController;
 use App\Http\Controllers\ResourceController;
-use App\Jobs\ProcessEmail;
-use App\Models\ApiCredential;
-use App\Models\BlastMessage;
-use App\Models\Client;
-use App\Models\Contract;
-use App\Models\FlowSetting;
-use App\Models\Notification;
-use App\Models\OperatorPhoneNumber;
-use App\Models\OrderProduct;
-use App\Models\Template;
-use App\Models\Request;
-use App\Models\SaldoUser;
+use App\Http\Controllers\ScheduleController;
+use App\Http\Controllers\UserChatController;
+use App\Models\Campaign;
 use Carbon\Carbon;
-use Illuminate\Support\Str;
-use Illuminate\Support\Facades\Mail;
 use Illuminate\Http\Request as HttpRequest;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
+
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -79,20 +71,25 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
      */
     Route::prefix('admin')->middleware('admin')->group(function () {
         Route::get('/', [DashboardController::class, 'show'])->name('admin');
-
-        Route::get('logout', 'Backend\AuthController@logout');
-        Route::resource('change-password', 'Backend\ChangePasswordController');
-        Route::resource('users', 'Backend\UserController');
+        Route::get('/dashboard/active-user', [DashboardController::class, 'activeUser'])->name('dashboard.active.user');
+        Route::get('/dashboard/order', [DashboardController::class, 'orderSummary'])->name('dashboard.order');
+        Route::get('/dashboard/provider', [DashboardController::class, 'providerSummary'])->name('dashboard.provider');
+        //Route::get('logout', 'Backend\AuthController@logout');
+        //Route::resource('change-password', 'Backend\ChangePasswordController');
+        // Route::resource('users', 'Backend\UserController');
 
         Route::get('/user', [UserController::class, 'index'])->name('admin.user');
         Route::get('/user/{user}', [UserController::class, 'show'])->name('user.show');
         Route::get('/user/{user}/balance', [UserController::class, 'balance'])->name('user.show.balance');
         Route::get('/user/{user}/profile', [UserController::class, 'profile'])->name('user.show.profile');
         Route::get('/user/{user}/provider', [UserController::class, 'provider'])->name('user.show.provider');
-        Route::get('/user/{user}/order', [UserController::class, 'profile'])->name('user.show.order');
+        Route::get('/user/{user}/order', [UserController::class, 'order'])->name('user.show.order');
+        Route::get('/user/{user}/client', [UserController::class, 'client'])->name('user.show.client');
+        Route::get('/user/{user}/client/{client}', [UserController::class, 'clientUser'])->name('client.create.user');
+        Route::get('/user/{user}/request', [UserController::class, 'request'])->name('user.show.request');
 
-        Route::get('/settings/clear-cache', 'Backend\SettingController@clearCache')->name('settings.clear-cache');
-        Route::get('/settings/rebuild-cache', 'Backend\SettingController@rebuildCache')->name('settings.rebuild-cache');
+        // Route::get('/settings/clear-cache', 'Backend\SettingController@clearCache')->name('settings.clear-cache');
+        // Route::get('/settings/rebuild-cache', 'Backend\SettingController@rebuildCache')->name('settings.rebuild-cache');
         //Route::resource('settings', 'Backend\SettingController', ['only' => ['index', 'update']]);
 
         Route::get('/user-billing', [UserBillingController::class, 'index'])->name('user.billing.index');
@@ -104,18 +101,20 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
 
         Route::get('/roles', [RoleController::class, 'index'])->name('role.index');
         Route::get('/roles/{role}', [RoleController::class, 'show'])->name('role.show');
-        Route::get('/settings/providers', [ProviderController::class, 'index'])->name('admin.settings.provider');
-        Route::get('/settings/providers/{provider}', [ProviderController::class, 'show'])->name('admin.settings.provider.show');
-
-        Route::get('/permission', function () {
-            return view('permission.index', ['page' => 'permission']);
-        })->name('permission.index');
-
-        Route::get('/flow/{model}', [FlowController::class, 'show'])->name('flow.show');
 
         Route::get('/settings', [SettingController::class, 'index'])->name('admin.settings');
-
+        Route::get('/settings/providers', [ProviderController::class, 'index'])->name('admin.settings.provider');
         Route::get('/settings/{page}', [SettingController::class, 'show'])->name('settings.show');
+        Route::get('/setting/log', [SettingController::class, 'logChange'])->name('settings.logChange');
+        Route::get('/settings/providers/{provider}', [ProviderController::class, 'show'])->name('admin.settings.provider.show');
+        Route::get('setting/product-line/{productLine}', [SettingController::class, 'productLineShow'])->name('settings.productLine.show');
+        Route::get('setting/commerce-item/{commerceItem}', [SettingController::class, 'commerceItemShow'])->name('settings.commerceItem.show');
+
+        Route::get('/permission', [PermissionController::class, 'index'])->name('permission.index');
+        Route::get('/setting/company', [SettingController::class, 'company'])->name('settings.company');
+        Route::get('setting/company/{company}', [SettingController::class, 'companyShow'])->name('settings.company.show');
+
+        Route::get('/flow/{model}', [FlowController::class, 'show'])->name('flow.show');
 
         Route::get('/order', [OrderController::class, 'index'])->name('admin.order');
         Route::get('/order/{order}', [OrderController::class, 'show'])->name('show.order');
@@ -129,14 +128,8 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
         Route::get('/commission', [CommissionController::class, 'index'])->name('admin.commission');
         Route::get('/commission/{commission}', [CommissionController::class, 'show'])->name('show.commission');
 
-        Route::get('/commercial', [CommercialController::class, 'index'])->name('commercial');
-        Route::get('/commercial/{key}', [CommercialController::class, 'show'])->name('commercial.show');
-        Route::get('/commercial/{key}/{id}', [CommercialController::class, 'template'])->name('invoice');
-
-        Route::resource('reportings', 'Backend\ReportingController');
-        Route::resource('logs', 'Backend\LogController');
-
-        Route::get('/company/{company}', [SettingController::class, 'company'])->name('settings.company.show');
+        // Route::resource('reportings', 'Backend\ReportingController');
+        // Route::resource('logs', 'Backend\LogController');
 
         Route::get('/project', [ProjectController::class, 'index'])->name('project');
         Route::get('/project/{project}', [ProjectController::class, 'show'])->name('project.show');
@@ -144,8 +137,12 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
         Route::get('report', [ReportController::class, 'index'])->name('admin.report');
         Route::get('report/{key}', [ReportController::class, 'show'])->name('report.show');
 
+        Route::get('/commercial', [CommercialController::class, 'index'])->name('commercial');
+        Route::get('/commercial/{key}', [CommercialController::class, 'show'])->name('commercial.show');
+        Route::get('/commercial/{key}/{id}', [CommercialController::class, 'template'])->name('invoice');
         Route::get('commercial/{key}/{id}', [CommercialController::class, 'edit'])->name('commercial.edit.show');
         Route::get('commercial/{id}/{type}/print', [CommercialController::class, 'template'])->name('commercial.print');
+
         Route::get('product/commercial/syn', [CommercialController::class, 'sync'])->name('commercial.sync');
         Route::post('product/commercial/syn', [CommercialController::class, 'syncPost'])->name('commercial.sync.post');
     });
@@ -156,9 +153,9 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
      */
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
-    // Route::get('/resources', function () {
-    //     return view('resource.index');
-    // })->name('resources.index');
+    Route::get('/campaign', [CampaignController::class, 'index'])->name('campaign.index');
+    Route::get('/campaign/{campaign}', [CampaignController::class, 'show'])->name('campaign.show');
+
     Route::get('/resources', [ResourceController::class, 'index'])->name('resources.index');
     Route::get('/resources/create', [ResourceController::class, 'show'])->name('show.resource');
 
@@ -170,18 +167,11 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
         return view('new');
     })->name('new');
 
-    Route::get('/message', function () {
-        return view('message');
-    })->name('message');
-
+    Route::get('/message', [UserChatController::class, 'index'])->name('message');
     Route::get('/client', [CustomerController::class, 'index'])->name('client');
 
-    Route::get('/template', function () {
-        return view('template.index');
-    })->name('template');
-    Route::get('/template/helper/index', function () {
-        return view('livewire.template.table-helper');
-    })->name('template.helper');
+    Route::get('/template', [TemplateController::class, 'index'])->name('template');
+    Route::get('/template/helper/index', [TemplateController::class, 'templateHelper'])->name('template.helper');
     Route::get('/template/create', function () {
         return view('template.form-template');
     })->name('create.template');
@@ -203,14 +193,16 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
     Route::get('/channel/{channel}', [ChannelController::class, 'show'])->name('channel.show');
     //Route::get('/channel/{channel}/{resource}', [ChannelController::class, 'view'])->name('channel.view');
 
-    Route::get('/assistant',  function () {
+    Route::get('/assistant', function () {
         return view('assistant.index');
     })->name('assistant');
 
     Route::get('/payment/deposit', [PaymentController::class, 'index'])->name('payment.deposit');
     Route::get('/payment/topup', [PaymentController::class, 'topup'])->name('payment.topup');
-    Route::get('/quotation', [PaymentController::class, 'quotation'])->name('quotation');
-    Route::get('/quotation/{quotation}', [PaymentController::class, 'quotationShow'])->name('quotation.show');
+    Route::get('/quotation', [UserQuotationController::class, 'quotation'])->name('quotation');
+    Route::get('/quotation/{quotation}', [UserQuotationController::class, 'quotationShow'])->name('quotation.show');
+    Route::get('/order', [UserOrderController::class, 'orderUSer'])->name('user.order');
+    Route::get('/order/{order}', [UserOrderController::class, 'showUserOrder'])->name('order.show');
 
     Route::get('/payment/invoice/{id}', [PaymentController::class, 'invoice'])->name('invoice.topup');
 
@@ -220,6 +212,10 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
 
     Route::get('/profile-user', [App\Http\Controllers\ProfileController::class, 'index'])->name('profile');
 
+    Route::get('/teams', function () {
+        return view('teams.index');
+    })->name('teams');
+
     /** ------------------------------------------
      * Ardana Routes
      * --------------------------------------------
@@ -228,8 +224,8 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
     Route::get('/contact/create', [ContactController::class, 'create'])->name('contacts.create');
     Route::post('/contact', [ContactController::class, 'store'])->name('contacts.store');
 
-    Route::get('/contact/exports', [ContactController::class, 'export'])->name('contact.export');
-    Route::get('/contact/import', [ContactController::class, 'showFormImport'])->name('contacts.showFormImport');
+    Route::get('/contact/request/exports', [ContactController::class, 'export'])->name('contact.export');
+    Route::get('/contact/request/import', [ContactController::class, 'showFormImport'])->name('contacts.showFormImport');
 
     Route::post('/contact/import', [ContactController::class, 'import'])->name('contact.import');
 
@@ -239,6 +235,7 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
 
     Route::get('/dashboard/inbound', [DashboardController::class, 'getInBound'])->name('dashboard.inbound');
     Route::get('/dashboard/outbound', [DashboardController::class, 'getOutBound'])->name('dashboard.outbound');
+
 });
 
 Route::get('/role-invitations/{invitation}', [RoleInvitationController::class, 'accept'])->middleware(['signed'])->name('role-invitations.accept');
@@ -260,7 +257,6 @@ Route::get('/upload', [UploadController::class, 'index']);
 Route::get('/logout', [AuthController::class, 'destroy'])->name('logout');
 Route::post('/logout', [AuthController::class, 'destroy'])->name('logout');
 
-
 Route::get('cache/{id}', function ($id) {
     if ($id == "clear") {
         \Artisan::call('cache:clear');
@@ -270,8 +266,9 @@ Route::get('cache/{id}', function ($id) {
     }
     dd("Job is done");
 });
-
-
+// ==================================
+// CRON JOB URL
+// ==================================
 Route::get('queue/{id}', function ($id) {
     if ($id == "work") {
         \Artisan::call('queue:work --tries=3 --stop-when-empty --timeout=60');
@@ -356,7 +353,15 @@ Route::get('/restart-service', function () {
     return 'success';
 });
 
-Route::get('/saveAlarm', [ApiViGuardController::class, 'index']);
+Route::get('campaign-schedule', [ScheduleController::class, 'index'])->name('schedule.start');
+Route::get('campaign-schedule-reset', [ScheduleController::class, 'reset'])->name('schedule.reset');
+// ==================================
+// END CRON JOB URL
+// // ==================================
+// Route::get('/saveAlarm', [ApiViGuardController::class, 'index']);
+Route::post('/saveAlarm', [ApiViGuardController::class, 'post']);
+Route::post('/getAllMonitoringDeviceList', [ApiViGuardController::class, 'getMonitoringDevice']);
+Route::post('/getAllDeptList', [ApiViGuardController::class, 'getDeptList']);
 
 //
 //
@@ -365,17 +370,103 @@ Route::get('/saveAlarm', [ApiViGuardController::class, 'index']);
 //
 //
 Route::get('/test', [WebhookController::class, 'index']);
-Route::get('/testing', function () {
-    // return 1;
-    $lastError = SaldoUser::find(63);
-    $errors = SaldoUser::where('balance', '<', 0)->where('user_id', '=', 1)->orderBy('id', 'asc')->get();
 
-    foreach ($errors as $er) {
-        $lastError = SaldoUser::find($er->id - 1);
-        SaldoUser::find($er->id)->update([
-            "balance" => $lastError->balance - $er->amount
-        ]);
+Route::get('/testing', function () {
+
+    // $gates = app(Gate::class)->abilities();
+    // // echo implode("\n", array_keys($gates));
+    // dd($gates);
+    // $user = auth()->user();
+
+    // if ($user->isNoAdmin && $user->isNoAdmin->role === "agen") {
+    //     $currentRoute = request()->route()->getName();
+    //     dd($currentRoute = request()->route()->getName() === 'messagea');
+    //     return $currentRoute === 'message'; // Periksa apakah route saat ini adalah 'messages'
+    // }'
+    $count = 0;
+    $c = Campaign::find(2);
+    $currentTime = Carbon::now(); // SET GMT di config
+    $scheduleNow = explode(':', $currentTime);
+    //return $scheduleNow[0];
+    foreach ($c->schedule as $s) {
+        // echo $s;
+        //CHECK MONTH
+        if ($c->shedule_type == 'yearly') {
+            $pass = false;
+            if ($s->month == $currentTime->format('m')) {
+                if ($s->day == $currentTime->format('l')) {
+                    $pass = true;
+                } elseif ($s->day == $currentTime->format('j')) {
+                    $pass = true;
+                }
+            }
+        }
+        //CHECK DAY
+        if ($c->shedule_type == 'monhly') {
+            $pass = false;
+            if ($s->day == $currentTime->format('l')) {
+                $pass = true;
+                echo 'll';
+            } elseif ($s->day == $currentTime->format('j')) {
+                $pass = true;
+                echo 'jj';
+            }
+        }
+        //CHECK TIME
+        //CHECK DAY
+        if ($c->shedule_type == 'daily') {
+            $pass = true;
+        }
+        if ($pass) {
+            $scheduleDb = explode(':', $s->time);
+            $scheduleNow = explode(':', $currentTime->format('H:i'));
+            if ($s->status == 0 && $scheduleDb[0] >= $scheduleNow[0]) {
+                $count = $count + 1;
+                if ($c->provider == 'provider3') {
+                    echo $s;
+                } else {
+                    echo $s;
+                }
+            }
+        }
     }
+    return $count;
+    // if(($campaign && ($campaign->to != '' || $campaign->audience_id))){
+    //     $contact = $campaign->to != '' && !str_contains( $campaign->to, 'Audience') ? explode(',', $campaign->to) : $campaign->audience->audienceClients;
+    //     $data = [
+    //         'type' => $campaign->type,
+    //         'from' => $campaign->from,
+    //         'text' => $campaign->text,
+    //         'title' => $campaign->title,
+    //         'otp' => $campaign->otp,
+    //         'provider' => $campaign->provider,
+    //     ];
+
+    //     if($campaign->template_id!=NULL){
+    //         $data['templateid'] = $campaign->template_id;
+    //     }
+    //     foreach ($contact as $c) {
+    //         return $data['to'] = $c->client->email;
+
+    //         $user = $campaign->user;
+
+    //         return $data;
+    //     }
+    // }else{
+    //     return 0;
+    // }
+
+
+    // return 1;
+    // $lastError = SaldoUser::find(63);
+    // $errors = SaldoUser::where('balance', '<', 0)->where('user_id', '=', 1)->orderBy('id', 'asc')->get();
+
+    // foreach ($errors as $er) {
+    //     $lastError = SaldoUser::find($er->id - 1);
+    //     SaldoUser::find($er->id)->update([
+    //         "balance" => $lastError->balance - $er->amount
+    //     ]);
+    // }
 
     return "done";
     // $phoneNo = '6281339668556';
@@ -454,10 +545,10 @@ Route::get('/testing', function () {
     // curl_close($curl);
     // echo $response;
 
-});
+})->name('messagea');
 
 Route::get('/tester', function (HttpRequest $request) {
-    // return auth()->user()->super->first()->role;
+    return auth()->user()->super->first()->role;
     // $sms = BlastMessage::find(435);
     // if($quote = App\Models\Quotation::where('client_id', 1)->whereIn('status', ['reviewed'])->orderBy('id', 'desc')->first()){
     //     $items = OrderProduct::orderBy('id', 'asc')->where('model', 'Quotation')->where('model_id', $quote->id)->get();
@@ -517,24 +608,26 @@ Route::get('/tester', function (HttpRequest $request) {
             'minPurchase' => 10,
             'shortDescription' => "Test Produk Lagi",
             'description' => "Test HTMl Produk Lagi",
-            "variations" => array(array(
-                "sellingPrice" => array(
-                    "amount" => 20000,
-                    "currencyCode" => "IDR"
-                ),
-                "sku" => "2022007-001",
-                "stock" => array(
-                    "availableStock" => 10,
-                    "safetyAlert" => false,
-                    "safetyStock" => 0
-                ),
-                "status" => "ACTIVE",
-                "type" => "NORMAL",
-                "purchasePrice" => array(
-                    "amount" => 20000,
-                    "currencyCode" => "IDR"
-                ),
-            )),
+            "variations" => array(
+                array(
+                    "sellingPrice" => array(
+                        "amount" => 20000,
+                        "currencyCode" => "IDR"
+                    ),
+                    "sku" => "2022007-001",
+                    "stock" => array(
+                        "availableStock" => 10,
+                        "safetyAlert" => false,
+                        "safetyStock" => 0
+                    ),
+                    "status" => "ACTIVE",
+                    "type" => "NORMAL",
+                    "purchasePrice" => array(
+                        "amount" => 20000,
+                        "currencyCode" => "IDR"
+                    ),
+                )
+            ),
             "images" => [],
             "status" => "PENDING_REVIEW"
 
@@ -626,11 +719,11 @@ Route::get('/tester', function (HttpRequest $request) {
             foreach (explode(",", $request->post) as $key => $posts) {
                 $post = explode(":", $posts);
                 if (is_numeric($post[1])) {
-                    $POSTFIELDS[$post[0]] = (int)$post[1];
+                    $POSTFIELDS[$post[0]] = (int) $post[1];
                 } else {
                     $POSTFIELDS[$post[0]] = $post[1];
                 }
-                $POSTFIELDS[$post[0]] = is_numeric($post[1]) ? (int)$post[1] : $post[1];
+                $POSTFIELDS[$post[0]] = is_numeric($post[1]) ? (int) $post[1] : $post[1];
             }
         }
         $POSTFIELDS = json_encode($POSTFIELDS);
@@ -667,18 +760,21 @@ Route::get('/tester', function (HttpRequest $request) {
 
     $curl = curl_init();
 
-    curl_setopt_array($curl, array(
-        CURLOPT_URL => $ginee_url . $url,
-        CURLOPT_RETURNTRANSFER => true,
-        CURLOPT_ENCODING => '',
-        CURLOPT_MAXREDIRS => 10,
-        CURLOPT_TIMEOUT => 0,
-        CURLOPT_FOLLOWLOCATION => true,
-        CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-        CURLOPT_CUSTOMREQUEST => $method,
-        CURLOPT_POSTFIELDS => $POSTFIELDS,
-        CURLOPT_HTTPHEADER => $headers,
-    ));
+    curl_setopt_array(
+        $curl,
+        array(
+            CURLOPT_URL => $ginee_url . $url,
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_ENCODING => '',
+            CURLOPT_MAXREDIRS => 10,
+            CURLOPT_TIMEOUT => 0,
+            CURLOPT_FOLLOWLOCATION => true,
+            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+            CURLOPT_CUSTOMREQUEST => $method,
+            CURLOPT_POSTFIELDS => $POSTFIELDS,
+            CURLOPT_HTTPHEADER => $headers,
+        )
+    );
 
     $response = curl_exec($curl);
 
@@ -730,47 +826,47 @@ Route::get('/tester', function (HttpRequest $request) {
 
 Route::get('test1', function (HttpRequest $request) {
     // $request_host = 'https://api.ginee.com';
-    $request_host = 'https://genie-sandbox.advai.net';
-    $http_method = 'POST';
+    // $request_host = 'https://genie-sandbox.advai.net';
+    // $http_method = 'POST';
 
-    $access_key = 'd20254aee13cc156';
-    $secret_key = 'b3436f168a4402b7';
+    // $access_key = 'd20254aee13cc156';
+    // $secret_key = 'b3436f168a4402b7';
 
-    if ($request->format == 'ListMasterProduct') {
-        $request_uri = '/openapi/product/master/v1/list';
-        $param_json = '{"page":0,"size":2,"productName":"Test 0125001"}';
-    } elseif ($request->format == 'ListInventorySku') {
-        $request_uri = '/openapi/inventory/v1/sku/list';
-        $param_json = '{"page":0,"size":20}';
-    } elseif ($request->format == 'GetInventorySku') {
-        $request_uri = '/openapi/inventory/v1/sku/get';
-        $param_json = '{"inventoryId":"IN605AA65352FAFF0001A6A2F7"}';
-    } else {
-        $request_uri = '/openapi/shop/v1/list';
-        $param_json = '{"page":0,"size":2}';
-    }
-
-
-    $newline = '$';
-    $sign_str = $http_method . $newline . $request_uri . $newline;
-    $authorization = sprintf('%s:%s', $access_key, base64_encode(hash_hmac('sha256', $sign_str, $secret_key, TRUE)));
-    // echo sprintf('signature string is:%s', $sign_str . PHP_EOL);
+    // if ($request->format == 'ListMasterProduct') {
+    //     $request_uri = '/openapi/product/master/v1/list';
+    //     $param_json = '{"page":0,"size":2,"productName":"Test 0125001"}';
+    // } elseif ($request->format == 'ListInventorySku') {
+    //     $request_uri = '/openapi/inventory/v1/sku/list';
+    //     $param_json = '{"page":0,"size":20}';
+    // } elseif ($request->format == 'GetInventorySku') {
+    //     $request_uri = '/openapi/inventory/v1/sku/get';
+    //     $param_json = '{"inventoryId":"IN605AA65352FAFF0001A6A2F7"}';
+    // } else {
+    //     $request_uri = '/openapi/shop/v1/list';
+    //     $param_json = '{"page":0,"size":2}';
+    // }
 
 
-    $header_array = array(
-        'Authorization: ' . $authorization,
-        'Content-Type: ' . 'application/json',
-        'X-Advai-Country: ' . 'ID'
-    );
+    // $newline = '$';
+    // $sign_str = $http_method . $newline . $request_uri . $newline;
+    // $authorization = sprintf('%s:%s', $access_key, base64_encode(hash_hmac('sha256', $sign_str, $secret_key, TRUE)));
+    // // echo sprintf('signature string is:%s', $sign_str . PHP_EOL);
 
-    var_dump($header_array);
 
-    $http_header = array(
-        'http' => array('method' => $http_method, 'header' => $header_array, 'content' => $param_json)
-    );
+    // $header_array = array(
+    //     'Authorization: ' . $authorization,
+    //     'Content-Type: ' . 'application/json',
+    //     'X-Advai-Country: ' . 'ID'
+    // );
 
-    $context = stream_context_create($http_header);
-    return file_get_contents($request_host . $request_uri, false, $context, 0);
+    // var_dump($header_array);
+
+    // $http_header = array(
+    //     'http' => array('method' => $http_method, 'header' => $header_array, 'content' => $param_json)
+    // );
+
+    // $context = stream_context_create($http_header);
+    // return file_get_contents($request_host . $request_uri, false, $context, 0);
 });
 
 Route::get('/email', function () {
@@ -831,39 +927,59 @@ Route::get('/email', function () {
 // })->name('billing');
 
 //retrive json and save to db
-Route::get('/get-from-ginee', [SynProductController::class, 'index']);
+// Route::get('/get-from-ginee', [SynProductController::class, 'index']);
 
 // testing response json format\
 Route::get('/json', [ApiBulkSmsController::class, 'ginee']);
 
 Route::get('/joymove', function (HttpRequest $request) {
-    $url = 'https://enjoymov.co/prod-api/kstbCore/sms/send';
-    $md5_key = 'AFD4274C39AB55D8C8D08FA6E145D535';
-    $merchantId = 'KSTB904790';
-    $callbackUrl = 'http://hireach.archeeshop.com/receive-sms-status';
-    $phone = '6281339668556';
-    $content = 'test enjoymov api wa';
+    // $url = 'https://enjoymov.co/prod-api/kstbCore/sms/send';
+    // $md5_key = 'AFD4274C39AB55D8C8D08FA6E145D535';
+    // $merchantId = 'KSTB904790';
+    // $callbackUrl = 'http://hireach.archeeshop.com/receive-sms-status';
+    // $phone = '6281339668556';
+    // $content = 'test enjoymov api wa';
 
-    $code = str_split($phone, 2);
+    // $code = str_split($phone, 2);
 
-    echo $code[0];
-    echo "<br>";
-    echo substr($phone, 2);
+    // echo $code[0];
+    // echo "<br>";
+    // echo substr($phone, 2);
 
-    $sb = $md5_key . $merchantId . $phone . $content;
-    $sign = md5($sb);
-    //return $sign;
-    $response = Http::withOptions(['verify' => false,])->post($url, [
-        'merchantId' => $merchantId,
-        'sign' => $sign,
-        'type' => $request['type'],
-        'phone' => $request['to'],
-        'countryCode' => $request['countryCode'],
-        'content' => $request['text'],
-        'msgChannel' => 'SM',
-        "callbackUrl" => $callbackUrl,
-        "msgId" => 'intenalID009'
-    ]);
-    return $response;
-    return $request->all();
+    // $sb = $md5_key . $merchantId . $phone . $content;
+    // $sign = md5($sb);
+    // //return $sign;
+    // $response = Http::withOptions(['verify' => false,])->post($url, [
+    //     'merchantId' => $merchantId,
+    //     'sign' => $sign,
+    //     'type' => $request['type'],
+    //     'phone' => $request['to'],
+    //     'countryCode' => $request['countryCode'],
+    //     'content' => $request['text'],
+    //     'msgChannel' => 'SM',
+    //     "callbackUrl" => $callbackUrl,
+    //     "msgId" => 'intenalID009'
+    // ]);
+    // return $response;
+    // return $request->all();
+});
+
+
+$authMiddleware = config('jetstream.guard')
+    ? 'auth:' . config('jetstream.guard')
+    : 'auth';
+
+$authSessionMiddleware = config('jetstream.auth_session', false)
+    ? config('jetstream.auth_session')
+    : null;
+
+Route::group(['middleware' => 'web'], function () {
+    // Teams...
+
+    Route::get('/team-invitations/{invitation}', [TeamInvitationController::class, 'accept'])
+        ->middleware(['signed'])
+        ->name('team-invitations.accept');
+    // Route::get('/team-invitations/{invitation}', function () {
+    //     return 1;
+    // });
 });

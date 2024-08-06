@@ -17,10 +17,11 @@ class ProviderTableSeeder extends Seeder
     public function run()
     {
         DB::table('providers')->insert([
-            ['id' => 1, 'code' => 'TCI01', 'name' => 'Macrokiosk Telixcel OTP'],
-            ['id' => 2, 'code' => 'TCI02', 'name' => 'Macrokiosk Telixcel NONOTP'],
-            ['id' => 3, 'code' => 'EMAIL1', 'name' => 'smtp2go'],
-            ['id' => 4, 'code' => 'KSTB904790', 'name' => 'enjoymov'],
+            ['id' => 1, 'code' => 'provider1', 'name' => 'Macrokiosk Telixcel OTP', 'channel' => 'SMS_OTP'],
+            ['id' => 2, 'code' => 'provider1', 'name' => 'Macrokiosk Telixcel NONOTP', 'channel' => 'SMS_OTP,SMS'],
+            ['id' => 3, 'code' => 'provider1', 'name' => 'smtp2go', 'channel' => 'EMAIL'],
+            ['id' => 4, 'code' => 'provider2', 'name' => 'enjoymov', 'channel' => 'LONG_WA,LONG_SMS'],
+            ['id' => 5, 'code' => 'provider3', 'name' => 'forCampaign', 'channel' => 'LONG_WA,LONG_SMS'],
         ]);
     }
 }

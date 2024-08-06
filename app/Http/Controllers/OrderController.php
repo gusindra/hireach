@@ -2,8 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Client;
 use App\Models\Order;
+use App\Models\OrderProduct;
 use App\Models\Quotation;
+use App\Models\User;
 use Illuminate\Support\Facades\Auth as FacadesAuth;
 
 class OrderController extends Controller
@@ -11,18 +14,20 @@ class OrderController extends Controller
     public $user_info;
     public function __construct()
     {
-        $this->middleware(function ($request, $next) {
-            // Your auth here
-            $permission = false;
-            $id = array("ORDER");
-            $permission = checkPermisissions($id);
 
-            if ($permission) {
-                return $next($request);
-            }
-            abort(404);
-        });
+        // $this->middleware(function ($request, $next) {
+        //     // Your auth here
+        //     $granted = false;
+        //     $user = auth()->user();
+        //     $granted = userAccess('ORDER');
+
+        //     if ($granted) {
+        //         return $next($request);
+        //     }
+        //     abort(403);
+        // });
     }
+
 
     public function index()
     {
@@ -49,4 +54,30 @@ class OrderController extends Controller
     {
         return view('assistant.order.show', ['order' => $order]);
     }
+    public function showUserOrder(Order $order)
+    {
+        $client = Client::where('uuid', $order->customer_id)->first();
+        $user = User::where('email', $client->email)->first();
+
+        $this->authorize('VIEW_ORDER', $user->id);
+        $orderProducts = OrderProduct::where('model_id', $order->id)
+            ->where('name', '!=', 'Tax')
+            ->get();
+
+        $subTotal = $orderProducts->sum(function ($item) {
+            return $item->price * $item->qty;
+        });
+
+        $taxPrice = $subTotal * ($order->vat / 100);
+
+
+        return view('assistant.order.show-order-user', [
+            'data' => $order,
+            'orderProducts' => $orderProducts,
+            'subTotal' => $subTotal,
+            'tax' => $taxPrice,
+            'total' => $subTotal + $taxPrice
+        ]);
+    }
+
 }

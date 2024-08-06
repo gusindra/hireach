@@ -48,7 +48,7 @@ class ClientDatatables extends LivewireDatatable
     		Column::name('name')->label('Name')->searchable(),
     		Column::name('phone')->label('Phone Number')->searchable(),
     		Column::name('email')->label('Email')->searchable(),
-    		DateColumn::name('created_at')->label('Inputed Date')->format('d F Y')
+    		DateColumn::name('created_at')->label('Inputed Date')->searchable()->format('d F Y')
     	];
     }
 }

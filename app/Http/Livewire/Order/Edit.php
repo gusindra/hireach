@@ -2,14 +2,18 @@
 
 namespace App\Http\Livewire\Order;
 
-use Livewire\Component;
+use App\Models\Billing;
 use App\Models\Client;
 use App\Models\Order;
-use App\Models\Project;
-use App\Models\Quotation;
+use App\Models\User;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+use Livewire\Component;
+use Illuminate\Support\Str;
 
 class Edit extends Component
 {
+    use AuthorizesRequests;
+
     public $order;
     public $quote;
     public $quoteNo;
@@ -32,15 +36,28 @@ class Edit extends Component
     public $addressed_company;
     public $description;
     public $input;
+    public $user;
     public $modalAttach = false;
     public $url;
+    public $modalDeleteVisible = false;
+    public $customer;
+    public $formName;
+    public $nominal;
+    public $selectedName = '';
+    public $search = '';
+    public $selectedId = null;
+    public $disable = false;
+    public $nominal_view;
 
     public function mount($uuid)
     {
+
         $this->order = Order::find($uuid);
+        $this->user = [];
+        $this->customer = Client::where('uuid', $this->order->customer_id)->first();
         $this->date = $this->order->date;
         $this->input['name'] = $this->order->name ?? '';
-        $this->input['no'] = $this->order->no ?? '';
+        $this->input['no'] = 'HAPP' . date("YmdHis");
         $this->input['type'] = $this->order->type ?? '';
         $this->input['entity_party'] = $this->order->entity_party ?? '';
         $this->input['customer_type'] = $this->order->customer_type ?? '';
@@ -51,63 +68,106 @@ class Edit extends Component
         $this->input['status'] = $this->order->status ?? '';
         $this->input['source'] = $this->order->source ?? '';
         $this->input['source_id'] = $this->order->source_id ?? '';
-        $this->input['date'] = $this->order->date ? $this->order->date->format('Y-m-d') :'';
+        $this->input['date'] = $this->order->date ? $this->order->date->format('Y-m-d') : '';
         $this->input['total'] = $this->order->total ?? '';
+        $this->nominal = $this->order->total ?? '';
+        $this->disable = $this->disableInput($this->order->status);
     }
 
     public function rules()
     {
-        return [
-            'input' => 'required'
+
+
+        $data = [
+            'input.no' => 'required',
+            'input.name' => 'required',
+            'input.date' => 'required',
+
         ];
+        if ($this->formName == 'customer') {
+            $data = [
+                'input.customer_id' => 'required',
+            ];
+        }
+
+        return $data;
     }
 
     public function modelData()
     {
         return [
-            'name'              => $this->input['name'],
-            'status'            => $this->input['status'],
-            'no'                => $this->input['no'],
-            'date'              => $this->input['date'],
-            'customer_id'       => $this->input['customer_id'],
-            'type'              => $this->input['type'],
-            'model'             => $this->model,
-            'model_id'          => $this->model_id,
+            'name' => $this->input['name'],
+            'status' => $this->input['status'],
+            'no' => $this->input['no'],
+            'date' => $this->input['date'],
+            'customer_id' => $this->input['customer_id'],
+            'type' => $this->input['type'],
             'addressed_company' => $this->addressed_company,
-            'description'       => $this->description,
-            'created_by'        => $this->created_by,
-            'created_role'      => $this->created_role,
-            'addressed_name'    => $this->addressed_name,
-            'addressed_role'    => $this->addressed_role,
+            'total' => $this->nominal,
+            'description' => $this->description,
+            'created_by' => $this->created_by,
+            'created_role' => $this->created_role,
+            'addressed_name' => $this->addressed_name,
+            'addressed_role' => $this->addressed_role,
         ];
     }
 
-    public function update($id)
+
+    public function onClickNominal($value)
     {
-        // dd($id);
-        $this->validate();
-        // dd($this->modelData());
-        $order = Order::find($id)->update($this->modelData());
-        $this->emit('saved');
+        $this->nominal = $value;
+        $this->nominal_view = number_format($value);
     }
 
-    public function updateStatus($id)
+
+    public function disableInput($status)
     {
+        return $status === 'unpaid';
+    }
+
+    public function updatedSearch()
+    {
+        //
+    }
+
+    public function selectItem($id)
+    {
+        $client = Client::where('uuid', $id)->first();
+        if ($client) {
+            $this->search = $client->name;
+            $this->selectedId = $client->uuid;
+            $this->input['customer_id'] = $client->uuid;
+            $this->emit('updateCustomerId', $client->uuid);
+        }
+
+    }
+
+    public function updateStatus($id, $formName = '')
+    {
+        $this->authorize('UPDATE_ORDER', 'ORDER');
+        $this->formName = $formName;
+        $this->validate();
         Order::find($id)->update([
+            'status' => $this->input['status']
+        ]);
+        Billing::where('order_id', $id)->update([
             'status' => $this->input['status']
         ]);
         $this->emit('update_status');
     }
 
-    public function onChangeModelId()
+    public function inputCustomer($uuid)
     {
-        if($this->model_id!=0){
-            $this->addressed = $this->order->customer;
-            $this->addressed_company = $this->addressed->name;
-        }else{
-            $this->model = NULL;
-            $this->model_id = NULL;
-            $this->addressed_company = NULL;
+        if ($this->order) {
+            $customer = Client::where('uuid', $uuid)->first();
+            $this->customer = $customer ?? null;
+            $this->input['customer_id'] = $uuid;
+
+            $this->search = $customer->name ?? '';
+        } else {
+            $this->model = null;
+            $this->model_id = null;
+            $this->addressed_company = null;
             $this->addressed = '';
         }
     }
@@ -118,17 +178,23 @@ class Edit extends Component
         $this->modalAttach = true;
     }
 
-    /**
-     * The read function.
-     *
-     * @return void
-     */
-    public function readModelSelection()
+    public function update($id)
     {
+        $this->authorize('UPDATE_ORDER', $this->customer->user_id);
+        $this->validate();
+        // dd($this->modelData());
+        $order = Order::find($id)->update($this->modelData());
 
-        $data = Client::where('user_id', auth()->user()->currentTeam->user_id)->pluck('name', 'uuid');
+        $bill = Billing::updateOrCreate([
+            'uuid' => Str::uuid(),
+            'status' => 'unpaid',
+            'code' => $this->input['no'],
+            'description' => $this->name,
+            'amount' => $this->nominal,
+            'order_id' => $this->order->id,
+        ]);
 
-        return $data;
+        $this->emit('saved');
     }
 
     public function readClient()
@@ -136,21 +202,33 @@ class Edit extends Component
         return $this->order->customer;
     }
 
-    public function readItem()
+    public function actionShowDeleteModal()
     {
-        $data = [];
-        $data[0] = $this->order->items->count();
-        $data[1] = $this->order->total;
+        $this->modalDeleteVisible = true;
+    }
+    public function delete()
+    {
 
-        return $data;
+        if ($this->order) {
+            $this->order->delete();
+        }
+        $this->modalDeleteVisible = false;
+        return redirect()->route('admin.order');
     }
 
     public function render()
     {
+        $clients = Client::query()
+            ->where('name', 'like', "%{$this->search}%")
+            ->orWhere('phone', 'like', "%{$this->search}%")
+            ->orWhere('email', 'like', "%{$this->search}%")
+            ->limit(5)
+            ->get();
         return view('livewire.order.edit', [
-            'model_list' => $this->readModelSelection(),
+            // 'model_list' => $this->readModelSelection(),
             'client' => $this->readClient(),
-            'data' => $this->readItem(),
+            'clients' => $clients
+            // 'data' => $this->readItem(),
         ]);
     }
 }

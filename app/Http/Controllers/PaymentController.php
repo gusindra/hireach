@@ -9,9 +9,27 @@ use Illuminate\Support\Facades\Auth;
 
 class PaymentController extends Controller
 {
+    // public $user_info;
+    // public function __construct()
+    // {
+
+
+    //     $this->middleware(function ($request, $next) {
+    //         // Your auth here
+    //         $granted = false;
+    //         $user = auth()->user();
+    //         $granted = userAccess('PAYMENT');
+
+    //         if ($granted) {
+    //             return $next($request);
+    //         }
+    //         abort(403);
+    //     });
+    // }
 
     public function index(Request $request)
     {
+        $this->authorize('VIEW_ANY_CHAT_USR');
         if ($request->has('v')) {
             return view('main-side.payment-deposit');
         }
@@ -20,17 +38,27 @@ class PaymentController extends Controller
 
     public function topup()
     {
+        $this->authorize('VIEW_ANY_CHAT_USR');
         return view('payment.topup');
     }
 
     public function quotation()
     {
+
+        $this->authorize('VIEW_ANY_CHAT_USR');
         return view('payment.quotation');
+    }
+    public function orderUser()
+    {
+
+        $this->authorize('VIEW_ANY_CHAT_USR');
+        return view('assistant.invoice.index');
     }
 
     public function quotationShow($id)
     {
         $data = Quotation::find($id);
+        $this->authorize('VIEW_QUOTATION', $data->model_id);
         return view('payment.show-quotation', compact('data'));
     }
 
@@ -41,4 +69,6 @@ class PaymentController extends Controller
 
         return view('payment.pay', ['order' => $id]);
     }
+
+
 }

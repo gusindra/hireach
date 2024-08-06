@@ -1,6 +1,7 @@
 <div>
-    @if (Gate::check('addTeamMember', $team) || ($this->user->team && $this->user->team->role == 'admin'))
+    {{-- @if (Gate::check('addTeamMember', $team) || ($this->user->team && $this->user->team->role == 'admin'))
         <x-jet-section-border />
+
 
         <!-- Add Team Member -->
         <div class="mt-10 sm:mt-0">
@@ -72,9 +73,9 @@
                 </x-slot>
             </x-jet-form-section>
         </div>
-    @endif
-    
-    @if ($team->teamInvitations->isNotEmpty() && (Gate::check('addTeamMember', $team) || ($this->user->team && $this->user->team->role == 'admin')))
+    @endif --}}
+
+    {{-- @if ($team->teamInvitations->isNotEmpty() && (Gate::check('addTeamMember', $team) || ($this->user->team && $this->user->team->role == 'admin')))
         <x-jet-section-border />
 
         <!-- Team Member Invitations -->
@@ -109,7 +110,7 @@
                 </x-slot>
             </x-jet-action-section>
         </div>
-    @endif
+    @endif --}}
 
     @if ($team->users->isNotEmpty())
         <x-jet-section-border />
@@ -138,13 +139,14 @@
 
                                 <div class="flex items-center">
                                     <!-- Manage Team Member Role -->
+
                                     @if (Gate::check('addTeamMember', $team) && Laravel\Jetstream\Jetstream::hasRoles())
                                         <button class="ml-2 text-sm text-gray-400 dark:text-slate-300 underline" wire:click="manageRole('{{ $user->id }}')">
-                                            {{ Laravel\Jetstream\Jetstream::findRole($user->membership->role) ? Laravel\Jetstream\Jetstream::findRole($user->membership->role)->name : '' }}
+                                            {{ Laravel\Jetstream\Jetstream::findRole($user->membership->role) ? Laravel\Jetstream\Jetstream::findRole('admin')->name : 'Agent' }}
                                         </button>
                                     @elseif (Laravel\Jetstream\Jetstream::hasRoles())
                                         <div class="ml-2 text-sm text-gray-400 dark:text-slate-300">
-                                            {{ Laravel\Jetstream\Jetstream::findRole($user->membership->role)->name }}
+                                            {{ Laravel\Jetstream\Jetstream::findRole($user->membership->role) ? Laravel\Jetstream\Jetstream::findRole($user->membership->role)->name : $user->membership->role }}
                                         </div>
                                     @endif
 

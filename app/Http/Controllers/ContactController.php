@@ -9,24 +9,28 @@ use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Auth as FacadesAuth;
 use Vinkla\Hashids\Facades\Hashids;
 use Illuminate\Support\Str;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Imports\ImportContact;
+use App\Exports\ExportContact;
 
 class ContactController extends Controller
 {
-    public $user_info;
-    public function __construct()
-    {
-        $this->middleware(function ($request, $next) {
-            // Your auth here
-            $this->user_info = auth()->user();
-            if ($this->user_info) {
-                return $next($request);
-            }
-            abort(404);
-        });
-    }
+    // public $user_info;
+    // public function __construct()
+    // {
+    //     $this->middleware(function ($request, $next) {
+    //         // Your auth here
+    //         $this->user_info = auth()->user();
+    //         if ($this->user_info) {
+    //             return $next($request);
+    //         }
+    //         abort(404);
+    //     });
+    // }
 
     public function index(Request $request)
     {
+        $this->authorize('VIEW_ANY_CHAT_USR');
         // if($request->has('v')){
         //     return view('main-side.user');
         // }
@@ -130,11 +134,10 @@ class ContactController extends Controller
 
     public function audienceShow(Request $request, $audience)
     {
-        $data = Audience::find($audience);
-
-        return view('resource.show-audience', ['user' => $data]);
-        // return redirect('user');
+        $data = Audience::findOrFail($audience);
+        return view('resource.show-audience', ['audience' => $data]);
     }
+
 
     public function profile(Client $client)
     {
@@ -157,52 +160,70 @@ class ContactController extends Controller
         return view('contact.import');
     }
 
+    /**
+     * This to import contact from file
+     *
+     * @param  mixed $request
+     * @return void
+     */
     public function import(Request $request)
     {
         $file = $request->file('file');
         $fileContents = file($file->getPathname());
-
-        foreach ($fileContents as $key => $line) {
-            if ($key > 0) {
-                $data = str_getcsv($line);
-
-                // dd($data);
-                // $perData = explode(',', $data[0]);
-                // return $perData[1];
-                $exsist = Client::where('user_id', auth()->user()->id)->where('phone', $data[1])->count();
-                if ($exsist == 0) {
-                    Client::create([
-                        'uuid'      => Str::uuid(),
-                        'name' => $data[0],
-                        'phone' => $data[1],
-                        'user_id' => auth()->user()->id,
-                        'created_at' => date('Y-m-d H:i:s')
-                        // Add more fields as needed
-                    ]);
+        if ($file->getClientMimeType() == "text/csv") {
+            foreach ($fileContents as $key => $line) {
+                if ($key > 0) {
+                    $data = str_getcsv($line);
+                    //dd($data);
+                    $perData = explode(',', $data[0]);
+                    // return $perData[1];
+                    $exsist = Client::where('user_id', auth()->user()->id)->where('phone', $perData[0])->count();
+                    if ($exsist == 0) {
+                        Client::create([
+                            'uuid' => Str::uuid(),
+                            'phone' => $perData[0],
+                            'email' => $perData[1],
+                            'name' => $perData[2],
+                            'user_id' => auth()->user()->id,
+                            'created_at' => date('Y-m-d H:i:s')
+                            // Add more fields as needed
+                        ]);
+                    }
                 }
             }
+        } else {
+            Excel::import(new ImportContact, $request->file('file')->store('files'));
         }
 
         return redirect()->back()->with('success', 'CSV file imported successfully.');
     }
 
+    /**
+     * This to export contact as csv file.
+     *
+     * @param  mixed $request
+     * @return void
+     */
     public function export(Request $request)
     {
+        if ($request->mime == "application") {
+            return Excel::download(new ExportContact, $request->name . '_client.xlsx');
+        } else {
+            $table = Client::where('user_id', auth()->user()->id)->get();
+            $filename = "tweets.csv";
+            $handle = fopen($filename, 'w+');
+            fputcsv($handle, array('phone', 'email', 'name', 'created_at'));
 
-        $table = Client::where('user_id', auth()->user()->id)->get();
-        $filename = "tweets.csv";
-        $handle = fopen($filename, 'w+');
-        fputcsv($handle, array('name', 'phone', 'created_at'));
+            foreach ($table as $row) {
+                fputcsv($handle, array($row['phone'], $row['email'], $row['name'], $row['created_at']));
+            }
 
-        foreach ($table as $row) {
-            fputcsv($handle, array($row['name'], $row['phone'], $row['created_at']));
+            fclose($handle);
+
+            $headers = array(
+                'Content-Type' => 'text/csv',
+            );
+            return Response::download($filename, 'client.csv', $headers);
         }
-
-        fclose($handle);
-
-        $headers = array(
-            'Content-Type' => 'text/csv',
-        );
-        return Response::download($filename, 'client.csv', $headers);
     }
 }

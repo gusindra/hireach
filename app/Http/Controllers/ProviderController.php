@@ -8,6 +8,25 @@ use Illuminate\Support\Facades\Auth;
 
 class ProviderController extends Controller
 {
+    public $user_info;
+    public function __construct()
+    {
+
+        $this->middleware(function ($request, $next) {
+            // Your auth here
+            $granted = false;
+            $user = auth()->user();
+            $granted = userAccess('PROVIDER');
+
+            if ($granted) {
+                return $next($request);
+            }
+            abort(403);
+        });
+    }
+
+
+
     public function index()
     {
 

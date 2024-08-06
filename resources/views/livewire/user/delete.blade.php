@@ -1,5 +1,5 @@
 <div>
-    <x-jet-form-section submit="saveUser({{$user->id}})">
+    <x-jet-form-section submit="saveUser({{ $user->id }})">
         <x-slot name="title">
             {{ __('Delete User Account') }}
         </x-slot>
@@ -18,7 +18,7 @@
                 {{ __('Profile user saved.') }}
             </x-jet-action-message>
 
-            <x-jet-danger-button wire:click="confirmDelete" wire:loading.attr="disabled" class="p-2">
+            <x-jet-danger-button :disabled="!userAccess('USER', 'delete')" wire:click="confirmDelete" wire:loading.attr="disabled" class="p-2">
                 {{ __('Delete User') }}
             </x-jet-danger-button>
         </x-slot>
@@ -43,7 +43,7 @@
                 {{ __('Cancel') }}
             </x-jet-secondary-button>
 
-            <x-jet-danger-button class="ml-2" wire:click="delete" wire:loading.attr="disabled">
+            <x-jet-danger-button :disabled="!userAccess('USER', 'delete')" class="ml-2" wire:click="delete" wire:loading.attr="disabled">
                 {{ __('Yes, Delete It') }}
             </x-jet-danger-button>
         </x-slot>
