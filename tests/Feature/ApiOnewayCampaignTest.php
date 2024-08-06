@@ -37,7 +37,7 @@ class ApiOnewayCampaignTest extends TestCase
             'from' => '112121',
             'provider' => 'provider3',
             'contact' => $file,
-            'is_otp'=> 0
+            'is_otp' => 0
         ];
 
         $headers = [

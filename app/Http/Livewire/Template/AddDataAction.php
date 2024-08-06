@@ -83,6 +83,7 @@ class AddDataAction extends Component
 
     public function insert()
     {
+        $this->authorize('UPDATE_CONTENT_USR', $this->template->user_id);
         $this->validate();
         array_push($this->dataArray, $this->modelData());
         $this->resetForm();

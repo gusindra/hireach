@@ -31,6 +31,7 @@ class Delete extends Component
     {
         if ($this->template) {
             $this->template->delete();
+            $this->authorize('DELETE_CONTENT_USR', $this->template->id);
         }
         $this->modalDeleteVisible = false;
         return redirect()->route('template')->with('message', 'Template deleted successfully.');

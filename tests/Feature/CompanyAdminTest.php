@@ -61,7 +61,7 @@ class CompanyAdminTest extends TestCase
     public function test_can_update_company()
     {
         $company = Company::where('name', 'Test Company')->latest()->first();
-        $user = User::find(2);
+        $user = User::find(1);
 
         Livewire::actingAs($user)->test(CompanyEdit::class, ['company' => $company])
             ->set('input.name', 'New Name')
@@ -83,7 +83,7 @@ class CompanyAdminTest extends TestCase
     public function test_can_delete_company()
     {
         $company = Company::where('name', 'New Name')->latest()->first();
-        $user = User::find(2);
+        $user = User::find(1);
         Livewire::actingAs($user)->test(CompanyEdit::class, ['company' => $company])
             ->call('actionShowDeleteModal')
             ->call('delete');

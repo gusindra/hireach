@@ -70,6 +70,7 @@ class TopupUser extends Component
 
     public function create()
     {
+        $this->authorize('CREATE_BILLING_USR', auth()->user()->id);
         $vat = cache('vat_setting');
         if (empty($vat)) {
 

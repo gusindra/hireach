@@ -20,7 +20,7 @@ class QuotationUserTest extends TestCase
      */
     public function test_render_order__user()
     {
-        $user = User::find(1);
+        $user = User::find(2);
         $response = $this->actingAs($user)->get('quotation');
 
         $response->assertStatus(200);

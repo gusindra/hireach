@@ -36,7 +36,8 @@ class DashboardController extends Controller
     public function index(Request $request)
     {
         $userId = FacadesAuth::user()->id;
-        if (empty(auth()->user()->listTeams)) {
+        // return count(auth()->user()->listTeams);
+        if (count(auth()->user()->listTeams)== 0) {
             return redirect()->route('teams.create');
         }
 

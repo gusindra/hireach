@@ -31,6 +31,7 @@ class Delete extends Component
     {
         if ($this->audience) {
             $this->audience->delete();
+            $this->authorize('DELETE_RESOURCE_USR', $this->audience->user_id);
         }
         $this->modalDeleteVisible = false;
         return redirect()->route('audience.index')->with('message', 'Audience deleted successfully.');

@@ -50,6 +50,7 @@ class EditTemplate extends Component
      */
     public function updateTemplate()
     {
+        $this->authorize('UPDATE_CONTENT_USR', $this->template->user_id);
         $this->validate();
         Template::find($this->templateId)->update($this->modelData());
         $this->emit('saved');

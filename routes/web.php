@@ -119,6 +119,11 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
 
         Route::get('/roles', [RoleController::class, 'index'])->name('role.index');
         Route::get('/roles/{role}', [RoleController::class, 'show'])->name('role.show');
+
+        Route::get('/settings', [SettingController::class, 'index'])->name('admin.settings');
+
+        Route::get('/settings/{page}', [SettingController::class, 'show'])->name('settings.show');
+        Route::get('/setting/log', [SettingController::class, 'logChange'])->name('settings.logChange');
         Route::get('/settings/providers', [ProviderController::class, 'index'])->name('admin.settings.provider');
         Route::get('/settings/providers/{provider}', [ProviderController::class, 'show'])->name('admin.settings.provider.show');
 

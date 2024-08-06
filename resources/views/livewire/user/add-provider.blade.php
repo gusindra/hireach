@@ -52,25 +52,27 @@
                                                     </td>
                                                 </tr>
                                                 @foreach ($data as $item)
-                                                    <tr>
-                                                        <td class="w-full px-6 py-4 text-sm whitespace-no-wrap">
-                                                            <div class="">
-                                                                <div class="grid grid-cols-4 gap-4">
-                                                                    <span>
-                                                                        {{ $item->provider->code }}
-                                                                    </span>
+                                                    @if($item)
+                                                        <tr>
+                                                            <td class="w-full px-6 py-4 text-sm whitespace-no-wrap">
+                                                                <div class="">
+                                                                    <div class="grid grid-cols-4 gap-4">
+                                                                        <span>
+                                                                            {{ $item->provider ? $item->provider->code : '-' }}
+                                                                        </span>
 
-                                                                    <span>
-                                                                        {{ $item->provider->name }}
-                                                                    </span>
+                                                                        <span>
+                                                                            {{ $item->provider ? $item->provider->name : '-' }}
+                                                                        </span>
 
-                                                                    <span>
-                                                                        {{ $item->channel }}
-                                                                    </span>
+                                                                        <span>
+                                                                            {{ $item->channel }}
+                                                                        </span>
 
-                                                                    <span>
-                                                                        {{ $item->from }}
-                                                                    </span>
+                                                                        <span>
+                                                                            {{ $item->from }}
+                                                                        </span>
+                                                                    </div>
                                                                 </div>
                                                             </div>
                                                         </td>

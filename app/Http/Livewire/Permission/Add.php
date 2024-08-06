@@ -29,7 +29,8 @@ class Add extends Component
         foreach ($this->type as $key => $menu) {
             Permission::create([
                 'name' => strtoupper($key . ' ' . $this->model),
-                'model' => strtoupper($this->model)
+                'model' => strtoupper($this->model),
+                'for' => $this->for
             ]);
         }
         $this->modalActionVisible = false;

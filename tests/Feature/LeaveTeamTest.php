@@ -12,30 +12,20 @@ use Tests\TestCase;
 
 class LeaveTeamTest extends TestCase
 {
-    // use RefreshDatabase;
 
     public function test_users_can_leave_teams()
     {
         $user = User::factory()->create();
+        $user->ownedTeams()->save($team = Team::factory()->make(['personal_team' => false]));
 
-        $user->ownedTeams()->save($team = Team::factory()->make([
-            'personal_team' => false,
-        ]));
+        $otherUser = User::factory()->create(['current_team_id' => $team->id]);
+        $team->users()->attach($otherUser, ['role' => 'test-role']);
 
-        $team->users()->attach(
-            $otherUser = User::factory()->create([
-                'current_team_id' => $team->id
-            ]),
-            ['role' => 'test-role']
-        );
 
         $this->actingAs($otherUser);
-
-        $component = Livewire::test(TeamMemberManager::class, ['team' => $team])
-            ->call('leaveTeam');
-
+        Livewire::test(TeamMemberManager::class, ['team' => $team])->call('leaveTeam');
         $otherUser->refresh();
-        $this->assertCount(0, $user->currentTeam->fresh()->users);
+        $this->assertCount(0, $team->fresh()->users()->where('users.id', $otherUser->id)->get());
     }
 
     public function test_team_owners_cant_leave_their_own_team()
