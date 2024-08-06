@@ -434,15 +434,19 @@ function userAccess($menu, $action = 'view', $level = '')
     $user = auth()->user();
     //LEVEL1
     if ($user->super->first()) {
-        if ($user->super->first()->role == 'superadmin') {
+        if ($user->super->first()->role == 'superadmin' || $user->super->first()->role == 'Super Admin') {
             return true;
         }
     }
     //LEVEL 2
     if (auth()->user()->activeRole) {
-        $gp = cache()->remember('permission-' . $menu, 14400, function () use ($menu) {
-            return Permission::where('model', $menu)->pluck('name')->toArray();
-        });
+        if(cache('permission-' . $menu)){
+            $gp = cache('permission-' . $menu);
+        }else{
+            $gp = cache()->remember('permission-' . $menu, 14400, function () use ($menu) {
+                return Permission::where('model', $menu)->pluck('name')->toArray();
+            });
+        }
 
         foreach (auth()->user()->activeRole->role->permission as $permission) {
             if (in_array($permission->name, $gp)) {
