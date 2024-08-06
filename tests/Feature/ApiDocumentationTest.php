@@ -82,7 +82,7 @@ class ApiDocumentationTest extends TestCase
             'X-CSRF-TOKEN' => '',
         ];
 
-        $response = $this->actingAs($user, 'api')->post('/api/one-way', $newData, $newHeader);
+        $response = $this->actingAs($user, 'api')->postJson('/api/one-way', $newData, $newHeader);
 
         $response->assertStatus(200);
     }
@@ -115,32 +115,32 @@ class ApiDocumentationTest extends TestCase
      *
      * @return void
      */
-    // public function test_api_two_way_can_be_posted()
-    // {
-    //     $user = User::find(2);
-    //     $token = $user->createToken(
-    //         'Test Token',
-    //         ['create', 'read']
-    //     );
-    //     $plainTextToken = explode('|', $token->plainTextToken, 2)[1];
-    //     $response = $this->actingAs($user, 'api')->post('/api/two-way', [
-    //         "channel" => "web",
-    //         "type" => 0,
-    //         "title" => "New Product Launch",
-    //         "text" => "Hi, {client_name}, your account has been updated with the following features in March. Find out more on our website!",
-    //         "templateid" => 1,
-    //         "to" => "string",
-    //         "from" => "string",
-    //         "provider" => "string"
-    //     ],[
-    //         'Authorization'=>'Bearer '.$plainTextToken,
-    //         'accept'=>'application/json',
-    //         'Content-Type'=>'application/json',
-    //         'X-CSRF-TOKEN'=>'',
-    //     ]);
+    public function test_api_two_way_can_be_posted()
+    {
+        $user = User::find(2);
+        $token = $user->createToken(
+            'Test Token',
+            ['create', 'read']
+        );
+        $plainTextToken = explode('|', $token->plainTextToken, 2)[1];
+        $response = $this->actingAs($user, 'api')->postJson('/api/two-way', [
+            "channel" => "web",
+            "type" => 0,
+            "title" => "New Product Launch",
+            "text" => "Hi, {client_name}, your account has been updated with the following features in March. Find out more on our website!",
+            "templateid" => 1,
+            "to" => "string",
+            "from" => "string",
+            "provider" => "string"
+        ],[
+            'Authorization'=>'Bearer '.$plainTextToken,
+            'accept'=>'application/json',
+            'Content-Type'=>'application/json',
+            'X-CSRF-TOKEN'=>'',
+        ]);
 
-    //     $response->assertStatus(200);
-    // }
+        $response->assertStatus(200);
+    }
 
     /**
      * A post test feature for test render api documentation.

@@ -126,7 +126,7 @@ class SendResourceUserTest extends TestCase
             ->set('from', '087767653663')
             ->set('resource', 1)
             ->set('to', '09090')
-            ->set('title', 'SMS  OTGPINI YA')
+            ->set('title', 'SMS  OTGP INI YA')
             ->set('type', 'SMS')
             ->set('text', 'FROM PHP ARTISAN TEST.')
             ->call('sendResource');
@@ -230,7 +230,7 @@ class SendResourceUserTest extends TestCase
 
     public function test_it_can_send_resource_two_way_via_sms_otp()
     {
-        $randomText = str()->random(9);
+        $randomText ='1a2b3c';
         $user = User::find(2);
 
         Livewire::actingAs($user)->test(AddResource::class, ['uuid' => $user->id])
@@ -246,7 +246,7 @@ class SendResourceUserTest extends TestCase
 
         $this->assertDatabaseHas('requests', [
             'user_id' => $user->id,
-            'reply' => $randomText,
+            'reply' => '1a2b3c',
         ]);
     }
 }

@@ -1,24 +1,25 @@
 <div wire:poll>
     @if ($model->status == 'draft' || ($model->status == 'unpaid' && $model_type == 'commission'))
-        @if (auth()->user()->isSuper || (auth()->user()->team && str_contains((auth()->user()->activeRole->role->name, '')))
-            <div class="px-4 py-5 bg-white dark:bg-slate-600 sm:p-6 shadow sm:rounded-md">
+        @if (auth()->user()->isSuper || (auth()->user()->team && str_contains(auth()->user()->isNoAdmin->role, 'admin')))
+        <div class="px-4 py-5 bg-white dark:bg-slate-600 sm:p-6 shadow sm:rounded-md">
 
-                <div class="sm:px-0">
-                    <h3 class="text-base font-bold text-gray-900 dark:text-slate-300">Submission Process</h3>
-                </div>
-                <div class="w-auto text-center mt-4">
-                    <x-jet-button :disabled="!userAccess('QUOTATION', 'update')" wire:click="submit" class="hover:bg-green-700 bg-green-700">
-                        {{ $approvals->count() > 0 ? __('Re-Submit') : __('Submit') }}
-                    </x-jet-button>
-                </div>
-                @if ($errorMessage)
-                    <div class="text-red-500 p-2">
-                        {!! $errorMessage !!}
-                    </div>
-                @endif
+            <div class="sm:px-0">
+                <h3 class="text-base font-bold text-gray-900 dark:text-slate-300">Submission Process</h3>
             </div>
-            <br>
-        @endif
+            <div class="w-auto text-center mt-4">
+                <x-jet-button :disabled="!userAccess('QUOTATION', 'update')" wire:click="submit" class="hover:bg-green-700 bg-green-700">
+                    {{ $approvals->count() > 0 ? __('Re-Submit') : __('Submit') }}
+                </x-jet-button>
+            </div>
+            @if ($errorMessage)
+                <div class="text-red-500 p-2">
+                    {!! $errorMessage !!}
+                </div>
+            @endif
+        </div>
+        <br>
+    @endif
+
     @endif
 
     @if ($approvals->count() > 0)
