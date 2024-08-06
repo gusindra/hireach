@@ -21,8 +21,8 @@ class Profile extends Component
     public function mount($user)
     {
 
+        $this->user = Client::find($user);
 
-        $this->user = Client::find($user->id);
         $this->inputuser = [
             'name' => $this->user->name ?? '',
             'nick' => $this->user->nick ?? '',
@@ -128,7 +128,7 @@ class Profile extends Component
 
     public function render()
     {
-        $this->authorize('VIEW_RESOURCE', $this->user->user_id);
+        $this->authorize('VIEW_RESOURCE_USR', $this->user->user_id);
         return view('livewire.contact.profile');
     }
 }

@@ -27,6 +27,7 @@ class Progress extends Component
 
     public function mount($model, $id)
     {
+
         $this->model_type = $model;
         $this->model_id = $id;
         if ($model == 'project') {
@@ -107,7 +108,14 @@ class Progress extends Component
 
     public function next($status = '')
     {
-        $this->authorize('UPDATE_QUOTATION', 'QUOTATION');
+
+        if (auth()->user()->activeRole == null) {
+            $this->authorize('VIEW_QUOTATION_USR', $this->model->model_id);
+        } else {
+            $this->authorize('UPDATE_QUOTATION', 'QUOTATION');
+        }
+
+
         $update_status = $status;
         // dd($this->model->approval);
         $flow = FlowProcess::create(['model' => $this->model_type, $this->model->approval]);
@@ -137,7 +145,12 @@ class Progress extends Component
 
     public function decline()
     {
-        $this->authorize('UPDATE_QUOTATION', 'QUOTATION');
+        if (auth()->user()->activeRole == null) {
+            $this->authorize('VIEW_QUOTATION_USR', $this->model->model_id);
+        } else {
+            $this->authorize('UPDATE_QUOTATION', 'QUOTATION');
+        }
+
         $this->model->update([
             'status' => 'revision'
         ]);

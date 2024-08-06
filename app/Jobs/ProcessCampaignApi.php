@@ -30,7 +30,7 @@ class ProcessCampaignApi implements ShouldQueue
      * @param  mixed $campaign
      * @return void
      */
-    public function __construct($request, $user,  $campaign)
+    public function __construct($request, $user, $campaign)
     {
         $this->request = $request;
         $this->user = $user;
@@ -50,6 +50,7 @@ class ProcessCampaignApi implements ShouldQueue
         $provider = $this->request['provider'];
 
         if ($provider->code == 'provider3') {
+            Log::debug($this->request);
             $this->WTProvider($this->request);
         }
     }
@@ -77,16 +78,17 @@ class ProcessCampaignApi implements ShouldQueue
             // Production environment: make the actual API call
             Excel::store(new ExportAudienceContact($this->campaign->audience_id), $this->campaign->id . '_campaign.xlsx');
             $response = Http::withOptions(['verify' => false,])
-            ->withHeaders([
-                'Client-Key' => ENV('WTID_CLIENT_KEY', 'MD=='),
-                'Client-Secret' => ENV('WTID_CLIENT_SECRET', 'MD==jIw')])
-            ->attach('campaign_receiver', file_get_contents(storage_path('app\\' . $this->campaign->id . '_campaign.xlsx')), $this->campaign->id . '_campaign.xlsx')
-            // ->attach('campaign_receiver', file_get_contents(storage_path('app\template_contact_wetalk.xlsx')), 'template_contact_wetalk.xlsx')
-            ->post($url . 'api/campaign/create', [
-                'campaign_name' => $this->campaign->title,
-                'campaign_text' => $this->campaign->text,
-                // 'campaign_receiver' => new CURLFile(storage_path('app\template_contact_wetalk.xlsx'))
-            ]);
+                ->withHeaders([
+                    'Client-Key' => ENV('WTID_CLIENT_KEY', 'MD=='),
+                    'Client-Secret' => ENV('WTID_CLIENT_SECRET', 'MD==jIw')
+                ])
+                ->attach('campaign_receiver', file_get_contents(storage_path('app\\' . $this->campaign->id . '_campaign.xlsx')), $this->campaign->id . '_campaign.xlsx')
+                // ->attach('campaign_receiver', file_get_contents(storage_path('app\template_contact_wetalk.xlsx')), 'template_contact_wetalk.xlsx')
+                ->post($url . 'api/campaign/create', [
+                    'campaign_name' => $this->campaign->title,
+                    'campaign_text' => $this->campaign->text,
+                    // 'campaign_receiver' => new CURLFile(storage_path('app\template_contact_wetalk.xlsx'))
+                ]);
             $resData = json_decode($response, true);
             Log::debug($resData);
             if ($resData['status']) {

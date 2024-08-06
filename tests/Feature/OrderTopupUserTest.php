@@ -25,7 +25,7 @@ class OrderTopupUserTest extends TestCase
      */
     public function test_render_form_top_up()
     {
-        $user = User::find(1);
+        $user = User::find(2);
         $response = $this->actingAs($user)->get('payment/topup');
 
         $response->assertStatus(200);
@@ -116,7 +116,7 @@ class OrderTopupUserTest extends TestCase
         $this->assertDatabaseHas('saldo_users', [
             'id' => $saldo->id,
             'user_id' => $saldo->user_id,
-            'amount' => 111,
+            'amount' => 100,
             'balance' => $saldo->balance,
         ]);
     }
@@ -126,7 +126,7 @@ class OrderTopupUserTest extends TestCase
         $user = User::find(2);
         $this->actingAs($user);
         Livewire::actingAs($user)->test(TopupUser::class)
-            ->set('nominal', '200')
+            ->set('nominal', '3000000')
             ->call('create');
         $this->assertDatabaseHas('orders', [
             'name' => 'Request Topup from ' . $user->name,
@@ -191,7 +191,7 @@ class OrderTopupUserTest extends TestCase
         $this->assertDatabaseHas('saldo_users', [
             'id' => $saldo->id,
             'user_id' => $saldo->user_id,
-            'amount' => 333,
+            'amount' => 3000000,
             'balance' => $saldo->balance,
         ]);
     }

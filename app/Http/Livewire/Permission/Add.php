@@ -34,7 +34,6 @@ class Add extends Component
             Permission::create([
                 'name' => strtoupper($key . ' ' . $this->model),
                 'model' => strtoupper($this->model),
-
                 'for' => $this->for
             ]);
 

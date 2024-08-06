@@ -63,7 +63,7 @@ class EditApi extends Component
      */
     public function update()
     {
-        $this->authorize('UPDATE_CONTENT', $this->template->user_id);
+        $this->authorize('UPDATE_CONTENT_USR', $this->template->user_id);
         $this->validate();
         //dd($this->templateId);
         $endpoint = Endpoint::where('template_id', $this->templateId)->first();

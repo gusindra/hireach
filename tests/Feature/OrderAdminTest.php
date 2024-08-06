@@ -30,10 +30,10 @@ class OrderAdminTest extends TestCase
 
     public function testCanCreateOrder()
     {
-        $user=User::find(1);
-        $user2=User::find(2);
+        $user = User::find(1);
+        $user2 = User::find(2);
 
-        $client=Client::where('name','User Hireach')->latest()->first();
+        $client = Client::where('name', 'User Hireach')->latest()->first();
         Livewire::actingAs($user)->test(Add::class)
             ->set('type', 'selling')
             ->set('entity', 1)
@@ -53,7 +53,6 @@ class OrderAdminTest extends TestCase
 
     public function test_can_update_edit_component()
     {
-
         $user = User::find(1);
         $order = Order::where('name', 'Sample Order')->first();
         $customer = User::find(2);
@@ -133,7 +132,7 @@ class OrderAdminTest extends TestCase
 
 
 
-    public function test_can_updatecommission_agent()
+    public function test_can_update_commission_agent()
     {
         $user = User::find(1);
         $client = User::find(2);
@@ -153,7 +152,7 @@ class OrderAdminTest extends TestCase
 
 
         // Update the commission
-        Livewire::test('commission.edit', ['model' => 'order', 'data' => $order, 'disabled' => false])
+        Livewire::actingAs($user)->test('commission.edit', ['model' => 'order', 'data' => $order, 'disabled' => false])
             ->set('rate', 10)
             ->set('clientId', $client->id)
             ->set('type', 'percentage')

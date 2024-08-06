@@ -20,28 +20,30 @@ class DeleteApiTokenTest extends TestCase
         if (!Features::hasApiFeatures()) {
             return $this->markTestSkipped('API support is not enabled.');
         }
-
+        $fakeName = Str::random(5);
         if (Features::hasTeamFeatures()) {
             $this->actingAs($user = User::find(2));
         } else {
             $this->actingAs($user = User::create([
-                'name' => 'User Delete Api',
-                'email' => 'ausesr1@hireach.com',
+                'name' => $fakeName,
+                'email' => $fakeName.'@hireach.com',
                 'password' => Hash::make('12345678'),
                 'current_team_id' => 2
             ]));
         }
 
         $token = $user->tokens()->create([
-            'name' => 'Test Token',
+            'name' => $fakeName,
             'token' => Str::random(40),
             'abilities' => ['create', 'read'],
         ]);
 
         Livewire::test(ApiTokenManager::class)
-            ->set(['apiTokenIdBeingDeleted' => $token->id])
-            ->call('deleteApiToken');
+        ->set(['apiTokenIdBeingDeleted' => $token->id])
+        ->call('deleteApiToken');
 
-        $this->assertCount(0, $user->fresh()->tokens);
+        $this->assertDatabaseMissing('personal_access_tokens', [
+            'name' => $fakeName
+        ]);
     }
 }

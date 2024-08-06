@@ -16,7 +16,8 @@ class DeleteTeam implements DeletesTeams
      */
     public function delete($team)
     {
-        $this->authorize('DELETE_TEAM', $team);
+
+        $this->authorize('DELETE_TEAM_USR', $team->user_id);
         $team->purge();
     }
 }

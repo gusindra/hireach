@@ -17,12 +17,12 @@ class ProviderUserSeeder extends Seeder
     {
         DB::table('provider_user')->insert([
             [
-                'provider_id' => 4,
+                'provider_id' => 5,
                 'user_id' => 2,
                 'channel' => 'LONG_WA',
             ],
             [
-                'provider_id' => 4,
+                'provider_id' => 5,
                 'user_id' => 2,
                 'channel' => 'LONG_SMS',
             ],

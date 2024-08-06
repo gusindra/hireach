@@ -41,7 +41,7 @@ class OneWay extends Component
         $this->validate();
 
         $template = Template::findOrFail($this->selectedItemId);
-        $this->authorize('UPDATE_CONTENT', $template->user_id);
+        $this->authorize('UPDATE_CONTENT_USR', $template->user_id);
         $template->update($this->modelData());
 
         $this->modalActionVisible = false;
@@ -52,7 +52,7 @@ class OneWay extends Component
     public function edit($id)
     {
         $template = Template::findOrFail($id);
-        $this->authorize('UPDATE_CONTENT', $template->user_id);
+        $this->authorize('UPDATE_CONTENT_USR', $template->user_id);
         $this->selectedItemId = $id;
         $this->type = $template->type;
         $this->name = $template->name;
@@ -65,7 +65,7 @@ class OneWay extends Component
     public function delete($id)
     {
         $template = Template::findOrFail($id);
-        $this->authorize('DELETE_CONTENT', $template->user_id);
+        $this->authorize('DELETE_CONTENT_USR', $template->user_id);
         $template->delete();
 
         $this->emit('refreshLivewireDatatable');

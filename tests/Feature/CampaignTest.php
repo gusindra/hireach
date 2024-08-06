@@ -5,6 +5,7 @@ namespace Tests\Feature;
 use App\Http\Livewire\Campaign\Add;
 use App\Http\Livewire\Campaign\Edit;
 use App\Models\Campaign;
+use App\Models\CampaignSchedule;
 use App\Models\User;
 use Livewire\Livewire;
 use Tests\TestCase;
@@ -75,69 +76,38 @@ class CampaignTest extends TestCase
 
 
 
-
-
-    public function test_can_generate_schedule_for_monday_to_friday()
+    public function test_it_can_add_a_schedule()
     {
-        $user = User::find(2);
-        $campaign = Campaign::latest()->first();
-        Livewire::actingAs($user)
-            ->test('campaign.add-schedule', ['campaign_id' => $campaign->id])
-            ->set('days.monday', true)
-            ->set('times.monday', '09:00')
-            ->set('days.tuesday', true)
-            ->set('times.tuesday', '10:00')
-            ->set('days.wednesday', true)
-            ->set('times.wednesday', '11:00')
-            ->set('days.thursday', true)
-            ->set('times.thursday', '12:00')
-            ->set('days.friday', true)
-            ->set('times.friday', '13:00')
-            ->set('days.saturday', true)
-            ->set('times.saturday', '14:00')
-            ->set('days.sunday', true)
-            ->set('times.sunday', '15:00')
-            ->call('generateSchedule')
-            ->assertHasNoErrors()
-            ->assertSee('Schedule generated successfully.');
+        // Create a campaign
+        $campaign = Campaign::factory()->create([
+            'shedule_type' => 'daily',
+            'loop_type' => 'weekly',
+            'user_id' => 2
+        ]);
 
+        // Test rendering of the component
+        Livewire::test('campaign.add-schedule', ['campaign' => $campaign])
+            ->assertSee('Add Schedule')
+            ->assertSee('Set the schedule for the campaign.');
 
+        // Test adding a new schedule
+        Livewire::test('campaign.add-schedule', ['campaign' => $campaign])
+            ->set('typeShedule', 'monthly')
+            ->set('dateDay', '1')
+            ->set('dateTime', '08:00:00')
+            ->call('addSchedule')
+            ->assertStatus(200); // Ensure no errors are thrown
+
+        // Assert that the schedule was added to the database
         $this->assertDatabaseHas('campaigns_schedules', [
             'campaign_id' => $campaign->id,
-            'day' => 'Monday',
-            'time' => '09:00',
-        ]);
-        $this->assertDatabaseHas('campaigns_schedules', [
-            'campaign_id' => $campaign->id,
-            'day' => 'Tuesday',
-            'time' => '10:00',
-        ]);
-        $this->assertDatabaseHas('campaigns_schedules', [
-            'campaign_id' => $campaign->id,
-            'day' => 'Wednesday',
-            'time' => '11:00',
-        ]);
-        $this->assertDatabaseHas('campaigns_schedules', [
-            'campaign_id' => $campaign->id,
-            'day' => 'Thursday',
-            'time' => '12:00',
-        ]);
-        $this->assertDatabaseHas('campaigns_schedules', [
-            'campaign_id' => $campaign->id,
-            'day' => 'Friday',
-            'time' => '13:00',
-        ]);
-        $this->assertDatabaseHas('campaigns_schedules', [
-            'campaign_id' => $campaign->id,
-            'day' => 'Saturday',
-            'time' => '14:00',
-        ]);
-        $this->assertDatabaseHas('campaigns_schedules', [
-            'campaign_id' => $campaign->id,
-            'day' => 'Sunday',
-            'time' => '15:00',
+            'day' => '1',
+            'time' => '08:00:00',
+
         ]);
     }
+
+
 
     public function test_can_delete_campaign()
     {
