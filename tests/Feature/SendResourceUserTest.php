@@ -16,14 +16,14 @@ class SendResourceUserTest extends TestCase
      */
     public function test_render_oneway()
     {
-        $user = User::find(2);
+        $user = User::find(4);
         $response = $this->actingAs($user)->get('resources?resource=1');
 
         $response->assertStatus(200);
     }
     public function test_render_twoway()
     {
-        $user = User::find(2);
+        $user = User::find(4);
         $response = $this->actingAs($user)->get('resources?resource=2');
 
         $response->assertStatus(200);
@@ -32,7 +32,7 @@ class SendResourceUserTest extends TestCase
 
     public function test_it_can_send_resource_one_way_via_email()
     {
-        $user = User::find(2);
+        $user = User::find(4);
 
         Livewire::actingAs($user)->test(AddResource::class, ['uuid' => $user->id])
             ->set('channel', 'email')
@@ -53,7 +53,7 @@ class SendResourceUserTest extends TestCase
 
     public function test_it_can_send_resource_one_way_via_long_sms()
     {
-        $user = User::find(2);
+        $user = User::find(4);
 
         Livewire::actingAs($user)->test(AddResource::class, ['uuid' => $user->id])
             ->set('channel', 'long_sms')
@@ -76,7 +76,7 @@ class SendResourceUserTest extends TestCase
 
     public function test_it_can_send_resource_one_way_via_sms()
     {
-        $user = User::find(2);
+        $user = User::find(4);
 
         Livewire::actingAs($user)->test(AddResource::class, ['uuid' => $user->id])
             ->set('channel', 'sms')
@@ -97,7 +97,7 @@ class SendResourceUserTest extends TestCase
 
     public function test_it_can_send_resource_one_way_via_wa()
     {
-        $user = User::find(2);
+        $user = User::find(4);
 
         Livewire::actingAs($user)->test(AddResource::class, ['uuid' => $user->id])
             ->set('channel', 'long_wa')
@@ -119,7 +119,7 @@ class SendResourceUserTest extends TestCase
     public function test_it_can_send_resource_one_way_via_sms_otp()
     {
 
-        $user = User::find(2);
+        $user = User::find(4);
 
         Livewire::actingAs($user)->test(AddResource::class, ['uuid' => $user->id])
             ->set('channel', 'sms_otp')
@@ -141,7 +141,7 @@ class SendResourceUserTest extends TestCase
 
     public function test_it_can_send_resource_two_way_via_email()
     {
-        $user = User::find(2);
+        $user = User::find(4);
         $randomText = str()->random(5);
 
         Livewire::actingAs($user)->test(AddResource::class, ['uuid' => $user->id])
@@ -163,7 +163,7 @@ class SendResourceUserTest extends TestCase
 
     public function test_it_can_send_resource_two_way_via_long_sms()
     {
-        $user = User::find(2);
+        $user = User::find(4);
         $randomText = str()->random(7);
 
         Livewire::actingAs($user)->test(AddResource::class, ['uuid' => $user->id])
@@ -187,7 +187,7 @@ class SendResourceUserTest extends TestCase
 
     public function test_it_can_send_resource_two_way_via_sms()
     {
-        $user = User::find(2);
+        $user = User::find(4);
         $randomText = str()->random(9);
 
         Livewire::actingAs($user)->test(AddResource::class, ['uuid' => $user->id])
@@ -210,7 +210,7 @@ class SendResourceUserTest extends TestCase
     {
 
         $randomText = str()->random(20);
-        $user = User::find(2);
+        $user = User::find(4);
 
         Livewire::actingAs($user)->test(AddResource::class, ['uuid' => $user->id])
             ->set('channel', 'long_wa')
@@ -231,7 +231,7 @@ class SendResourceUserTest extends TestCase
     public function test_it_can_send_resource_two_way_via_sms_otp()
     {
         $randomText ='1a2b3c';
-        $user = User::find(2);
+        $user = User::find(4);
 
         Livewire::actingAs($user)->test(AddResource::class, ['uuid' => $user->id])
             ->set('channel', 'long_sms')

@@ -380,11 +380,20 @@ function addLog($model, $data, $before = null)
     } else if (empty($ds) || !array_intersect_assoc($ds, $bs)) {
         $diff = 'Deleted: ' . json_encode($bs);
     } else {
-       foreach ($ds as $key => $d) {
-            if (isset($bs[$key]) && $key != 'updated_at' && $d != $bs[$key]) {
-                $diff .= $key . ':' . $bs[$key] . ' > ' . $d . ', ';
-            } else if (!isset($bs[$key])) {
-                $diff .= $key . ':' . 'null > ' . $d . ', ';
+        foreach ($ds as $key => $d) {
+            // Check if the key exists in the before data or if the value has changed
+            if ((isset($bs[$key]) && $key != 'updated_at' && $d != $bs[$key]) || (!isset($bs[$key]) && $d != null)) {
+                $beforeValue = isset($bs[$key]) ? $bs[$key] : 'null';
+
+                // Convert arrays to JSON strings for logging
+                if (is_array($beforeValue)) {
+                    $beforeValue = json_encode($beforeValue);
+                }
+                if (is_array($d)) {
+                    $d = json_encode($d);
+                }
+
+                $diff .= $key . ':' . $beforeValue . ' > ' . $d . ', ';
             }
         }
     }
@@ -394,11 +403,12 @@ function addLog($model, $data, $before = null)
             'model' => class_basename($model),
             'model_id' => isset($ds['id']) ? $ds['id'] : $bs['id'],
             'before' => $before,
-            'remark' => $diff,
+            'remark' => rtrim($diff, ', '),
             'user_id' => auth()->check() ? auth()->user()->id : ''
         ]);
     }
 }
+
 
 
 function checkContentOtp($content)

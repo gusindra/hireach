@@ -33,14 +33,16 @@ class OrderAdminTest extends TestCase
         $user = User::find(1);
         $user2 = User::find(2);
 
-        $client = Client::where('name', 'User Hireach')->latest()->first();
+
+
+
         Livewire::actingAs($user)->test(Add::class)
             ->set('type', 'selling')
             ->set('entity', 1)
             ->set('name', 'Sample Order')
             ->set('customer_id', $user2->id)
             ->call('create');
-
+    $client = Client::where('name', 'User Hireach')->latest()->first();
         $this->assertDatabaseHas('orders', [
             'name' => 'Sample Order',
             'type' => 'selling',

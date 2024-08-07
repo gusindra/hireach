@@ -41,6 +41,33 @@ class ProviderUserSeeder extends Seeder
                 'user_id' => 2,
                 'channel' => 'SMS_OTP',
             ],
+
+
+                [
+                'provider_id' => 4,
+                'user_id' => 4,
+                'channel' => 'LONG_WA',
+            ],
+            [
+                'provider_id' =>4,
+                'user_id' => 4,
+                'channel' => 'LONG_SMS',
+            ],
+            [
+                'provider_id' => 3,
+                'user_id' => 4,
+                'channel' => 'EMAIL',
+            ],
+            [
+                'provider_id' => 2,
+                'user_id' => 4,
+                'channel' => 'SMS',
+            ],
+            [
+                'provider_id' => 1,
+                'user_id' => 4,
+                'channel' => 'SMS_OTP',
+            ],
         ]);
     }
 }

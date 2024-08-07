@@ -54,7 +54,7 @@ class ProcessWaApi implements ShouldQueue
         // Log::debug($this->request);
         //filter OTP & Non OTP
         $provider = $this->request['provider'];
-
+        Log::debug($provider);
         if ($provider->code == 'provider1' || $this->request['otp']) {
             $this->MKProvider($this->request);
         } elseif ($provider->code == 'provider2') {
