@@ -34,64 +34,58 @@
                                 @if ($data->count())
                                     <div class="shadow overflow-hidden border-b border-gray-200 sm:rounded-lg">
                                         <table class="min-w-full divide-y divide-gray-200 mt-2">
-
-                                            <tbody class="bg-white dark:bg-slate-700 divide-y divide-gray-200">
+                                            <thead>
                                                 <tr>
-                                                    <td class="w-full px-6 py-4 text-sm whitespace-no-wrap">
-                                                        <div class="">
-                                                            <div class="grid grid-cols-4 gap-4">
-                                                                <b>Provider Code</b>
-                                                                <b>Name</b>
-                                                                <b>Channel</b>
-                                                                <b>From / Sender ID</b>
-                                                            </div>
-                                                        </div>
-                                                    </td>
-                                                    <td
-                                                        class="flex items-center justify-end px-4 py-3 text-right sm:px-6">
-                                                    </td>
+                                                    <th
+                                                        class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                                        Provider Code
+                                                    </th>
+                                                    <th
+                                                        class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                                        Name
+                                                    </th>
+                                                    <th
+                                                        class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                                        Channel
+                                                    </th>
+                                                    <th
+                                                        class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                                        From / Sender ID
+                                                    </th>
+                                                    <th class="px-6 py-4"></th> <!-- Empty header for action buttons -->
                                                 </tr>
+                                            </thead>
+                                            <tbody class="bg-white dark:bg-slate-700 divide-y divide-gray-200">
                                                 @foreach ($data as $item)
-                                                    @if($item)
+                                                    @if ($item)
                                                         <tr>
-                                                            <td class="w-full px-6 py-4 text-sm whitespace-no-wrap">
-                                                                <div class="">
-                                                                    <div class="grid grid-cols-4 gap-4">
-                                                                        <span>
-                                                                            {{ $item->provider ? $item->provider->code : '-' }}
-                                                                        </span>
-
-                                                                        <span>
-                                                                            {{ $item->provider ? $item->provider->name : '-' }}
-                                                                        </span>
-
-                                                                        <span>
-                                                                            {{ $item->channel }}
-                                                                        </span>
-
-                                                                        <span>
-                                                                            {{ $item->from }}
-                                                                        </span>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </td>
-                                                        <td
-                                                             class="flex items-center justify-end px-4 py-3 text-right sm:px-6">
-                                                            <div class="flex items-center">
+                                                            <td class="px-6 py-4 whitespace-no-wrap text-sm">
+                                                                {{ $item->provider ? $item->provider->code : '-' }}
+                                                            </td>
+                                                            <td class="px-6 py-4 whitespace-no-wrap text-sm">
+                                                                {{ $item->provider ? $item->provider->name : '-' }}
+                                                            </td>
+                                                            <td class="px-6 py-4 whitespace-no-wrap text-sm">
+                                                                {{ $item->channel }}
+                                                            </td>
+                                                            <td class="px-6 py-4 whitespace-no-wrap text-sm">
+                                                                {{ $item->from }}
+                                                            </td>
+                                                            <td class="px-6 py-4 whitespace-no-wrap text-sm text-right">
                                                                 <x-link-button :disabled="!userAccess('USER', 'delete')"
                                                                     class="cursor-pointer ml-6 text-sm"
                                                                     wire:click="deleteShowModal('{{ $item->id }}')">
                                                                     {{ __('Delete') }}
                                                                 </x-link-button>
-                                                            </div>
-                                                        </td>
-                                                    </tr>
+                                                            </td>
+                                                        </tr>
+                                                    @endif
                                                 @endforeach
                                             </tbody>
                                         </table>
                                     </div>
                                 @endif
+
                             </div>
                         </div>
                     </div>

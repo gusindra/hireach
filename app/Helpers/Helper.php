@@ -380,9 +380,11 @@ function addLog($model, $data, $before = null)
     } else if (empty($ds) || !array_intersect_assoc($ds, $bs)) {
         $diff = 'Deleted: ' . json_encode($bs);
     } else {
-        foreach ($ds as $key => $d) {
+       foreach ($ds as $key => $d) {
             if (isset($bs[$key]) && $key != 'updated_at' && $d != $bs[$key]) {
                 $diff .= $key . ':' . $bs[$key] . ' > ' . $d . ', ';
+            } else if (!isset($bs[$key])) {
+                $diff .= $key . ':' . 'null > ' . $d . ', ';
             }
         }
     }

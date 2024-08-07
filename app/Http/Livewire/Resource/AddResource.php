@@ -218,12 +218,12 @@ class AddResource extends Component
      */
     public function modelData()
     {
-        return [
-            'name'                  => $this->name,
-            'description'           => $this->description,
-            'is_enabled'            => $this->is_enabled,
-            'is_wait_for_chat'      => $this->is_waiting,
-        ];
+       return [
+        'name' => strip_tags(filterInput($this->name)),
+        'description' => strip_tags(filterInput($this->description)),
+        'is_enabled' => $this->is_enabled,
+        'is_wait_for_chat' => strip_tags(filterInput($this->is_waiting)),
+    ];
     }
 
     /**
@@ -292,32 +292,33 @@ class AddResource extends Component
             foreach ($template->actions as $key => $action) {
 
                 // send request using template prt action
-                $data[$key] = [
-                    'channel' => $channel,
-                    'type' => 0,
-                    'title' => $title,
-                    'text' => $action->message,
-                    'templateid' => $templateid,
-                    'to' => $to,
-                    'from' => $from,
-                    'resource' => $this->resource,
-                    'provider' => $provider,
-                    'otp' => checkContentOtp($action->message)
-                ];
+              $data[$key] = [
+                'channel' => strip_tags(filterInput($channel)),
+                'type' => 0,
+                'title' => strip_tags(filterInput($title)),
+                'text' => strip_tags(filterInput($action->message)),
+                'templateid' => strip_tags(filterInput($templateid)),
+                'to' => strip_tags(filterInput($to)),
+                'from' => strip_tags(filterInput($from)),
+                'resource' => strip_tags(filterInput($this->resource)),
+                'provider' => strip_tags(filterInput($provider)),
+                'otp' => checkContentOtp(strip_tags(filterInput($action->message)))
+            ];
+
             }
         } else {
             $data = [
-                'channel' => $channel,
-                'type' => 0,
-                'title' => $title,
-                'text' => $text,
-                'templateid' => $templateid,
-                'to' => $to,
-                'from' => $from,
-                'resource' => $this->resource,
-                'provider' => $provider,
-                'otp' => checkContentOtp($text)
-            ];
+            'channel' => strip_tags(filterInput($this->channel)),
+            'type' => 0,
+            'title' => strip_tags(filterInput($this->title)),
+            'text' => strip_tags(filterInput($this->text)),
+            'templateid' => strip_tags(filterInput($this->templateid)),
+            'to' => strip_tags(filterInput($this->to)),
+            'from' => strip_tags(filterInput($this->from)),
+            'resource' => strip_tags(filterInput($this->resource)),
+            'provider' => strip_tags(filterInput($this->provider)),
+            'otp' => checkContentOtp($this->text)
+        ];
         }
 
         if ($this->resource == '2') {

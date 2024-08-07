@@ -39,14 +39,14 @@ class Templates extends Component
 
     public function modelData()
     {
-        return [
-            'uuid' => Str::uuid(),
-            'type' => $this->way == 2 ? $this->type : 'text',
-            'name' => $this->name,
-            'resource' => $this->way,
-            'description' => $this->description,
-            'user_id' => Auth::user()->id,
-        ];
+          return [
+        'uuid' => Str::uuid(),
+        'type' => strip_tags(filterInput($this->way == 2 ? $this->type : 'text')),
+        'name' => strip_tags(filterInput($this->name)),
+        'resource' => strip_tags(filterInput($this->way)),
+        'description' => strip_tags(filterInput($this->description)),
+        'user_id' => Auth::user()->id,
+    ];
     }
 
     public function resetForm()

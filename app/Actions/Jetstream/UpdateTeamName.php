@@ -20,6 +20,9 @@ class UpdateTeamName implements UpdatesTeamNames
     {
         Gate::forUser($user)->authorize('update', $team);
 
+        // Sanitize and validate input
+        $input = $this->sanitizeInput($input);
+
         Validator::make($input, [
             'name' => ['required', 'string', 'max:255'],
         ])->validateWithBag('updateTeamName');
@@ -27,5 +30,18 @@ class UpdateTeamName implements UpdatesTeamNames
         $team->forceFill([
             'name' => $input['name']
         ])->save();
+    }
+
+    /**
+     * Sanitize input data.
+     *
+     * @param  array  $input
+     * @return array
+     */
+    protected function sanitizeInput(array $input)
+    {
+        return [
+            'name' => strip_tags(filterInput($input['name'])),
+        ];
     }
 }

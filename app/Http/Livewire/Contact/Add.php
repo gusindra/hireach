@@ -44,10 +44,10 @@ class Add extends Component
 
         $this->validate();
         Client::create([
-            'title' => $this->input['title'],
-            'name' => $this->input['name'],
-            'phone' => $this->input['phone'],
-            'email' => $this->input['email'],
+            'title' => strip_tags(filterInput($this->input['title'])),
+            'name' => strip_tags(filterInput($this->input['name'])),
+            'phone' => strip_tags(filterInput($this->input['phone'])),
+            'email' => strip_tags(filterInput($this->input['email'])),
             'user_id' => auth()->user()->id,
             'uuid' => Str::uuid()
         ]);

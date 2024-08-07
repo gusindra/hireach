@@ -50,19 +50,18 @@ class Profile extends Component
             ]);
         }
         $user->update([
-            'sender' => $this->inputuser['sender'],
-            'name' => $this->inputuser['name'],
-            'phone' => $this->inputuser['phone'],
-            'identity' => $this->inputuser['identity'],
-            'user_id' => $this->inputuser['user_id'],
-            'note' => $this->inputuser['note'],
-            'tag' => $this->inputuser['tag'],
-            'source' => $this->inputuser['source'],
-            'email' => $this->inputuser['email'],
-            'address' => $this->inputuser['address'],
-            'title' => $this->inputuser['title'],
-
-        ]);
+        'sender' => strip_tags(filterInput($this->inputuser['sender'])),
+        'name' => strip_tags(filterInput($this->inputuser['name'])),
+        'phone' => strip_tags(filterInput($this->inputuser['phone'])),
+        'identity' => strip_tags(filterInput($this->inputuser['identity'])),
+        'user_id' => strip_tags(filterInput($this->inputuser['user_id'])),
+        'note' => strip_tags(filterInput($this->inputuser['note'])),
+        'tag' => strip_tags(filterInput($this->inputuser['tag'])),
+        'source' => strip_tags(filterInput($this->inputuser['source'])),
+        'email' => strip_tags(filterInput($this->inputuser['email'])),
+        'address' => strip_tags(filterInput($this->inputuser['address'])),
+        'title' => strip_tags(filterInput($this->inputuser['title'])),
+    ]);
 
 
         $this->emit('user_saved');
