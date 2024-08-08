@@ -294,28 +294,28 @@ class AddResource extends Component
                 // send request using template prt action
                 $data[$key] = [
                  'channel'   => strip_tags(filterInput($channel)),
-                'type'      => (int) $type,
+                'type'      => $type,
                 'title'     => strip_tags(filterInput($title)),
                 'text'      => strip_tags(filterInput($action->message)),
                 'templateid'=> strip_tags(filterInput($templateid)),
                 'to'        => strip_tags(filterInput($to)),
                 'from'      => strip_tags(filterInput($from)),
                 'resource'  => strip_tags(filterInput($this->resource)),
-                'provider'  => strip_tags(filterInput($provider)),
+                'provider'  =>$provider,
                 'otp'       => strip_tags(filterInput(checkContentOtp($action->message))),
                 ];
             }
         } else {
             $data = [
                'channel'    => strip_tags(filterInput($channel)),
-                'type'       => (int) 0,
+                'type'       => 0,
                 'title'      => strip_tags(filterInput($title)),
                 'text'       => strip_tags(filterInput($text)),
                 'templateid' => strip_tags(filterInput($templateid)),
                 'to'         => strip_tags(filterInput($to)),
                 'from'       => strip_tags(filterInput($from)),
                 'resource'   => strip_tags(filterInput($this->resource)),
-                'provider'   => strip_tags(filterInput($provider)),
+                'provider'   => $provider,
                 'otp'        => strip_tags(filterInput(checkContentOtp($text))),
             ];
         }
