@@ -27,7 +27,7 @@
                         @include('assistant.commercial.table-list', ['active' => 'quotation'])
                     </div>
                     <div class="px-4 py-2">
-                        <livewire:table.quotation searchable="title, status, source" exportable />
+                        <livewire:table.quotation searchable="title, status, quotation" exportable />
                     </div>
                 </div>
             </div>

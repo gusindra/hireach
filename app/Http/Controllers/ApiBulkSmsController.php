@@ -23,7 +23,7 @@ class ApiBulkSmsController extends Controller
             'title' => 'required|string',
             'detail' => 'string',
         ]);
-        
+
         try{
             Log::debug($request->all());
             //$userCredention = ApiCredential::where("user_id", auth()->user()->id)->where("client", "api_sms_mk")->where("is_enabled", 1)->first();
@@ -46,7 +46,7 @@ class ApiBulkSmsController extends Controller
         //return $request->getContent();
         //Log::debug($request->all());
         ProcessSmsStatus::dispatch($request->all());
-        
+
         // BlastMessage::where("msg_id", $request->msgID)->where("msisdn", $request->msisdn)->first()->update([
         //     'status' => $request->status
         // ]);

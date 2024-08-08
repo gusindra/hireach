@@ -24,7 +24,7 @@
 
             </header>
             <div class="bg-white dark:bg-slate-600 overflow-hidden sm:rounded-b-lg border-t space-y-2">
-                @livewire('audience.profile', ['user' => $audience])
+                @livewire('audience.edit', ['user' => $audience])
             </div>
         </div>
     </div>

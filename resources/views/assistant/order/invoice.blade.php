@@ -26,7 +26,7 @@
                         <livewire:all-billing-table searchable="code, description" exportable />
                     </div> --}}
                     <div class="px-4 py-2">
-                        <livewire:invoice-order-table searchable="code, description" exportable />
+                        <livewire:table.invoice-order-table searchable="code, description" exportable />
                     </div>
 
                 </div>

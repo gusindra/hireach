@@ -92,9 +92,9 @@ class ChatSlug extends Component
         // Check long of word if > will store to message
         $request = Request::create([
             'source_id' => 'webchat_' . Hashids::encode($this->client->id),
-            'reply'     => $this->message,
-            'from'      => $this->client->id,
-            'user_id'   => $this->owner,
+            'reply'     => strip_tags(filterInput($this->message)),
+            'from'      => strip_tags(filterInput($this->client->id)),
+            'user_id'   => strip_tags(filterInput($this->owner)),
             'type'      => 'text',
             'client_id' => $this->client->uuid,
             'sent_at'   => date('Y-m-d H:i:s'),
@@ -138,14 +138,14 @@ class ChatSlug extends Component
         if ($this->type) {
             $request = Request::create([
                 'source_id' => 'web_' . Hashids::encode($this->client->id),
-                'reply'     => $this->message,
-                'media'     => $this->link_attachment,
-                'from'      => $this->client->id,
-                'user_id'   => $this->owner,
-                'client_id' => $this->client->uuid,
-                'type'      => $this->type,
-                'sent_at'   => date('Y-m-d H:i:s'),
-                'team_id'   => $this->team->id
+                'reply'     => strip_tags(filterInput($this->message)),
+                'media'     => strip_tags(filterInput($this->link_attachment)),
+                'from'      => strip_tags(filterInput($this->client->id)),
+                'user_id'   => strip_tags(filterInput($this->owner)),
+                'client_id' => strip_tags(filterInput($this->client->uuid)),
+                'type'      => strip_tags(filterInput($this->type)),
+                'sent_at'   => strip_tags(filterInput(date('Y-m-d H:i:s'))),
+                'team_id'   => strip_tags(filterInput($this->team->id))
             ]);
             $this->message = null;
             $this->modalAttachment = false;

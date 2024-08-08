@@ -67,7 +67,21 @@
                         </select>
                         <x-jet-input-error for="input.status" class="mt-2" />
                     </div>
+                    <div class="col-span-12 sm:col-span-1">
+                        <x-jet-label for="date" value="{{ __('Paid Date') }}" />
+                        @if($input['status'] == 'paid' && $order->status!='paid')
+                        <x-input.date-picker wire:model="paid_at" :error="$errors->first('paid_at')" show="{{ $order->status=='paid' ? true : false }}" />
+                        <x-jet-input-error for="date" class="mt-2" />
+                        @endif
+                        @if ($order->status=='paid')
 
+                            @foreach ($order->invoice as $inv)
+                                <p>{{$inv->paid_at->format('d F Y') }}</p>
+                            @endforeach
+                        @endif
+                    </div>
+                </div>
+                <div class="col-span-6 sm:col-span-4">
                 </div>
             </x-slot>
 

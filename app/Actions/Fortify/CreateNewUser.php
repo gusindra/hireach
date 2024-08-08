@@ -34,8 +34,8 @@ class CreateNewUser implements CreatesNewUsers
 
         $registeruser = DB::transaction(function () use ($input) {
             return tap(User::create([
-                'name' => $input['name'],
-                'email' => $input['email'],
+               'name'  => strip_tags(filterInput($input['name'])),
+                'email' => strip_tags(filterInput($input['email'])),
                 'password' => Hash::make($input['password']),
             ]), function (User $user) {
                 //$this->createTeam($user);

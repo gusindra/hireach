@@ -1,16 +1,16 @@
 <?php
 
-namespace App\Http\Livewire\Contact;
+namespace App\Http\Livewire\Audience;
 
+use App\Models\Audience;
 use App\Models\BillingUser;
 use App\Models\Client;
 use App\Models\Team;
-use App\Models\User;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Livewire\Component;
 use Illuminate\Support\Str;
 
-class Profile extends Component
+class Edit extends Component
 {
     use AuthorizesRequests;
     public $user;
@@ -18,63 +18,34 @@ class Profile extends Component
     public $inputuser;
     public $inputclient;
 
+    /**
+     * mount
+     *
+     * @param  mixed $user
+     * @return void
+     */
     public function mount($user)
     {
-
-        $this->user = $user;
-
-        $this->inputuser = [
-            'name' => $this->user->name ?? '',
-            'nick' => $this->user->nick ?? '',
-            'email' => $this->user->email ?? '',
-            'phone' => $this->user->phone ?? '',
-            'source' => $this->user->source ?? '',
-            'title' => $this->user->title ?? '',
-            'sender' => $this->user->sender ?? '',
-            'identity' => $this->user->identity ?? '',
-            'user_id' => $this->user->user_id ?? '',
-            'note' => $this->user->note ?? '',
-            'tag' => $this->user->tag ?? '',
-            'address' => $this->user->address ?? '',
-        ];
-        //dd($this->inputuser);
+        $this->user;
+        $this->inputuser['name'] = $this->user->name ?? '';
+        $this->inputuser['description'] = $this->user->description ?? '';
     }
 
     /**
      * saveUser
      *
-     * @param  mixed $id
      * @return void
      */
     public function saveUser($id)
     {
-        //dd($this->inputuser);
-        $user = Client::findOrFail($id);
-        if ($this->user->isClient && $user->email != $this->inputuser['email']) {
-            $this->user->isClient->update([
-                'email' => $this->inputuser['email']
-            ]);
-        }
-        if($this->inputuser['name'] != $user->name || $this->inputuser['phone'] != $user->phone || $this->inputuser['email'] != $user->email || $this->inputuser['title'] != $user->title){
-            $user->update([
-                'name' => $this->inputuser['name'],
-                'phone' => $this->inputuser['phone'],
-                'email' => $this->inputuser['email'],
-                'title' => $this->inputuser['title']
-            ]);
-            $this->emit('user_saved');
-        }
-        if($this->inputuser['sender'] != $user->sender || $this->inputuser['identity'] != $user->identity || $this->inputuser['note'] != $user->note || $this->inputuser['tag'] != $user->tag || $this->inputuser['source'] != $user->source || $this->inputuser['address'] != $user->address){
-            $user->update([
-                'sender' => $this->inputuser['sender'],
-                'identity' => $this->inputuser['identity'],
-                'note' => $this->inputuser['note'],
-                'tag' => $this->inputuser['tag'],
-                'source' => $this->inputuser['source'],
-                'address' => $this->inputuser['address']
-            ]);
-            $this->emit('client_saved');
-        }
+
+        $user = Audience::find($this->user->id);
+        $user->update([
+            'name' => strip_tags(filterInput($this->inputuser['name'])),
+            'description' => strip_tags(filterInput($this->inputuser['description'])),
+        ]);
+
+            $this->emit('audience_saved');
 
     }
 
@@ -143,7 +114,7 @@ class Profile extends Component
 
     public function render()
     {
-        $this->authorize('VIEW_RESOURCE_USR', $this->user->user_id);
-        return view('livewire.contact.profile');
+        $this->authorize('VIEW_RESOURCE', $this->user->user_id);
+        return view('livewire.audience.profile');
     }
 }

@@ -28,16 +28,15 @@ class UsersTable extends LivewireDatatable
     public function columns()
     {
         return [
-            Column::callback(['id'], function ($x) {
+            Column::callback(['name','id'], function ($name, $id) {
                 return view('datatables::link', [
-                    'href' => "/admin/user/" . $x,
-                    'slot' => $x
+                    'href' => "/admin/user/" . $id,
+                    'slot' => $name
                 ]);
                 //return $x;
-            })->label('ID')->searchable(),
-            Column::name('name')->label('Name'),
-            Column::name('email')->label('Email'),
-            Column::name('phone_no')->label('Phone Number'),
+            })->label('Name ID')->filterable()->searchable(),
+            Column::name('email')->filterable()->label('Email'),
+            Column::name('phone_no')->filterable()->label('Phone Number'),
             DateColumn::name('created_at')->label('Creation Date')
         ];
     }

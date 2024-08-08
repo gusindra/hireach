@@ -13,6 +13,7 @@ class Edit extends Component
     public $name;
     public $company;
     public $code;
+    public $status;
     public $channel;
     public $uuid;
     public $modalDeleteVisible = false;
@@ -31,6 +32,7 @@ class Edit extends Component
         $this->code = $this->provider->code;
         $this->company = $this->provider->company;
         $this->channel = $this->provider->channel;
+        $this->status = $this->provider->status;
     }
 
     /**
@@ -76,6 +78,21 @@ class Edit extends Component
         $this->validate();
         Provider::find($id)->update($this->modelData());
         $this->emit('saved');
+    }
+
+    /**
+     * updateStatus
+     *
+     * @param  mixed $id
+     * @return void
+     */
+    public function updateStatus($id)
+    {
+        $this->authorize('UPDATE_SETTING', 'SETTING');
+        Provider::find($id)->update(['status'=>!$this->provider->status]);
+        $this->provider->status = !$this->provider->status;
+        $this->emit('updated');
+        return redirect(request()->header('Referer'));
     }
 
     /**

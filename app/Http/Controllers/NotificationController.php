@@ -11,9 +11,9 @@ class NotificationController extends Controller
 {
 
     public $user_info;
+
     public function __construct()
     {
-
         $this->middleware(function ($request, $next) {
             // Your auth here
             $granted = false;
@@ -22,11 +22,13 @@ class NotificationController extends Controller
 
             if ($granted) {
                 return $next($request);
+            }else{
+                if($this->authorize('VIEW_ANY_CHAT_USR'))
+                    return $next($request);
             }
             abort(403);
         });
     }
-
 
 
     public function index()
@@ -39,6 +41,12 @@ class NotificationController extends Controller
     }
 
 
+    /**
+     * show
+     *
+     * @param  mixed $notification
+     * @return void
+     */
     public function show(Notice $notification)
     {
         $notification->update(array('status' => 'read'));

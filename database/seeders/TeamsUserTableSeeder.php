@@ -26,5 +26,10 @@ class TeamsUserTableSeeder extends Seeder
             'user_id' => 2,
             'role' => 'admin',
         ]);
+        TeamUser::create([
+            'team_id' => 2,
+            'user_id' => 4,
+            'role' => 'admin',
+        ]);
     }
 }

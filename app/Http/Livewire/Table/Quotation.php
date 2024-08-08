@@ -20,7 +20,7 @@ class Quotation extends LivewireDatatable
         $auth = Auth::user();
         $query = ModelsQuotation::query()->orderBy('quotations.created_at', 'desc');
         if (auth()->user()->super && auth()->user()->super->first() && auth()->user()->super->first()->role == 'superadmin') {
-            $query;
+            $query->with('users');
         } elseif (auth()->user()->activeRole && str_contains(auth()->user()->activeRole->role->name, "Admin")) {
             $query;
         } else {
@@ -34,29 +34,24 @@ class Quotation extends LivewireDatatable
     private function adminColumns()
     {
         return [
-            Column::name('title')->label('Title'),
-            Column::name('model')->callback('model, model_id, project.name, company.name, user.name', function ($m, $mi, $pn, $com, $cn) {
-                if ($m == 'PROJECT') {
-                    return $m . ' : ' . $pn;
-                } elseif ($m == 'COMPANY') {
-                    return $m . ' : ' . $com;
-                } elseif ($m == 'USER') {
-                    return $m . ' : ' . $cn;
+            Column::callback(['title','id'], function ($name, $id) {
+                return view('datatables::link', [
+                    'href' => "/admin/quotation/" . $id,
+                    'slot' => strtoupper($name)
+                ]);
+            })->label('Quotation')->filterable()->searchable(),
+            // Column::name('title')->label('Title'),
+            Column::name('model')->callback('model, model_id', function ($m, $mi) {
+                if ($m == 'USER') {
+                    return $m . ' : '. $mi;
                 }
                 return $m;
             })->label('Source')->filterable(),
-            DateColumn::name('date')->label('Date')->filterable(),
+            DateColumn::name('date')->label('Date')->format('d F Y')->filterable(),
             NumberColumn::name('valid_day')->label('Duration (Day)')->filterable(),
             Column::callback(['status'], function ($status) {
                 return view('label.label', ['type' => $status]);
             })->label('Status')->filterable(['DRAFT', 'APPROVED', 'SUBMIT']),
-            NumberColumn::name('id')->label('Detail')->sortBy('id')->callback('id', function ($value) {
-                return view('datatables::link', [
-                    'href' => "/admin/quotation/" . $value,
-                    'slot' => 'View'
-                ]);
-            }),
-
         ];
     }
 

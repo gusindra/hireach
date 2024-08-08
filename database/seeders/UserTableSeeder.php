@@ -39,5 +39,12 @@ class UserTableSeeder extends Seeder
             'password' => Hash::make('12345678'),
             'current_team_id' => 0
         ]);
+
+          User::create([
+            'name' => 'User 4',
+            'email' => 'user4@hireach.com',
+            'password' => Hash::make('12345678'),
+            'current_team_id' => 2
+        ]);
     }
 }

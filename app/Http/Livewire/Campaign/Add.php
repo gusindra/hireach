@@ -30,13 +30,13 @@ class Add extends Component
         });
 
         if(!empty($provider)){
-            Campaign::create([
-                'title' => $this->title,
-                'way_type' => $this->way_type,
-                'user_id' => Auth::id(),
-                'uuid' => Str::uuid(),
-                'type' => 0
-            ]);
+        Campaign::create([
+            'title' => strip_tags(filterInput($this->title)),
+            'way_type' => strip_tags(filterInput($this->way_type)),
+            'user_id' => Auth::id(),
+            'uuid' => Str::uuid(),
+            'type' => 0
+        ]);
             $this->modalActionVisible = false;
         }else{
             $this->emit('campaign_failed');

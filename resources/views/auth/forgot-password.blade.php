@@ -29,6 +29,15 @@
                     {{ __('Email Password Reset Link') }}
                 </x-jet-button>
             </div>
+
+            <div class="items-center text-center mt-4 pt-4 border-t">
+                <span class="text-gray-600 text-xs">
+                    Back to login page?
+                    <a class="underline text-xs text-gray-600 hover:text-gray-900" href="{{ route('login') }}">
+                        Login account
+                    </a>
+                </span>
+            </div>
         </form>
     </x-jet-authentication-card>
 </x-guest-layout>

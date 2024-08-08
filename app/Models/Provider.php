@@ -13,7 +13,8 @@ class Provider extends Model
         'code',
         'name',
         'company',
-        'channel'
+        'channel',
+        'status'
     ];
 
     protected $casts = [
@@ -24,5 +25,10 @@ class Provider extends Model
     public function settingProvider()
     {
         return $this->hasMany(SettingProvider::class);
+    }
+
+    public function users()
+    {
+        return $this->hasMany(ProviderUser::class);
     }
 }
