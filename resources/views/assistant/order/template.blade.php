@@ -124,7 +124,7 @@
                                                 </tr>
                                                 <tr class="border-none">
                                                     <td class="text-sm whitespace-no-wrap"> NPWP :
-                                                        {{-- {{ @$data->user->user->userBilling->tax_id }} </td> --}}
+                                                         {{ $data->user->user && $data->user->user->userBilling ? @$data->user->user->userBilling->tax_id : '-' }} </td>
                                                 </tr>
                                                 <tr class="border-none">
                                                     <td class="text-sm whitespace-no-wrap"> CN :
@@ -298,10 +298,11 @@
                                     <tbody class="bg-white divide-y divide-gray-200">
                                         <tr class="border-none">
                                             <td class="text-sm whitespace-no-wrap align-top">
-                                                <h3 class="text-sm font-medium text-gray-900">PLEASE REMIT PAYMENT
-                                                    DIRECTLY TO
-
-                                                </h3>
+                                                @if($data->status=='paid')
+                                                    <p class="text-center">Transaction Date : {{$data->paid_at}}}</p>
+                                                @else
+                                                <h3 class="text-sm font-medium text-gray-900">PLEASE REMIT PAYMENT DIRECTLY TO</h3>
+                                                @endif
                                             </td>
                                         </tr>
                                         <tr>

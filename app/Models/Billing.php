@@ -24,12 +24,22 @@ class Billing extends Model
         'amount',
         'user_id',
         'currency',
-        'note'
+        'note',
+        'paid_at'
     ];
 
     public static $searchable=[
         "code",
         "description"
+    ];
+
+    /**
+     * The attributes that should be cast to native types.
+     *
+     * @var array
+     */
+    protected $casts = [
+        'paid_at' => 'datetime',
     ];
 
     protected $guarded = [];

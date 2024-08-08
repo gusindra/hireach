@@ -30,11 +30,11 @@ return new class extends Migration
     public function down()
     {
         Schema::table('campaigns', function (Blueprint $table) {
-            $table->string('loop_type');
-            $table->string('shedule_type');
+            $table->dropColumn('loop_type');
+            $table->dropColumn('shedule_type');
         });
         Schema::table('campaigns_schedules', function (Blueprint $table) {
-            $table->string('status');
+            $table->dropColumn('status');
         });
     }
 };

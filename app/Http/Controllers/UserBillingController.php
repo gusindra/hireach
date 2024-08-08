@@ -18,7 +18,7 @@ class UserBillingController extends Controller
     {
         $this->middleware(function ($request, $next) {
             // Your auth here
-            $this->user_info=Auth::user()->super->first();
+            $this->user_info=auth()->user()->super->first();
             if($this->user_info && $this->user_info->role=='superadmin'){
                 return $next($request);
             }
@@ -31,18 +31,17 @@ class UserBillingController extends Controller
         return view('billing-table');
     }
 
-    public function show(Notification $notification)
-    {
-        // $notification->update(array('status' => 'read'));
-        // $value =  $notification->ticket->request->client->id;
-        // return redirect()->to("/message/?id=" . Hashids::encode($value));
-    }
-
     public function generate()
     {
         return redirect()->to("/user-billing");
     }
 
+    /**
+     * invoice
+     *
+     * @param  Illuminate\Http\Request $request
+     * @return void
+     */
     public function invoice(Request $request)
     {
         Billing::create([
@@ -57,6 +56,12 @@ class UserBillingController extends Controller
         return redirect()->back();
     }
 
+    /**
+     * showInvoice
+     *
+     * @param  App\Models\Billing $billing
+     * @return \Illuminate\Contracts\View\View
+     */
     public function showInvoice(Billing $billing)
     {
         $user = User::find($billing->user_id);
@@ -64,6 +69,13 @@ class UserBillingController extends Controller
 
     }
 
+    /**
+     * updateInvoice
+     *
+     * @param  App\Models\Billing $billing
+     * @param  Illuminate\Http\Request $request
+     * @return void
+     */
     public function updateInvoice(Billing $billing, Request $request)
     {
         // return $billing;

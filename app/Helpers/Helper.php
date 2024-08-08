@@ -462,7 +462,6 @@ function userAccess($menu, $action = 'view', $level = '')
             return true;
         }
     }
-    // dd($menu );
     //LEVEL 4
     if ($menu == 'DASHBOARD') {
         return true;

@@ -25,15 +25,24 @@ class OrderAdminTable extends LivewireDatatable
     public function columns()
     {
         return [
+            Column::callback(['no','id'], function ($name, $id) {
+                return view('datatables::link', [
+                    'href' => "/admin/order/" . $id,
+                    'slot' => strtoupper($name)
+                ]);
+            })->label('Name')->searchable()->filterable(),
             Column::callback('type', function ($value) {
                 return $value ? strtoupper($value) : '-';
-            })->label('Type')->filterable(),
+            })->label('Type')->filterable(['SELLING', 'TOPUP', "OTHER"]),
 
-            Column::name('customer_id')->label('Customer'),
+            Column::callback(['customer_id'], function ($id) {
+                return view('datatables::link', [
+                    'href' => "/admin/customer/" . $id,
+                    'slot' => $id
+                ]);
+            })->label('Customer')->searchable()->filterable(),
 
-            Column::name('no')->label('No'),
-
-            Column::name('name')->label('Name'),
+            Column::name('name')->label('Name')->filterable()->group('group2'),
 
             Column::callback('entity_party', function ($value) {
                 if ($value) {
@@ -43,24 +52,18 @@ class OrderAdminTable extends LivewireDatatable
                     return $value . ' - ' . ($company ? $company->name : '-');
                 }
                 return '-';
-            })->label('Party')->filterable(),
+            })->label('Party')->group('group2'),
 
             DateColumn::name('created_at')->format('d F Y')->label('Created_at')->filterable(),
 
             Column::name('total')->callback('total', function ($value) {
-                return $value ? 'Rp' . number_format($value) : '0';
-            })->label('Total'),
+                return (int)$value;
+                return $value ? 'Rp' . number_format($value) : 0;
+            })->label('Total')->filterable()->enableSummary(),
 
             Column::callback(['status'], function ($status) {
                 return view('label.label', ['type' => $status]);
             })->label('Status')->filterable(['DRAFT', 'UNPAID', 'PAID', 'CANCEL']),
-
-            NumberColumn::name('id')->label('Detail')->sortBy('id')->callback('id', function ($value) {
-                return view('datatables::link', [
-                    'href' => "/admin/order/" . $value,
-                    'slot' => 'View'
-                ]);
-            }),
         ];
     }
 }
