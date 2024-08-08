@@ -69,8 +69,8 @@ class InviteTeamMemberForm extends Component
         $team = $this->team;
 
         $invitation = $team->teamInvitations()->create([
-            'email' => $this->email,
-            'role' => $this->role,
+            'email' => strip_tags(filterInput($this->email)),
+            'role' => strip_tags(filterInput($this->role)),
         ]);
 
         $this->invitationLink = URL::signedRoute('team-invitations.accept', [

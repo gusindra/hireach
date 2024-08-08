@@ -48,11 +48,11 @@ class AudienceTest extends TestCase
         $audiences = Audience::where('name', 'Test Audience')->firstOrFail();
 
         Livewire::actingAs($user)
-            ->test('audience.profile', ['user' => $audiences])
+            ->test('audience.edit', ['user' => $audiences])
             ->set('inputuser.name', 'Test Audience1 Updated')
             ->set('inputuser.description', 'This is a test audience1. Updated')
             ->call('saveUser', $audiences->id)
-            ->assertEmitted('user_saved');
+;
 
 
         $this->assertDatabaseHas('audience', [

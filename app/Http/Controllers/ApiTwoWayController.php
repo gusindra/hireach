@@ -32,16 +32,16 @@ class ApiTwoWayController extends Controller
     public function index(Request $request)
     {
         //$data = ModelsRequest::where('user_id', '=', auth()->user()->id)->get();
-        $skip = $request->page*$request->pageSize;
-        $customer = Client::where('phone', $request->phone)->where('user_id', auth()->user()->id)->first(); //
+        $skip = strip_tags(filterInput($request->page*$request->pageSize));
+        $customer = Client::where('phone', strip_tags(filterInput($request->phone)))->where('user_id', auth()->user()->id)->first(); //
         if($customer){
             //$data = ModelsRequest::paginate($request->page);
-            $data = ModelsRequest::where('client_id', $customer->uuid)->skip($skip)->take($request->pageSize)->where('user_id', '=', $customer->user_id)->get();
+            $data = ModelsRequest::where('client_id', strip_tags(filterInput($customer->uuid)))->skip($skip)->take($request->pageSize)->where('user_id', '=', strip_tags(filterInput($customer->user_id)))->get();
             if(count($data)>=1){
                 return response()->json([
                     'code' => 200,
                     'message' => "Successful",
-                    'page'  => $request->page,
+                    'page'  => strip_tags(filterInput($request->page)),
                     'response' => TwoWayResource::collection($data),
                 ]);
             }
@@ -65,9 +65,9 @@ class ApiTwoWayController extends Controller
         //     'message' => "User not found"
         // ]);
         if(is_numeric($request->value)){
-            $customer = Client::where('phone', $request->value)->where('user_id', auth()->user()->id)->first();
+            $customer = Client::where('phone', strip_tags(filterInput($request->value)))->where('user_id', auth()->user()->id)->first();
             if($customer){
-                $data = ModelsRequest::where('user_id', '=', auth()->user()->id)->where('client_id', $customer->uuid)->get();
+                $data = ModelsRequest::where('user_id', '=', auth()->user()->id)->where('client_id', strip_tags(filterInput($customer->uuid)))->get();
 
                 return response()->json([
                     'code' => 200,
@@ -80,9 +80,9 @@ class ApiTwoWayController extends Controller
                 'message' => "Client not found"
             ]);
         }elseif(strpos($request->value, '@')){
-            $customer = Client::where('email', $request->value)->where('user_id', auth()->user()->id)->first();
+            $customer = Client::where('email', strip_tags(filterInput($request->value)))->where('user_id', auth()->user()->id)->first();
             if($customer){
-                $data = ModelsRequest::where('user_id', '=', auth()->user()->id)->where('client_id', $customer->uuid)->get();
+                $data = ModelsRequest::where('user_id', '=', auth()->user()->id)->where('client_id', strip_tags(filterInput($customer->uuid)))->get();
 
                 return response()->json([
                     'code' => 200,
@@ -95,7 +95,7 @@ class ApiTwoWayController extends Controller
                 'message' => "Client not found"
             ]);
         }else{
-            $data = Campaign::where('uuid', $request->value)->where('user_id', auth()->user()->id)->first();
+            $data = Campaign::where('uuid', strip_tags(filterInput($request->value)))->where('user_id', auth()->user()->id)->first();
             if($data){
                 return response()->json([
                     'code' => 200,
@@ -130,10 +130,9 @@ class ApiTwoWayController extends Controller
         ]);
 
         try{
-            $provider = cache()->remember('provider-user-', $this->cacheDuration, function() use ($request) {
-                return ProviderUser::where('user_id', auth()->user()->id)->where('channel', $request->channel)->first();
+              $provider = cache()->remember('provider-user-'.auth()->user()->id.'-'.$request->channel, $this->cacheDuration, function() use ($request) {
+                return auth()->user()->providerUser->where('channel', strtoupper($request->channel))->first()->provider;
             });
-
             if($provider){
                 //$userCredention = ApiCredential::where("user_id", auth()->user()->id)->where("client", "api_sms_mk")->where("is_enabled", 1)->first();
                 //Log::channel('apilog')->info($request, [
@@ -172,16 +171,16 @@ class ApiTwoWayController extends Controller
                     if(count($phones)>1){
                         foreach($phones as $p){
                             $data = array(
-                                'type' => $request->type,
-                                'to' => trim($p),
-                                'from' => $request->from,
-                                'text' => $request->text,
-                                //'servid' => $request->servid,
-                                'channel' => $request->channel,
-                                'title' => $request->title,
-                                'otp' => $request->otp,
-                                'is_otp' => $request->otp,
-                                'provider' => $provider,
+                            'type' => strip_tags(filterInput($request->type)),
+                            'to' => strip_tags(filterInput(trim($p))),
+                            'from' => strip_tags(filterInput($request->from)),
+                            'text' => strip_tags(filterInput($request->text)),
+                            // 'servid' => strip_tags(filterInput($request->servid)),
+                            'channel' => strip_tags(filterInput($request->channel)),
+                            'title' => strip_tags(filterInput($request->title)),
+                            'otp' => strip_tags(filterInput($request->otp)),
+                            'is_otp' => strip_tags(filterInput($request->otp)),
+                            'provider' => strip_tags(filterInput($provider))
                             );
                             if($request->has('templateid')){
                                 $data['templateid'] = $request->templateid;
@@ -192,13 +191,13 @@ class ApiTwoWayController extends Controller
                         }
                     }else{
                         $data = array(
-                            'type' => $request->type,
-                            'to' => $request->to,
-                            'from' => $request->from,
-                            'text' => $request->text,
-                            'channel' => $request->channel,
-                            'is_otp' => $request->otp,
-                            'title' => $request->title,
+                            'type' => strip_tags(filterInput($request->type)),
+                            'to' => strip_tags(filterInput($request->to)),
+                            'from' => strip_tags(filterInput($request->from)),
+                            'text' => strip_tags(filterInput($request->text)),
+                            'channel' => strip_tags(filterInput($request->channel)),
+                            'is_otp' => strip_tags(filterInput($request->otp)),
+                            'title' => strip_tags(filterInput($request->title))
                         );
                         $chat = $this->saveResult($campaign, $data);
                         if($request->channel!='webchat')
@@ -246,20 +245,20 @@ class ApiTwoWayController extends Controller
      */
     private function campaignAdd($request){
         return Campaign::create([
-            'title'         => $request->title,
-            'channel'       => strtoupper($request->channel),
-            'provider'      => $request->provider,
-            'from'          => $request->from,
-            'to'            => $request->to,
-            'text'          => $request->text,
-            'is_otp'        => 0,
-            'request_type'  => 'api',
-            'status'        => 'starting',
-            'way_type'      => 2,
-            'type'          => $request->type,
-            'template_id'   => $request->templateid,
-            'user_id'       => auth()->user()->id,
-            'uuid'          => Str::uuid()
+           'title' => strip_tags(filterInput($request->title)),
+            'channel' => strtoupper(strip_tags(filterInput($request->channel))),
+            'provider' => strip_tags(filterInput($request->provider)),
+            'from' => strip_tags(filterInput($request->from)),
+            'to' => strip_tags(filterInput($request->to)),
+            'text' => strip_tags(filterInput($request->text)),
+            'is_otp' => 0,
+            'request_type' => 'api',
+            'status' => 'starting',
+            'way_type' => 2,
+            'type' => strip_tags(filterInput($request->type)),
+            'template_id' => strip_tags(filterInput($request->templateid)),
+            'user_id' => auth()->user()->id,
+            'uuid' => Str::uuid()
         ]);
     }
 

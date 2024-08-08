@@ -85,7 +85,7 @@ class Edit extends Component
         $this->userProvider = ProviderUser::with('provider')
             ->where('user_id', auth()->user()->id)
             ->get();
-        
+
         $selectProvider = [];
         $selectChannel = [];
         foreach($this->userProvider as $key => $up){
@@ -94,11 +94,11 @@ class Edit extends Component
         }
         $this->listProvider = $selectProvider;
         $this->listChannel = $selectChannel;
-        
+
         $this->userProvider->firstWhere('provider.code', $this->provider);
 
         $this->selectedProviderCode = $this->provider;
-        
+
         $userTemplates = Template::with('question')
             ->where('user_id', auth()->user()->id)
             ->get();
@@ -414,19 +414,19 @@ class Edit extends Component
 
         $campaign = Campaign::where('id', $id)->where('user_id', auth()->user()->id)->firstOrFail();
 
-        $campaign->update([
-            'title' => $this->title,
-            'type' => $this->type,
-            'way_type' => $this->way_type,
-            'budget' => $this->budget,
+    $campaign->update([
+            'title' => strip_tags(filterInput($this->title)),
+            'type' => strip_tags(filterInput($this->type)),
+            'way_type' => strip_tags(filterInput($this->way_type)),
+            'budget' => strip_tags(filterInput($this->budget)),
             'is_otp' => $this->is_otp,
-            'provider' => $this->provider,
-            'audience_id' => $this->audience_id,
-            'template_id' => $this->template_id,
-            'channel' => $this->channel,
-            'text' => $this->text,
-            'from' => $this->from,
-            'to' => $this->audience_id ? 'Audience-' . $this->audience_id : $this->to,
+            'provider' => strip_tags(filterInput($this->provider)),
+            'audience_id' => strip_tags(filterInput($this->audience_id)),
+            'template_id' => strip_tags(filterInput($this->template_id)),
+            'channel' => strip_tags(filterInput($this->channel)),
+            'text' => strip_tags(filterInput($this->text)),
+            'from' => strip_tags(filterInput($this->from)),
+            'to' => $this->audience_id ? 'Audience-' . strip_tags(filterInput($this->audience_id)) : strip_tags(filterInput($this->to)),
         ]);
 
         if ($formName == 'provider') {

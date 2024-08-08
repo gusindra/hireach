@@ -153,15 +153,15 @@ class ApiOneWayController extends Controller
             ]);
 
             if($provider){
-                $retriver = explode(",", $request->to);
-                Log::debug('retrive'. $retriver);
+                $retriver = explode(",", strip_tags(filterInput($request->to)));
+                // Log::debug('retrive'. $retriver);
                 $allretriver = $request->to;
                 $balance = (int)balance(auth()->user());
                 if($balance>500 && count($retriver)<$balance/1){
                     //CHECK OTP
                     //auto check otp / non otp type base on text
                     if(strpos(strtolower($request->channel), 'sms') !== false){
-                        $checkString = $request->text;
+                        $checkString = strip_tags(filterInput($request->text));
                         $otpWord = ['Angka Rahasia', 'Authorisation', 'Authorise', 'Authorization', 'Authorized', 'Code', 'Harap masukkan', 'Kata Sandi', 'Kode',' Kode aktivasi', 'konfirmasi', 'otentikasi', 'Otorisasi', 'Rahasia', 'Sandi', 'trx', 'unik', 'Venfikasi', 'KodeOTP', 'NewOtp', 'One-Time Password', 'Otorisasi', 'OTP', 'Pass', 'Passcode', 'PassKey', 'Password', 'PIN', 'verifikasi', 'insert current code', 'Security', 'This code is valid', 'Token', 'Passcode', 'Valid OTP', 'verification','Verification', 'login code', 'registration code', 'secunty code'];
                         if($request->otp){
                             $request->merge([
@@ -199,14 +199,14 @@ class ApiOneWayController extends Controller
                         //GROUP RETRIVER
                         foreach($phones as $p){
                             $data = array(
-                                'type' => $request->type,
-                                'to' => trim($p),
-                                'from' => $request->from,
-                                'text' => $request->text,
-                                'servid' => $request->servid,
-                                'title' => $request->title,
-                                'otp' => $request->otp,
-                                'provider' => $provider,
+                                'type' => strip_tags(filterInput($request->type)),
+                                'to' => strip_tags(filterInput(trim($p))),
+                                'from' => strip_tags(filterInput($request->from)),
+                                'text' => strip_tags(filterInput($request->text)),
+                                'servid' => strip_tags(filterInput($request->servid)),
+                                'title' => strip_tags(filterInput($request->title)),
+                                'otp' => strip_tags(filterInput($request->otp)),
+                                'provider' => strip_tags(filterInput($provider)),
                             );
                             if($request->has('templateid')){
                                 $data['templateid'] = $request->templateid;
@@ -308,25 +308,27 @@ class ApiOneWayController extends Controller
      * @param  mixed $request
      * @return object $campaign
      */
-    private function campaignAdd($request, $audience_id=null){
-        return Campaign::create([
-            'title'         => $request->title,
-            'channel'       => strtoupper($request->channel),
-            'provider'      => $request->provider->code,
-            'from'          => $request->from,
-            'to'            => $audience_id ? 'Audience:'.$audience_id : $request->to,
-            'audience_id'   => $audience_id,
-            'text'          => $request->text,
-            'is_otp'        => $request->otp ?? '',
-            'request_type'  => 'api',
-            'status'        => 'starting',
-            'way_type'      => 1,
-            'type'          => $request->type,
-            'template_id'   => $request->templateid,
-            'user_id'       => auth()->user()->id,
-            'uuid'          => Str::uuid()
-        ]);
-    }
+ private function campaignAdd($request, $audience_id = null)
+{
+    return Campaign::create([
+        'title'         => strip_tags(filterInput($request->title)),
+        'channel'       => strtoupper(strip_tags(filterInput($request->channel))),
+        'provider'      => strip_tags(filterInput($request->provider->code)),
+        'from'          => strip_tags(filterInput($request->from)),
+        'to'            => $audience_id ? 'Audience:'.strip_tags(filterInput($audience_id)) : strip_tags(filterInput($request->to)),
+        'audience_id'   => strip_tags(filterInput($audience_id)),
+        'text'          => strip_tags(filterInput($request->text)),
+        'is_otp'        => strip_tags(filterInput($request->otp ?? '')),
+        'request_type'  => 'api',
+        'status'        => 'starting',
+        'way_type'      => 1,
+        'type'          => strip_tags(filterInput($request->type)),
+        'template_id'   => strip_tags(filterInput($request->templateid)),
+        'user_id'       => auth()->user()->id,
+        'uuid'          => Str::uuid()
+    ]);
+}
+
 
 
     /**
@@ -421,14 +423,14 @@ class ApiOneWayController extends Controller
                         foreach ($phones as $p) {
                             //Log::info('Processing phone: ' . $p);
                             $data = [
-                                'type' => $request->type,
-                                'to' => trim($p),
-                                'from' => $request->from,
-                                'text' => $request->text,
-                                'servid' => $request->servid,
-                                'title' => $request->title,
-                                'otp' => $request->otp,
-                                'provider' => $provider,
+                                  'type'      => strip_tags(filterInput($request->type)),
+                                    'to'        => strip_tags(filterInput(trim($p))),
+                                    'from'      => strip_tags(filterInput($request->from)),
+                                    'text'      => strip_tags(filterInput($request->text)),
+                                    'servid'    => strip_tags(filterInput($request->servid)),
+                                    'title'     => strip_tags(filterInput($request->title)),
+                                    'otp'       => strip_tags(filterInput($request->otp)),
+                                    'provider'  => strip_tags(filterInput($provider)),
                             ];
 
                             if ($request->has('templateid')) {
@@ -514,7 +516,7 @@ class ApiOneWayController extends Controller
 
             if (empty($input->audience_id)) {
                 $input->audience = Audience::create([
-                    'name'        => $input->title,
+                    'name'        => strip_tags(filterInput($input->title)),
                     'description' => 'This Audience Created Automatically from Campaign',
                     'user_id'     => auth()->user()->id,
                 ]);

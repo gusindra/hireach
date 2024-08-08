@@ -80,12 +80,10 @@ class TopupUser extends Component
                 return Setting::where('key', 'vat')->latest()->first();
             });
 
+
         }
-
-
-
         $this->validate();
-        try {
+
             $order = Order::create($this->dataOrder());
             if ($order) {
                 OrderProduct::updateOrCreate(
@@ -117,15 +115,9 @@ class TopupUser extends Component
                     ]
                 );
             }
-
             //ProcessEmail::dispatch($order, 'create_order');
-
             return redirect()->to('/payment/invoice/' . $order->id);
-        } catch (\Throwable $th) {
-            //throw $th;
-            dd('Mohon Tambahkan VAT pada setting');
-        }
-        $this->emit('fail');
+
     }
 
     public function onClickNominal($value)

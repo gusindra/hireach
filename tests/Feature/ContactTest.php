@@ -46,7 +46,7 @@ class ContactTest extends TestCase
         $client = Client::latest()->first();
 
         Livewire::actingAs($user)
-            ->test('contact.profile', ['user' => $client->id])
+            ->test('contact.profile', ['user' => $client])
             ->set('inputuser.name', 'John Doe Updated')
             ->set('inputuser.email', 'john@example.com')
             ->set('inputuser.phone', '987654321')

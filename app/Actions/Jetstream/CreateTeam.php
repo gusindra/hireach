@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Validator;
 use Laravel\Jetstream\Contracts\CreatesTeams;
 use Laravel\Jetstream\Events\AddingTeam;
 use Laravel\Jetstream\Jetstream;
+use Illuminate\Support\Str;
 
 class CreateTeam implements CreatesTeams
 {
@@ -27,9 +28,11 @@ class CreateTeam implements CreatesTeams
 
         AddingTeam::dispatch($user);
 
+        $slug = $this->generateUniqueSlug($input['name']);
+
         $user->switchTeam($team = $user->ownedTeams()->create([
             'name' => $input['name'],
-            'slug' => slugify($input['name']),
+            'slug' => $slug,
             'personal_team' => false,
         ]));
 
@@ -43,5 +46,25 @@ class CreateTeam implements CreatesTeams
         );
 
         return $team;
+    }
+
+    /**
+     * Generate a unique slug for the team.
+     *
+     * @param  string  $name
+     * @return string
+     */
+    protected function generateUniqueSlug($name)
+    {
+        $slug = slugify($name);
+        $originalSlug = $slug;
+
+        $i = 1;
+        while (Jetstream::newTeamModel()->where('slug', $slug)->exists()) {
+            $slug = $originalSlug . '-' . Str::random(5);
+            $i++;
+        }
+
+        return $slug;
     }
 }

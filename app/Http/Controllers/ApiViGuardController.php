@@ -75,7 +75,7 @@ class ApiViGuardController extends Controller
                             'templateid' => $template->id,
                             'otp' => checkContentOtp($action->message)
                         ];
-                        
+
                         if($request->channel=='email'){
                             $reqArr = json_encode($data);
                             //THIS WILL QUEUE EMAIL JOB
@@ -97,9 +97,9 @@ class ApiViGuardController extends Controller
                                     'code' => 401
                                 ]);
                             }
-                                
+
                         }
-        
+
                     }
                     return response()->json([
                         'message' => "Successful",
@@ -135,7 +135,7 @@ class ApiViGuardController extends Controller
             'code' => 400
         ]);
     }
-        
+
     /**
      * convertText
      *
@@ -155,7 +155,7 @@ class ApiViGuardController extends Controller
         }
         return bind_to_template($variable, $action);
     }
-    
+
     /**
      * post new chat
      *
@@ -218,7 +218,7 @@ class ApiViGuardController extends Controller
                                 'templateid' => $template->id,
                                 'otp' => checkContentOtp($action->message)
                             ];
-        
+
                             if($channel=='email'){
                                 $reqArr = json_encode($data[$key]);
                                 //THIS WILL QUEUE EMAIL JOB
@@ -240,7 +240,7 @@ class ApiViGuardController extends Controller
                                         'code' => 401
                                     ]);
                                 }
-                                    
+
                             }
                         }
                         //Return API Respon
@@ -279,7 +279,7 @@ class ApiViGuardController extends Controller
             'code' => 500
         ]);
     }
-    
+
     /**
      * getDeptList
      *
@@ -322,7 +322,7 @@ class ApiViGuardController extends Controller
             ]);
         }
     }
-    
+
     /**
      * getMonitoringDevice
      *
@@ -353,14 +353,14 @@ class ApiViGuardController extends Controller
         try{
             $customer = Client::where('tag', $request->uniqueTag)->first();
 
-            
+
             if($customer){
                 if($customer->source=='email'){
-                    $channel = 'email'; 
+                    $channel = 'email';
                     $to = $customer->email;
                     $from = 'alert@hireach.archeeshop.com';
                 }else{
-                    $channel = 'sms'; 
+                    $channel = 'sms';
                     $to = $customer->phone;
                     $from = '081339668556';
                 }
@@ -382,7 +382,7 @@ class ApiViGuardController extends Controller
                             'templateid' => $template->id,
                             'otp' => checkContentOtp($action->message)
                         ];
-    
+
                         if($channel=='email'){
                             $reqArr = json_encode($data[$key]);
                             //THIS WILL QUEUE EMAIL JOB
@@ -404,7 +404,7 @@ class ApiViGuardController extends Controller
                                     'code' => 401
                                 ]);
                             }
-                                
+
                         }
                     }
                     //Return API Respon

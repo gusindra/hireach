@@ -39,10 +39,10 @@ class EditTemplate extends Component
     public function modelData()
     {
         return [
-            'name' => $this->name,
-            'description' => $this->description,
-            'is_enabled' => $this->is_enabled,
-            'is_wait_for_chat' => $this->is_waiting,
+            'name' => strip_tags(filterInput($this->name)),
+            'description' => strip_tags(filterInput($this->description)),
+            'is_enabled' => (bool) strip_tags(filterInput($this->is_enabled)),
+            'is_wait_for_chat' => (bool) strip_tags(filterInput($this->is_waiting)),
         ];
     }
 

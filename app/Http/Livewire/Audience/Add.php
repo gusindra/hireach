@@ -62,8 +62,8 @@ class Add extends Component
     public function modelData()
     {
         $data = [
-            'name'          => $this->input['name'],
-            'description'   => $this->input['description'],
+            'name'          => strip_tags(filterInput($this->input['name'])),
+            'description'   => strip_tags(filterInput($this->input['description'])),
             'user_id'      => auth()->user()->id,
         ];
         return $data;
