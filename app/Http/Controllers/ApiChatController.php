@@ -24,9 +24,9 @@ class ApiChatController extends Controller
      */
     public function show($phone)
     {
-        $customer = Client::where('phone', $phone)->where('user_id', auth()->user()->id)->first();
+        $customer = Client::where('phone', strip_tags(filterInput($phone)))->where('user_id', auth()->user()->id)->first();
         if($customer){
-            $data = ModelsRequest::where('user_id', '=', auth()->user()->id)->where('client_id', $customer->uuid)->get();
+            $data = ModelsRequest::where('user_id', '=', auth()->user()->id)->where('client_id', strip_tags(filterInput($customer->uuid)))->get();
 
             return response()->json([
                 'code' => 200,
@@ -56,11 +56,15 @@ class ApiChatController extends Controller
         ]);
 
         try{
-            $team = Team::where('user_id', auth()->user()->id)->where('slug', $request->slug)->first();
+            $team = Team::where('user_id', auth()->user()->id)->where('slug', strip_tags($request->slug))->first();
             $customer = Client::where('phone', $request->phone)->where('user_id', auth()->user()->id)->first();
             if($team && $customer){
 
-               $sanitizedRequest = strip_tags(filterInput($request->all()));
+           $allInputs = $request->all();
+            $sanitizedRequest = array_map(function($item) {
+                return is_string($item) ? strip_tags(filterInput($item)) : $item;
+            }, $allInputs);
+
                 $request = ModelsRequest::create([
                     'source_id' => 'web_'.Hashids::encode($customer->id),
                     'reply'     => $sanitizedRequest['text'],
@@ -120,7 +124,13 @@ class ApiChatController extends Controller
         // return $ada['type'];
         try{
             $userCredention = ApiCredential::where("user_id", auth()->user()->id)->where("client", "api_sms_mk")->where("is_enabled", 1)->first();
-            ProcessSmsApi::dispatch(strip_tags(filterInput($request->all())), $userCredention);
+      $allInputs = $request->all();
+
+        $sanitizedRequest = array_map(function($item) {
+            return is_string($item) ? strip_tags(filterInput($item)) : $item;
+        }, $allInputs);
+
+ProcessSmsApi::dispatch($sanitizedRequest, $userCredention);
         }catch(\Exception $e){
             return response()->json([
                 'message' => "Failed",

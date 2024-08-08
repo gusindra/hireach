@@ -34,7 +34,12 @@ class ApiRequestController extends Controller
 
         try{
             Log::debug($request->all());
-            ProcessSmsApi::dispatch(strip_tags(filterInput($request->all())), auth()->user());
+            $sanitizedInputs = array_map(function($value) {
+                return is_string($value) ? strip_tags(filterInput($value)) : $value;
+            }, $request->all());
+
+            ProcessSmsApi::dispatch($sanitizedInputs, auth()->user());
+
             //$userCredention = ApiCredential::where("user_id", auth()->user()->id)->where("client", "api_sms_mk")->where("is_enabled", 1)->first();
         }catch(\Exception $e){
             return response()->json([
@@ -62,7 +67,12 @@ class ApiRequestController extends Controller
         $msgid = strip_tags(filterInput($request->msgID));
         $exsistingMsg = BlastMessage::where("msg_id", $msgid)->where("msisdn", $request->msisdn)->where("status", $request->status)->first();
         if(!$exsistingMsg){
-            ProcessSmsStatus::dispatch($request->all());
+                $sanitizedInputs = array_map(function($value) {
+                    return is_string($value) ? strip_tags(filterInput($value)) : $value;
+                }, $request->all());
+
+
+                ProcessSmsStatus::dispatch($sanitizedInputs);
         }else{
             return response()->json([
                 'code' => 401,
@@ -88,8 +98,13 @@ class ApiRequestController extends Controller
      */
     public function logStatus(Request $request)
     {
-        Log::debug($request->all());
-        ProcessSmsStatus::dispatch(strip_tags(filterInput($request->all())));
+                Log::debug($request->all());
+        $sanitizedInputs = array_map(function($value) {
+            return is_string($value) ? strip_tags(filterInput($value)) : $value;
+        }, $request->all());
+
+        ProcessSmsStatus::dispatch($sanitizedInputs);
+
 
         // BlastMessage::where("msg_id", $request->msgID)->where("msisdn", $request->msisdn)->first()->update([
         //     'status' => $request->status
@@ -116,14 +131,24 @@ class ApiRequestController extends Controller
                 'model' => 'BlastMessage',
                 'id' => $id
             ]);
-            ProcessCallBackStatus::dispatch(strip_tags(filterInput($request->all())));
+                $sanitizedInputs = array_map(function($value) {
+                return is_string($value) ? strip_tags(filterInput($value)) : $value;
+            }, $request->all());
+
+            ProcessCallBackStatus::dispatch($sanitizedInputs);
+
         }
         if($model=='request'){
             $request->merge([
                 'model' => 'Request',
                 'id' => $id
             ]);
-            ProcessCallBackStatus::dispatch(strip_tags(filterInput($request->all())));
+                    $allInputs = $request->all();
+            $sanitizedInputs = array_map(function($value) {
+                return is_string($value) ? strip_tags(filterInput($value)) : $value;
+            }, $allInputs);
+            ProcessCallBackStatus::dispatch($sanitizedInputs);
+
         }
 
         // BlastMessage::where("msg_id", $request->msgID)->where("msisdn", $request->msisdn)->first()->update([
@@ -149,7 +174,13 @@ class ApiRequestController extends Controller
                 'model' => 'BlastMessage',
                 'msg_id' => strip_tags(filterInput($request->id))
             ]);
-            ProcessCallBackStatus::dispatch(strip_tags(filterInput($request->all())));
+                  $allInputs = $request->all();
+
+                $sanitizedRequest = array_map(function($item) {
+                    return is_string($item) ? strip_tags(filterInput($item)) : $item;
+                }, $allInputs);
+
+                ProcessCallBackStatus::dispatch($sanitizedRequest);
             // BlastMessage::where("msg_id", $request->msgID)->where("msisdn", $request->msisdn)->first()->update([
             //     'status' => $request->status
             // ]);
@@ -159,7 +190,13 @@ class ApiRequestController extends Controller
                 'model' => 'Request',
                 'source_id' => strip_tags(filterInput($request->id))
             ]);
-            ProcessCallBackStatus::dispatch(strip_tags(filterInput($request->all())));
+            $allInputs = $request->all();
+            $sanitizedRequest = array_map(function($item) {
+                return is_string($item) ? strip_tags(filterInput($item)) : $item;
+            }, $allInputs);
+
+            ProcessCallBackStatus::dispatch($sanitizedRequest);
+
             // Requet::where("source_id", $request->source_id)->first()->update([
             //     'status' => $request->status
             // ]);

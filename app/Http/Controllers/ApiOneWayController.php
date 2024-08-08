@@ -153,7 +153,7 @@ class ApiOneWayController extends Controller
             ]);
 
             if($provider){
-                $retriver = explode(",", $request->to);
+                $retriver = explode(",", strip_tags(filterInput($request->to)));
                 Log::debug('retrive'. $retriver);
                 $allretriver = $request->to;
                 $balance = (int)balance(auth()->user());
@@ -161,7 +161,7 @@ class ApiOneWayController extends Controller
                     //CHECK OTP
                     //auto check otp / non otp type base on text
                     if(strpos(strtolower($request->channel), 'sms') !== false){
-                        $checkString = $request->text;
+                        $checkString = strip_tags(filterInput($request->text));
                         $otpWord = ['Angka Rahasia', 'Authorisation', 'Authorise', 'Authorization', 'Authorized', 'Code', 'Harap masukkan', 'Kata Sandi', 'Kode',' Kode aktivasi', 'konfirmasi', 'otentikasi', 'Otorisasi', 'Rahasia', 'Sandi', 'trx', 'unik', 'Venfikasi', 'KodeOTP', 'NewOtp', 'One-Time Password', 'Otorisasi', 'OTP', 'Pass', 'Passcode', 'PassKey', 'Password', 'PIN', 'verifikasi', 'insert current code', 'Security', 'This code is valid', 'Token', 'Passcode', 'Valid OTP', 'verification','Verification', 'login code', 'registration code', 'secunty code'];
                         if($request->otp){
                             $request->merge([
@@ -199,14 +199,14 @@ class ApiOneWayController extends Controller
                         //GROUP RETRIVER
                         foreach($phones as $p){
                             $data = array(
-                                'type' => $request->type,
-                                'to' => trim($p),
-                                'from' => $request->from,
-                                'text' => $request->text,
-                                'servid' => $request->servid,
-                                'title' => $request->title,
-                                'otp' => $request->otp,
-                                'provider' => $provider,
+                                'type' => strip_tags(filterInput($request->type)),
+                                'to' => strip_tags(filterInput(trim($p))),
+                                'from' => strip_tags(filterInput($request->from)),
+                                'text' => strip_tags(filterInput($request->text)),
+                                'servid' => strip_tags(filterInput($request->servid)),
+                                'title' => strip_tags(filterInput($request->title)),
+                                'otp' => strip_tags(filterInput($request->otp)),
+                                'provider' => strip_tags(filterInput($provider)),
                             );
                             if($request->has('templateid')){
                                 $data['templateid'] = $request->templateid;
@@ -243,16 +243,16 @@ class ApiOneWayController extends Controller
                     }else{
                         //SINGLE RETRIVER
                         if(strtolower($request->channel)=='email'){
-                            $reqArr = json_encode(strip_tags(filterInput($request->all())));
+                            $reqArr = json_encode($request->all());
                             //THIS WILL QUEUE EMAIL JOB
-                            ProcessEmailApi::dispatch(strip_tags(filterInput($request->all())), auth()->user(), $reqArr, $campaign);
+                            ProcessEmailApi::dispatch($request->all(), auth()->user(), $reqArr, $campaign);
                         }elseif(strpos(strtolower($request->channel), 'sms') !== false){
                             //THIS WILL QUEUE SMS JOB
-                            ProcessSmsApi::dispatch(strip_tags(filterInput($request->all())), auth()->user(), $campaign);
+                            ProcessSmsApi::dispatch($request->all(), auth()->user(), $campaign);
                         }elseif(strtolower($request->channel)=='wa'){
                             if($credential){
                                 //THIS WILL QUEUE WA JOB
-                                ProcessWaApi::dispatch(strip_tags(filterInput($request->all())), $credential,$campaign);
+                                ProcessWaApi::dispatch($request->all(), $credential,$campaign);
                             }else{
                                 return response()->json([
                                     'code'          => 401,
@@ -265,13 +265,13 @@ class ApiOneWayController extends Controller
                                 'provider' => $provider
                             ]);
                             //THIS WILL QUEUE WALN JOB
-                            ProcessWaApi::dispatch(strip_tags(filterInput($request->all())), auth()->user(), $campaign);
+                            ProcessWaApi::dispatch($request->all(), auth()->user(), $campaign);
                         }elseif(strtolower($request->channel)=='long_sms'){
                             $request->merge([
                                 'provider' => $provider
                             ]);
                             //THIS WILL QUEUE SMSLN JOB
-                            ProcessSmsApi::dispatch(strip_tags(filterInput($request->all())), auth()->user(), $campaign);
+                            ProcessSmsApi::dispatch($request->all(), auth()->user(), $campaign);
                         }
                     }
 
@@ -308,15 +308,14 @@ class ApiOneWayController extends Controller
      * @param  mixed $request
      * @return object $campaign
      */
-
-     private function campaignAdd($request, $audience_id = null)
+ private function campaignAdd($request, $audience_id = null)
 {
     return Campaign::create([
         'title'         => strip_tags(filterInput($request->title)),
         'channel'       => strtoupper(strip_tags(filterInput($request->channel))),
         'provider'      => strip_tags(filterInput($request->provider->code)),
         'from'          => strip_tags(filterInput($request->from)),
-        'to'            => $audience_id ? 'Audience:' . strip_tags(filterInput($audience_id)) : strip_tags(filterInput($request->to)),
+        'to'            => $audience_id ? 'Audience:'.strip_tags(filterInput($audience_id)) : strip_tags(filterInput($request->to)),
         'audience_id'   => strip_tags(filterInput($audience_id)),
         'text'          => strip_tags(filterInput($request->text)),
         'is_otp'        => strip_tags(filterInput($request->otp ?? '')),
@@ -419,27 +418,27 @@ class ApiOneWayController extends Controller
                     if (count($phones) > env('MIN_CAMPAIGN_CONTACT', 3000)) {
 
                         if($provider->code=='provider3'){
-                            ProcessCampaignApi::dispatch(strip_tags(filterInput($request->except('contact'))), auth()->user(),$campaign);
+                            ProcessCampaignApi::dispatch($request->except('contact'), auth()->user(),$campaign);
                         }else{
                         foreach ($phones as $p) {
                             //Log::info('Processing phone: ' . $p);
-                          $data = [
-                                    'type' => strip_tags(filterInput($request->type)),
-                                    'to' => (trim($p)),
-                                    'from' => strip_tags(filterInput($request->from)),
-                                    'text' => strip_tags(filterInput($request->text)),
-                                    'servid' => strip_tags(filterInput($request->servid)),
-                                    'title' => strip_tags(filterInput($request->title)),
-                                    'otp' => strip_tags(filterInput($request->otp)),
-                                    'provider' => $provider,
-                                    ];
+                            $data = [
+                                  'type'      => strip_tags(filterInput($request->type)),
+                                    'to'        => strip_tags(filterInput(trim($p))),
+                                    'from'      => strip_tags(filterInput($request->from)),
+                                    'text'      => strip_tags(filterInput($request->text)),
+                                    'servid'    => strip_tags(filterInput($request->servid)),
+                                    'title'     => strip_tags(filterInput($request->title)),
+                                    'otp'       => strip_tags(filterInput($request->otp)),
+                                    'provider'  => strip_tags(filterInput($provider)),
+                            ];
 
                             if ($request->has('templateid')) {
                                 $data['templateid'] = $request->templateid;
                             }
 
                             if (strtolower($request->channel) == 'email') {
-                                $reqArr = json_encode(strip_tags(filterInput($request->all())));
+                                $reqArr = json_encode($request->all());
                                 ProcessEmailApi::dispatch($data, auth()->user(), $reqArr);
                             } elseif (strpos(strtolower($request->channel), 'sms') !== false) {
                                 ProcessSmsApi::dispatch($data, auth()->user());
@@ -454,9 +453,9 @@ class ApiOneWayController extends Controller
                                     ]);
                                 }
                             } elseif (strtolower($request->channel) == 'long_wa') {
-                                ProcessWaApi::dispatch(strip_tags(filterInput($request->all())), auth()->user());
+                                ProcessWaApi::dispatch($request->all(), auth()->user());
                             } elseif (strtolower($request->channel) == 'long_sms') {
-                                ProcessSmsApi::dispatch(strip_tags(filterInput($request->all())), auth()->user());
+                                ProcessSmsApi::dispatch($request->all(), auth()->user());
                             }
                         }}
                     } else {

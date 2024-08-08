@@ -203,7 +203,12 @@ class ApiTwoWayController extends Controller
                         );
                         $chat = $this->saveResult($campaign, $data);
                         if($request->channel!='webchat')
-                            ProcessChatApi::dispatch(strip_tags(filterInput($request->all())), $credential, $chat);
+                        $sanitizedData = array_map(function($value) {
+                    return is_array($value) ? array_map('strip_tags', array_map('filterInput', $value)) : strip_tags(filterInput($value));
+                }, $request->all());
+
+                ProcessChatApi::dispatch($sanitizedData, $credential, $chat);
+
                     }
 
                     return response()->json([
@@ -403,12 +408,22 @@ class ApiTwoWayController extends Controller
             if($request->shortcode){
                 //MK SHORT CODE MO
                 // $this->saveResult(null, $request, $prvMsg);
-                ProcessInboundMessage::dispatch(strip_tags(filterInput($request->all())), $prvMsg);
+                    $sanitizedData = array_map(function($value) {
+                    return is_array($value) ? array_map('strip_tags', array_map('filterInput', $value)) : strip_tags(filterInput($value));
+                }, $request->all());
+
+                ProcessInboundMessage::dispatch($sanitizedData, $prvMsg);
+
                 $status=1;
             }elseif($request->longcode){
                 //MK LONG CODE MO
                 // $this->saveResult(null, $request, $prvMsg);
-                ProcessInboundMessage::dispatch(strip_tags(filterInput($request->all())), $prvMsg);
+                 $sanitizedData = array_map(function($value) {
+                    return strip_tags(filterInput($value));
+                }, $request->all());
+
+                // Dispatch dengan data yang sudah disanitasi
+                ProcessInboundMessage::dispatch($sanitizedData, $prvMsg);
                 $status=1;
             }
         }

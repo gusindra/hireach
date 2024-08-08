@@ -65,15 +65,15 @@ class ApiViGuardController extends Controller
                     foreach($template->actions as $key => $action){
                         // send request using template prt action
                         $data[$key] = [
-                            'channel' => $channel,
-                            'provider' => $provider,
-                            'to' => $to,
-                            'from' => $from,
+                            'channel' => strip_tags(filterInput($channel)),
+                            'provider' => strip_tags(filterInput($provider)),
+                            'to' => strip_tags(filterInput($to)),
+                            'from' => strip_tags(filterInput($from)),
                             'type' => 0,
-                            'title' => $request->alarmDetails,
-                            'text' => $this->convertText($request, $action->message),
-                            'templateid' => $template->id,
-                            'otp' => checkContentOtp($action->message)
+                            'title' => strip_tags(filterInput($request->alarmDetails)),
+                       '    text' => $this->convertText($request, $action->message),
+                            'templateid' => strip_tags(filterInput($template->id)),
+                                 'otp' => checkContentOtp($action->message)
                         ];
 
                         if($request->channel=='email'){

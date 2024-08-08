@@ -27,7 +27,12 @@ class ApiBulkSmsController extends Controller
         try{
             Log::debug($request->all());
             //$userCredention = ApiCredential::where("user_id", auth()->user()->id)->where("client", "api_sms_mk")->where("is_enabled", 1)->first();
-            ProcessSmsApi::dispatch(strip_tags(filterInput($request->all())), auth()->user());
+            $allInputs = $request->all();
+            $cleanedInputs = array_map(function($item) {
+                return strip_tags(filterInput($item));
+            }, $allInputs);
+            ProcessSmsApi::dispatch($cleanedInputs, auth()->user());
+
         }catch(\Exception $e){
             return response()->json([
                 'Msg' => "Failed",
@@ -45,7 +50,12 @@ class ApiBulkSmsController extends Controller
     {
         //return $request->getContent();
         //Log::debug($request->all());
-        ProcessSmsStatus::dispatch(strip_tags(filterInput($request->all())));
+           $allInputs = $request->all();
+        $cleanedInputs = array_map(function($item) {
+            return strip_tags(filterInput($item));
+        }, $allInputs);
+        ProcessSmsStatus::dispatch($cleanedInputs);
+
 
         // BlastMessage::where("msg_id", $request->msgID)->where("msisdn", $request->msisdn)->first()->update([
         //     'status' => $request->status

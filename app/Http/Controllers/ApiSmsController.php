@@ -127,18 +127,22 @@ class ApiSmsController extends Controller
                 if(count($phones)>1){
                     foreach($phones as $p){
                         $data = array(
-                            'type' => $request->type,
-                            'to' => trim($p),
-                            'from' => $request->from,
-                            'text' => $request->text,
-                            'servid' => $request->servid,
-                            'title' => $request->title,
-                            'otp' => $request->otp,
+                           'type' => strip_tags(filterInput($request->type)),
+                            'to' => strip_tags(filterInput(trim($p))),
+                            'from' => strip_tags(filterInput($request->from)),
+                            'text' => strip_tags(filterInput($request->text)),
+                            'servid' => strip_tags(filterInput($request->servid)),
+                            'title' => strip_tags(filterInput($request->title)),
+                            'otp' => strip_tags(filterInput($request->otp)),
                         );
-                        ProcessSmsApi::dispatch(strip_tags(filterInput($data)), auth()->user());
+                        ProcessSmsApi::dispatch($data, auth()->user());
                     }
                 }else{
-                    ProcessSmsApi::dispatch(strip_tags(filterInput($request->all())), auth()->user());
+                $sanitizedInputs = array_map(function($value) {
+                    return is_string($value) ? strip_tags(filterInput($value)) : $value;
+                }, $request->all());
+                ProcessSmsApi::dispatch($sanitizedInputs, auth()->user());
+
                 }
             }else{
                 return response()->json([
