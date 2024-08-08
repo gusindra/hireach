@@ -21,7 +21,7 @@ class Profile extends Component
     public function mount($user)
     {
 
-        $this->user = Client::find($user);
+        $this->user = $user;
 
         $this->inputuser = [
             'name' => $this->user->name ?? '',
@@ -40,6 +40,12 @@ class Profile extends Component
         //dd($this->inputuser);
     }
 
+    /**
+     * saveUser
+     *
+     * @param  mixed $id
+     * @return void
+     */
     public function saveUser($id)
     {
         //dd($this->inputuser);
@@ -49,24 +55,34 @@ class Profile extends Component
                 'email' => $this->inputuser['email']
             ]);
         }
-        $user->update([
-        'sender' => strip_tags(filterInput($this->inputuser['sender'])),
-        'name' => strip_tags(filterInput($this->inputuser['name'])),
-        'phone' => strip_tags(filterInput($this->inputuser['phone'])),
-        'identity' => strip_tags(filterInput($this->inputuser['identity'])),
-        'user_id' => strip_tags(filterInput($this->inputuser['user_id'])),
-        'note' => strip_tags(filterInput($this->inputuser['note'])),
-        'tag' => strip_tags(filterInput($this->inputuser['tag'])),
-        'source' => strip_tags(filterInput($this->inputuser['source'])),
-        'email' => strip_tags(filterInput($this->inputuser['email'])),
-        'address' => strip_tags(filterInput($this->inputuser['address'])),
-        'title' => strip_tags(filterInput($this->inputuser['title'])),
-    ]);
+        if($this->inputuser['name'] != $user->name || $this->inputuser['phone'] != $user->phone || $this->inputuser['email'] != $user->email || $this->inputuser['title'] != $user->title){
+            $user->update([
+                'name' => $this->inputuser['name'],
+                'phone' => $this->inputuser['phone'],
+                'email' => $this->inputuser['email'],
+                'title' => $this->inputuser['title']
+            ]);
+            $this->emit('user_saved');
+        }
+        if($this->inputuser['sender'] != $user->sender || $this->inputuser['identity'] != $user->identity || $this->inputuser['note'] != $user->note || $this->inputuser['tag'] != $user->tag || $this->inputuser['source'] != $user->source || $this->inputuser['address'] != $user->address){
+            $user->update([
+                'sender' => $this->inputuser['sender'],
+                'identity' => $this->inputuser['identity'],
+                'note' => $this->inputuser['note'],
+                'tag' => $this->inputuser['tag'],
+                'source' => $this->inputuser['source'],
+                'address' => $this->inputuser['address']
+            ]);
+            $this->emit('client_saved');
+        }
 
-
-        $this->emit('user_saved');
     }
 
+    /**
+     * saveClient
+     *
+     * @return void
+     */
     public function saveClient()
     {
         if ($this->user->isClient) {

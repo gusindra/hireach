@@ -25,7 +25,6 @@ class ProductLineTable extends LivewireDatatable
             })->label('Name')->searchable(),
             Column::name('type')->label('type')->searchable(),
             Column::name('company.name')->label('company')->searchable(),
-
             NumberColumn::name('id')->label('Action')->sortBy('id')->callback('id', function ($value) {
                 // return view('datatables::link', [
                 //     'href' => "/admin/setting/product-line/" . $value,
