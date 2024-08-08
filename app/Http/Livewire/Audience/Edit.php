@@ -10,7 +10,7 @@ use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Livewire\Component;
 use Illuminate\Support\Str;
 
-class Profile extends Component
+class Edit extends Component
 {
     use AuthorizesRequests;
     public $user;
@@ -34,17 +34,19 @@ class Profile extends Component
     /**
      * saveUser
      *
-     * @param  mixed $id
      * @return void
      */
     public function saveUser($id)
     {
-        $user = Audience::find($id);
+
+        $user = Audience::find($this->user->id);
         $user->update([
-            'name' => $this->inputuser['name'],
-            'description' => $this->inputuser['description'],
+            'name' => strip_tags(filterInput($this->inputuser['name'])),
+            'description' => strip_tags(filterInput($this->inputuser['description'])),
         ]);
-        $this->emit('user_saved');
+
+            $this->emit('audience_saved');
+
     }
 
     /**
