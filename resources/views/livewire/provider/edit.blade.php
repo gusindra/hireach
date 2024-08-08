@@ -1,4 +1,43 @@
 <div>
+    <x-jet-form-section submit="updateStatus({{ $provider->id }})">
+        <x-slot name="title">
+            {{ __('Status Provider') }}
+        </x-slot>
+
+        <x-slot name="description">
+            {{ __('This is for Enable / Disable Provider.') }}
+        </x-slot>
+
+        <x-slot name="form">
+            <div class="col-span-6">
+                <h3 class="text-lg font-medium text-gray-900 dark:text-slate-300">
+                    You have {{$status?'':'not'}} enabled <span class="uppercase">{{$provider->name}}</span>.
+                </h3>
+                <div class="mt-3 max-w-xl text-sm text-gray-600 dark:text-slate-300">
+                    <p>
+                        When this provider is enabled, system will able to sending message via channel set by this provider and {{$status?'active used':'will used'}} by {{count($provider->users)}} of clients.
+                    </p>
+                </div>
+            </div>
+        </x-slot>
+
+        <x-slot name="actions">
+            <x-jet-action-message class="mr-3" on="updated">
+                {{ __('Provider updated.') }}
+            </x-jet-action-message>
+            @if(!$status)
+            <x-jet-button :disabled="!userAccess('PROVIDER', 'delete')" class="">
+                {{ __('Enable') }}
+            </x-jet-button>
+            @else
+            <x-jet-button :disabled="!userAccess('PROVIDER', 'delete')" class="bg-red-600">
+                {{ __('Disable') }}
+            </x-jet-button>
+            @endif
+        </x-slot>
+    </x-jet-form-section>
+
+    <x-jet-section-border />
 
     <x-jet-form-section submit="update({{ $provider->id }})">
         <x-slot name="title">
@@ -70,6 +109,7 @@
     <x-jet-section-border />
     @livewire('provider.add-setting-provider', ['provider' => $provider])
     <x-jet-section-border />
+
     <x-jet-form-section submit="actionShowDeleteModal">
         <x-slot name="title">
             {{ __('Delete Provider') }}

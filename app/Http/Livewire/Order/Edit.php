@@ -6,6 +6,7 @@ use App\Models\Billing;
 use App\Models\Client;
 use App\Models\Order;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Livewire\Component;
 use Illuminate\Support\Str;
@@ -48,10 +49,16 @@ class Edit extends Component
     public $selectedId = null;
     public $disable = false;
     public $nominal_view;
+    public $paid_at;
 
+    /**
+     * mount
+     *
+     * @param  mixed $uuid
+     * @return void
+     */
     public function mount($uuid)
     {
-
         $this->order = Order::find($uuid);
         $this->user = [];
         $this->customer = Client::where('uuid', $this->order->customer_id)->first();
@@ -76,8 +83,6 @@ class Edit extends Component
 
     public function rules()
     {
-
-
         $data = [
             'input.no' => 'required',
             'input.name' => 'required',
@@ -113,23 +118,35 @@ class Edit extends Component
     }
 
 
+    /**
+     * onClickNominal
+     *
+     * @param  mixed $value
+     * @return void
+     */
     public function onClickNominal($value)
     {
         $this->nominal = $value;
         $this->nominal_view = number_format($value);
     }
 
-
+    /**
+     * disableInput
+     *
+     * @param  mixed $status
+     * @return void
+     */
     public function disableInput($status)
     {
         return $status === 'unpaid';
     }
 
-    public function updatedSearch()
-    {
-        //
-    }
-
+    /**
+     * selectItem
+     *
+     * @param  mixed $id
+     * @return void
+     */
     public function selectItem($id)
     {
         $client = Client::where('uuid', $id)->first();
@@ -142,20 +159,36 @@ class Edit extends Component
 
     }
 
+    /**
+     * updateStatus
+     *
+     * @param  mixed $id
+     * @param  mixed $formName
+     * @return void
+     */
     public function updateStatus($id, $formName = '')
     {
         $this->authorize('UPDATE_ORDER', 'ORDER');
         $this->formName = $formName;
         $this->validate();
+        $datetime = Carbon::parse($this->paid_at);
         Order::find($id)->update([
             'status' => $this->input['status']
         ]);
         Billing::where('order_id', $id)->update([
-            'status' => $this->input['status']
+            'status' => $this->input['status'],
+            'paid_at' => $datetime->format('Y-m-d H:i:s')
         ]);
         $this->emit('update_status');
+        return redirect(request()->header('Referer'));
     }
 
+    /**
+     * inputCustomer
+     *
+     * @param  mixed $uuid
+     * @return void
+     */
     public function inputCustomer($uuid)
     {
         if ($this->order) {
@@ -172,12 +205,24 @@ class Edit extends Component
         }
     }
 
+    /**
+     * actionShowModal
+     *
+     * @param  mixed $url
+     * @return void
+     */
     public function actionShowModal($url)
     {
         $this->url = $url;
         $this->modalAttach = true;
     }
 
+    /**
+     * update
+     *
+     * @param  mixed $id
+     * @return void
+     */
     public function update($id)
     {
         $this->authorize('UPDATE_ORDER', $this->customer->user_id);
@@ -206,6 +251,7 @@ class Edit extends Component
     {
         $this->modalDeleteVisible = true;
     }
+
     public function delete()
     {
 

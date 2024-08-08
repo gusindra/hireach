@@ -28,32 +28,36 @@ class ContactController extends Controller
     //     });
     // }
 
-    public function index(Request $request)
+    /**
+     * index
+     *
+     * @param  mixed $request
+     * @return void
+     */
+    public function index()
     {
         $this->authorize('VIEW_ANY_CHAT_USR');
+        return view('resource.contact');
         // if($request->has('v')){
         //     return view('main-side.user');
         // }
         //return view('user.company-table');
-        $client = Client::latest()->paginate(15);
-        if ($request->has('v')) {
+        // $client = Client::latest()->paginate(15);
+        // if ($request->has('v')) {
 
-            return view('contact.index', ['client' => $client]);
-        }
+        //     return view('contact.index', ['client' => $client]);
+        // }
 
-        return view('resource.contact');
     }
 
     public function show(Request $request, $client)
     {
         $client = Client::where('uuid', $client)->first();
+        return view('contact.edit', ['user' => $client]);
 
         // return view('user.contact-profile', ['user'=>$client]);
-
         // if ($request->has('v')) {
         // }
-
-        return view('contact.edit', ['user' => $client]);
         //return view('user.contact-profile', ['user' => $client]);
         // return redirect('user');
     }
@@ -123,13 +127,14 @@ class ContactController extends Controller
 
         return redirect()->route('contacts.index')->with('success', 'Contact deleted successfully!');
     }
-    public function audience(Request $request)
+
+    public function audience()
     {
+        return view('resource.audience');
         // if($request->has('v')){
         //     return view('main-side.user');
         // }
         //return view('user.company-table');
-        return view('resource.audience');
     }
 
     public function audienceShow(Request $request, $audience)
@@ -139,6 +144,12 @@ class ContactController extends Controller
     }
 
 
+    /**
+     * profile
+     *
+     * @param  mixed $client
+     * @return void
+     */
     public function profile(Client $client)
     {
         return view('user.user-profile', ['user' => $client]);
@@ -147,10 +158,17 @@ class ContactController extends Controller
         // return redirect('user');
     }
 
+    /**
+     * balance
+     *
+     * @param  App\Models\Client $client
+     * @param  Illuminate\Http\Request $request
+     * @return void
+     */
     public function balance(Client $client, Request $request)
     {
-        // if($user->name != 'Admin'){
         return view('user.user-balance', ['user' => $client, 'team' => $request->has('team') ? $request->team : 0]);
+        // if($user->name != 'Admin'){
         // }
         // return redirect('user');
     }

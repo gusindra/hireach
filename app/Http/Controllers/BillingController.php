@@ -21,18 +21,22 @@ class BillingController extends Controller
         // });
     }
 
+    /**
+     * index
+     *
+     * @param  Illuminate\Http\Request $request
+     * @return void
+     */
     public function index(Request $request)
     {
 
         if(empty(auth()->user()->currentTeam)){
             return redirect()->route('teams.create');
         }
+        return view('billing');
         if($request->has('v')){
             return view('main-side.billing');
         }
-
-
-        return view('billing');
 
     }
 }

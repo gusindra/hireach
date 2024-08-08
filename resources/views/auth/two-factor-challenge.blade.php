@@ -5,7 +5,7 @@
         </x-slot>
 
         <div x-data="{ recovery: false }">
-            <div class="mb-4 text-sm text-gray-600" x-show="! recovery">
+            <div class="px-6 mb-4 text-sm text-gray-600" x-show="! recovery">
                 {{ __('Please confirm access to your account by entering the authentication code provided by your authenticator application.') }}
             </div>
 
@@ -15,7 +15,7 @@
 
             <x-jet-validation-errors class="mb-4" />
 
-            <form class="mt-3 p-6" method="POST" action="{{ route('two-factor.login') }}">
+            <form class="mt-3 px-6" method="POST" action="{{ route('two-factor.login') }}">
                 @csrf
 
                 <div class="mt-4" x-show="! recovery">

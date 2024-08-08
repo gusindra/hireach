@@ -28,9 +28,14 @@ class InvoiceController extends Controller
         return view('assistant.order.invoice');
     }
 
+    /**
+     * show
+     *
+     * @param  App\Models\Billing $invoice
+     * @return void
+     */
     public function show(Billing $invoice)
     {
-
         return view('assistant.invoice.show', ['invoice' => $invoice, 'order' => $invoice->order]);
     }
 }

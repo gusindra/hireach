@@ -106,6 +106,7 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
         Route::get('/settings/providers', [ProviderController::class, 'index'])->name('admin.settings.provider');
         Route::get('/settings/{page}', [SettingController::class, 'show'])->name('settings.show');
         Route::get('/setting/log', [SettingController::class, 'logChange'])->name('settings.logChange');
+        Route::get('/setting/log/export', [SettingController::class, 'logExport'])->name('settings.log.export');
         Route::get('/settings/providers/{provider}', [ProviderController::class, 'show'])->name('admin.settings.provider.show');
         Route::get('setting/product-line/{productLine}', [SettingController::class, 'productLineShow'])->name('settings.productLine.show');
         Route::get('setting/commerce-item/{commerceItem}', [SettingController::class, 'commerceItemShow'])->name('settings.commerceItem.show');

@@ -5,7 +5,7 @@
 <div
     x-data="{ value: @entangle($attributes->wire('model')),show:'{{ $attributes['show']}}' }"
     x-on:change="value = $event.target.value"
-    x-init="new Pikaday({ field: $refs.input, 'format': 'd M Y' });"
+    x-init="new Pikaday({ field: $refs.input, 'format': 'd F Y' });"
 >
     <input
         {{ $attributes->whereDoesntStartWith('wire:model') }}
