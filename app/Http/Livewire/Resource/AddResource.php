@@ -268,11 +268,11 @@ class AddResource extends Component
         $credential = null;
         $channel = strip_tags(filterInput($this->channel));
         $type = $this->type;
-        $title = $this->title;
+        $title = strip_tags(filterInput($this->title));
         $text = strip_tags(filterInput($this->text));
         $templateid = $this->templateId;
         $from = strip_tags(filterInput($this->from));
-        $provider = $this->provider;
+        $provider = strip_tags(filterInput($this->provider));
         $otp = $this->is_enabled;
 
         //SET PROVIDER BASE ON THE SETTING OR AUTO SELECT DEFAULT PROVIDER
@@ -293,30 +293,30 @@ class AddResource extends Component
 
                 // send request using template prt action
                 $data[$key] = [
-                    'channel' => $channel,
-                    'type' => 0,
-                    'title' => $title,
-                    'text' => $action->message,
-                    'templateid' => $templateid,
-                    'to' => $to,
-                    'from' => $from,
-                    'resource' => $this->resource,
-                    'provider' => $provider,
-                    'otp' => checkContentOtp($action->message)
+                 'channel'   => strip_tags(filterInput($channel)),
+                'type'      => (int) $type,
+                'title'     => strip_tags(filterInput($title)),
+                'text'      => strip_tags(filterInput($action->message)),
+                'templateid'=> strip_tags(filterInput($templateid)),
+                'to'        => strip_tags(filterInput($to)),
+                'from'      => strip_tags(filterInput($from)),
+                'resource'  => strip_tags(filterInput($this->resource)),
+                'provider'  => strip_tags(filterInput($provider)),
+                'otp'       => strip_tags(filterInput(checkContentOtp($action->message))),
                 ];
             }
         } else {
             $data = [
-                'channel' => $channel,
-                'type' => 0,
-                'title' => $title,
-                'text' => $text,
-                'templateid' => $templateid,
-                'to' => $to,
-                'from' => $from,
-                'resource' => $this->resource,
-                'provider' => $provider,
-                'otp' => checkContentOtp($text)
+               'channel'    => strip_tags(filterInput($channel)),
+                'type'       => (int) 0,
+                'title'      => strip_tags(filterInput($title)),
+                'text'       => strip_tags(filterInput($text)),
+                'templateid' => strip_tags(filterInput($templateid)),
+                'to'         => strip_tags(filterInput($to)),
+                'from'       => strip_tags(filterInput($from)),
+                'resource'   => strip_tags(filterInput($this->resource)),
+                'provider'   => strip_tags(filterInput($provider)),
+                'otp'        => strip_tags(filterInput(checkContentOtp($text))),
             ];
         }
 

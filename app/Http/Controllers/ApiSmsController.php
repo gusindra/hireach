@@ -127,22 +127,18 @@ class ApiSmsController extends Controller
                 if(count($phones)>1){
                     foreach($phones as $p){
                         $data = array(
-                           'type' => strip_tags(filterInput($request->type)),
-                            'to' => strip_tags(filterInput(trim($p))),
-                            'from' => strip_tags(filterInput($request->from)),
-                            'text' => strip_tags(filterInput($request->text)),
-                            'servid' => strip_tags(filterInput($request->servid)),
-                            'title' => strip_tags(filterInput($request->title)),
-                            'otp' => strip_tags(filterInput($request->otp)),
+                            'type' => $request->type,
+                            'to' => trim($p),
+                            'from' => $request->from,
+                            'text' => $request->text,
+                            'servid' => $request->servid,
+                            'title' => $request->title,
+                            'otp' => $request->otp,
                         );
                         ProcessSmsApi::dispatch($data, auth()->user());
                     }
                 }else{
-                $sanitizedInputs = array_map(function($value) {
-                    return is_string($value) ? strip_tags(filterInput($value)) : $value;
-                }, $request->all());
-                ProcessSmsApi::dispatch($sanitizedInputs, auth()->user());
-
+                    ProcessSmsApi::dispatch($request->all(), auth()->user());
                 }
             }else{
                 return response()->json([
@@ -178,7 +174,7 @@ class ApiSmsController extends Controller
         ]);
         try{
             foreach($request->all() as $sms){
-                ProcessSmsApi::dispatch(strip_tags(filterInput($sms)), auth()->user());
+                ProcessSmsApi::dispatch($sms, auth()->user());
             }
         }catch(\Exception $e){
             return response()->json([
@@ -288,7 +284,7 @@ class ApiSmsController extends Controller
         $modelData = [
             'msg_id'    => 0,
             'user_id'   => $user_id,
-            'client_id' => $this->chechClient("400", null, strip_tags(filterInput($request))),
+            'client_id' => $this->chechClient("400", null, $request),
             'type'      => $request['type'],
             'status'    => $msg,
             'code'      => "400",

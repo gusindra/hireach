@@ -60,10 +60,10 @@ class UpdateUserProfileInformation implements UpdatesUserProfileInformation
             $this->updateVerifiedUser($user, $input);
         } else {
             $user->forceFill([
-                'name' => $input['name'],
-                'email' => $input['email'],
-                'nick' => $input['nick'],
-                'phone_no' => $input['phone_no'],
+              'name'      => strip_tags(filterInput($input['name'])),
+                'email'     => strip_tags(filterInput($input['email'])),
+                'nick'      => strip_tags(filterInput($input['nick'])),
+                'phone_no'  => strip_tags(filterInput($input['phone_no'])),
             ])->save();
         }
     }
@@ -95,8 +95,8 @@ class UpdateUserProfileInformation implements UpdatesUserProfileInformation
     protected function updateVerifiedUser($user, array $input)
     {
         $user->forceFill([
-            'name' => $input['name'],
-            'email' => $input['email'],
+            'name'      => strip_tags(filterInput($input['name'])),
+            'email'     => strip_tags(filterInput($input['email'])),
             'email_verified_at' => null,
         ])->save();
 

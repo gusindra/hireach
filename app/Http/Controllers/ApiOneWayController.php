@@ -154,7 +154,7 @@ class ApiOneWayController extends Controller
 
             if($provider){
                 $retriver = explode(",", strip_tags(filterInput($request->to)));
-                Log::debug('retrive'. $retriver);
+                // Log::debug('retrive'. $retriver);
                 $allretriver = $request->to;
                 $balance = (int)balance(auth()->user());
                 if($balance>500 && count($retriver)<$balance/1){
