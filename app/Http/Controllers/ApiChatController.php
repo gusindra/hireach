@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Resources\ChatResource;
+use App\Models\Team;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
@@ -58,9 +59,11 @@ class ApiChatController extends Controller
             $team = Team::where('user_id', auth()->user()->id)->where('slug', $request->slug)->first();
             $customer = Client::where('phone', $request->phone)->where('user_id', auth()->user()->id)->first();
             if($team && $customer){
+
+               $sanitizedRequest = strip_tags(filterInput($request->all()));
                 $request = ModelsRequest::create([
                     'source_id' => 'web_'.Hashids::encode($customer->id),
-                    'reply'     => $request->text,
+                    'reply'     => $sanitizedRequest['text'],
                     'from'      => $customer->id,
                     'user_id'   => auth()->user()->id,
                     'type'      => 'text',
@@ -117,7 +120,7 @@ class ApiChatController extends Controller
         // return $ada['type'];
         try{
             $userCredention = ApiCredential::where("user_id", auth()->user()->id)->where("client", "api_sms_mk")->where("is_enabled", 1)->first();
-            ProcessSmsApi::dispatch($request->all(), $userCredention);
+            ProcessSmsApi::dispatch(strip_tags(filterInput($request->all())), $userCredention);
         }catch(\Exception $e){
             return response()->json([
                 'message' => "Failed",

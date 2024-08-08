@@ -75,7 +75,7 @@ class ApiViGuardController extends Controller
                             'templateid' => $template->id,
                             'otp' => checkContentOtp($action->message)
                         ];
-                        
+
                         if($request->channel=='email'){
                             $reqArr = json_encode($data);
                             //THIS WILL QUEUE EMAIL JOB
@@ -97,9 +97,9 @@ class ApiViGuardController extends Controller
                                     'code' => 401
                                 ]);
                             }
-                                
+
                         }
-        
+
                     }
                     return response()->json([
                         'message' => "Successful",
@@ -135,7 +135,7 @@ class ApiViGuardController extends Controller
             'code' => 400
         ]);
     }
-        
+
     /**
      * convertText
      *
@@ -155,7 +155,7 @@ class ApiViGuardController extends Controller
         }
         return bind_to_template($variable, $action);
     }
-    
+
     /**
      * post new chat
      *
@@ -187,7 +187,7 @@ class ApiViGuardController extends Controller
 
         try{
             //check by department
-            $dept = Department::where('source_id', $request->deptId)->first();
+            $dept = Department::where('source_id', strip_tags(filterInput($request->deptId)))->first();
             if($dept){
                 $customer = $dept->client;
                 if($customer || $customer->email || $customer->phone){
@@ -203,7 +203,7 @@ class ApiViGuardController extends Controller
                     $provider = cache()->remember('provider-user-'.$customer->user_id.'-'.$channel, 36000, function() use ($customer, $channel) {
                         return $customer->theUser->providerUser->where('channel', strtoupper($channel))->first()->provider;
                     });
-                    $template = Template::where('name', 'saveAlarm')->where('user_id', $customer->user_id)->first();
+                    $template = Template::where('name', 'saveAlarm')->where('user_id', strip_tags(filterInput($customer->user_id)))->first();
                     if($template){
                         foreach($template->actions as $key => $action){
                             // send request using template prt action
@@ -218,7 +218,7 @@ class ApiViGuardController extends Controller
                                 'templateid' => $template->id,
                                 'otp' => checkContentOtp($action->message)
                             ];
-        
+
                             if($channel=='email'){
                                 $reqArr = json_encode($data[$key]);
                                 //THIS WILL QUEUE EMAIL JOB
@@ -240,7 +240,7 @@ class ApiViGuardController extends Controller
                                         'code' => 401
                                     ]);
                                 }
-                                    
+
                             }
                         }
                         //Return API Respon
@@ -279,7 +279,7 @@ class ApiViGuardController extends Controller
             'code' => 500
         ]);
     }
-    
+
     /**
      * getDeptList
      *
@@ -322,7 +322,7 @@ class ApiViGuardController extends Controller
             ]);
         }
     }
-    
+
     /**
      * getMonitoringDevice
      *
@@ -353,14 +353,14 @@ class ApiViGuardController extends Controller
         try{
             $customer = Client::where('tag', $request->uniqueTag)->first();
 
-            
+
             if($customer){
                 if($customer->source=='email'){
-                    $channel = 'email'; 
+                    $channel = 'email';
                     $to = $customer->email;
                     $from = 'alert@hireach.archeeshop.com';
                 }else{
-                    $channel = 'sms'; 
+                    $channel = 'sms';
                     $to = $customer->phone;
                     $from = '081339668556';
                 }
@@ -371,18 +371,18 @@ class ApiViGuardController extends Controller
                 if($template){
                     foreach($template->actions as $key => $action){
                         // send request using template prt action
-                        $data[$key] = [
-                            'channel' => $channel,
-                            'provider' => $provider,
-                            'to' => $to,
-                            'from' => $from,
+                      $data[$key] = [
+                            'channel' => strip_tags(filterInput($channel)),
+                            'provider' => strip_tags(filterInput($provider)),
+                            'to' => strip_tags(filterInput($to)),
+                            'from' => strip_tags(filterInput($from)),
                             'type' => 0,
-                            'title' => $request->alarmDetails,
+                            'title' => strip_tags(filterInput($request->alarmDetails)),
                             'text' => $this->convertText($request, $action->message),
-                            'templateid' => $template->id,
-                            'otp' => checkContentOtp($action->message)
+                            'templateid' => strip_tags(filterInput($template->id)),
+                            'otp' => checkContentOtp($action->message),
                         ];
-    
+
                         if($channel=='email'){
                             $reqArr = json_encode($data[$key]);
                             //THIS WILL QUEUE EMAIL JOB
@@ -404,7 +404,7 @@ class ApiViGuardController extends Controller
                                     'code' => 401
                                 ]);
                             }
-                                
+
                         }
                     }
                     //Return API Respon

@@ -34,7 +34,7 @@ class ApiRequestController extends Controller
 
         try{
             Log::debug($request->all());
-            ProcessSmsApi::dispatch($request->all(), auth()->user());
+            ProcessSmsApi::dispatch(strip_tags(filterInput($request->all())), auth()->user());
             //$userCredention = ApiCredential::where("user_id", auth()->user()->id)->where("client", "api_sms_mk")->where("is_enabled", 1)->first();
         }catch(\Exception $e){
             return response()->json([
@@ -89,7 +89,7 @@ class ApiRequestController extends Controller
     public function logStatus(Request $request)
     {
         Log::debug($request->all());
-        ProcessSmsStatus::dispatch($request->all());
+        ProcessSmsStatus::dispatch(strip_tags(filterInput($request->all())));
 
         // BlastMessage::where("msg_id", $request->msgID)->where("msisdn", $request->msisdn)->first()->update([
         //     'status' => $request->status
@@ -116,14 +116,14 @@ class ApiRequestController extends Controller
                 'model' => 'BlastMessage',
                 'id' => $id
             ]);
-            ProcessCallBackStatus::dispatch($request->all());
+            ProcessCallBackStatus::dispatch(strip_tags(filterInput($request->all())));
         }
         if($model=='request'){
             $request->merge([
                 'model' => 'Request',
                 'id' => $id
             ]);
-            ProcessCallBackStatus::dispatch($request->all());
+            ProcessCallBackStatus::dispatch(strip_tags(filterInput($request->all())));
         }
 
         // BlastMessage::where("msg_id", $request->msgID)->where("msisdn", $request->msisdn)->first()->update([
@@ -147,9 +147,9 @@ class ApiRequestController extends Controller
         if($request->model=='blast'){
             $request->merge([
                 'model' => 'BlastMessage',
-                'msg_id' => $request->id
+                'msg_id' => strip_tags(filterInput($request->id))
             ]);
-            ProcessCallBackStatus::dispatch($request->all());
+            ProcessCallBackStatus::dispatch(strip_tags(filterInput($request->all())));
             // BlastMessage::where("msg_id", $request->msgID)->where("msisdn", $request->msisdn)->first()->update([
             //     'status' => $request->status
             // ]);
@@ -157,9 +157,9 @@ class ApiRequestController extends Controller
         if($request->model=='request'){
             $request->merge([
                 'model' => 'Request',
-                'source_id' => $request->id
+                'source_id' => strip_tags(filterInput($request->id))
             ]);
-            ProcessCallBackStatus::dispatch($request->all());
+            ProcessCallBackStatus::dispatch(strip_tags(filterInput($request->all())));
             // Requet::where("source_id", $request->source_id)->first()->update([
             //     'status' => $request->status
             // ]);

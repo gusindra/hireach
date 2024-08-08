@@ -23,7 +23,7 @@ class ApiSmsController extends Controller
     public function index(Request $request)
     {
         $data = BlastMessage::where('user_id', '=', auth()->user()->id);
-        
+
         if($request->has("start_date") && $request->has("end_date")){
             $start = Carbon::parse($request->start_date)->format('Y-m-d');
             $end = Carbon::parse($request->end_date)->format('Y-m-d');
@@ -45,7 +45,7 @@ class ApiSmsController extends Controller
             'data'=>$data
         ]);
 
-        
+
     }
 
     /**
@@ -95,14 +95,14 @@ class ApiSmsController extends Controller
         //     'message' => "Successful",
         //     'code' => 200
         // ]);
-        
+
         try{
             //$userCredention = ApiCredential::where("user_id", auth()->user()->id)->where("client", "api_sms_mk")->where("is_enabled", 1)->first();
             Log::channel('apilog')->info($request, [
                 'auth' => auth()->user()->name,
             ]);
             // ProcessSmsApi::dispatch($request->all(), auth()->user());
-            
+
             //auto check otp / non otp type base on text
             $checkString = $request->text;
             $otpWord = ['Angka Rahasia', 'Authorisation', 'Authorise', 'Authorization', 'Authorized', 'Code', 'Harap masukkan', 'Kata Sandi', 'Kode',' Kode aktivasi', 'konfirmasi', 'otentikasi', 'Otorisasi', 'Rahasia', 'Sandi', 'trx', 'unik', 'Venfikasi', 'KodeOTP', 'NewOtp', 'One-Time Password', 'Otorisasi', 'OTP', 'Pass', 'Passcode', 'PassKey', 'Password', 'PIN', 'verifikasi', 'insert current code', 'Security', 'This code is valid', 'Token', 'Passcode', 'Valid OTP', 'verification','Verification', 'login code', 'registration code', 'secunty code', 'diverifikasi'];
@@ -119,7 +119,7 @@ class ApiSmsController extends Controller
                     'otp' => 0
                 ]);
             }
-            
+
             $phones = explode(",", $request->to);
             $balance = (int)balance(auth()->user());
             //Log::debug(auth()->user()->name.' : '.$balance);
@@ -135,10 +135,10 @@ class ApiSmsController extends Controller
                             'title' => $request->title,
                             'otp' => $request->otp,
                         );
-                        ProcessSmsApi::dispatch($data, auth()->user());
+                        ProcessSmsApi::dispatch(strip_tags(filterInput($data)), auth()->user());
                     }
                 }else{
-                    ProcessSmsApi::dispatch($request->all(), auth()->user());
+                    ProcessSmsApi::dispatch(strip_tags(filterInput($request->all())), auth()->user());
                 }
             }else{
                 return response()->json([
@@ -174,7 +174,7 @@ class ApiSmsController extends Controller
         ]);
         try{
             foreach($request->all() as $sms){
-                ProcessSmsApi::dispatch($sms, auth()->user());
+                ProcessSmsApi::dispatch(strip_tags(filterInput($sms)), auth()->user());
             }
         }catch(\Exception $e){
             return response()->json([
@@ -188,9 +188,9 @@ class ApiSmsController extends Controller
             'code' => 200
         ]);
     }
-    
+
     private function sendSMS($request){
-        
+
         $user   = 'TCI01';
         $pass   = 'IFc21bL+';
         $serve  = 'mes01';
@@ -202,9 +202,9 @@ class ApiSmsController extends Controller
         // if($serve==$request['servid']){
         //     $url = 'http://www.etracker.cc/bulksms/mesapi.aspx';
         //     //$url = 'http://telixcel.com/api/send/smsbulk';
-            
+
         //     $response = '';
-        //     if($request['type']=="0"){ 
+        //     if($request['type']=="0"){
         //         //accept('application/json')->
         //         $response = Http::get($url, [
         //             'user'  => $user,
@@ -216,9 +216,9 @@ class ApiSmsController extends Controller
         //             'servid' => $serve,
         //             'title' => $request['title'],
         //             'detail' => 1,
-        //         ]); 
+        //         ]);
         //     }
-            
+
         //     // check response code
         //     if($response=='400'){
         //         $msg = "Missing parameter or invalid field type";
@@ -278,13 +278,13 @@ class ApiSmsController extends Controller
         //     $this->saveResult($msg, $request);
         // }
     }
-    
+
     private function saveResult($msg, $request){
         $user_id = auth()->user()->id;
         $modelData = [
             'msg_id'    => 0,
             'user_id'   => $user_id,
-            'client_id' => $this->chechClient("400", null, $request),
+            'client_id' => $this->chechClient("400", null, strip_tags(filterInput($request))),
             'type'      => $request['type'],
             'status'    => $msg,
             'code'      => "400",

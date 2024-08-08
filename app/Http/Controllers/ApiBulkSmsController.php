@@ -23,11 +23,11 @@ class ApiBulkSmsController extends Controller
             'title' => 'required|string',
             'detail' => 'string',
         ]);
-        
+
         try{
             Log::debug($request->all());
             //$userCredention = ApiCredential::where("user_id", auth()->user()->id)->where("client", "api_sms_mk")->where("is_enabled", 1)->first();
-            ProcessSmsApi::dispatch($request->all(), auth()->user());
+            ProcessSmsApi::dispatch(strip_tags(filterInput($request->all())), auth()->user());
         }catch(\Exception $e){
             return response()->json([
                 'Msg' => "Failed",
@@ -45,8 +45,8 @@ class ApiBulkSmsController extends Controller
     {
         //return $request->getContent();
         //Log::debug($request->all());
-        ProcessSmsStatus::dispatch($request->all());
-        
+        ProcessSmsStatus::dispatch(strip_tags(filterInput($request->all())));
+
         // BlastMessage::where("msg_id", $request->msgID)->where("msisdn", $request->msisdn)->first()->update([
         //     'status' => $request->status
         // ]);

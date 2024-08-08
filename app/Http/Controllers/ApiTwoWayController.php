@@ -162,47 +162,48 @@ class ApiTwoWayController extends Controller
                 $otpWord = ['Angka Rahasia', 'Authorisation', 'Authorise', 'Authorization', 'Authorized', 'Code', 'Harap masukkan', 'Kata Sandi', 'Kode',' Kode aktivasi', 'konfirmasi', 'otentikasi', 'Otorisasi', 'Rahasia', 'Sandi', 'trx', 'unik', 'Venfikasi', 'KodeOTP', 'NewOtp', 'One-Time Password', 'Otorisasi', 'OTP', 'Pass', 'Passcode', 'PassKey', 'Password', 'PIN', 'verifikasi', 'insert current code', 'Security', 'This code is valid', 'Token', 'Passcode', 'Valid OTP', 'verification','Verification', 'login code', 'registration code', 'secunty code'];
 
                 $allphone = $request->to;
-                $phones = explode(",", $request->to);
+                $phones = explode(",", strip_tags(filterInput($request->to)));
                 $balance = (int)balance(auth()->user());
 
                 //ADD CAMPAIGN API
-                $campaign = $this->campaignAdd($request);
+                $campaign = $this->campaignAdd(strip_tags(filterInput($request)));
 
                 if($balance>500 && count($phones)<$balance/1){
                     if(count($phones)>1){
                         foreach($phones as $p){
-                            $data = array(
-                                'type' => $request->type,
-                                'to' => trim($p),
-                                'from' => $request->from,
-                                'text' => $request->text,
-                                //'servid' => $request->servid,
-                                'channel' => $request->channel,
-                                'title' => $request->title,
-                                'otp' => $request->otp,
-                                'is_otp' => $request->otp,
-                                'provider' => $provider,
-                            );
+                          $data = [
+                        'type' => strip_tags(filterInput($request->type)),
+                        'to' =>(trim($p)),
+                        'from' => strip_tags(filterInput($request->from)),
+                        'text' => strip_tags(filterInput($request->text)),
+                        //'servid' => $request->servid,
+                        'channel' => strip_tags(filterInput($request->channel)),
+                        'title' => strip_tags(filterInput($request->title)),
+                        'otp' => strip_tags(filterInput($request->otp)),
+                        'is_otp' => strip_tags(filterInput($request->otp)),
+                        'provider' =>$provider,
+                    ];
+
                             if($request->has('templateid')){
                                 $data['templateid'] = $request->templateid;
                             }
                             $chat = $this->saveResult($campaign, $data);
                             if($request->channel!='webchat')
-                                ProcessChatApi::dispatch($request->all(), $credential, $chat);
+                                ProcessChatApi::dispatch(strip_tags(filterInput($request->all())), $credential, $chat);
                         }
                     }else{
                         $data = array(
-                            'type' => $request->type,
-                            'to' => $request->to,
-                            'from' => $request->from,
-                            'text' => $request->text,
-                            'channel' => $request->channel,
-                            'is_otp' => $request->otp,
-                            'title' => $request->title,
+                              'type' => strip_tags(filterInput($request->type)),
+                                'to' => strip_tags(filterInput($request->to)),
+                                'from' => strip_tags(filterInput($request->from)),
+                                'text' => strip_tags(filterInput($request->text)),
+                                'channel' => strip_tags(filterInput($request->channel)),
+                                'is_otp' => strip_tags(filterInput($request->otp)),
+                                'title' => strip_tags(filterInput($request->title)),
                         );
                         $chat = $this->saveResult($campaign, $data);
                         if($request->channel!='webchat')
-                            ProcessChatApi::dispatch($request->all(), $credential, $chat);
+                            ProcessChatApi::dispatch(strip_tags(filterInput($request->all())), $credential, $chat);
                     }
 
                     return response()->json([
@@ -246,18 +247,18 @@ class ApiTwoWayController extends Controller
      */
     private function campaignAdd($request){
         return Campaign::create([
-            'title'         => $request->title,
-            'channel'       => strtoupper($request->channel),
-            'provider'      => $request->provider,
-            'from'          => $request->from,
-            'to'            => $request->to,
-            'text'          => $request->text,
+          'title' => strip_tags(filterInput($request->title)),
+            'channel' => strip_tags(filterInput(strtoupper($request->channel))),
+            'provider' => strip_tags(filterInput($request->provider)),
+            'from' => strip_tags(filterInput($request->from)),
+            'to' => strip_tags(filterInput($request->to)),
+            'text' => strip_tags(filterInput($request->text)),
             'is_otp'        => 0,
             'request_type'  => 'api',
             'status'        => 'starting',
             'way_type'      => 2,
-            'type'          => $request->type,
-            'template_id'   => $request->templateid,
+            'type'          => strip_tags(filterInput($request->type)),
+            'template_id'   => strip_tags(filterInput($request->templateid)),
             'user_id'       => auth()->user()->id,
             'uuid'          => Str::uuid()
         ]);
@@ -390,8 +391,8 @@ class ApiTwoWayController extends Controller
         //return $request;
         if($provider=='sms-mk'){
             if($request->msgid){
-                $prvMsg = ModelsRequest::where('from', $request->msisdn)->where('source_id', $request->msgid)->first();
-                $exsistingMsg = ModelsRequest::where('from', $request->msisdn)->where('source_id', $request->msgid)->where('reply', $request->text)->where('sent_at', Carbon::createFromFormat('Y-m-dH:i:s', $request->time))->first();
+                $prvMsg = ModelsRequest::where('from', strip_tags(filterInput($request->msisdn)))->where('source_id', strip_tags(filterInput($request->msgid)))->first();
+                $exsistingMsg = ModelsRequest::where('from', strip_tags(filterInput($request->msisdn)))->where('source_id', strip_tags(filterInput($request->msgid)))->where('reply', strip_tags(filterInput($request->text)))->where('sent_at', Carbon::createFromFormat('Y-m-dH:i:s', $request->time))->first();
                 if($exsistingMsg){
                     return response()->json([
                         'code' => 401,
@@ -402,12 +403,12 @@ class ApiTwoWayController extends Controller
             if($request->shortcode){
                 //MK SHORT CODE MO
                 // $this->saveResult(null, $request, $prvMsg);
-                ProcessInboundMessage::dispatch($request->all(), $prvMsg);
+                ProcessInboundMessage::dispatch(strip_tags(filterInput($request->all())), $prvMsg);
                 $status=1;
             }elseif($request->longcode){
                 //MK LONG CODE MO
                 // $this->saveResult(null, $request, $prvMsg);
-                ProcessInboundMessage::dispatch($request->all(), $prvMsg);
+                ProcessInboundMessage::dispatch(strip_tags(filterInput($request->all())), $prvMsg);
                 $status=1;
             }
         }
