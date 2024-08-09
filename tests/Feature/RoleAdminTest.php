@@ -165,6 +165,24 @@ class RoleAdminTest extends TestCase
             'role_id' => $role->id,
             'team_id' => $user->current_team_id
         ]);
+
+
+        $this->assertDatabaseHas('log_changes', [
+            'model' =>'Role',
+            'model_id' =>  $role->id,
+            'user_id'=>$user->id
+
+        ]);
+
+         $this->assertTrue(
+            \DB::table('log_changes')
+                ->where('model', 'Role')
+                ->where('model_id', $role->id)
+                ->where('user_id', $user->id)
+                ->where('remark', 'like', '%New Role Name%')
+                ->exists(),
+            'The log entry does not contain the expected remark.'
+        );
     }
 
 
@@ -175,9 +193,9 @@ class RoleAdminTest extends TestCase
         $invitation = ModelsRoleInvitation::where('email', 'test@example.com')->latest()->first();
 
         Livewire::actingAs($user)->test(Member::class, ['id' => $role->id])
-            ->call('cancelTeamInvitation', $invitation->id)
-            ->call('removeTeamMember')
-            ->assertEmitted('deleted');
+         ->call('confirmCancelInvitation', $invitation->id)
+            ->call('cancelTeamInvitation')
+        ;
 
         // Assert the role invitation is deleted
         $this->assertDatabaseMissing('role_invitations', [
@@ -185,6 +203,24 @@ class RoleAdminTest extends TestCase
             'email' => 'test@example.com',
             'role_id' => $role->id,
             'team_id' => $user->current_team_id
+        ]);
+    }
+
+     public function test_a_user_can_remove_a_team_member()
+    {
+            $user = User::find(1);
+        $role = Role::where('name', 'New Role Name')->latest()->first();
+        $teamMember = User::factory()->create();
+
+
+
+        Livewire::actingAs($user)->test(Member::class, ['id' => $role->id])
+            ->call('confirmTeamMemberRemoval', $teamMember->id)
+            ->call('removeTeamMember');
+
+        $this->assertDatabaseMissing('role_user', [
+            'role_id' => $role->id,
+            'user_id' => $teamMember->id,
         ]);
     }
 }

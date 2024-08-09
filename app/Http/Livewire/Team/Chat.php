@@ -13,8 +13,14 @@ class Chat extends Component
     public $dataId;
     public $modalActionVisible = true;
 
+       protected $rules = [
+        'slug' => 'required|unique:teams',
+    ];
+
+
     public function mount($team)
     {
+
         $this->team = $team;
         $this->slug = $team->slug;
         $this->dataId = Hashids::encode($team->id);
@@ -23,6 +29,7 @@ class Chat extends Component
 
     public function updateChatTeam()
     {
+        $this->validate();
         Team::find($this->team->id)->update(['slug' => $this->slug]);
         $this->emit('saved');
     }
