@@ -71,7 +71,7 @@ class Add extends Component
             'user_id' => $user,
             'status' => 'unread'
         ]);
-      $this->emit('refreshLivewireDatatable');
+             return redirect(request()->header('Referer'));
     }
 
     public function resetForm()

@@ -461,10 +461,6 @@ function userAccess($menu, $action = 'view', $level = '')
             $gp = cache()->remember('permission-' . $menu, 14400, function () use ($menu) {
                 return Permission::where('model', $menu)->pluck('name')->toArray();
             });
-
-
-
-
         }
 
         foreach (auth()->user()->activeRole->role->permission as $permission) {

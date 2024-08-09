@@ -31,7 +31,7 @@ public $noticeId;
         $query = Notice::query();
 
         if (auth()->user()->isSuper || (auth()->user()->team && str_contains(auth()->user()->activeRole->role->name, 'Admin'))) {
-            $query = $query->withTrashed();
+            $query;
         } else {
             $query = $query->where('user_id', auth()->user()->id);
         }
@@ -72,14 +72,23 @@ public $noticeId;
     {
         $this->emit('refreshLivewireDatatable');
     }
-
- public function delete($id)
+public function delete($id)
 {
-   $notification = Notice::findOrFail($id);
-        $notification->delete();
+    $notification = Notice::where('id', $id)
+                          ->whereNull('deleted_at')
+                          ->first();
+
+    if ($notification) {
         $notification->update(['status' => 'deleted']);
-          $this->emit('updateSavedQueries', $this->getSavedQueries());
+        $notification->delete();
+
+        $this->emit('updateSavedQueries', $this->getSavedQueries());
+    } else {
+        return redirect(request()->header('Referer'));
+    }
 }
+
+
     public function getSavedQueries()
     {
         return Notice::query()->find($this->noticeId);
@@ -108,7 +117,9 @@ public $noticeId;
             Column::callback(['status'], function ($type) {
                 return view('label.label', ['type' => $type]);
             }),
-              Column::name('delete')->delete(),
+
+            Column::name('delete')->delete()
+
 
         ];
     }

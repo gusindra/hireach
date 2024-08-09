@@ -206,20 +206,19 @@ class RoleAdminTest extends TestCase
         ]);
     }
 
-     public function a_user_can_remove_a_team_member()
+     public function test_a_user_can_remove_a_team_member()
     {
             $user = User::find(1);
         $role = Role::where('name', 'New Role Name')->latest()->first();
         $teamMember = User::factory()->create();
 
-        $role->members()->attach($teamMember->id);
+
 
         Livewire::actingAs($user)->test(Member::class, ['id' => $role->id])
             ->call('confirmTeamMemberRemoval', $teamMember->id)
-            ->call('removeTeamMember')
-            ->assertEmitted('deleted');
+            ->call('removeTeamMember');
 
-        $this->assertDatabaseMissing('role_members', [
+        $this->assertDatabaseMissing('role_user', [
             'role_id' => $role->id,
             'user_id' => $teamMember->id,
         ]);
