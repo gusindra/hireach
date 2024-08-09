@@ -77,9 +77,9 @@ class NotificationTable extends LivewireDatatable
     private function adminTbl()
     {
         return [
-            Column::name('user_id')->callback(['user_id'], function ($value) {
+            Column::name('id')->callback(['id'], function ($value) {
                 return view('datatables::link', [
-                    'href' => "/admin/user/" . $value,
+                    'href' => "/notif-center/" . $value,
                     'slot' => $value
                 ]);
             })->label('User')->filterable()->exportCallback(function ($value) {
@@ -92,19 +92,8 @@ class NotificationTable extends LivewireDatatable
             Column::callback(['status'], function ($type) {
                 return view('label.label', ['type' => $type]);
             }),
-            Column::callback(['status', 'id'], function ($status, $id) {
-                $html = '<div class="flex">';
-                $html = $html . view('datatables::link', [
-                    'href' => "/notif-center/" . $id,
-                    'slot' => 'View'
-                ]);
-                $disabled = $status === 'deleted' ? 'disabled' : '';
-                $html = $html . view('tables.delete-notification', [
-                    'notificationId' => $id,
-                    'disabled' => $disabled,
-                ]);
-                return $html . "</div>";
-            })->label('Actions')
+              Column::name('delete')->delete(),
+
         ];
     }
 

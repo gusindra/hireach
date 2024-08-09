@@ -114,7 +114,7 @@
                                     <div class="flex items-center">
                                         <!-- Remove Team Member -->
                                         <button class="cursor-pointer ml-6 text-sm text-red-500"
-                                            wire:click="confirmTeamMemberRemoval({{ $user->id }})">
+                                            wire:click="cancelTeamInvitation({{ $user->id }})">
                                             {{ __('Remove') }}
                                         </button>
                                     </div>

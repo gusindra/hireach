@@ -58,6 +58,7 @@ class Member extends Component
 
     public function cancelTeamInvitation($id)
     {
+
         $this->authorize('DELETE_ROLE', 'ROLE');
         $this->inviteCancel = $id;
         $this->confirmingTeamMemberRemoval = true;
@@ -65,8 +66,15 @@ class Member extends Component
 
     public function removeTeamMember()
     {
+
         $this->authorize('UPDATE_ROLE', 'ROLE');
-        RoleInvitation::find($this->inviteCancel)->delete();
+     $roleInvitation = RoleUser::find($this->inviteCancel);
+
+    if ($roleInvitation) {
+        $roleInvitation->delete();
+        $this->emit('deleted');
+    }
+
         $this->confirmingTeamMemberRemoval = false;
         $this->inviteCancel = null;
         $this->emit('deleted');
