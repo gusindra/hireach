@@ -3,6 +3,7 @@
 namespace App\Http\Livewire\Table;
 
 use App\Models\Notice;
+use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Redirect;
 use Mediconesystems\LivewireDatatables\Http\Livewire\LivewireDatatable;
@@ -13,6 +14,8 @@ use Mediconesystems\LivewireDatatables\DateColumn;
 class NotificationTable extends LivewireDatatable
 {
     public $model = Notice::class;
+public $noticeId;
+
     public $filterDate = null;
     public $statusFilter = 'All';
 
@@ -24,6 +27,7 @@ class NotificationTable extends LivewireDatatable
      */
     public function builder()
     {
+
         $query = Notice::query();
 
         if (auth()->user()->isSuper || (auth()->user()->team && str_contains(auth()->user()->activeRole->role->name, 'Admin'))) {
@@ -67,6 +71,18 @@ class NotificationTable extends LivewireDatatable
     public function refresh()
     {
         $this->emit('refreshLivewireDatatable');
+    }
+
+ public function delete($id)
+{
+   $notification = Notice::findOrFail($id);
+        $notification->delete();
+        $notification->update(['status' => 'deleted']);
+          $this->emit('updateSavedQueries', $this->getSavedQueries());
+}
+    public function getSavedQueries()
+    {
+        return Notice::query()->find($this->noticeId);
     }
 
     /**

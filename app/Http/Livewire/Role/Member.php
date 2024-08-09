@@ -1,16 +1,12 @@
 <?php
 
-
 namespace App\Http\Livewire\Role;
 
-use App\Mail\RoleInvitation as MailRoleInvitation;
 use App\Models\RoleInvitation;
 use App\Models\RoleUser;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Livewire\Component;
-use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\URL;
-use Illuminate\Support\Facades\Log;
 
 class Member extends Component
 {
@@ -18,10 +14,12 @@ class Member extends Component
     public $team;
     public $role;
     public $inviteEmail;
-    public $inviteCancel;
+    public $confirmingInvitationCancel = false;
     public $confirmingTeamMemberRemoval = false;
     public $showCopyLinkModal = false;
     public $inviteLink;
+    public $invitationIdBeingCanceled = null;
+    public $teamMemberIdBeingRemoved = null;
 
     public function mount($id)
     {
@@ -41,9 +39,6 @@ class Member extends Component
             'invitation' => $invitation->id,
         ]);
 
-        Log::debug($this->inviteLink);
-
-
         $this->showCopyLinkModal = true;
 
         $this->resetForm();
@@ -56,28 +51,48 @@ class Member extends Component
         $this->inviteEmail = null;
     }
 
-    public function cancelTeamInvitation($id)
+    public function confirmCancelInvitation($id)
     {
-
         $this->authorize('DELETE_ROLE', 'ROLE');
-        $this->inviteCancel = $id;
+        $this->invitationIdBeingCanceled = $id;
+        $this->confirmingInvitationCancel = true;
+    }
+
+    public function cancelTeamInvitation()
+    {
+        $this->authorize('DELETE_ROLE', 'ROLE');
+
+        $roleInvitation = RoleInvitation::find($this->invitationIdBeingCanceled);
+
+        if ($roleInvitation) {
+            $roleInvitation->delete();
+            $this->emit('deleted');
+        }
+
+        $this->confirmingInvitationCancel = false;
+        $this->invitationIdBeingCanceled = null;
+    }
+
+    public function confirmTeamMemberRemoval($userId)
+    {
+        $this->authorize('UPDATE_ROLE', 'ROLE');
+        $this->teamMemberIdBeingRemoved = $userId;
         $this->confirmingTeamMemberRemoval = true;
     }
 
     public function removeTeamMember()
     {
-
         $this->authorize('UPDATE_ROLE', 'ROLE');
-     $roleInvitation = RoleUser::find($this->inviteCancel);
 
-    if ($roleInvitation) {
-        $roleInvitation->delete();
-        $this->emit('deleted');
-    }
+        $roleUser = RoleUser::find($this->teamMemberIdBeingRemoved);
+
+        if ($roleUser) {
+            $roleUser->delete();
+            $this->emit('deleted');
+        }
 
         $this->confirmingTeamMemberRemoval = false;
-        $this->inviteCancel = null;
-        $this->emit('deleted');
+        $this->teamMemberIdBeingRemoved = null;
     }
 
     public function readInvite()
