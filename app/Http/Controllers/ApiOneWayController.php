@@ -145,7 +145,10 @@ class ApiOneWayController extends Controller
             //    'auth' => auth()->user()->name,
             //]);
             $provider = cache()->remember('provider-user-'.auth()->user()->id.'-'.$request->channel, $this->cacheDuration, function() use ($request) {
-                return auth()->user()->providerUser->where('channel', strtoupper($request->channel))->first()->provider;
+                $pro = auth()->user()->providerUser->where('channel', strtoupper($request->channel))->first()->provider;
+                if($pro->status){
+                    return $pro;
+                }
             });
 
             $request->merge([
@@ -358,8 +361,11 @@ class ApiOneWayController extends Controller
         $request->validate($validateArr);
 
         try {
-            $provider = cache()->remember('provider-user-' . auth()->user()->id . '-' . $request->channel, $this->cacheDuration, function() use ($request) {
-                return auth()->user()->providerUser->where('channel', strtoupper($request->channel))->first()->provider;
+            $provider = cache()->remember('provider-user-'.auth()->user()->id.'-'.$request->channel, $this->cacheDuration, function() use ($request) {
+                $pro = auth()->user()->providerUser->where('channel', strtoupper($request->channel))->first()->provider;
+                if($pro->status){
+                    return $pro;
+                }
             });
 
             $request->merge(['provider' => $provider]);

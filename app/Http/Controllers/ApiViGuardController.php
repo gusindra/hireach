@@ -17,7 +17,8 @@ use App\Models\Setting;
 
 class ApiViGuardController extends Controller
 {
-     /**
+    public $cacheDuration = 1440;
+    /**
      * test response
      *
      * @param  mixed $request
@@ -25,7 +26,6 @@ class ApiViGuardController extends Controller
      */
     public function index(Request $request)
     {
-        //return 1;
         //get the request & validate parameters
         $rules = [
             'createDate' => 'required',
@@ -200,8 +200,11 @@ class ApiViGuardController extends Controller
                         $to = $customer->phone;
                         $from = '081339668556';
                     }
-                    $provider = cache()->remember('provider-user-'.$customer->user_id.'-'.$channel, 36000, function() use ($customer, $channel) {
-                        return $customer->theUser->providerUser->where('channel', strtoupper($channel))->first()->provider;
+                    $provider = cache()->remember('provider-user-'.$customer->user_id.'-'.$channel, $this->cacheDuration, function() use ($customer, $channel) {
+                        $pro = $customer->theUser->providerUser->where('channel', strtoupper($channel))->first()->provider;
+                        if($pro->status){
+                            return $pro;
+                        }
                     });
                     $template = Template::where('name', 'saveAlarm')->where('user_id', $customer->user_id)->first();
                     if($template){
@@ -353,7 +356,6 @@ class ApiViGuardController extends Controller
         try{
             $customer = Client::where('tag', $request->uniqueTag)->first();
 
-
             if($customer){
                 if($customer->source=='email'){
                     $channel = 'email';
@@ -364,8 +366,11 @@ class ApiViGuardController extends Controller
                     $to = $customer->phone;
                     $from = '081339668556';
                 }
-                $provider = cache()->remember('provider-user-'.$customer->user_id.'-'.$channel, 36000, function() use ($customer, $channel) {
-                    return $customer->theUser->providerUser->where('channel', strtoupper($channel))->first()->provider;
+                $provider = cache()->remember('provider-user-'.$customer->user_id.'-'.$channel, $this->cacheDuration, function() use ($customer, $channel) {
+                    $pro = $customer->theUser->providerUser->where('channel', strtoupper($channel))->first()->provider;
+                    if($pro->status){
+                        return $pro;
+                    }
                 });
                 $template = Template::where('name', 'getAllMonitoingDeviceList')->where('user_id', $customer->user_id)->first();
                 if($template){

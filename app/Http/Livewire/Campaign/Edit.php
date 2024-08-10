@@ -300,9 +300,12 @@ class Edit extends Component
                 $this->campaign->save();
 
                 $channel = $this->campaign->channel;
-                $provider = cache()->remember('provider-user-' . auth()->user()->id . '-' . $channel, $this->cacheDuration, function () use ($channel) {
-                    return auth()->user()->providerUser->where('channel', strtoupper($channel))->first()->provider;
-                });
+                $provider = cache()->remember('provider-user-'.auth()->user()->id.'-'.$channel, $this->cacheDuration, function() use ($channel) {
+                    $pro = auth()->user()->providerUser->where('channel', strtoupper($channel))->first()->provider;
+                    if($pro->status){
+                        return $pro;
+                    }
+                }); 
                 // START TO HIT CREATE CAMPAIGN API
                 if ($provider->code == 'provider3') {
                     //EXPORT FILE EXCEL AUDIENCE
