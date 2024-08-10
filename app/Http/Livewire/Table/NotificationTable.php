@@ -101,7 +101,7 @@ public function delete($id)
      */
     private function adminTbl()
     {
-        return [
+        $data = [
             Column::name('id')->callback(['id'], function ($value) {
                 return view('datatables::link', [
                     'href' => "/notif-center/" . $value,
@@ -114,14 +114,14 @@ public function delete($id)
             DateColumn::name('created_at')->label('Creation Date')->sortBy('created_at', 'desc')->filterable()->format('d-m-Y H:i:s'),
             Column::name('type')->label('Name')->searchable()->filterable(),
             Column::name('notification')->truncate(50)->label('Description')->searchable()->filterable(),
-            Column::callback(['status'], function ($type) {
-                return view('label.label', ['type' => $type]);
-            }),
-
-            Column::name('delete')->delete()
-
-
+            Column::callback(['status', 'deleted_at'], function ($type,$del) {
+                return view('label.label', ['type' => $type, 'deleted'=>$del]);
+            })
         ];
+        if($this->statusFilter != 'deleted'){
+            $data[6] = Column::name('delete')->delete();
+        }
+        return $data;
     }
 
     /**
