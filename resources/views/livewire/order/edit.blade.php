@@ -74,9 +74,8 @@
                         <x-jet-input-error for="date" class="mt-2" />
                         @endif
                         @if ($order->status=='paid')
-
                             @foreach ($order->invoice as $inv)
-                                <p>{{$inv->paid_at->format('d F Y') }}</p>
+                                <p>{{$inv->paid_at ? $inv->paid_at->format('d F Y') : '-' }}</p>
                             @endforeach
                         @endif
                     </div>

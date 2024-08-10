@@ -139,18 +139,18 @@
 
                                 <div class="flex items-center">
                                     <!-- Manage Team Member Role -->
-
-                                    @if (Gate::check('addTeamMember', $team) && Laravel\Jetstream\Jetstream::hasRoles())
-                                        <button class="ml-2 text-sm text-gray-400 dark:text-slate-300 underline" wire:click="manageRole('{{ $user->id }}')">
-                                            {{ Laravel\Jetstream\Jetstream::findRole($user->membership->role) ? Laravel\Jetstream\Jetstream::findRole('admin')->name : 'Agent' }}
-                                        </button>
-                                    @elseif (Laravel\Jetstream\Jetstream::hasRoles())
-                                        <div class="ml-2 text-sm text-gray-400 dark:text-slate-300">
-                                            {{ Laravel\Jetstream\Jetstream::findRole($user->membership->role) ? Laravel\Jetstream\Jetstream::findRole($user->membership->role)->name : $user->membership->role }}
-                                        </div>
-                                    @endif
-
                                     @if ($team->user_id != $user->id)
+                                        @if (Gate::check('addTeamMember', $team) && Laravel\Jetstream\Jetstream::hasRoles())
+                                            <button class="ml-2 text-sm text-gray-400 dark:text-slate-300 underline" wire:click="manageRole('{{ $user->id }}')">
+                                                {{ Laravel\Jetstream\Jetstream::findRole($user->membership->role) ? Laravel\Jetstream\Jetstream::findRole($user->membership->role)->name : 'Agent' }}
+                                            </button>
+                                        @elseif (Laravel\Jetstream\Jetstream::hasRoles())
+                                            <div class="ml-2 text-sm text-gray-400 dark:text-slate-300">
+                                                {{ Laravel\Jetstream\Jetstream::findRole($user->membership->role) ? Laravel\Jetstream\Jetstream::findRole($user->membership->role)->name : '-' }}
+                                            </div>
+                                        @endif
+
+
                                         <!-- Leave Team -->
                                         @if ($this->user->id === $user->id)
                                             <button class="cursor-pointer ml-6 text-sm text-red-500" wire:click="$toggle('confirmingLeavingTeam')">

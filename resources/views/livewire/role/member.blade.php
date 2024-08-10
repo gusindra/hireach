@@ -65,7 +65,7 @@
                                     <!-- Cancel Team Invitation -->
                                     <button :disabled="!userAccess('ROLE', 'delete')"
                                         class="cursor-pointer ml-6 text-sm text-red-500 focus:outline-none"
-                                        wire:click="cancelTeamInvitation({{ $invite->id }})">
+                                        wire:click="confirmCancelInvitation({{ $invite->id }})">
                                         {{ __('Cancel') }}
                                     </button>
                                 </div>
@@ -106,7 +106,7 @@
                                 <div class="flex items-center justify-between">
                                     <div class="flex items-center">
                                         <img class="w-8 h-8 rounded-full" src="{{ $user->user->profile_photo_url }}"
-                                            alt="name">
+                                            alt="{{ $user->user->name }}">
                                         <div class="ml-4">{{ $user->user->email }}</div>
                                         <div class="ml-4">( {{ $user->user->name }} )</div>
                                     </div>
@@ -144,6 +144,27 @@
 
             <x-jet-danger-button class="ml-2" wire:click="removeTeamMember" wire:loading.attr="disabled">
                 {{ __('Remove') }}
+            </x-jet-danger-button>
+        </x-slot>
+    </x-jet-confirmation-modal>
+
+    <!-- Cancel Invitation Confirmation Modal -->
+    <x-jet-confirmation-modal wire:model="confirmingInvitationCancel">
+        <x-slot name="title">
+            {{ __('Cancel Invitation') }}
+        </x-slot>
+
+        <x-slot name="content">
+            {{ __('Are you sure you would like to cancel this invitation?') }}
+        </x-slot>
+
+        <x-slot name="footer">
+            <x-jet-secondary-button wire:click="$toggle('confirmingInvitationCancel')" wire:loading.attr="disabled">
+                {{ __('Cancel') }}
+            </x-jet-secondary-button>
+
+            <x-jet-danger-button class="ml-2" wire:click="cancelTeamInvitation" wire:loading.attr="disabled">
+                {{ __('Cancel Invitation') }}
             </x-jet-danger-button>
         </x-slot>
     </x-jet-confirmation-modal>
@@ -194,7 +215,6 @@
 
             document.execCommand('copy');
 
-
             message.classList.remove('hidden');
 
             setTimeout(function() {
@@ -202,6 +222,4 @@
             }, 2000);
         }
     </script>
-
-
 </div>

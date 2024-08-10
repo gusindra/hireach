@@ -451,10 +451,13 @@ function userAccess($menu, $action = 'view', $level = '')
         }
     }
     //LEVEL 2
+
     if (auth()->user()->activeRole) {
         if(cache('permission-' . $menu)){
             $gp = cache('permission-' . $menu);
+
         }else{
+
             $gp = cache()->remember('permission-' . $menu, 14400, function () use ($menu) {
                 return Permission::where('model', $menu)->pluck('name')->toArray();
             });
