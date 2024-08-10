@@ -3,6 +3,7 @@
 namespace App\Http\Livewire\Table;
 
 use App\Models\Notice;
+use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Redirect;
 use Mediconesystems\LivewireDatatables\Http\Livewire\LivewireDatatable;
@@ -13,6 +14,8 @@ use Mediconesystems\LivewireDatatables\DateColumn;
 class NotificationTable extends LivewireDatatable
 {
     public $model = Notice::class;
+public $noticeId;
+
     public $filterDate = null;
     public $statusFilter = 'All';
 
@@ -24,10 +27,11 @@ class NotificationTable extends LivewireDatatable
      */
     public function builder()
     {
+
         $query = Notice::query();
 
         if (auth()->user()->isSuper || (auth()->user()->team && str_contains(auth()->user()->activeRole->role->name, 'Admin'))) {
-            $query = $query->withTrashed();
+            $query;
         } else {
             $query = $query->where('user_id', auth()->user()->id);
         }
@@ -68,6 +72,27 @@ class NotificationTable extends LivewireDatatable
     {
         $this->emit('refreshLivewireDatatable');
     }
+public function delete($id)
+{
+    $notification = Notice::where('id', $id)
+                          ->whereNull('deleted_at')
+                          ->first();
+
+    if ($notification) {
+        $notification->update(['status' => 'deleted']);
+        $notification->delete();
+
+        $this->emit('updateSavedQueries', $this->getSavedQueries());
+    } else {
+        return redirect(request()->header('Referer'));
+    }
+}
+
+
+    public function getSavedQueries()
+    {
+        return Notice::query()->find($this->noticeId);
+    }
 
     /**
      * adminTbl
@@ -76,10 +101,10 @@ class NotificationTable extends LivewireDatatable
      */
     private function adminTbl()
     {
-        return [
-            Column::name('user_id')->callback(['user_id'], function ($value) {
+        $data = [
+            Column::name('id')->callback(['id'], function ($value) {
                 return view('datatables::link', [
-                    'href' => "/admin/user/" . $value,
+                    'href' => "/notif-center/" . $value,
                     'slot' => $value
                 ]);
             })->label('User')->filterable()->exportCallback(function ($value) {
@@ -89,23 +114,14 @@ class NotificationTable extends LivewireDatatable
             DateColumn::name('created_at')->label('Creation Date')->sortBy('created_at', 'desc')->filterable()->format('d-m-Y H:i:s'),
             Column::name('type')->label('Name')->searchable()->filterable(),
             Column::name('notification')->truncate(50)->label('Description')->searchable()->filterable(),
-            Column::callback(['status'], function ($type) {
-                return view('label.label', ['type' => $type]);
-            }),
-            Column::callback(['status', 'id'], function ($status, $id) {
-                $html = '<div class="flex">';
-                $html = $html . view('datatables::link', [
-                    'href' => "/notif-center/" . $id,
-                    'slot' => 'View'
-                ]);
-                $disabled = $status === 'deleted' ? 'disabled' : '';
-                $html = $html . view('tables.delete-notification', [
-                    'notificationId' => $id,
-                    'disabled' => $disabled,
-                ]);
-                return $html . "</div>";
-            })->label('Actions')
+            Column::callback(['status', 'deleted_at'], function ($type,$del) {
+                return view('label.label', ['type' => $type, 'deleted'=>$del]);
+            })
         ];
+        if($this->statusFilter != 'deleted'){
+            $data[6] = Column::name('delete')->delete();
+        }
+        return $data;
     }
 
     /**

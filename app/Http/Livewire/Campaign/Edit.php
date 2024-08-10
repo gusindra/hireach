@@ -89,8 +89,11 @@ class Edit extends Component
         $selectProvider = [];
         $selectChannel = [];
         foreach($this->userProvider as $key => $up){
-            $selectProvider[$key] = [$up->provider->code, $up->provider->name];
+            if($up->provider){
+   $selectProvider[$key] = [$up->provider->code, $up->provider->name];
             $selectChannel[$key] = [$up->channel, $up->provider->code];
+            }
+
         }
         $this->listProvider = $selectProvider;
         $this->listChannel = $selectChannel;

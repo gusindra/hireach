@@ -25,6 +25,7 @@
         <link rel="stylesheet" href="https://telixcel.s3.ap-southeast-1.amazonaws.com/assets/2022/tail.min.css">
         <style>
             #livewire-error {width: 100% !important;height: 100% !important;}
+            [x-cloak] { display: none; }
         </style>
         @trixassets
         @livewireStyles
