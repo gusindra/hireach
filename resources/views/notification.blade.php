@@ -6,7 +6,7 @@
     </x-slot>
 
     <div class="grid grid-cols-12">
-        @if(auth()->user()->isSuper || (auth()->user()->team && str_contains(auth()->user()->activeRole->role->name, 'Admin')))
+        @if(auth()->user()->isSuper || (auth()->user()->team && auth()->user()->activeRole && auth()->user()->activeRole->role &&  str_contains(auth()->user()->activeRole->role->name, 'Admin')))
             @includeWhen(auth()->user(), 'menu.admin-menu-setting', [])
         @else
             @includeWhen(auth()->user(), 'menu.user-dashboard', [])
@@ -16,7 +16,9 @@
             <div class="bg-white dark:bg-slate-600 overflow-hidden shadow-xl sm:rounded-lg">
                 <div class="mx-auto p-4">
                     <div class="flex flex-row-reverse gap-3">
+                        @if (userAccess('NOTICE', 'create'))
                         @livewire('setting.notification.add')
+                        @endif
                         <a class="inline-flex items-center px-4 py-2 border border-transparent rounded-md font-semibold text-xs text-slate-900 dark:text-slate-300 uppercase tracking-widest hover:border-gray-700 active:bg-gray-900 focus:outline-none focus:border-gray-900 focus:shadow-outline-gray disabled:opacity-25 transition" href="{{route('notification.read.all')}}">
                             Set all Notification to Read
                         </a>

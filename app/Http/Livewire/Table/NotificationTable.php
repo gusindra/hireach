@@ -30,7 +30,7 @@ public $noticeId;
 
         $query = Notice::query();
 
-        if (auth()->user()->isSuper || (auth()->user()->team && str_contains(auth()->user()->activeRole->role->name, 'Admin'))) {
+        if (auth()->user()->isSuper || (auth()->user()->team && auth()->user()->activeRole && auth()->user()->activeRole->role && str_contains(auth()->user()->activeRole->role->name, 'Admin'))) {
             $query;
         } else {
             $query = $query->where('user_id', auth()->user()->id);
@@ -134,26 +134,18 @@ public function delete($id)
         if ((auth()->user()->super && auth()->user()->super->first() && auth()->user()->super->first()->role == 'superadmin') || (auth()->user()->activeRole && str_contains(auth()->user()->activeRole->role->name, "Admin"))) {
             return $this->adminTbl();
         }
-        return [
+        $data = [
             Column::name('type')->label('Name')->searchable(),
             Column::name('notification')->truncate(50)->label('Description')->searchable(),
             DateColumn::name('created_at')->label('Date'),
             Column::callback(['status'], function ($type) {
                 return view('label.label', ['type' => $type]);
             })->label('Status'),
-            Column::callback(['status', 'id'], function ($status, $id) {
-                $html = '<div class="flex">';
-                $html = $html . view('datatables::link', [
-                    'href' => "/notif-center/" . $id,
-                    'slot' => 'View'
-                ]);
-                $disabled = $status === 'deleted' ? 'disabled' : '';
-                $html = $html . view('tables.delete-notification', [
-                    'id' => $id,
-                    'disabled' => $disabled,
-                ]);
-                return $html . "</div>";
-            })->label('Actions'),
+
         ];
+        if($this->statusFilter != 'deleted'){
+            $data[6] = Column::name('delete')->delete();
+        }
+        return $data;
     }
 }
