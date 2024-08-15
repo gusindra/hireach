@@ -65,7 +65,7 @@ class OneWay extends Component
     public function delete($id)
     {
         $template = Template::findOrFail($id);
-        dd($template->user_id);
+
         $this->authorize('DELETE_CONTENT_USR', $template->user_id);
         $template->delete();
 
