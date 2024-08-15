@@ -33,7 +33,7 @@ class Export extends Component
         // ->get();;
 
         $this->group_date = Client::where('user_id', auth()->user()->id)->groupBy('created_at')->get(); //->whereMonth('created_at', Carbon::now()->month)
-        //dd($this->group_date);
+
     }
 
     public function rules()
@@ -50,7 +50,7 @@ class Export extends Component
 
     public function create()
     {
-        //dd(1);
+
         $this->validate();
         $customer =  Client::create([
             'title'     => $this->input['title'],
@@ -64,7 +64,6 @@ class Export extends Component
         ]);
         return redirect(request()->header('Referer'));
 
-        //$this->modalActionVisible = false;
         $this->resetForm();
         $this->emit('refreshLivewireDatatable');
     }

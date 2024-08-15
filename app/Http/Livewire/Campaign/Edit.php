@@ -182,22 +182,7 @@ class Edit extends Component
         $this->loadAudienceContacts();
     }
 
-    /**
-     * updatedProvider
-     *
-     * @param  mixed $providerCode
-     * @return void
-     */
-    public function updatedProvider($providerCode)
-    {
 
-        // // dd($providerCode);
-        // $selectedProvider = $this->userProvider->firstWhere('provider.code', $providerCode);
-        // // dd($this->listProvider);
-        // $this->channel = $selectedProvider ? $selectedProvider->channel : '';
-        // $this->loadAudienceContacts();
-        // $this->getFrom();
-    }
 
     /**
      * updatedProvider
@@ -208,7 +193,6 @@ class Edit extends Component
     public function updatedChannel($channel)
     {
         $selectedProvider = $this->userProvider->firstWhere('channel', $channel);
-        // dd($selectedProvider);
         $this->provider = $selectedProvider ? $selectedProvider->provider->code : '';
         $this->loadAudienceContacts();
         $this->getFrom();
@@ -305,7 +289,7 @@ class Edit extends Component
                     if($pro->status){
                         return $pro;
                     }
-                }); 
+                });
                 // START TO HIT CREATE CAMPAIGN API
                 if ($provider->code == 'provider3') {
                     //EXPORT FILE EXCEL AUDIENCE
@@ -326,7 +310,6 @@ class Edit extends Component
                     Log::debug($resData);
                     if ($resData['status']) {
                         $response = Http::withOptions(['verify' => false,])->withHeaders(['Client-Key' => ENV('WTID_CLIENT_KEY', 'MDg3Ng=='), 'Client-Secret' => ENV('WTID_CLIENT_SECRET', 'MDgxMjM0NTY')])->patch($url . 'api/campaign/ready/' . $resData['campaign_id']);
-                        // Log::debug($response);
                         $result = json_decode($response, true);
                         if ($result['status']) {
                             Log::debug("Campaign is Ready to Publish");

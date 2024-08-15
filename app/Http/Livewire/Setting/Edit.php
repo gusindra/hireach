@@ -34,10 +34,7 @@ class Edit extends Component
         // $this->showModal = true;
     }
 
-    public function showModalUpdate($settingId)
-    {
-        dd($settingId);
-    }
+
 
     public function update()
     {

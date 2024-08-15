@@ -26,7 +26,7 @@ class Profile extends Component
         $this->inputuser['nick'] = $this->user->nick ?? '';
         $this->inputuser['email'] = $this->user->email ?? '';
         $this->inputuser['phone'] = $this->user->phone_no ?? '';
-        // dd($this->inputuser);
+
         if ($this->user->isClient) {
             $this->inputclient['title'] = $this->user->isClient->title ?? '';
             $this->inputclient['name'] = $this->user->isClient->name ?? '';
@@ -45,7 +45,7 @@ class Profile extends Component
 
     public function saveUser($id)
     {
-        // dd($id);
+
         $this->authorize('UPDATE_USER', 'USER');
         $user = User::find($id);
         if ($this->user->isClient && $user->email != $this->inputuser['email']) {
@@ -65,7 +65,6 @@ class Profile extends Component
     public function saveClient()
     {
         $this->authorize('UPDATE_USER', 'USER');
-        // dd($this->user);
         if ($this->user->isClient) {
             $this->user->isClient->update([
                 'title' => $this->inputclient['title'],

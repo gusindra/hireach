@@ -16,7 +16,6 @@ class LogChangeTable extends LivewireDatatable
     public function columns()
     {
         return [
-            // Column::name('model')->label('Model')->filterable(),
             Column::callback(['model', 'model_id'], function ($model, $id) {
                 $array = ['Order', 'User', 'Quotation', 'Roles'];
                 if (in_array($model, $array)){
@@ -29,7 +28,6 @@ class LogChangeTable extends LivewireDatatable
             })->label('Model')->searchable()->filterable(),
             Column::name('model_id')->label('Model ID')->filterable(),
             Column::name('before')->label('Before')->filterable(),
-            // Column::name('user.name')->hideable()->label('User'),
             Column::callback(['user_id'], function ($id) {
                 return view('datatables::link', [
                     'href' => "/admin/user/" . $id,

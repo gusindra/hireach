@@ -15,10 +15,7 @@ class Balance extends LivewireDatatable
 
     public function builder()
     {
-        // if(auth()->user()->super && auth()->user()->super->first() && auth()->user()->super->first()->role == 'superadmin'){
-        //     return SaldoUser::query();
-        // }
-        return SaldoUser::query()->where('user_id', $this->user)->orderBy('id', 'desc');
+           return SaldoUser::query()->where('user_id', $this->user)->orderBy('id', 'desc');
     }
 
     public function columns()

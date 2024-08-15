@@ -227,7 +227,6 @@ class Edit extends Component
     {
         $this->authorize('UPDATE_ORDER', $this->customer->user_id);
         $this->validate();
-        // dd($this->modelData());
         $order = Order::find($id)->update($this->modelData());
 
         $bill = Billing::updateOrCreate([

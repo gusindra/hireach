@@ -44,12 +44,9 @@ class Add extends Component
 
     public function create()
     {
-        //dd(1);
         $this->validate();
         $customer =  Audience::create($this->modelData());
         return redirect(request()->header('Referer'));
-
-        //$this->modalActionVisible = false;
         $this->resetForm();
         $this->emit('refreshLivewireDatatable');
     }

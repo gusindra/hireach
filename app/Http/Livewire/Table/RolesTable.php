@@ -26,15 +26,12 @@ class RolesTable extends LivewireDatatable
                     'href' => "/admin/roles/" . $id,
                     'slot' => $name
                 ]);
-                //return $x;
             })->label('Name')->searchable(),
             Column::name('name')->label('Name'),
             Column::name('description')->label('Description'),
             Column::name('type')->label('Type'),
             BooleanColumn::name('status')->label('Active'),
-            NumberColumn::name('id')->label('Action')->sortBy('id')->callback('id', function ($value) {
 
-            }),
 
         ];
     }

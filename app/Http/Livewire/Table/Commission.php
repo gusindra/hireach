@@ -20,8 +20,6 @@ class Commission extends LivewireDatatable
     public function columns()
     {
         return [
-    		// Column::name('id')->label('ID'),
-    		// Column::name('model')->label('Model'),
     		Column::name('data.name')->callback('model, model_id, product.name, project.name, order.name', function ($m, $mi, $p, $v, $o) {
                 if($m=='product'){
                     return view('datatables::link', [

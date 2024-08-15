@@ -19,7 +19,6 @@ class Add extends Component
     public $showEditModal = false;
     public $showDeleteModal = false;
 
-    // public $settings = [];
     public $selectedSettingId;
 
     public function showModalAdd()
@@ -89,8 +88,6 @@ class Add extends Component
         $this->showDeleteModal = false;
         $this->selectedSettingId = null;
         session()->flash('message', 'Setting deleted successfully.');
-
-        //$this->loadSettings();
     }
 
     /**
