@@ -5,7 +5,7 @@ namespace App\Http\Livewire\Campaign;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Livewire\Component;
 use App\Models\Campaign;
-use App\Models\CampaignSchedule; // Import CampaignSchedule model
+use App\Models\CampaignSchedule;
 
 class Delete extends Component
 {
@@ -24,7 +24,7 @@ class Delete extends Component
         CampaignSchedule::where('campaign_id', $this->campaign->id)->delete();
         $this->campaign->delete();
 
-        return redirect()->route('campaign.index'); // Redirect to campaign index or another page
+        return redirect()->route('campaign.index');
     }
 
     public function render()

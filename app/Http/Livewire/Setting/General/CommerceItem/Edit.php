@@ -105,7 +105,6 @@ class Edit extends Component
     public function update($id)
     {
         $this->authorize('UPDATE_SETTING', 'SETTING');
-        //dd($this->modelData());
         $this->validate();
         CommerceItem::findOrFail($id)->update($this->modelData());
 

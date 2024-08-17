@@ -193,7 +193,6 @@ class Send extends Component
                 'otp' => checkContentOtp($text)
             ];
         }
-        //dd($data);
 
         if ($this->channel == 'wa') {
             foreach (auth()->user()->credential as $cre) {

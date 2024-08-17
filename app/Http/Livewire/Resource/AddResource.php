@@ -168,7 +168,7 @@ class AddResource extends Component
     public function selectContact($value)
     {
 
-        // dd($value);
+
         $this->selectedContact = "";
         if ($value != "") {
             $this->selectedContact = $value;
@@ -182,7 +182,7 @@ class AddResource extends Component
         } else {
             $this->search = "";
         }
-        // dd($value);
+
     }
 
     /**
@@ -323,7 +323,6 @@ class AddResource extends Component
         if ($this->resource == '2') {
             $data['team_id'] = auth()->user()->currentTeam->id;
         }
-        //dd($data);
 
         if (strpos($this->channel, 'wa') !== false && $provider->code == 'provider1') {
             foreach (auth()->user()->credential as $cre) {
@@ -447,7 +446,6 @@ class AddResource extends Component
             } elseif ($this->channel != 'email') {
                 $this->to = Client::whereNotNull('phone')->whereIn('uuid', $clientIds)->pluck('phone')->implode(',');
             }
-            dd($this->to);
         } else {
             $this->clients = [];
         }

@@ -5,7 +5,7 @@ namespace App\Http\Livewire\Setting\General\ProductLine;
 use App\Models\Company;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Livewire\Component;
-use App\Models\ProductLine; // Import the ProductLine model
+use App\Models\ProductLine; 
 
 class Add extends Component
 {

@@ -161,14 +161,12 @@ class AddSchedule extends Component
             'month' => (int)$this->month,
             'time' => $this->dateTime,
         ];
-        // dd($data);
         $campaign = CampaignSchedule::create(
             $data
         );
         // $this->loadExistingSchedules();
         // $this->emit('refreshLivewireDatatable');
-        // dd('success');
-        // if($campaign)
+
         return redirect(request()->header('Referer'));
     }
 
@@ -207,7 +205,6 @@ class AddSchedule extends Component
         dd($value);
         $data = CampaignSchedule::find($value);
         if($data){
-            // dd($data);
             $data->delete();
             $this->emit('deleted');
         }

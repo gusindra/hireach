@@ -40,7 +40,6 @@ class AddProvider extends Component
 
         $this->provider_id = '';
         $this->user = $user;
-        // $this->provider = ProviderUser::where('user_id', $user->id)->get();
 
         $this->userId = $this->user->id;
     }

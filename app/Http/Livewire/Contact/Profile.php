@@ -37,7 +37,7 @@ class Profile extends Component
             'tag' => $this->user->tag ?? '',
             'address' => $this->user->address ?? '',
         ];
-        //dd($this->inputuser);
+
     }
 
     /**
@@ -48,7 +48,7 @@ class Profile extends Component
      */
     public function saveUser($id)
     {
-        //dd($this->inputuser);
+
         $user = Client::findOrFail($id);
         if ($this->user->isClient && $user->email != $this->inputuser['email']) {
             $this->user->isClient->update([

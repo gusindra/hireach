@@ -37,7 +37,7 @@ class OrderAdminTable extends LivewireDatatable
 
             Column::callback(['customer_id'], function ($id) {
                 return view('datatables::link', [
-                    'href' => "/admin/customer/" . $id,
+                    'href' => "/admin/user/" . $id,
                     'slot' => $id
                 ]);
             })->label('Customer')->searchable()->filterable(),

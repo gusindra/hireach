@@ -40,7 +40,6 @@ class Quotation extends LivewireDatatable
                     'slot' => strtoupper($name)
                 ]);
             })->label('Quotation')->filterable()->searchable(),
-            // Column::name('title')->label('Title'),
             Column::name('model')->callback('model, model_id', function ($m, $mi) {
                 if ($m == 'USER') {
                     return $m . ' : '. $mi;

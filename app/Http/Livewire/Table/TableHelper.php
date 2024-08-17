@@ -21,12 +21,6 @@ class TableHelper extends LivewireDatatable
         $template->where('type', 'helper')->orderBy('created_at', 'desc');
 
         return $template->where('user_id', auth()->user()->currentTeam->user_id);
-        // ->with('teams')
-        //     ->whereHas('teams', function ($query) {
-        //         $query->where([
-        //             'teams.id' => auth()->user()->currentTeam->id
-        //         ]);
-        //     }); //->where('user_id', auth()->user()->currentTeam->user_id);
     }
 
     public function columns()

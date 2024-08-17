@@ -52,8 +52,6 @@ class Add extends Component
             'uuid' => Str::uuid()
         ]);
         return redirect(request()->header('Referer'));
-
-        //$this->modalActionVisible = false;
         $this->resetForm();
         $this->emit('refreshLivewireDatatable');
     }
@@ -88,10 +86,6 @@ class Add extends Component
         $this->modalActionVisible = true;
     }
 
-    public function createFormUser()
-    {
-        dd(1);
-    }
 
     public function render()
     {
