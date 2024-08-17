@@ -5,16 +5,12 @@ namespace App\Http\Controllers;
 use App\Http\Resources\CampaignResource;
 use App\Http\Resources\SmsResource;
 use App\Http\Resources\TwoWayResource;
-use App\Models\BlastMessage;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use App\Jobs\ProcessChatApi;
 use App\Jobs\ProcessInboundMessage;
-use App\Models\ApiCredential;
 use App\Models\Campaign;
 use App\Models\Client;
-use App\Models\ProviderUser;
 use App\Models\Request as ModelsRequest;
 use Carbon\Carbon;
 use Illuminate\Support\Str;
@@ -130,8 +126,11 @@ class ApiTwoWayController extends Controller
         ]);
 
         try{
-              $provider = cache()->remember('provider-user-'.auth()->user()->id.'-'.$request->channel, $this->cacheDuration, function() use ($request) {
-                return auth()->user()->providerUser->where('channel', strtoupper($request->channel))->first()->provider;
+            $provider = cache()->remember('provider-user-'.auth()->user()->id.'-'.$request->channel, $this->cacheDuration, function() use ($request) {
+                $pro = auth()->user()->providerUser->where('channel', strtoupper($request->channel))->first()->provider;
+                if($pro->status){
+                    return $pro;
+                }
             });
             if($provider){
                 //$userCredention = ApiCredential::where("user_id", auth()->user()->id)->where("client", "api_sms_mk")->where("is_enabled", 1)->first();
@@ -270,9 +269,9 @@ class ApiTwoWayController extends Controller
      */
     public function sendBulk(Request $request)
     {
-        Log::channel('apilog')->info($request, [
-            'auth' => auth()->user()->name,
-        ]);
+        // Log::channel('apilog')->info($request, [
+        //     'auth' => auth()->user()->name,
+        // ]);
         $totalPhone = 0;
         try{
             foreach($request->all() as $sms){
@@ -384,6 +383,13 @@ class ApiTwoWayController extends Controller
         return $client;
     }
 
+    /**
+     * retriveNewMessage
+     *
+     * @param  Illuminate\Http\Request $request
+     * @param  mixed $provider
+     * @return void
+     */
     public function retriveNewMessage(Request $request, $provider){
         $status=0;
         //return $request;

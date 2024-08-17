@@ -4,9 +4,9 @@ namespace App\Http\Livewire\Setting\General\CommerceItem;
 
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Livewire\Component;
-use App\Models\CommerceItem; // Import the CommerceItem model
+use App\Models\CommerceItem;
 use App\Models\ProductLine;
-use Illuminate\Support\Facades\Auth; // Import Auth facade
+use Illuminate\Support\Facades\Auth; 
 
 class Add extends Component
 {

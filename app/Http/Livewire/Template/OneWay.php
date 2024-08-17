@@ -62,14 +62,7 @@ class OneWay extends Component
         $this->modalActionVisible = true;
     }
 
-    public function delete($id)
-    {
-        $template = Template::findOrFail($id);
-        $this->authorize('DELETE_CONTENT_USR', $template->user_id);
-        $template->delete();
 
-        $this->emit('refreshLivewireDatatable');
-    }
 
     public function modelData()
     {

@@ -19,25 +19,17 @@ class ContactTable extends LivewireDatatable
     public function builder()
     {
         return Client::query()->where('user_id', auth()->user()->currentTeam->user_id);
-        // return Client::query()->with('teams')
-        //     ->whereHas('teams', function ($query) {
-        //         $query->where([
-        //             'teams.id' => auth()->user()->currentTeam->id
-        //         ]);
-        //     })->where('user_id', auth()->user()->currentTeam->user_id);
     }
 
     function columns()
     {
-    	return [ 
+    	return [
     		Column::callback(['uuid'], function ($x) {
                 return view('datatables::link', [
                     'href' => "/contact/" . $x,
                     'slot' => substr($x, 30)
                 ]);
-                //return $x;
             })->label('UUID')->searchable(),
-    		// Column::name('uuid')->label('ID')->sortBy('id')->searchable(),
     		Column::name('name')->label('Name')->searchable(),
     		Column::name('phone')->label('Phone Number')->searchable(),
     		Column::name('email')->label('Email')->searchable(),

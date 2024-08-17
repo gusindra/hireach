@@ -25,7 +25,6 @@ class Companies extends LivewireDatatable
                     'slot' => strtoupper($name)
                 ]);
             })->label('Name')->searchable(),
-            // Column::name('id')->label('ID'),
             Column::name('logo')->callback('logo, name', function ($value, $name) {
                 if ($value) {
                     return '<img src="https://telixcel.s3.ap-southeast-1.amazonaws.com/' . $value . '" />';

@@ -30,12 +30,6 @@ class ProviderTable extends LivewireDatatable
             Column::name('code')->label('code'),
             Column::name('channel')->label('channel'),
             Column::name('company')->label('Company'),
-            // NumberColumn::name('id')->label('Action')->sortBy('id')->callback('id', function ($value) {
-            //     // return view('datatables::link', [
-            //         //     'href' => url('/admin/settings/providers/') . '/' . $value,
-            //         //     'slot' => 'View'
-            //         // ]);
-            // }),
             BooleanColumn::name('status')->label('Status')
         ];
     }

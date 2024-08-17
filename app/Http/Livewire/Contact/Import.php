@@ -54,7 +54,6 @@ class Import extends Component
         ]);
         return redirect(request()->header('Referer'));
 
-        //$this->modalActionVisible = false;
         $this->resetForm();
         $this->emit('refreshLivewireDatatable');
     }
@@ -87,11 +86,6 @@ class Import extends Component
     public function actionShowModal()
     {
         $this->modalActionVisible = true;
-    }
-
-    public function createFormUser()
-    {
-        dd(1);
     }
 
     public function render()

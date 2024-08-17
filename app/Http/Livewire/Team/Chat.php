@@ -24,7 +24,7 @@ class Chat extends Component
         $this->team = $team;
         $this->slug = $team->slug;
         $this->dataId = Hashids::encode($team->id);
-        // dd($this->team);
+
     }
 
     public function updateChatTeam()

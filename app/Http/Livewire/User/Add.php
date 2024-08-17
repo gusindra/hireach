@@ -138,7 +138,7 @@ class Add extends Component
 
     public function createFormUser()
     {
-        dd(1);
+
         $customer = Client::create([
             'title' => $this->inputclient['title'],
             'name' => $this->inputclient['name'],

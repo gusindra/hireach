@@ -38,15 +38,11 @@ class Permissions extends Component
             $old = $this->role->permission()->find($id);
             $this->role->permission()->detach($id);
             addLog($this->role, $this->role->permission()->find($id), $old);
-            // Arr::except($this->request,[$id]);
             $this->request[$id] = false;
-            // unset($this->request[$id]);
         } else {
             $old = $this->role->permission()->find($id);
             $this->role->permission()->attach($id);
             addLog($this->role, $this->role->permission()->find($id), $old);
-            // $newCompete = array($id=>true);
-            // array_push($this->request, $newCompete);
             $this->request[$id] = true;
         }
 

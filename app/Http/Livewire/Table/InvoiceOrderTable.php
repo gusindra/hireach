@@ -35,7 +35,6 @@ class InvoiceOrderTable extends LivewireDatatable
             DateColumn::name('created_at')->label('Creation Date')->filterable(),
             NumberColumn::name('amount')->callback('amount', function ($value) {
                 if ($value) {
-                    // return 'Rp' . number_format($value);
                     return $value;
                 }
                 return 0;

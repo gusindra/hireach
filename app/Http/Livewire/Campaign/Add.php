@@ -24,9 +24,11 @@ class Add extends Component
     public function create()
     {
         $this->validate();
-
         $provider = cache()->remember('provider-user-'.auth()->user()->id, $this->cacheDuration, function() {
-            return auth()->user()->providerUser && auth()->user()->providerUser->first() ? auth()->user()->providerUser->first()->provider : [];
+            $pro = auth()->user()->providerUser->first()->provider;
+            if($pro->status){
+                return $pro;
+            }
         });
 
         if(!empty($provider)){

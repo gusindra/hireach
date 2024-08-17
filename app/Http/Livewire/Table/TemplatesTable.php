@@ -28,12 +28,7 @@ class TemplatesTable extends LivewireDatatable
             $template = $template->where('resource', $this->resource);
         }
         return $template->where('user_id', auth()->user()->currentTeam->user_id);
-        // ->with('teams')
-        //     ->whereHas('teams', function ($query) {
-        //         $query->where([
-        //             'teams.id' => auth()->user()->currentTeam->id
-        //         ]);
-        //     }); //->where('user_id', auth()->user()->currentTeam->user_id);
+
     }
 
     public function columns()
