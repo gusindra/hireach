@@ -88,6 +88,9 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
         Route::get('/user/{user}/client/{client}', [UserController::class, 'clientUser'])->name('client.create.user');
         Route::get('/user/{user}/request', [UserController::class, 'request'])->name('user.show.request');
 
+        Route::get('/department', [UserController::class, 'listDepartment'])->name('admin.department');
+        Route::get('/get/api/department', [UserController::class, 'getDepartment'])->name('admin.department.get');
+
         // Route::get('/settings/clear-cache', 'Backend\SettingController@clearCache')->name('settings.clear-cache');
         // Route::get('/settings/rebuild-cache', 'Backend\SettingController@rebuildCache')->name('settings.rebuild-cache');
         //Route::resource('settings', 'Backend\SettingController', ['only' => ['index', 'update']]);
