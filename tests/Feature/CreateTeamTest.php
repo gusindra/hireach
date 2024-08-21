@@ -20,7 +20,6 @@ class CreateTeamTest extends TestCase
         Livewire::test(CreateTeamForm::class)
                     ->set(['state' => ['name' => $random]])
                     ->call('createTeam');
-
         $this->assertCount(2, $user->fresh()->ownedTeams);
         $this->assertEquals($random, $user->fresh()->ownedTeams()->latest('id')->first()->name);
         $user->fresh()->ownedTeams()->latest('id')->first()->delete();

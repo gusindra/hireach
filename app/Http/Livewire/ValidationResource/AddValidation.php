@@ -40,13 +40,9 @@ class AddValidation extends Component
     {
         $this->validate();
 
-        // Store the uploaded file
-        $path = $this->file->store('uploads');
-
-        // Dispatch the job to process the file
+          $path = $this->file->store('uploads');
         ProcessValidation::dispatch($path, $this->type, auth()->id());
 
-        // Close the modal and reset the form
         $this->closeModal();
         $this->resetFields();
 

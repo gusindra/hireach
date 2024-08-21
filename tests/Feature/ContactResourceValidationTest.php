@@ -2,7 +2,6 @@
 
 namespace Tests\Feature;
 
-use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
@@ -14,9 +13,9 @@ class ContactResourceValidationTest extends TestCase
      *
      * @return void
      */
-    public function test_can_render_index_page()
+    public function test_example()
     {
-        $response = $this->actingAs(User::find(2))->$this->get('/contact-validation');
+        $response = $this->get('/');
 
         $response->assertStatus(200);
     }

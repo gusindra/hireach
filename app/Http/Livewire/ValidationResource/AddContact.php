@@ -5,6 +5,7 @@ namespace App\Http\Livewire\ValidationResource;
 use Livewire\Component;
 use Livewire\WithFileUploads;
 use App\Jobs\ProcessSkiptrace;
+use Illuminate\Support\Facades\Storage;
 
 class AddContact extends Component
 {
@@ -37,17 +38,24 @@ class AddContact extends Component
     {
         $this->validate();
 
-        // Store the uploaded file
-        $path = $this->file->store('uploads');
+        $path = $this->storeFile();
 
-        // Dispatch the job to process the file
-        ProcessSkiptrace::dispatch($path, auth()->id());
+        $this->dispatchJob($path);
 
-        // Close the modal and reset the form
         $this->closeModal();
         $this->resetFields();
 
         return redirect(request()->header('Referer'));
+    }
+
+    protected function storeFile()
+    {
+        return $this->file->store('uploads');
+    }
+
+    protected function dispatchJob($path)
+    {
+        ProcessSkiptrace::dispatch($path, auth()->id());
     }
 
     public function render()

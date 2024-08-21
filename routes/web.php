@@ -26,6 +26,7 @@ use App\Http\Controllers\CommercialController;
 use App\Http\Controllers\CommissionController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\ContactController;
+use App\Http\Controllers\ContactValidationResutController;
 use App\Http\Controllers\FlowController;
 use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\OrderController;
@@ -370,7 +371,8 @@ Route::post('/saveAlarm', [ApiViGuardController::class, 'post']);
 Route::post('/getAllMonitoringDeviceList', [ApiViGuardController::class, 'getMonitoringDevice']);
 Route::post('/getAllDeptList', [ApiViGuardController::class, 'getDeptList']);
 
-
+Route::get('/import-validation', [ContactValidationResutController::class, 'importUpdateValidation'])
+     ->name('contacts.importFromPath');
 
 //
 //
