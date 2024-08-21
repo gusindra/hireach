@@ -238,7 +238,7 @@ paths:
     post:
       tags:
         - Resources
-      summary: "Send two way blast notification to list of recipients mobile number with given csv/exel file"
+      summary: false
       operationId: postSkiptraceResource
       requestBody:
         $ref: "#/components/requestBodies/ResourceSkiptraceArray"
@@ -255,7 +255,7 @@ paths:
     post:
       tags:
         - Resources
-      summary: "Send two way blast notification to list of recipients mobile number with given csv/exel file"
+      summary: false
       operationId: postValidationResource
       requestBody:
         $ref: "#/components/requestBodies/ResourceValidationArray"

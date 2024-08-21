@@ -45,7 +45,7 @@ class PhoneNumberImport implements ToModel
                 'type' => $this->type,
             ]
         );
-
+        
         ClientValidation::create([
             'contact_id' => $contact->id,
             'user_id' => $this->userId,

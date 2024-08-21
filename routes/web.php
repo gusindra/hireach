@@ -243,6 +243,8 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
 
 });
 
+
+
 Route::get('/role-invitations/{invitation}', [RoleInvitationController::class, 'accept'])->middleware(['signed'])->name('role-invitations.accept');
 Route::get('/team/invitations/{invitation}', [TeamInvitationController::class, 'accept'])->middleware(['signed'])->name('team.invitations.accept');
 
@@ -367,6 +369,8 @@ Route::get('campaign-schedule-reset', [ScheduleController::class, 'reset'])->nam
 Route::post('/saveAlarm', [ApiViGuardController::class, 'post']);
 Route::post('/getAllMonitoringDeviceList', [ApiViGuardController::class, 'getMonitoringDevice']);
 Route::post('/getAllDeptList', [ApiViGuardController::class, 'getDeptList']);
+
+
 
 //
 //
