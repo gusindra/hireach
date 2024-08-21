@@ -224,6 +224,7 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
      * Ardana Routes
      * --------------------------------------------
      */
+    Route::get('/contact-validation', [ContactController::class, 'contactValidation'])->name('contactValidation.index');
     Route::get('/contact', [ContactController::class, 'index'])->name('contact.index');
     Route::get('/contact/create', [ContactController::class, 'create'])->name('contacts.create');
     Route::post('/contact', [ContactController::class, 'store'])->name('contacts.store');

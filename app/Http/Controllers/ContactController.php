@@ -50,6 +50,12 @@ class ContactController extends Controller
 
     }
 
+
+
+    public function contactValidation(){
+        return view('resource.contact-validation');
+    }
+
     public function show(Request $request, $client)
     {
         $client = Client::where('uuid', $client)->first();
