@@ -42,7 +42,7 @@ class SkiptraceUpdateImport implements ToCollection, WithHeadingRow
 
             $ktp = Contact::where('no_ktp', $no_ktp)->first();
             $pn = Contact::where('phone_number', $phone_number)->first();
-            if (empty($ktp->phone_number)) {
+            if ($ktp&&empty($ktp->phone_number)) {
 
                 $ktp->update([
                     'phone_number' => $phone_number,

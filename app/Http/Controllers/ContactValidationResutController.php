@@ -22,17 +22,17 @@ class ContactValidationResutController extends Controller
             return redirect()->back()->with('error', 'File not found: RESULT SKIPTRACE_NO_20240820.xlsx');
         }
 
-        // if (file_exists($filePath2)) {
-        //     CellularUpdateValidateJob::dispatch($filePath2);
-        // } else {
-        //     return redirect()->back()->with('error', 'File not found: RESULT CELLULARNO_20240819.xlsx');
-        // }
+        if (file_exists($filePath2)) {
+            CellularUpdateValidateJob::dispatch($filePath2);
+        } else {
+            return redirect()->back()->with('error', 'File not found: RESULT CELLULARNO_20240819.xlsx');
+        }
 
-        // if (file_exists($filePath3)) {
-        //     WhatsappValidateUpdateJob::dispatch($filePath3);
-        // } else {
-        //     return redirect()->back()->with('error', 'File not found: RESULT WHATSAPP_20240819.xlsx');
-        // }
+        if (file_exists($filePath3)) {
+            WhatsappValidateUpdateJob::dispatch($filePath3);
+        } else {
+            return redirect()->back()->with('error', 'File not found: RESULT WHATSAPP_20240819.xlsx');
+        }
 
         // return redirect()->back()->with('success', 'All contact imports have been queued.');
     }
