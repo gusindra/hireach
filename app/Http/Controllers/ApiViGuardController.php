@@ -190,12 +190,12 @@ class ApiViGuardController extends Controller
             $dept = Department::where('source_id', $request->deptId)->first();
             if($dept){
                 $customer = $dept->client;
-                if($customer || $customer->email || $customer->phone){
-                    if($customer->source=='email'){
+                if($customer){
+                    if($customer->source=='email' && $customer->email){
                         $channel = 'email';
                         $to = $customer->email;
                         $from = 'alert@hireach.archeeshop.com';
-                    }else{
+                    }elseif($customer->phone){
                         $channel = 'sms';
                         $to = $customer->phone;
                         $from = '081339668556';
@@ -272,7 +272,7 @@ class ApiViGuardController extends Controller
             }
         }catch(\Exception $e){
             return response()->json([
-                'msg' => $e->getMessage(),
+                'msg' => $e->getMessage().' at  on line '.$e->getLine(),
                 'code' => 500
             ]);
         }

@@ -18,7 +18,7 @@ class Department extends Component
     public $client;
     public $department;
     public $listDepartment;
-    
+
     /**
      * mount
      *
@@ -32,11 +32,11 @@ class Department extends Component
         $list = ModelsDepartment::where('user_id', $client->user_id)->get();
         foreach($list as $key => $l){
             $listDept[$key][0] = $l->id;
-            $listDept[$key][1] = $l->name;
+            $listDept[$key][1] = $l->source_id.':'.$l->name;
         }
         $this->listDepartment = $listDept;
     }
-    
+
     /**
      * saveUser
      *
@@ -51,7 +51,7 @@ class Department extends Component
 
         $this->emit('department_saved');
     }
-    
+
     /**
      * removeDepartment
      *
