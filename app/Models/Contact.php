@@ -10,11 +10,12 @@ class Contact extends Model
     use HasFactory;
 
     protected $fillable = [
-        'user_id',
         'no_ktp',
-        'status',
+        'status_wa',
+        'status_no',
         'type',
         'phone_number',
+        'file_name',
         'activation_date',
     ];
 

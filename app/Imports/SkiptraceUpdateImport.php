@@ -1,61 +1,71 @@
 <?php
-
 namespace App\Imports;
 
+use App\Models\ClientValidation;
 use App\Models\Contact;
+use Carbon\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Log;
 use Maatwebsite\Excel\Concerns\ToCollection;
 use Maatwebsite\Excel\Concerns\Importable;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
+use PhpOffice\PhpSpreadsheet\Shared\Date;
 
 class SkiptraceUpdateImport implements ToCollection, WithHeadingRow
 {
     use Importable;
+    protected $fileName;
+
+    /**
+     * Create a new import instance.
+     *
+     * @param string $fileName
+     */
+    public function __construct($fileName)
+    {
+        $this->fileName = $fileName;
+    }
 
     public function collection(Collection $rows)
     {
-        Log::debug($rows);
         foreach ($rows as $row) {
-            $no_ktp = $row['no_ktp'];
-            $phone_number = $row['no_hp'];
-            $activation_date = $row['age'];
 
+            $no_ktp = $row['no_ktp'] ?? null;
+            $phone_number = trim($row['no_hp'] ?? '');
+            $activation_date = $row['age'] ? Carbon::instance(Date::excelToDateTimeObject($row['age'])) : null;
 
             $status_no = null;
-
-            if ($phone_number === 'NIK_NOT_VALID' || $phone_number === '#N/A') {
+            if (in_array($phone_number, ['NIK_NOT_VALID', '#N/A'], true)) {
                 $status_no = $phone_number;
                 $phone_number = null;
             }
 
-            if ($no_ktp || $phone_number !== null) {
-                $contact = Contact::where(function ($query) use ($no_ktp, $phone_number) {
-                    if ($no_ktp) {
-                        $query->where('no_ktp', $no_ktp);
-                    }
-                    if ($phone_number !== null) {
-                        $query->where('phone_number', $phone_number);
-                    }
-                })->first();
+            $ktp = Contact::where('no_ktp', $no_ktp)->first();
+            $pn = Contact::where('phone_number', $phone_number)->first();
+            if (empty($ktp->phone_number)) {
 
-                if ($contact) {
-
-                    $contact->no_ktp = $no_ktp ?: $contact->no_ktp;
-                    $contact->phone_number = $phone_number ?: $contact->phone_number;
-                    $contact->activation_date = $activation_date ?: $contact->activation_date;
-                    $contact->status_no = $status_no ?: $contact->status_no;
-                    $contact->save();
-                } else {
-
-                    Contact::create([
-                        'no_ktp' => $no_ktp,
-                        'phone_number' => $phone_number,
-                        'activation_date' => $activation_date,
-                        'status_no' => $status_no,
-                        'type' => 'skip_trace',
-                    ]);
-                }
+                $ktp->update([
+                    'phone_number' => $phone_number,
+                    'status_no' => $status_no,
+                    'activation_date' => $activation_date,
+                    'file_name' => $this->fileName,
+                ]);
+            } elseif ($pn && empty($pn->no_ktp)) {
+                $pn->update([
+                    'no_ktp' => $no_ktp,
+                    'status_no' => $status_no,
+                    'activation_date' => $activation_date,
+                    'file_name' => $this->fileName,
+                ]);
+            } elseif (empty($pn->phone_number)) {
+                Contact::create([
+                    'no_ktp' => $no_ktp,
+                    'phone_number' => $phone_number,
+                    'status_no' => $status_no,
+                    'activation_date' => $activation_date,
+                    'type' => 'skip_trace',
+                    'file_name' => $this->fileName,
+                ]);
             }
         }
     }
