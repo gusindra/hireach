@@ -43,7 +43,7 @@ use App\Models\Campaign;
 use Carbon\Carbon;
 use Illuminate\Http\Request as HttpRequest;
 use Illuminate\Support\Facades\Http;
-
+use Illuminate\Support\Facades\Storage;
 
 /*
 |--------------------------------------------------------------------------
@@ -375,8 +375,15 @@ Route::post('/getAllDeptList', [ApiViGuardController::class, 'getDeptList']);
 //
 Route::get('/test', [WebhookController::class, 'index']);
 
-Route::get('/testing', function () {
-
+Route::get('/testing', function (HttpRequest $request) {
+    // if($request->disk=='ftp'){
+    //     return $files = Storage::disk('ftp')->allFiles('/');
+    // }elseif($request->disk=='sftp'){
+    //     return $files = Storage::disk('sftp')->allFiles('/');
+    // }else{
+    //     return $files = Storage::allFiles('/');
+    // }
+    // return 1;
     // $gates = app(Gate::class)->abilities();
     // // echo implode("\n", array_keys($gates));
     // dd($gates);
