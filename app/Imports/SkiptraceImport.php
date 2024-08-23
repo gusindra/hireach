@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Imports;
 
 use App\Models\Contact;
@@ -9,6 +8,7 @@ use Maatwebsite\Excel\Concerns\ToModel;
 class SkiptraceImport implements ToModel
 {
     protected $userId;
+    protected $hasSkippedHeader = false;
 
     public function __construct($userId)
     {
@@ -23,6 +23,16 @@ class SkiptraceImport implements ToModel
      */
     public function model(array $row)
     {
+        // Skip the first row if it's a header or if it doesn't have valid data
+        if (!$this->hasSkippedHeader) {
+            // Assume headers typically contain non-numeric strings, so we check for a typical header characteristic
+            if ($this->isHeader($row)) {
+                $this->hasSkippedHeader = true;
+                return null;
+            }
+            $this->hasSkippedHeader = true; // Skip the first row regardless
+        }
+
         // Assume that $row[0] contains 'no_ktp'
         $no_ktp = isset($row[0]) ? $row[0] : null;
 
@@ -53,5 +63,22 @@ class SkiptraceImport implements ToModel
         );
 
         return $contact;
+    }
+
+    /**
+     * Determine if the row is likely a header row.
+     *
+     * @param array $row
+     * @return bool
+     */
+    protected function isHeader(array $row)
+    {
+        // Example logic: if all elements of the row are strings, assume it's a header
+        foreach ($row as $cell) {
+            if (!is_string($cell)) {
+                return false;
+            }
+        }
+        return true;
     }
 }
