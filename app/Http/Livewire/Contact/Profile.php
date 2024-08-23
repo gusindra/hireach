@@ -4,6 +4,7 @@ namespace App\Http\Livewire\Contact;
 
 use App\Models\BillingUser;
 use App\Models\Client;
+use App\Models\ClientValidation;
 use App\Models\Team;
 use App\Models\User;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
@@ -17,11 +18,14 @@ class Profile extends Component
     public $client;
     public $inputuser;
     public $inputclient;
+    public $isValidate;
 
     public function mount($user)
     {
 
         $this->user = $user;
+        $this->isValidate = ClientValidation::where('user_id', auth()->user()->id)
+            ->where('client_id', $this->user->id)->get();
 
         $this->inputuser = [
             'name' => $this->user->name ?? '',

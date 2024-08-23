@@ -1,4 +1,17 @@
 <div>
+    @if ($isValidate)
+        <div class="bg-green-500 text-white mb-4 p-3 rounded-md shadow-md flex items-center space-x-2">
+            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+            </svg>
+            <div>
+                <h3 class="text-sm font-semibold">Contact Validated</h3>
+            </div>
+        </div>
+    @endif
+
+
     <x-jet-form-section submit="saveUser({{ $user->id }})">
         <x-slot name="title">
             {{ __('User Information') }}
@@ -105,8 +118,9 @@
             <div class="col-span-6 sm:col-span-3">
                 <div class="col-span-12 sm:col-span-1">
                     <x-jet-label for="inputuser.identity" value="{{ __('Identity') }}" />
-                    <x-jet-input id="identity" type="text" class="mt-1 block w-full" wire:model="inputuser.identity"
-                        wire:model.defer="inputuser.identity" wire:model.debunce.800ms="inputuser.identity" />
+                    <x-jet-input id="identity" type="text" class="mt-1 block w-full"
+                        wire:model="inputuser.identity" wire:model.defer="inputuser.identity"
+                        wire:model.debunce.800ms="inputuser.identity" />
                     <x-jet-input-error for="inputuser.identity" class="mt-2" />
                 </div>
             </div>
@@ -162,9 +176,9 @@
 
     <x-jet-section-border />
 
-    @if($user->theUser->department)
-    <livewire:contact.department :client="$user" />
-    <x-jet-section-border />
+    @if ($user->theUser->department)
+        <livewire:contact.department :client="$user" />
+        <x-jet-section-border />
     @endif
 
     @if ($user)
@@ -197,7 +211,7 @@
                     </x-jet-danger-button>
                 </div>
 
-                
+
             </x-slot>
         </x-jet-form-section>
         <livewire:contact.delete :contact="$user" :key="$user->id" />

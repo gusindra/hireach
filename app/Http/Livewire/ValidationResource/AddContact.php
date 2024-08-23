@@ -12,10 +12,11 @@ class AddContact extends Component
     use WithFileUploads;
 
     public $file;
+    public $storedPath='';
     public $showModal = false;
 
     protected $rules = [
-        'file' => 'required|file|mimes:xlsx,xls,csv',
+        'file' => 'required|mimes:xlsx,xls,csv',
     ];
 
     public function openModal()
@@ -36,21 +37,15 @@ class AddContact extends Component
 
     public function uploadFile()
     {
-        $this->validate();
+        // $this->validate();
 
-        $path = $this->storeFile();
-
-        $this->dispatchJob($path);
+        $this->storedPath = $this->file->store('uploads');
+        $this->dispatchJob( $this->storedPath);
 
         $this->closeModal();
         $this->resetFields();
 
-        return redirect(request()->header('Referer'));
-    }
-
-    protected function storeFile()
-    {
-        return $this->file->store('uploads');
+        return redirect()->back();
     }
 
     protected function dispatchJob($path)

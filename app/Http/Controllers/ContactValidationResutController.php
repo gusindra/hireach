@@ -34,6 +34,5 @@ class ContactValidationResutController extends Controller
             return redirect()->back()->with('error', 'File not found: RESULT WHATSAPP_20240819.xlsx');
         }
 
-        // return redirect()->back()->with('success', 'All contact imports have been queued.');
     }
 }
