@@ -40,7 +40,7 @@ class AddValidation extends Component
     {
         $this->validate();
 
-          $path = $this->file->store('uploads');
+        $path = $this->file->store('uploads');
         ProcessValidation::dispatch($path, $this->type, auth()->id());
 
         $this->closeModal();

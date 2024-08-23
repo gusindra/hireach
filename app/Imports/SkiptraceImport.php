@@ -31,22 +31,26 @@ class SkiptraceImport implements ToModel
             return null;
         }
 
-        // Use updateOrCreate to either update an existing contact or create a new one
-        $contact = Contact::updateOrCreate(
-            ['no_ktp' => $no_ktp],
-            [
+        // Check if a contact with the given 'no_ktp' already exists
+        $contact = Contact::where('no_ktp', $no_ktp)->first();
+
+        if (!$contact) {
+            // If no contact exists, create a new one
+            $contact = Contact::create([
                 'no_ktp' => $no_ktp,
                 'type' => 'skip_trace',
+            ]);
+        }
 
-            ]
-        );
-
-        // Create a new ClientValidation entry
-        ClientValidation::create([
-            'contact_id' => $contact->id,
-            'user_id' => $this->userId,
+        // Link the contact with the ClientValidation table
+        ClientValidation::updateOrCreate(
+            [
+                'contact_id' => $contact->id,
+                'user_id' => $this->userId,
+            ],
             // Add additional fields if necessary
-        ]);
+            []
+        );
 
         return $contact;
     }

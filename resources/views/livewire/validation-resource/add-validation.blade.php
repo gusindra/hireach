@@ -9,7 +9,7 @@
         </x-slot>
 
         <x-slot name="content">
-            <form wire:submit.prevent="uploadFile">
+            <div>
                 <div class="mt-4">
                     <x-jet-label for="file" value="Select File" />
                     <input type="file" id="file" wire:model="file"
@@ -27,20 +27,17 @@
                     </select>
                     <x-jet-input-error for="type" class="mt-2" />
                 </div>
-            </form>
+            </div>
         </x-slot>
 
-        <!-- Footer slot -->
         <x-slot name="footer">
-            <div class="mt-4 flex justify-end">
-                <x-jet-secondary-button wire:click="closeModal" wire:loading.attr="disabled">
-                    Cancel
-                </x-jet-secondary-button>
+            <x-jet-secondary-button wire:click="closeModal" wire:loading.attr="disabled">
+                Cancel
+            </x-jet-secondary-button>
 
-                <x-jet-button class="ml-2" type="submit" wire:loading.attr="disabled">
-                    Upload
-                </x-jet-button>
-            </div>
+            <x-jet-button class="ml-2" type="submit" wire:click="uploadFile" wire:loading.attr="disabled">
+                Upload
+            </x-jet-button>
         </x-slot>
     </x-jet-dialog-modal>
 </div>
