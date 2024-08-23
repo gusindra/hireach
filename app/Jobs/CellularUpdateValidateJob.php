@@ -16,17 +16,19 @@ class CellularUpdateValidateJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
+    protected $userId;
     protected $filePath;
 
-    public function __construct($filePath)
+    public function __construct($filePath, $userId)
     {
         $this->filePath = $filePath;
+        $this->userId = $userId;
     }
 
     public function handle()
     {
         $fileName = basename($this->filePath);
-        Excel::import(new CellulerUpdateImport($fileName), $this->filePath);
+        Excel::import(new CellulerUpdateImport($fileName,$this->userId), $this->filePath);
         Storage::delete($this->filePath);
     }
 }

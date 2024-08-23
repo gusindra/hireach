@@ -33,6 +33,12 @@ class ContactValidationTable extends LivewireDatatable
 
             Column::name('type')->label('Type')->searchable(),
 
+            Column::name('status_no')->label('Status No')->searchable(),
+
+            Column::name('status_wa')->label('Status WA')->searchable(),
+
+            DateColumn::name('activation_date')->label('Activation Date')->format('d F Y'),
+
             DateColumn::name('created_at')->label('Created Date')->format('d F Y'),
         ];
     }

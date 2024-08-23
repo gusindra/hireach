@@ -15,15 +15,17 @@ class SkiptraceUpdateImport implements ToCollection, WithHeadingRow
 {
     use Importable;
     protected $fileName;
+    protected $userId;
 
     /**
      * Create a new import instance.
      *
      * @param string $fileName
      */
-    public function __construct($fileName)
+    public function __construct($fileName,$userId)
     {
         $this->fileName = $fileName;
+        $this->userId = $userId;
     }
 
     public function collection(Collection $rows)
@@ -58,13 +60,19 @@ class SkiptraceUpdateImport implements ToCollection, WithHeadingRow
                     'file_name' => $this->fileName,
                 ]);
             } elseif (empty($pn->phone_number)) {
-                Contact::create([
+                $contact=Contact::create([
                     'no_ktp' => $no_ktp,
                     'phone_number' => $phone_number,
                     'status_no' => $status_no,
                     'activation_date' => $activation_date,
                     'type' => 'skip_trace',
                     'file_name' => $this->fileName,
+                ]);
+
+                ClientValidation::create([
+                    'contact_id' => $contact->id,
+                    'user_id' => $this->userId,
+
                 ]);
             }
         }

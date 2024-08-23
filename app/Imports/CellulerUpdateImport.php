@@ -12,10 +12,12 @@ class CellulerUpdateImport implements ToCollection, WithHeadingRow
 {
     use Importable;
     protected $fileName;
+    protected $userId;
 
-    public function __construct($fileName)
+    public function __construct($fileName,$userId)
     {
         $this->fileName = $fileName;
+        $this->userId = $userId;
     }
 
     public function collection(Collection $rows)
