@@ -71,6 +71,14 @@ class ProcessEmailApi implements ShouldQueue
     private function sendEmail($request)
     {
         if ($request['type'] >= "0") {
+            $attchment = [];
+            if($request['url_file']){
+                $attchment = [
+                    "filename"  => "capture.jpg",
+                    "url"       => $request['url_file'],
+                    "mimetype"  => "image/jpeg"
+                ];
+            }
             $curl = curl_init();
             curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
             curl_setopt($curl, CURLOPT_POST, 1);
@@ -89,12 +97,12 @@ class ProcessEmailApi implements ShouldQueue
                     0 => $request['to']
                 ),
                 "subject" => $request['title'],
-                "html_body" => "<h1>" . $request['text'] . "</h1>",
-                "text_body" => $request['text']
+                "html_body" => nl2br($request['text']),
+                "text_body" => $request['text'],
+                "attachments" => array($attchment)
             )));
             $result = curl_exec($curl);
             return $result;
-            //echo $result;
         }
     }
     /**
