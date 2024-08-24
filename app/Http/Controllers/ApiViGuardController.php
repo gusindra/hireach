@@ -12,8 +12,10 @@ use Vinkla\Hashids\Facades\Hashids;
 use App\Jobs\ProcessSmsApi;
 use App\Jobs\ProcessEmailApi;
 use App\Jobs\ProcessWaApi;
+use App\Models\Attachment;
 use App\Models\Department;
 use App\Models\Setting;
+use Illuminate\Support\Facades\Storage;
 
 class ApiViGuardController extends Controller
 {
@@ -148,12 +150,55 @@ class ApiViGuardController extends Controller
         $variable = [];
         foreach($request->all() as $key => $req){
             if($key=='image'){
-                $variable[$key] = '<img src="data:image/png;base64, '.$req.'" />';
+                $data = base64_decode($req);
+                $im = imagecreatefromstring($data);
+                if ($im !== false) {
+                    $attach = Attachment::where('notes', $request->createDate)->where('model','BlastMessage')->where('uploaded_by','viguard')->first();
+                    if($attach){
+                        $variable[$key] = $attach->file;
+                    }else{
+                        Storage::disk('s3')->put(date('YmdHis').'.jpg', $data);
+                        $url = Storage::disk('s3')->url(date('YmdHis').'.jpg');
+                        Attachment::create([
+                            'notes'         => $request->createDate,
+                            'model'         => 'BlastMessage',
+                            'uploaded_by'   => 'viguard',
+                            'file'          => $url
+                        ]);
+                        $variable[$key] = $url;
+                    }
+                }else {
+                    $variable[$key] = '<img src="data:image/png;base64, '.$req.'" />';
+                }
             }else{
                 $variable[$key] = $req;
             }
         }
         return bind_to_template($variable, $action);
+    }
+
+    /**
+     * convertAttachment
+     *
+     * @param  mixed $request
+     * @return void
+     */
+    private function convertAttachment($request){
+        $data = base64_decode($request);
+        $im = imagecreatefromstring($data);
+        if ($im !== false) {
+            imagedestroy($im);
+            Storage::disk('s3')->put(date('YmdHis').'.jpg', $data);
+            $url = Storage::disk('s3')->url(date('YmdHis').'.jpg');
+            Attachment::create([
+                'notes'         => $request->createDate,
+                'model'         => 'BlastMessage',
+                'uploaded_by'   => 'viguard',
+                'file'          => $url
+            ]);
+            return $url;
+        }
+        return 0;
     }
 
     /**
@@ -190,12 +235,12 @@ class ApiViGuardController extends Controller
             $dept = Department::where('source_id', $request->deptId)->first();
             if($dept){
                 $customer = $dept->client;
-                if($customer || $customer->email || $customer->phone){
-                    if($customer->source=='email'){
+                if($customer){
+                    if($customer->source=='email' && $customer->email){
                         $channel = 'email';
                         $to = $customer->email;
                         $from = 'alert@hireach.archeeshop.com';
-                    }else{
+                    }elseif($customer->phone){
                         $channel = 'sms';
                         $to = $customer->phone;
                         $from = '081339668556';
@@ -217,6 +262,7 @@ class ApiViGuardController extends Controller
                                 'from' => $from,
                                 'type' => 0,
                                 'title' => $request->alarmDetails,
+                                'url_file' => $this->convertAttachment($request->image),
                                 'text' => $this->convertText($request, $action->message),
                                 'templateid' => $template->id,
                                 'otp' => checkContentOtp($action->message)
@@ -272,7 +318,7 @@ class ApiViGuardController extends Controller
             }
         }catch(\Exception $e){
             return response()->json([
-                'msg' => $e->getMessage(),
+                'msg' => $e->getMessage().' at  on line '.$e->getLine(),
                 'code' => 500
             ]);
         }
