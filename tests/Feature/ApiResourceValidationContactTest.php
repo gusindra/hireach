@@ -52,7 +52,7 @@ class ApiResourceValidationContactTest extends TestCase
         $response->assertStatus(200);
 
         $response->assertJson([
-            'message' => 'File uploaded and processing started',
+            'message' => 'Data Import Successfully',
         ]);
 
         $this->assertDatabaseHas('contacts', [
@@ -95,7 +95,7 @@ class ApiResourceValidationContactTest extends TestCase
         $response->assertStatus(200);
 
         $response->assertJson([
-            'message' => 'Validation started.',
+            'message' => 'Data Import Successfully',
         ]);
 
 
