@@ -20,7 +20,8 @@ class Attachment extends Model
         'model_id',
         'request_id',
         'file',
-        'uploaded_by'
+        'uploaded_by',
+        'notes'
     ];
 }
 

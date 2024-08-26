@@ -183,7 +183,7 @@ class ApiViGuardController extends Controller
      * @param  mixed $request
      * @return void
      */
-    private function convertAttachment($request){
+    private function convertAttachment($request, $notes){
         $data = base64_decode($request);
         $im = imagecreatefromstring($data);
         if ($im !== false) {
@@ -191,7 +191,7 @@ class ApiViGuardController extends Controller
             Storage::disk('s3')->put(date('YmdHis').'.jpg', $data);
             $url = Storage::disk('s3')->url(date('YmdHis').'.jpg');
             Attachment::create([
-                'notes'         => $request->createDate,
+                'notes'         => $notes,
                 'model'         => 'BlastMessage',
                 'uploaded_by'   => 'viguard',
                 'file'          => $url
@@ -262,7 +262,7 @@ class ApiViGuardController extends Controller
                                 'from' => $from,
                                 'type' => 0,
                                 'title' => $request->alarmDetails,
-                                'url_file' => $this->convertAttachment($request->image),
+                                'url_file' => $this->convertAttachment($request->image, $request->createDate),
                                 'text' => $this->convertText($request, $action->message),
                                 'templateid' => $template->id,
                                 'otp' => checkContentOtp($action->message)
