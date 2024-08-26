@@ -75,9 +75,7 @@ class ConvertToClient extends Component
                 [
                     'uuid' => (string) Str::uuid(),
                     'phone' => $contact->phone_number,
-                    'name' => $contact->file_name,
                     'user_id' => auth()->user()->id,
-
                 ]
             );
         }
@@ -86,12 +84,12 @@ class ConvertToClient extends Component
     public function addClientId($phoneNumber)
     {
         $contact = Contact::where('phone_number', $phoneNumber)->first();
-        $client = Client::where('phone', $phoneNumber)->first();
+        $client = Client::where('phone', $phoneNumber)->where('user_id', auth()->id())->first();
 
         if ($contact && $client) {
             ClientValidation::updateOrCreate(
-                ['contact_id' => $contact->id, 'client_id' => $client->id],
-                ['user_id' => auth()->id()]
+                ['contact_id' => $contact->id, 'user_id' => $client->user_id],
+                ['client_id' => $client->id]
             );
         }
     }

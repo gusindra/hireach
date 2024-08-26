@@ -22,10 +22,10 @@ class SkiptraceUpdateImport implements ToCollection, WithHeadingRow
      *
      * @param string $fileName
      */
-    public function __construct($fileName,$userId)
+    public function __construct($fileName)
     {
         $this->fileName = $fileName;
-        $this->userId = $userId;
+        // $this->userId = $userId;
     }
 
     public function collection(Collection $rows)
@@ -45,7 +45,6 @@ class SkiptraceUpdateImport implements ToCollection, WithHeadingRow
             $ktp = Contact::where('no_ktp', $no_ktp)->first();
             $pn = Contact::where('phone_number', $phone_number)->first();
             if ($ktp&&empty($ktp->phone_number)) {
-
                 $ktp->update([
                     'phone_number' => $phone_number,
                     'status_no' => $status_no,
@@ -68,13 +67,29 @@ class SkiptraceUpdateImport implements ToCollection, WithHeadingRow
                     'type' => 'skip_trace',
                     'file_name' => $this->fileName,
                 ]);
-
-                ClientValidation::create([
-                    'contact_id' => $contact->id,
-                    'user_id' => $this->userId,
-
-                ]);
+                // ClientValidation::updateOrCreate([
+                //     'contact_id' => $contact->id,
+                //     'user_id' => $this->userId,
+                // ,[]]);
             }
+            //ADD KTP KE USER REQUEST
+            $getKtp = Contact::where('no_ktp', $no_ktp)->get();
+            if($getKtp){
+                foreach($getKtp as $key => $gk){
+                    if($key==0){
+                        $clientRequest = ClientValidation::where('contact_id', $gk->id)->get();
+                    }
+                    if($clientRequest){
+                        foreach( $clientRequest as $cr){
+                            ClientValidation::updateOrCreate([
+                                'contact_id' => $gk->id,
+                                'user_id' => $cr->user_id
+                            ],['updated_at' => date('Y-m-d H:i:s')]);
+                        }
+                    }
+                }
+            }
+            
         }
     }
 }

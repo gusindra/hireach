@@ -24,10 +24,10 @@ class SkiptraceUpdateJob implements ShouldQueue
      *
      * @return void
      */
-    public function __construct($filePath, $userId)
+    public function __construct($filePath)
     {
         $this->filePath = $filePath;
-        $this->userId = $userId;
+        // $this->userId = $userId;
     }
 
     /**
@@ -40,7 +40,7 @@ class SkiptraceUpdateJob implements ShouldQueue
         $fileName = basename($this->filePath); // Extract file name from file path
 
         // Import the data using SkiptraceUpdateImport
-        Excel::import(new SkiptraceUpdateImport($fileName, $this->userId), $this->filePath);
+        Excel::import(new SkiptraceUpdateImport($fileName), $this->filePath);
 
         // Optionally, delete the file after processing
         Storage::delete($this->filePath);

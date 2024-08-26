@@ -14,10 +14,9 @@ class CellulerUpdateImport implements ToCollection, WithHeadingRow
     protected $fileName;
     protected $userId;
 
-    public function __construct($fileName,$userId)
+    public function __construct($fileName)
     {
         $this->fileName = $fileName;
-        $this->userId = $userId;
     }
 
     public function collection(Collection $rows)

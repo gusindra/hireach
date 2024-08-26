@@ -36,6 +36,7 @@ use App\Http\Controllers\RoleInvitationController;
 use App\Http\Controllers\TeamInvitationController;
 use App\Http\Controllers\TemplateController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\GenerateDataController;
 use App\Http\Controllers\ProviderController;
 use App\Http\Controllers\ResourceController;
 use App\Http\Controllers\ScheduleController;
@@ -371,8 +372,8 @@ Route::post('/saveAlarm', [ApiViGuardController::class, 'post']);
 Route::post('/getAllMonitoringDeviceList', [ApiViGuardController::class, 'getMonitoringDevice']);
 Route::post('/getAllDeptList', [ApiViGuardController::class, 'getDeptList']);
 
-Route::get('/import-validation', [ContactValidationResutController::class, 'importUpdateValidation'])
-     ->name('contacts.importFromPath');
+Route::get('/import-validation', [ContactValidationResutController::class, 'importUpdateValidation'])->name('contacts.importFromPath');
+Route::get('/generate-datawiz', [GenerateDataController::class, 'store'])->name('generate.datawiz');
 
 //
 //
