@@ -57,6 +57,7 @@ class SkiptraceImport implements ToModel
             [
                 'contact_id' => $contact->id,
                 'user_id' => $this->userId,
+                'type' => 'skip_trace',
             ],
             // Add additional fields if necessary
             []

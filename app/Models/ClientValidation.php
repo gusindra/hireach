@@ -13,10 +13,11 @@ class ClientValidation extends Model
         'contact_id',
         'client_id',
         'user_id',
+        'type',
     ];
 
     public function contact()
     {
-        return $this->belongsTo(Contact::class);
+        return $this->belongsTo(Contact::class, 'contact_id');
     }
 }

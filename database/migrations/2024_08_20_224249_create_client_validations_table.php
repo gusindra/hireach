@@ -18,6 +18,7 @@ return new class extends Migration
             $table->unsignedBigInteger('contact_id');
             $table->unsignedBigInteger('client_id');
             $table->unsignedBigInteger('user_id');
+            $table->string('type', 50);
             $table->timestamps();
         });
     }

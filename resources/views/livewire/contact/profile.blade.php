@@ -1,15 +1,5 @@
 <div>
-    @if ($isValidate)
-        <div class="bg-green-500 text-white mb-4 p-3 rounded-md shadow-md flex items-center space-x-2">
-            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"
-                xmlns="http://www.w3.org/2000/svg">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-            </svg>
-            <div>
-                <h3 class="text-sm font-semibold">Contact Validated</h3>
-            </div>
-        </div>
-    @endif
+
 
 
     <x-jet-form-section submit="saveUser({{ $user->id }})">
@@ -79,7 +69,44 @@
                     <x-jet-input-error for="inputuser.phone" class="mt-2" />
                 </div>
             </div>
+            <div class="col-span-12 sm:col-span-3">
+                <div class="col-span-12 sm:col-span-1">
 
+                </div>
+            </div>
+            <div class="col-span-12 sm:col-span-3">
+                <div class="col-span-12 sm:col-span-1">
+                    @if ($isValidate)
+                        <div class="mb-4 pb-3 flex items-center space-x-2">
+                            @if($isValidate->contact && $isValidate->contact->status_no)
+                            <div class="flex">
+                                <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                                    xmlns="http://www.w3.org/2000/svg">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                                </svg>
+                                <span class="text-sm font-semibold">{{$isValidate->contact->status_no}}</span>
+                            </div>
+                            @endif
+                            @if($isValidate->contact && $isValidate->contact->status_no)
+                            <div class="flex">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 text-green-600">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 20.25c4.97 0 9-3.694 9-8.25s-4.03-8.25-9-8.25S3 7.444 3 12c0 2.104.859 4.023 2.273 5.48.432.447.74 1.04.586 1.641a4.483 4.483 0 0 1-.923 1.785A5.969 5.969 0 0 0 6 21c1.282 0 2.47-.402 3.445-1.087.81.22 1.668.337 2.555.337Z" />
+                                </svg>
+                                <span class="text-sm font-semibold">{{$isValidate->contact->status_wa}}</span>
+                            </div>
+                            @endif
+                            @if($isValidate->contact && $isValidate->contact->status_no)
+                            <div class="flex">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 text-green-600">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                                </svg>
+                                <span class="text-sm font-semibold">{{$isValidate->contact->activation_date}}</span>
+                            </div>
+                            @endif
+                        </div>
+                    @endif
+                </div>
+            </div>
         </x-slot>
         <x-slot name="actions">
             <x-jet-action-message class="mr-3" on="user_saved">

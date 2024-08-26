@@ -24,8 +24,7 @@ class Profile extends Component
     {
 
         $this->user = $user;
-        $this->isValidate = ClientValidation::where('user_id', auth()->user()->id)
-            ->where('client_id', $this->user->id)->get();
+        $this->isValidate = ClientValidation::with('contact')->where('user_id', auth()->user()->id)->where('client_id', $this->user->id)->first();
 
         $this->inputuser = [
             'name' => $this->user->name ?? '',

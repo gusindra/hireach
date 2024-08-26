@@ -8,6 +8,7 @@ use App\Models\ClientValidation;
 use Mediconesystems\LivewireDatatables\Column;
 use Mediconesystems\LivewireDatatables\DateColumn;
 use Mediconesystems\LivewireDatatables\Http\Livewire\LivewireDatatable;
+use Mediconesystems\LivewireDatatables\BooleanColumn;
 
 class ContactValidationTable extends LivewireDatatable
 {
@@ -21,26 +22,37 @@ class ContactValidationTable extends LivewireDatatable
         return Contact::query()
             ->join('client_validations', 'contacts.id', '=', 'client_validations.contact_id')
             ->where('client_validations.user_id', auth()->user()->id)
-            ->select('contacts.*'); // Ensure you select all required columns from Contact model
+            ->select('contacts.*','client_validations.client_id','client_validations.type'); // Ensure you select all required columns from Contact model
     }
 
     function columns()
     {
         return [
-            Column::name('phone_number')->label('Phone Number')->searchable(),
-
-            Column::name('no_ktp')->label('No KTP')->searchable(),
-
-            Column::name('type')->label('Type')->searchable(),
-
-            Column::name('status_no')->label('Status No')->searchable(),
-
-            Column::name('status_wa')->label('Status WA')->searchable(),
-
+            Column::name('client_validations.type')->label('Type')->searchable()->filterable(['skip_trace', 'whatsapps', 'cellular_no']),
+            // Column::name('phone_number')->label('Request')->searchable()->filterable(),
+            Column::callback(['client_validations.type','no_ktp','phone_number'], function ($type,$ktp,$no) {
+                if ($type == 'skip_trace') {
+                    return $ktp;
+                }else {
+                    return $no;
+                }
+            })->label('Request')->searchable()->filterable(),
+            // Column::name('no_ktp')->label('No KTP')->searchable()->filterable(),
+            // Column::name('status_no')->label('Status No')->searchable(),
+            // Column::name('status_wa')->label('Status WA')->searchable(),
+            Column::callback(['client_validations.type','status_no','status_wa','no_ktp','activation_date'], function ($type,$no,$wa,$ktp,$date) {
+                if ($type == 'skip_trace') {
+                    return $ktp;
+                }elseif ($type == 'cellular_no') {
+                    return $no;
+                }elseif ($type == 'whatsapps') {
+                    return $wa;
+                }
+            })->label('Status')->searchable()->filterable(),
             DateColumn::name('activation_date')->label('Activation Date')->format('d F Y'),
-
             DateColumn::name('updated_at')->label('Updated')->format('d F Y H:i:s'),
             DateColumn::name('created_at')->label('Created')->format('d F Y'),
+            BooleanColumn::name('client_validations.client_id')->label('Sync')->unsortable()
         ];
     }
 }

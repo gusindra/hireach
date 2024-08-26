@@ -26,6 +26,6 @@ class SkiptraceExport implements FromCollection, WithHeadings
      */
     public function collection()
     {
-        return Contact::select('no_ktp')->where('type', 'skip_trace')->where('created_at', date('Y-m-d'))->get();
+        return Contact::select('no_ktp')->where('no_ktp', '!=', '')->whereNull('phone_number')->whereDate('created_at', date('Y-m-d'))->get();
     }
 }

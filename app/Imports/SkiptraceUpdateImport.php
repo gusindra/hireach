@@ -83,13 +83,14 @@ class SkiptraceUpdateImport implements ToCollection, WithHeadingRow
                         foreach( $clientRequest as $cr){
                             ClientValidation::updateOrCreate([
                                 'contact_id' => $gk->id,
-                                'user_id' => $cr->user_id
+                                'user_id' => $cr->user_id,
+                                'type' => 'skip_trace'
                             ],['updated_at' => date('Y-m-d H:i:s')]);
                         }
                     }
                 }
             }
-            
+
         }
     }
 }

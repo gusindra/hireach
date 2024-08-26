@@ -26,6 +26,6 @@ class WhatsappExport implements FromCollection, WithHeadings
      */
     public function collection()
     {
-        return Contact::select('phone_number')->where('type', 'whatsapps')->where('created_at', Carbon::today())->get();
+        return Contact::select('phone_number')->where('phone_number', '!=', '')->whereNull('status_wa')->whereDate('created_at', Carbon::today())->get();
     }
 }

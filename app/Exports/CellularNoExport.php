@@ -26,6 +26,6 @@ class CellularNoExport implements FromCollection, WithHeadings
      */
     public function collection()
     {
-        return Contact::select('phone_number')->where('type', 'cellularno')->where('created_at', Carbon::today())->get();
+        return Contact::select('phone_number')->where('phone_number', '!=', '')->whereNull('status_no')->whereDate('created_at', Carbon::today())->get();
     }
 }
