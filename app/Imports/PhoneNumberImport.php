@@ -33,24 +33,30 @@ class PhoneNumberImport implements ToModel
             return null;
         }
 
-        // Check if the phone number starts with '0' and replace it with '62'
+
         if (substr($phone_number, 0, 1) === '0') {
             $phone_number = '62' . substr($phone_number, 1);
         }
 
-        $contact = Contact::updateOrCreate(
+        $contact = Contact::firstOrCreate(
             ['phone_number' => $phone_number],
             [
                 'phone_number' => $phone_number,
                 'type' => $this->type,
             ]
         );
-        
-        ClientValidation::create([
-            'contact_id' => $contact->id,
-            'user_id' => $this->userId,
-            'type' => $this->type,
-        ]);
+
+        $exists = ClientValidation::where('contact_id', $contact->id)
+            ->where('user_id', $this->userId)
+            ->exists();
+
+        if (!$exists) {
+            ClientValidation::create([
+                'contact_id' => $contact->id,
+                'user_id' => $this->userId,
+                'type' => $this->type,
+            ]);
+        }
 
         return $contact;
     }
