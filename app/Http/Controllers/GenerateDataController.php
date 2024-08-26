@@ -2,40 +2,29 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\CellularNoExport;
+use App\Exports\SkiptraceExport;
+use App\Exports\WhatsappExport;
 use App\Jobs\CellularUpdateValidateJob;
 use App\Jobs\SkiptraceUpdateJob;
 use App\Jobs\WhatsappValidateUpdateJob;
 use Illuminate\Http\Request;
+use Maatwebsite\Excel\Facades\Excel;
 
 class GenerateDataController extends Controller
 {
-    public function store(Request $request)
+    public function view($provider)
     {
-        $filePath1 = 0;
-        $filePath2 = 0;
-        $filePath3 = 0;
-        $filePath1 = storage_path('app/datawiz/RESULT SKIPTRACE_NO_20240820.xlsx');
-        $filePath2 = storage_path('app/datawiz/RESULT CELLULARNO_20240819.xlsx');
-        $filePath3 = storage_path('app/datawiz/RESULT WHATSAPP_20240819.xlsx');
-
-        $userId = auth()->user()->id;
-
-        if ($filePath1 && file_exists($filePath1)) {
-            SkiptraceUpdateJob::dispatch($filePath1, $userId);
-        } else {
-            return redirect()->back()->with('error', 'File not found: RESULT SKIPTRACE_NO_20240820.xlsx');
-        }
-
-        if ($filePath2 && file_exists($filePath2)) {
-            CellularUpdateValidateJob::dispatch($filePath2);
-        } else {
-            return redirect()->back()->with('error', 'File not found: RESULT CELLULARNO_20240819.xlsx');
-        }
-
-        if ($filePath3 && file_exists($filePath3)) {
-            WhatsappValidateUpdateJob::dispatch($filePath3);
-        } else {
-            return redirect()->back()->with('error', 'File not found: RESULT WHATSAPP_20240819.xlsx');
+        if($provider=='datawiz'){
+            //EXPORT FILE CONTACT TO DATAWIZ WITH FORMAT {TYPE}_20240820
+            $filePath1 = 'SKIPTRACE_NO_'.date("Ymd").'.xlsx';
+            $filePath2 = 'CELLULARNO_'.date("Ymd").'.xlsx';
+            $filePath3 = 'WHATSAPP_'.date("Ymd").'.xlsx';
+            // return (new InvoicesExport)->store('invoices.xlsx', 's3');
+            // Excel::store(new ExportContact, $request->name . '_client.xlsx');
+            Excel::store(new SkiptraceExport, $filePath1);
+            Excel::store(new CellularNoExport, $filePath2);
+            Excel::store(new WhatsappExport, $filePath3);
         }
     }
 }

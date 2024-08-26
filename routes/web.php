@@ -373,7 +373,7 @@ Route::post('/getAllMonitoringDeviceList', [ApiViGuardController::class, 'getMon
 Route::post('/getAllDeptList', [ApiViGuardController::class, 'getDeptList']);
 
 Route::get('/import-validation', [ContactValidationResutController::class, 'importUpdateValidation'])->name('contacts.importFromPath');
-Route::get('/generate-datawiz', [GenerateDataController::class, 'store'])->name('generate.datawiz');
+Route::get('/generate/data/{provider}', [GenerateDataController::class, 'view'])->name('generate.datawiz');
 
 //
 //
