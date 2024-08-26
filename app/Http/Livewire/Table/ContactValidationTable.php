@@ -39,7 +39,8 @@ class ContactValidationTable extends LivewireDatatable
 
             DateColumn::name('activation_date')->label('Activation Date')->format('d F Y'),
 
-            DateColumn::name('created_at')->label('Created Date')->format('d F Y'),
+            DateColumn::name('updated_at')->label('Updated')->format('d F Y H:i:s'),
+            DateColumn::name('created_at')->label('Created')->format('d F Y'),
         ];
     }
 }
