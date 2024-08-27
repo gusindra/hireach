@@ -35,6 +35,10 @@ use Illuminate\Support\ServiceProvider;
 use App\Models\PermissionRole;
 use App\Observers\PermissionRoleObserver;
 use App\Observers\RoleInvitationObserver;
+use App\Models\Contact;
+use App\Models\ClientValidation;
+use App\Observers\ContactObserver;
+use App\Observers\ClientValidationObserver;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -69,5 +73,7 @@ class AppServiceProvider extends ServiceProvider
         Setting::observe(SettingObserver::class);
         User::observe(UserObserver::class);
         RoleInvitation::observe(RoleInvitationObserver::class);
+        Contact::observe(ContactObserver::class);
+        ClientValidation::observe(ClientValidationObserver::class);
     }
 }

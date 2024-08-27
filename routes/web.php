@@ -91,6 +91,9 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
         Route::get('/user/{user}/request', [UserController::class, 'request'])->name('user.show.request');
 
         Route::get('/department', [UserController::class, 'listDepartment'])->name('admin.department');
+        Route::get('/contact', [UserController::class, 'contact'])->name('admin.contact');
+        Route::get('/contact/duplicate', [UserController::class, 'duplicateContact'])->name('admin.contact-duplicate');
+        Route::get('/contact/edit/{contact}', [UserController::class, 'contactEdit'])->name('admin.contact-edit');
         Route::get('/get/api/department', [UserController::class, 'getDepartment'])->name('admin.department.get');
 
         // Route::get('/settings/clear-cache', 'Backend\SettingController@clearCache')->name('settings.clear-cache');
