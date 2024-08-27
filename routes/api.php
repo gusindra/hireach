@@ -11,6 +11,7 @@ use App\Http\Controllers\ApiOneWayController;
 use App\Http\Controllers\ApiSmsController;
 use App\Http\Controllers\ApiTwoWayController;
 use App\Http\Controllers\ApiRequestController;
+use App\Http\Controllers\ApiResourceController;
 use App\Http\Controllers\ApiViGuardController;
 
 /*
@@ -64,6 +65,8 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::post('/two-way',  [ApiTwoWayController::class, 'post']);
     Route::post('/two-way/group',  [ApiTwoWayController::class, 'sendBulk']);
     Route::get('/two-way/campaign',  [ApiTwoWayController::class, 'show']);
+    Route::post('resources/skiptrace', [ApiResourceController::class, 'skiptrace']);
+        Route::post('resources/validation', [ApiResourceController::class, 'validation']);
 });
 
 //Route::get('/test',  [TestApiController::class, 'get']);

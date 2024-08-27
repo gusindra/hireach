@@ -18,6 +18,11 @@
                         <a href="{{ route('audience.index') }}" aria-current="page"
                             class="inline-block p-4 text-blue-600 bg-gray-100 rounded-t-lg active dark:bg-gray-800 dark:text-blue-500">Audience</a>
                     </li>
+                    <li class="me-2">
+                        <a href="{{ route('contactValidation.index') }}"
+                            class="inline-block p-4 rounded-t-lg hover:text-gray-600 active hover:bg-gray-50 dark:hover:bg-gray-800 dark:hover:text-gray-300">Contact
+                            Validation</a>
+                    </li>
                 </ul>
 
             </header>

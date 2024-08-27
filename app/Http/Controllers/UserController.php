@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Client;
+use App\Models\Contact;
 use App\Models\Department;
 use App\Models\Setting;
 use App\Models\User;
@@ -54,6 +55,41 @@ class UserController extends Controller
         return view('user.department');
     }
 
+
+
+        /**
+     * contact
+     *
+     *
+     * @return void
+     */
+    public function contact()
+    {
+        return view('user.contact');
+    }
+
+        /**
+     * duplicateContact
+     *
+     *
+     * @return void
+     */
+    public function duplicateContact()
+    {
+        return view('user.manage-duplicate-contact');
+    }
+
+        /**
+     * contact
+     *
+     *
+     * @return void
+     */
+    public function contactEdit($id)
+    {
+        $contact = Contact::find($id);
+        return view('user.contact-edit',['contact'=>$contact]);
+    }
     /**
      * getDepartment
      *

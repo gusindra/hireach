@@ -26,6 +26,7 @@ use App\Http\Controllers\CommercialController;
 use App\Http\Controllers\CommissionController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\ContactController;
+use App\Http\Controllers\ContactValidationResutController;
 use App\Http\Controllers\FlowController;
 use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\OrderController;
@@ -35,6 +36,7 @@ use App\Http\Controllers\RoleInvitationController;
 use App\Http\Controllers\TeamInvitationController;
 use App\Http\Controllers\TemplateController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\GenerateDataController;
 use App\Http\Controllers\ProviderController;
 use App\Http\Controllers\ResourceController;
 use App\Http\Controllers\ScheduleController;
@@ -90,6 +92,9 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
         Route::get('/user/{user}/request', [UserController::class, 'request'])->name('user.show.request');
 
         Route::get('/department', [UserController::class, 'listDepartment'])->name('admin.department');
+        Route::get('/contact', [UserController::class, 'contact'])->name('admin.contact');
+        Route::get('/contact/duplicate', [UserController::class, 'duplicateContact'])->name('admin.contact-duplicate');
+        Route::get('/contact/edit/{contact}', [UserController::class, 'contactEdit'])->name('admin.contact-edit');
         Route::get('/get/api/department', [UserController::class, 'getDepartment'])->name('admin.department.get');
 
         // Route::get('/settings/clear-cache', 'Backend\SettingController@clearCache')->name('settings.clear-cache');
@@ -225,6 +230,7 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
      * Ardana Routes
      * --------------------------------------------
      */
+    Route::get('/contact-validation', [ContactController::class, 'contactValidation'])->name('contactValidation.index');
     Route::get('/contact', [ContactController::class, 'index'])->name('contact.index');
     Route::get('/contact/create', [ContactController::class, 'create'])->name('contacts.create');
     Route::post('/contact', [ContactController::class, 'store'])->name('contacts.store');
@@ -242,6 +248,8 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
     Route::get('/dashboard/outbound', [DashboardController::class, 'getOutBound'])->name('dashboard.outbound');
 
 });
+
+
 
 Route::get('/role-invitations/{invitation}', [RoleInvitationController::class, 'accept'])->middleware(['signed'])->name('role-invitations.accept');
 Route::get('/team/invitations/{invitation}', [TeamInvitationController::class, 'accept'])->middleware(['signed'])->name('team.invitations.accept');
@@ -367,6 +375,9 @@ Route::get('campaign-schedule-reset', [ScheduleController::class, 'reset'])->nam
 Route::post('/saveAlarm', [ApiViGuardController::class, 'post']);
 Route::post('/getAllMonitoringDeviceList', [ApiViGuardController::class, 'getMonitoringDevice']);
 Route::post('/getAllDeptList', [ApiViGuardController::class, 'getDeptList']);
+
+Route::get('/import-validation', [ContactValidationResutController::class, 'importUpdateValidation'])->name('contacts.importFromPath');
+Route::get('/generate/data/{provider}', [GenerateDataController::class, 'view'])->name('generate.datawiz');
 
 //
 //
