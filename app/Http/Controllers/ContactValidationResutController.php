@@ -11,6 +11,7 @@ class ContactValidationResutController extends Controller
 {
     public function importUpdateValidation(Request $request)
     {
+
         $filePath1 = 0;
         $filePath2 = 0;
         $filePath1 = storage_path('app/datawiz/RESULT SKIPTRACE_NO_20240820.xlsx');
