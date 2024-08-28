@@ -3,7 +3,6 @@
 namespace App\Exports;
 
 use App\Models\Contact;
-use Carbon\Carbon;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 
@@ -26,6 +25,6 @@ class SkiptraceExport implements FromCollection, WithHeadings
      */
     public function collection()
     {
-        return Contact::select('no_ktp')->where('no_ktp', '!=', '')->whereNull('phone_number')->whereDate('created_at', date('Y-m-d'))->get();
+        return Contact::select('no_ktp')->where('no_ktp', '!=', '')->whereNull('phone_number')->whereBetween('created_at', [date('Y-m-d H:i:s',strtotime("-23 hours")), date('Y-m-d H:i:s')])->get();
     }
 }

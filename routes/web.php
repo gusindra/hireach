@@ -284,59 +284,9 @@ Route::get('cache/{id}', function ($id) {
 // ==================================
 Route::get('queue/{id}', function ($id) {
     if ($id == "work") {
-        \Artisan::call('queue:work --tries=3 --stop-when-empty --timeout=60');
+        \Artisan::call('queue:work --tries=1 --stop-when-empty --timeout=60');
     } elseif ($id == "restart") {
         \Artisan::call('queue:restart');
-    } elseif ($id == 'json') {
-        // $path = storage_path() . "/csvjson.json";
-        // $path = public_path() . "/csvjson.json";
-        // $content = json_decode(file_get_contents($path), true);
-        // try {
-        //     foreach($content as $sms){
-        //         $msg_id = preg_replace('/\s+/', '', $sms['Message ID']);
-        //         $msisdn = preg_replace('/\s+/', '', $sms['Send to']);
-        //         $user_id = 16;
-        //         // return $sms['Date/Time'];
-        //         // return $sms['From'];
-        //         // return $sms['Send to'];
-        //         // return $sms['Message Title'];
-        //         // return $sms['Message Content'];
-        //         // return $sms['Message Status'];
-        //         $myDate = $sms['Date/Time'];
-        //         $smsDate = Carbon::createFromFormat('d/m/Y H:i', $myDate)->format('Y-m-d H:i');
-        //         $client = Client::where('phone', $msisdn)->where('user_id', $user_id)->firstOr(function () use ($msisdn, $user_id) {
-        //             return Client::create([
-        //                 'phone' => $msisdn,
-        //                 'user_id' => $user_id,
-        //                 'uuid' => Str::uuid()
-        //             ]);
-        //         });
-        //         $modelData = [
-        //             'msg_id'    => $msg_id,
-        //             'user_id'   => $user_id,
-        //             'client_id' => $client->uuid,
-        //             'sender_id' => $sms['From'],
-        //             'type'      => '0',
-        //             'status'    => $sms['Message Status'],
-        //             'code'      => '200',
-        //             'message_content'  => $sms['Message Content'],
-        //             'currency'  => 'IDR',
-        //             'price'     => 500,
-        //             'balance'   => 0,
-        //             'msisdn'    => $msisdn,
-        //             'created_by'=> $date,
-        //             'updated_by'=> $date,
-        //         ];
-        //         $blast = BlastMessage::create($modelData);
-
-        //         $blast->created_at = $smsDate;
-        //         $blast->updated_at = $smsDate;
-        //         $blast->save();
-        //     }
-        // } catch (\Throwable $th) {
-        //     dd($th);
-        // }
-
     }
     dd("Job is done");
 });
@@ -368,6 +318,8 @@ Route::get('/restart-service', function () {
 
 Route::get('campaign-schedule', [ScheduleController::class, 'index'])->name('schedule.start');
 Route::get('campaign-schedule-reset', [ScheduleController::class, 'reset'])->name('schedule.reset');
+Route::get('/import-validation', [ContactValidationResutController::class, 'importUpdateValidation'])->name('contacts.importFromPath');
+Route::get('/generate/data/{provider}', [GenerateDataController::class, 'view'])->name('generate.datawiz');
 // ==================================
 // END CRON JOB URL
 // // ==================================
@@ -376,8 +328,7 @@ Route::post('/saveAlarm', [ApiViGuardController::class, 'post']);
 Route::post('/getAllMonitoringDeviceList', [ApiViGuardController::class, 'getMonitoringDevice']);
 Route::post('/getAllDeptList', [ApiViGuardController::class, 'getDeptList']);
 
-Route::get('/import-validation', [ContactValidationResutController::class, 'importUpdateValidation'])->name('contacts.importFromPath');
-Route::get('/generate/data/{provider}', [GenerateDataController::class, 'view'])->name('generate.datawiz');
+
 
 //
 //

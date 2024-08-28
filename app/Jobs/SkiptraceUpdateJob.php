@@ -37,7 +37,8 @@ class SkiptraceUpdateJob implements ShouldQueue
      */
     public function handle()
     {
-        $fileName = basename($this->filePath); // Extract file name from file path
+        // Extract file name from file path
+        $fileName = basename($this->filePath);
 
         // Import the data using SkiptraceUpdateImport
         Excel::import(new SkiptraceUpdateImport($fileName), $this->filePath);
