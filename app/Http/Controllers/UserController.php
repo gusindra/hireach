@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Client;
+use App\Models\Contact;
 use App\Models\Department;
 use App\Models\Setting;
 use App\Models\User;
@@ -54,6 +55,41 @@ class UserController extends Controller
         return view('user.department');
     }
 
+
+
+        /**
+     * contact
+     *
+     *
+     * @return void
+     */
+    public function contact()
+    {
+        return view('user.contact');
+    }
+
+        /**
+     * duplicateContact
+     *
+     *
+     * @return void
+     */
+    public function duplicateContact()
+    {
+        return view('user.manage-duplicate-contact');
+    }
+
+        /**
+     * contact
+     *
+     *
+     * @return void
+     */
+    public function contactEdit($id)
+    {
+        $contact = Contact::find($id);
+        return view('user.contact-edit',['contact'=>$contact]);
+    }
     /**
      * getDepartment
      *
@@ -94,17 +130,19 @@ class UserController extends Controller
         if($resData['data']){
             foreach($resData['data'] as $r){
                 // return $r['deptId'];
-                Department::updateOrCreate(
-                    [
-                        'source_id' => $r['deptId'],
-                        'user_id' => $userId
-                    ],
-                    [
-                        'parent' => $r['parentId'],
-                        'ancestors' => $r['ancestors'],
-                        'name' => $r['deptName']
-                    ]
-                );
+                if($r['parentId']=="230"){
+                    Department::updateOrCreate(
+                        [
+                            'source_id' => $r['deptId'],
+                            'user_id' => $userId
+                        ],
+                        [
+                            'parent' => $r['parentId'],
+                            'ancestors' => $r['ancestors'],
+                            'name' => $r['deptName']
+                        ]
+                    );
+                }
             }
         }
         // return response()->json([

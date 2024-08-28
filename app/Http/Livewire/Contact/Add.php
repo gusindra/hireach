@@ -21,6 +21,7 @@ class Add extends Component
     public $source;
     public $showClients = false;
     public $is_modal = true;
+    public $client_id = null;
 
     public function mount($model = null)
     {
@@ -29,6 +30,11 @@ class Add extends Component
         }
     }
 
+    /**
+     * rules
+     *
+     * @return array
+     */
     public function rules()
     {
         return [
@@ -39,16 +45,20 @@ class Add extends Component
         ];
     }
 
+    /**
+     * create
+     *
+     * @return redirect
+     */
     public function create()
     {
-
         $this->validate();
         Client::create([
             'title' => strip_tags(filterInput($this->input['title'])),
             'name' => strip_tags(filterInput($this->input['name'])),
             'phone' => strip_tags(filterInput($this->input['phone'])),
             'email' => strip_tags(filterInput($this->input['email'])),
-            'user_id' => auth()->user()->id,
+            'user_id' => is_null($this->client_id) ? auth()->user()->id: $this->client_id,
             'uuid' => Str::uuid()
         ]);
         return redirect(request()->header('Referer'));
@@ -56,11 +66,21 @@ class Add extends Component
         $this->emit('refreshLivewireDatatable');
     }
 
+    /**
+     * generatePassword
+     *
+     * @return void
+     */
     public function generatePassword()
     {
         $this->input['password'] = Str::random(8);
     }
 
+    /**
+     * modelData
+     *
+     * @return void
+     */
     public function modelData()
     {
         $data = [

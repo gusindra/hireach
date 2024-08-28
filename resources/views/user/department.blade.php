@@ -26,6 +26,8 @@
                                 </div>
                             </form>
                         </div>
+                        @livewire('contact.search')
+
                     </div>
                     <div class="m-3">
                         <livewire:table.department-table searchable="source_id, name, ancestors, parent, client_id" exportable />

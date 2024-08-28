@@ -183,7 +183,7 @@ class ApiViGuardController extends Controller
      * @param  mixed $request
      * @return void
      */
-    private function convertAttachment($request){
+    private function convertAttachment($request, $notes){
         $data = base64_decode($request);
         $im = imagecreatefromstring($data);
         if ($im !== false) {
@@ -191,7 +191,7 @@ class ApiViGuardController extends Controller
             Storage::disk('s3')->put(date('YmdHis').'.jpg', $data);
             $url = Storage::disk('s3')->url(date('YmdHis').'.jpg');
             Attachment::create([
-                'notes'         => $request->createDate,
+                'notes'         => $notes,
                 'model'         => 'BlastMessage',
                 'uploaded_by'   => 'viguard',
                 'file'          => $url
@@ -262,7 +262,7 @@ class ApiViGuardController extends Controller
                                 'from' => $from,
                                 'type' => 0,
                                 'title' => $request->alarmDetails,
-                                'url_file' => $this->convertAttachment($request->image),
+                                'url_file' => $this->convertAttachment($request->image, $request->createDate),
                                 'text' => $this->convertText($request, $action->message),
                                 'templateid' => $template->id,
                                 'otp' => checkContentOtp($action->message)
@@ -299,10 +299,59 @@ class ApiViGuardController extends Controller
                             'code' => 0
                         ]);
                     }else{
-                        return response()->json([
-                            'msg' => "Template Not Found",
-                            'code' => 500
-                        ]);
+                        $template = Template::where('uuid', 'save-alarm')->first();
+                        if($template){
+                            foreach($template->actions as $key => $action){
+                                // send request using template prt action
+                                $data[$key] = [
+                                    'channel' => $channel,
+                                    'provider' => $provider,
+                                    'to' => $to,
+                                    'from' => $from,
+                                    'type' => 0,
+                                    'title' => $request->alarmDetails,
+                                    'url_file' => $this->convertAttachment($request->image, $request->createDate),
+                                    'text' => $this->convertText($request, $action->message),
+                                    'templateid' => $template->id,
+                                    'otp' => checkContentOtp($action->message)
+                                ];
+
+                                if($channel=='email'){
+                                    $reqArr = json_encode($data[$key]);
+                                    //THIS WILL QUEUE EMAIL JOB
+                                    ProcessEmailApi::dispatch($data[$key], $customer->theUser, $reqArr);
+                                }elseif(strpos($channel, 'sms') !== false){
+                                    ProcessSmsApi::dispatch($data[$key], $customer->theUser);
+                                }elseif($channel=='wa'){
+                                    $credential = null;
+                                    foreach($customer->theUser->credential as $cre){
+                                        if($cre->client=='api_wa_mk'){
+                                            $credential = $cre;
+                                        }
+                                    }
+                                    if($credential){
+                                        ProcessWaApi::dispatch($data[$key], $credential);
+                                    }else{
+                                        return response()->json([
+                                            'msg' => "Invalid credential",
+                                            'code' => 401
+                                        ]);
+                                    }
+
+                                }
+                            }
+                            //Return API Respon
+                            return response()->json([
+                                'msg' => "Successful sending to ".$channel,
+                                'data' => $data,
+                                'code' => 0
+                            ]);
+                        }else{
+                            return response()->json([
+                                'msg' => "Template Not Found",
+                                'code' => 500
+                            ]);
+                        }
                     }
                 }elseif(!$customer){
                     return response()->json([

@@ -45,9 +45,13 @@ class Add extends Component
         ];
     }
 
+    /**
+     * createUser
+     *
+     * @return void
+     */
     public function createUser()
     {
-
         $this->validate();
         User::create($this->modelData());
         $this->modalActionVisible = false;
@@ -55,6 +59,11 @@ class Add extends Component
         $this->emit('refreshLivewireDatatable');
     }
 
+    /**
+     * create
+     *
+     * @return void
+     */
     public function create()
     {
         $this->authorize('CREATE_USER', 'USER');

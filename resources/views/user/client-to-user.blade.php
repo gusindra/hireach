@@ -13,9 +13,12 @@
 
         <div class="col-span-12 px-3 lg:ml-24 mt-2">
             <div class="bg-white dark:bg-slate-600 overflow-hidden shadow-xl sm:rounded-lg">
+            <div class="p-4">
+                @livewire('contact.add', ['client_id'=>$user->id])
+            </div>
+
                 <div class="mx-auto">
                     @livewire('table.client-to-user', ['user' => $user])
-
                 </div>
             </div>
         </div>
