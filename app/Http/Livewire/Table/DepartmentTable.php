@@ -20,11 +20,12 @@ class DepartmentTable extends LivewireDatatable
     public function columns()
     {
         return [
+            Column::name('source_id')->filterable()->label('ID'),
             Column::name('name')->filterable()->label('Name'),
             Column::name('ancestors')->filterable()->label('Ancestors'),
             Column::name('parent')->filterable()->label('Parent'),
-            DateColumn::name('client_id')->filterable()->label('Client_id'),
-            DateColumn::name('user_id')->filterable()->label('User_id')
+            Column::name('client_id')->filterable()->label('Client_id')->editable(),
+            DateColumn::name('updated_at')->filterable()->label('Updated')
         ];
     }
 }

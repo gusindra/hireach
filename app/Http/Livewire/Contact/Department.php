@@ -18,6 +18,7 @@ class Department extends Component
     public $client;
     public $department;
     public $listDepartment;
+    public $isadmin = false;
 
     /**
      * mount
@@ -29,7 +30,7 @@ class Department extends Component
     {
         $this->client = $client;
         $listDept = [];
-        $list = ModelsDepartment::where('user_id', $client->user_id)->get();
+        $list = $this->isadmin ? ModelsDepartment::whereNull('client_id')->get() : ModelsDepartment::where('user_id', $client->user_id)->get();
         foreach($list as $key => $l){
             $listDept[$key][0] = $l->id;
             $listDept[$key][1] = $l->source_id.':'.$l->name;
@@ -48,8 +49,9 @@ class Department extends Component
         ModelsDepartment::findOrFail($this->department)->update([
             'client_id' => $this->client->id
         ]);
-
         $this->emit('department_saved');
+        return redirect(request()->header('Referer'));
+
     }
 
     /**
@@ -64,6 +66,8 @@ class Department extends Component
             'client_id' => null
         ]);
         $this->emit('department_saved');
+        return redirect(request()->header('Referer'));
+
     }
 
     public function render()

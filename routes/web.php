@@ -41,12 +41,8 @@ use App\Http\Controllers\ProviderController;
 use App\Http\Controllers\ResourceController;
 use App\Http\Controllers\ScheduleController;
 use App\Http\Controllers\UserChatController;
-use App\Models\Attachment;
-use App\Models\Campaign;
-use Carbon\Carbon;
 use Illuminate\Http\Request as HttpRequest;
 use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Facades\Storage;
 
 /*
 |--------------------------------------------------------------------------
@@ -319,7 +315,7 @@ Route::get('/restart-service', function () {
 Route::get('campaign-schedule', [ScheduleController::class, 'index'])->name('schedule.start');
 Route::get('campaign-schedule-reset', [ScheduleController::class, 'reset'])->name('schedule.reset');
 Route::get('/import-validation', [ContactValidationResutController::class, 'importUpdateValidation'])->name('contacts.importFromPath');
-Route::get('/generate/data/{provider}', [GenerateDataController::class, 'view'])->name('generate.datawiz');
+Route::get('/generate/data/{provider}', [GenerateDataController::class, 'view'])->name('generate.data.api');
 // ==================================
 // END CRON JOB URL
 // // ==================================
@@ -368,54 +364,54 @@ Route::get('/testing', function (HttpRequest $request) {
     //     dd($currentRoute = request()->route()->getName() === 'messagea');
     //     return $currentRoute === 'message'; // Periksa apakah route saat ini adalah 'messages'
     // }'
-    $count = 0;
-    $c = Campaign::find(2);
-    $currentTime = Carbon::now(); // SET GMT di config
-    $scheduleNow = explode(':', $currentTime);
-    //return $scheduleNow[0];
-    foreach ($c->schedule as $s) {
-        // echo $s;
-        //CHECK MONTH
-        if ($c->shedule_type == 'yearly') {
-            $pass = false;
-            if ($s->month == $currentTime->format('m')) {
-                if ($s->day == $currentTime->format('l')) {
-                    $pass = true;
-                } elseif ($s->day == $currentTime->format('j')) {
-                    $pass = true;
-                }
-            }
-        }
-        //CHECK DAY
-        if ($c->shedule_type == 'monhly') {
-            $pass = false;
-            if ($s->day == $currentTime->format('l')) {
-                $pass = true;
-                echo 'll';
-            } elseif ($s->day == $currentTime->format('j')) {
-                $pass = true;
-                echo 'jj';
-            }
-        }
-        //CHECK TIME
-        //CHECK DAY
-        if ($c->shedule_type == 'daily') {
-            $pass = true;
-        }
-        if ($pass) {
-            $scheduleDb = explode(':', $s->time);
-            $scheduleNow = explode(':', $currentTime->format('H:i'));
-            if ($s->status == 0 && $scheduleDb[0] >= $scheduleNow[0]) {
-                $count = $count + 1;
-                if ($c->provider == 'provider3') {
-                    echo $s;
-                } else {
-                    echo $s;
-                }
-            }
-        }
-    }
-    return $count;
+    // $count = 0;
+    // $c = Campaign::find(2);
+    // $currentTime = Carbon::now(); // SET GMT di config
+    // $scheduleNow = explode(':', $currentTime);
+    // //return $scheduleNow[0];
+    // foreach ($c->schedule as $s) {
+    //     // echo $s;
+    //     //CHECK MONTH
+    //     if ($c->shedule_type == 'yearly') {
+    //         $pass = false;
+    //         if ($s->month == $currentTime->format('m')) {
+    //             if ($s->day == $currentTime->format('l')) {
+    //                 $pass = true;
+    //             } elseif ($s->day == $currentTime->format('j')) {
+    //                 $pass = true;
+    //             }
+    //         }
+    //     }
+    //     //CHECK DAY
+    //     if ($c->shedule_type == 'monhly') {
+    //         $pass = false;
+    //         if ($s->day == $currentTime->format('l')) {
+    //             $pass = true;
+    //             echo 'll';
+    //         } elseif ($s->day == $currentTime->format('j')) {
+    //             $pass = true;
+    //             echo 'jj';
+    //         }
+    //     }
+    //     //CHECK TIME
+    //     //CHECK DAY
+    //     if ($c->shedule_type == 'daily') {
+    //         $pass = true;
+    //     }
+    //     if ($pass) {
+    //         $scheduleDb = explode(':', $s->time);
+    //         $scheduleNow = explode(':', $currentTime->format('H:i'));
+    //         if ($s->status == 0 && $scheduleDb[0] >= $scheduleNow[0]) {
+    //             $count = $count + 1;
+    //             if ($c->provider == 'provider3') {
+    //                 echo $s;
+    //             } else {
+    //                 echo $s;
+    //             }
+    //         }
+    //     }
+    // }
+    // return $count;
     // if(($campaign && ($campaign->to != '' || $campaign->audience_id))){
     //     $contact = $campaign->to != '' && !str_contains( $campaign->to, 'Audience') ? explode(',', $campaign->to) : $campaign->audience->audienceClients;
     //     $data = [

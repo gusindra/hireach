@@ -130,17 +130,19 @@ class UserController extends Controller
         if($resData['data']){
             foreach($resData['data'] as $r){
                 // return $r['deptId'];
-                Department::updateOrCreate(
-                    [
-                        'source_id' => $r['deptId'],
-                        'user_id' => $userId
-                    ],
-                    [
-                        'parent' => $r['parentId'],
-                        'ancestors' => $r['ancestors'],
-                        'name' => $r['deptName']
-                    ]
-                );
+                if($r['parentId']=="230"){
+                    Department::updateOrCreate(
+                        [
+                            'source_id' => $r['deptId'],
+                            'user_id' => $userId
+                        ],
+                        [
+                            'parent' => $r['parentId'],
+                            'ancestors' => $r['ancestors'],
+                            'name' => $r['deptName']
+                        ]
+                    );
+                }
             }
         }
         // return response()->json([

@@ -37,8 +37,10 @@ use App\Observers\PermissionRoleObserver;
 use App\Observers\RoleInvitationObserver;
 use App\Models\Contact;
 use App\Models\ClientValidation;
+use App\Models\Department;
 use App\Observers\ContactObserver;
 use App\Observers\ClientValidationObserver;
+use App\Observers\DepartmentObserver;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -75,5 +77,6 @@ class AppServiceProvider extends ServiceProvider
         RoleInvitation::observe(RoleInvitationObserver::class);
         Contact::observe(ContactObserver::class);
         ClientValidation::observe(ClientValidationObserver::class);
+        Department::observe(DepartmentObserver::class);
     }
 }

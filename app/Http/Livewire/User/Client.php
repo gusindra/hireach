@@ -15,6 +15,7 @@ class Client extends Component
     public $name;
     public $email;
     public $phone;
+    public $title;
     public $password;
     public $user;
     public $client;
@@ -34,7 +35,38 @@ class Client extends Component
         $this->password = Str::random(12);
     }
 
+    /**
+     * update
+     *
+     * @return void
+     */
     public function update()
+    {
+        $this->authorize('UPDATE_USER', 'USER');
+        $this->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255|unique:users,email',
+            'phone' => 'required|string|max:15',
+            'password' => 'required|string|min:8',
+        ]);
+
+        if($this->name != $this->client->name || $this->phone != $this->client->phone || $this->email != $this->client->email || $this->title != $this->client->title){
+            $this->client->update([
+                'name' => $this->name,
+                'phone' => $this->phone,
+                'email' => $this->email,
+                'title' => $this->title
+            ]);
+            $this->emit('user_saved');
+        }
+    }
+
+    /**
+     * update
+     *
+     * @return void
+     */
+    public function addToUser()
     {
         $this->authorize('UPDATE_USER', 'USER');
         $this->validate([

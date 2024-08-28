@@ -5,7 +5,6 @@
             <div class="p-6 bg-white border-b border-gray-200">
                 <h2 class="text-xl font-semibold mb-4">Contact List</h2>
 
-
                 <div class="overflow-x-auto">
                     <table class="table-auto w-full border-collapse">
                         <thead>
@@ -43,8 +42,5 @@
             </div>
         </div>
     </div>
-
-
-
 
 </x-app-layout>

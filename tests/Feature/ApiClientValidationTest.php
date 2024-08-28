@@ -10,7 +10,7 @@ use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
 
-class ApiResourceValidationContactTest extends TestCase
+class ApiClientValidationTest extends TestCase
 {
     /**
      * A basic feature test example.

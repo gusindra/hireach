@@ -15,8 +15,6 @@
             <div class="bg-white dark:bg-slate-600 overflow-hidden shadow-xl sm:rounded-lg">
                 <div class="mx-auto">
                     @livewire('user.client', ['client' => $clients, 'user' => $user])
-
-
                 </div>
             </div>
         </div>

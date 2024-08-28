@@ -29,24 +29,17 @@ class ClientToUser extends LivewireDatatable
     public function columns()
     {
         return [
-            Column::name('name')->label('Name'),
+            Column::callback(['id','name'], function ($id,$name) {
+                return view('datatables::link', [
+                    'href' => url('admin/user/' . $this->user->id . '/client/' . $id),
+                    'slot' => $name,
+                    'class' => 'uppercase'
+                ]);
+                //return $x;
+            })->label('ID')->searchable(),
             Column::name('phone')->label('Phone'),
             Column::name('email')->label('Email'),
-            NumberColumn::name('id')->label('Detail')->sortBy('id')->callback(['id'], function ($id) {
-                $client = Client::find($id);
 
-                // Mengecek apakah tidak ada user dengan alamat email yang sama dengan klien
-                $userWithEmailExists = User::where('email', $client->email)->exists();
-
-                if (!$userWithEmailExists && $this->user && $client && $this->user->email !== $client->email) {
-                    return view('datatables::link', [
-                        'href' => url('admin/user/' . $this->user->id . '/client/' . $id),
-                        'slot' => 'Convert to User'
-                    ]);
-                }
-
-                return '';
-            }),
         ];
     }
 }

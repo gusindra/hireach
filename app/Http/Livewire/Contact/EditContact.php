@@ -29,6 +29,11 @@ class EditContact extends Component
         $this->activation_date = $this->contact->activation_date;
     }
 
+    /**
+     * save
+     *
+     * @return void
+     */
     public function save()
     {
         $this->validate([
@@ -40,8 +45,6 @@ class EditContact extends Component
             'file_name' => 'nullable|string|max:255',
             'activation_date' => 'nullable|date',
         ]);
-
-
 
         $this->contact->update([
             'no_ktp' => $this->no_ktp,
