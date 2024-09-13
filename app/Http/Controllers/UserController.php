@@ -267,4 +267,33 @@ class UserController extends Controller
 
         return view('user.user-balance', ['user' => $user, 'id' => $id, 'team' => $request->has('team') ? $request->team : 0]);
     }
+
+    /**
+     * department
+     *
+     * @param  mixed $user
+     * @return void
+     */
+    public function department(User $user)
+    {
+        $currentMonth = now()->format('Y-m');
+        $filterMonth = request()->input('filterMonth', $currentMonth);
+
+        return view('user.user-depart', ['user' => $user, 'filterMonth' => $filterMonth]);
+    }
+
+    /**
+     * departmentClient
+     *
+     * @param  mixed $user
+     * @param  mixed $dept
+     * @return void
+     */
+    public function departmentClient(User $user, Department $dept)
+    {
+        $currentMonth = now()->format('Y-m');
+        $filterMonth = request()->input('filterMonth', $currentMonth);
+
+        return view('user.user-depart-client', ['user' => $user, 'filterMonth' => $filterMonth]);
+    }
 }

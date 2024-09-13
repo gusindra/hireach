@@ -86,6 +86,8 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
         Route::get('/user/{user}/client', [UserController::class, 'client'])->name('user.show.client');
         Route::get('/user/{user}/client/{client}', [UserController::class, 'clientUser'])->name('client.create.user');
         Route::get('/user/{user}/request', [UserController::class, 'request'])->name('user.show.request');
+        Route::get('/user/{user}/dept', [UserController::class, 'department'])->name('user.show.dept');
+        Route::get('/user/{user}/dept/{dept}', [UserController::class, 'departmentClient'])->name('user.show.dept.client');
 
         Route::get('/department', [UserController::class, 'listDepartment'])->name('admin.department');
         Route::get('/contact', [UserController::class, 'contact'])->name('admin.contact');
