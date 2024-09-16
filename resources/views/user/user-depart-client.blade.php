@@ -7,7 +7,7 @@
 
     <div class="grid grid-cols-12">
         @includeWhen(auth()->user()->isSuper || str_contains(auth()->user()->activeRole->role->name, 'Admin'),
-            'menu.admin-menu-user',
+            'menu.admin-menu-user-profile',
             []
         )
 
@@ -19,7 +19,11 @@
                             <form method="GET" action="{{ route('admin.department.get')}}">
                                 @csrf
                                 <div>
-                                    <x-jet-input name="code" type="text" placeholder="aicsp" />
+                                    <!-- <x-jet-input name="code" type="text" list="server" /> -->
+                                    <input type="text" name="code" list="server" >
+                                    <datalist id="server">
+                                        <option value="aicsp">
+                                    </datalist>
                                     <x-jet-button type="submit">
                                         {{ __('Update Department') }}
                                     </x-jet-button>
@@ -30,7 +34,7 @@
 
                     </div>
                     <div class="m-3">
-                        <livewire:table.department-table searchable="source_id, name, ancestors, parent, client_id" exportable />
+                        <livewire:table.department-user-table searchable="source_id, name, ancestors, parent, client_id" exportable />
                     </div>
                 </div>
             </div>

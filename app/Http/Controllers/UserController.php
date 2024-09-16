@@ -9,6 +9,7 @@ use App\Models\Setting;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth as FacadesAuth;
+use Illuminate\Support\Facades\Log;
 use Vinkla\Hashids\Facades\Hashids;
 
 class UserController extends Controller
@@ -107,43 +108,51 @@ class UserController extends Controller
         }
         $curl = curl_init();
         $code = $request->code;
-        curl_setopt_array($curl, array(
-        CURLOPT_URL => 'http://218.3.11.19:8091/'.$code.'/getAllDeptList',
-        CURLOPT_RETURNTRANSFER => true,
-        CURLOPT_ENCODING => '',
-        CURLOPT_MAXREDIRS => 10,
-        CURLOPT_TIMEOUT => 0,
-        CURLOPT_FOLLOWLOCATION => true,
-        CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-        CURLOPT_CUSTOMREQUEST => 'GET',
-        CURLOPT_HTTPHEADER => array(
-            'Authorization: eyJhbGciOiJIUzI1NiJ9.eyJqdGkiOiJmM2I4NzhlMS0wNTI4LTQ1YjQtYjM2Yy05MWU1YTkxMDk1NDYiLCJpYXQiOjE3MTY5NDgwNjYsInN1YiI6IntcIlN5c1VzZXJJZFwiOjF9IiwiZXhwIjoxNzE5NTQwMDY2fQ.kHoUPiNrQGahxX3ZeFY50p-P1nQHmPlVUve4Udy7VkE',
-            'User-Agent: Apifox/1.0.0 (https://apifox.com)'
-        ),
-        ));
+        $server = config('viguard.server.'.$code);
 
-        $response = curl_exec($curl);
+        if($server){
+            $auth = 'Authorization: '.$server["auth"];
+            curl_setopt_array($curl, array(
+                CURLOPT_URL => $server['url'].'/getAllDeptList',
+                CURLOPT_RETURNTRANSFER => true,
+                CURLOPT_ENCODING => '',
+                CURLOPT_MAXREDIRS => 10,
+                CURLOPT_TIMEOUT => 0,
+                CURLOPT_FOLLOWLOCATION => true,
+                CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                CURLOPT_CUSTOMREQUEST => 'GET',
+                CURLOPT_HTTPHEADER => array(
+                    $auth,
+                    'User-Agent: Apifox/1.0.0 (https://hireach.firmapps.ai)'
+                ),
+            ));
 
-        curl_close($curl);
-        // dd($response);
-        $resData = json_decode($response, true);
-        if($resData['data']){
-            foreach($resData['data'] as $r){
-                // return $r['deptId'];
-                if($r['parentId']=="230"){
-                    Department::updateOrCreate(
-                        [
-                            'source_id' => $r['deptId'],
-                            'user_id' => $userId
-                        ],
-                        [
-                            'parent' => $r['parentId'],
-                            'ancestors' => $r['ancestors'],
-                            'name' => $r['deptName']
-                        ]
-                    );
+            $response = curl_exec($curl);
+
+            curl_close($curl);
+            // dd($response);
+            Log::debug($response);
+            $resData = json_decode($response, true);
+            if($resData && $resData['data']){
+                foreach($resData['data'] as $r){
+                    // return $r['deptId'];
+                    if($r['parentId']=="230"){
+                        Department::updateOrCreate(
+                            [
+                                'source_id' => $r['deptId'],
+                                'user_id' => $userId,
+                                'server' => $code
+                            ],
+                            [
+                                'parent' => $r['parentId'],
+                                'ancestors' => $r['ancestors'],
+                                'name' => $r['deptName']
+                            ]
+                        );
+                    }
                 }
             }
+
         }
         // return response()->json([
         //     'msg' => "Successful sending to update depertment",
@@ -291,9 +300,6 @@ class UserController extends Controller
      */
     public function departmentClient(User $user, Department $dept)
     {
-        $currentMonth = now()->format('Y-m');
-        $filterMonth = request()->input('filterMonth', $currentMonth);
-
-        return view('user.user-depart-client', ['user' => $user, 'filterMonth' => $filterMonth]);
+        return view('user.user-depart-client', ['user' => $user, 'department' => $dept]);
     }
 }
