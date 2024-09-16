@@ -38,7 +38,7 @@ class TopupUser extends Component
             'date' => date("Y-m-d H:i:s"),
             'name' => 'Request Topup from ' . Auth::user()->name,
             'no' => 'HAPP' . date("YmdHis"),
-            'type' => 'selling',
+            'type' => 'topup',
             'entity_party' => '1',
             'total' => 0,
             'status' => 'unpaid',
