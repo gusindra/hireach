@@ -285,10 +285,15 @@ class UserController extends Controller
      */
     public function department(User $user)
     {
-        $currentMonth = now()->format('Y-m');
-        $filterMonth = request()->input('filterMonth', $currentMonth);
+        if(cache('viguard_id')){
+            $userId = cache('viguard_id');
+        }else{
+            $userId = cache()->remember('viguard_id', 6000, function (){
+                return Setting::where('key', 'viguard')->latest()->first()->value;
+            });
+        }
 
-        return view('user.user-depart', ['user' => $user, 'filterMonth' => $filterMonth]);
+        return view('user.user-depart', ['user' => $user, 'viguard'=>$userId]);
     }
 
     /**
@@ -300,6 +305,13 @@ class UserController extends Controller
      */
     public function departmentClient(User $user, Department $dept)
     {
-        return view('user.user-depart-client', ['user' => $user, 'department' => $dept]);
+        if(cache('viguard_id')){
+            $userId = cache('viguard_id');
+        }else{
+            $userId = cache()->remember('viguard_id', 6000, function (){
+                return Setting::where('key', 'viguard')->latest()->first()->value;
+            });
+        }
+        return view('user.user-depart-client', ['viguard'=>$userId, 'user' => $user, 'department' => $dept]);
     }
 }

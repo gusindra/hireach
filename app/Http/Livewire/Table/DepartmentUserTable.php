@@ -11,10 +11,11 @@ use Mediconesystems\LivewireDatatables\DateColumn;
 class DepartmentUserTable extends LivewireDatatable
 {
     public $model = Department::class;
+    public $userId;
 
     public function builder()
     {
-        return Department::query()->with('client');
+        return Department::query()->with('client')->where('departments.user_id', $this->userId);
     }
 
     public function columns()

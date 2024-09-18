@@ -58,8 +58,8 @@
     <nav x-data="{ atTop: false }" class="navbar navbar-expand-lg navbar-dark ftco_navbar bg-dark ftco-navbar-light" id="ftco-navbar">
         <div class="container1 flex" >
             <a class="navbar-brand" href="/" >
-                {{-- <img class="logo-white w-50" src="https://hireach.archeeshop.com/frontend/images/logo-trans.png" title="HiReach">
-                <img class="logo w-50 hidden" src="https://hireach.archeeshop.com/frontend/images/logo.png" title="HiReach"> --}}
+                {{-- <img class="logo-white w-50" src="{{url('frontend/images/logo-trans.png')}}" title="HiReach">
+                <img class="logo w-50 hidden" src="{{url('frontend/images/logo.png')}}" title="HiReach"> --}}
                 <img :class="{ '': atTop, 'block': !atTop, 'hidden': atTop }"
                 @scroll.window="atTop = (window.pageYOffset < 50) ? false: true" class="logo-white w-16" src="{{url('/assets/img/logos/logo2-wh-nobg.png')}}" title="HiReach">
                 <img :class="{ '': atTop, 'hidden': !atTop, 'block': atTop }"

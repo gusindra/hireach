@@ -256,26 +256,26 @@ Route::get("/dummy-string-error", function () {
 
 Route::get("/sample/server-viguard/getAllDeptList", function () {
     $arrayVar = [
-        "msg" => "操作成功",
+        "msg" => "Success",
         "code" => 0,
         "data" => [
             [
-                "deptId" => "230",
-                "parentId" => "100",
+                "deptId" => "1",
+                "parentId" => "230",
                 "ancestors" => "0,100",
                 "deptName" => "Indonesia",
             ],
             [
-                "deptId" => "231",
+                "deptId" => "2",
                 "parentId" => "230",
                 "ancestors" => "0,100,230",
                 "deptName" => "Local Test",
             ],
             [
-                "deptId" => "232",
+                "deptId" => "3",
                 "parentId" => "230",
                 "ancestors" => "0,100,230",
-                "deptName" => "Local EDN",
+                "deptName" => rand(3,5),
             ],
         ],
     ];

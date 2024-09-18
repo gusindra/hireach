@@ -14,15 +14,18 @@
         <div class="col-span-12 px-3 lg:ml-24 mt-2">
             <div class="bg-white dark:bg-slate-600 overflow-hidden shadow-xl sm:rounded-lg">
                 <div class="mx-auto">
-                    <div class="flex justify-between">
-                        <div class="p-4">
+                    @if($viguard==$user->id)
+                    <div class="flex gap-4 my-3">
+                        <div class="p-4 hidden">
                             <form method="GET" action="{{ route('admin.department.get')}}">
                                 @csrf
                                 <div>
                                     <!-- <x-jet-input name="code" type="text" placeholder="aicsp" /> -->
                                     <input type="text" name="code" list="server" >
                                     <datalist id="server">
-                                        <option value="aicsp">
+                                            @foreach(config('viguard.server') as $key => $server)
+                                            <option value="{{$key}}">
+                                            @endforeach
                                     </datalist>
                                     <x-jet-button type="submit">
                                         {{ __('Update Department') }}
@@ -30,11 +33,12 @@
                                 </div>
                             </form>
                         </div>
-                        @livewire('contact.search')
-
+                        @livewire('department.update')
+                        @livewire('department.setting-contact')
                     </div>
+                    @endif
                     <div class="m-3">
-                        <livewire:table.department-table searchable="source_id, name, ancestors, parent, client_id" exportable />
+                        <livewire:table.department-user-table searchable="source_id, name, ancestors, server, client_id" :userId="$user->id" exportable />
                     </div>
                 </div>
             </div>
