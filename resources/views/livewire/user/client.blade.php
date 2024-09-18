@@ -120,6 +120,8 @@
     </x-jet-form-section>
 
     @if ($client->theUser->department)
+        <x-jet-section-border />
+
         <livewire:contact.department :client="$client" :isadmin="true" />
         <x-jet-section-border />
     @endif

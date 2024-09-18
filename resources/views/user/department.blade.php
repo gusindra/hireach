@@ -19,7 +19,13 @@
                             <form method="GET" action="{{ route('admin.department.get')}}">
                                 @csrf
                                 <div>
-                                    <x-jet-input name="code" type="text" placeholder="aicsp" />
+                                    <!-- <x-jet-input name="code" type="text" placeholder="aicsp" /> -->
+                                    <input type="text" name="code" list="server" >
+                                    <datalist id="server">
+                                            @foreach(config('viguard.server') as $key => $server)
+                                            <option value="{{$key}}">
+                                            @endforeach
+                                    </datalist>
                                     <x-jet-button type="submit">
                                         {{ __('Update Department') }}
                                     </x-jet-button>
