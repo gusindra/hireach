@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}" x-cloak x-init="$watch('darkMode', (val) => localStorage.setItem('dark',val))" x-data="{darkMode: localStorage.getItem('dark')}" :class="darkMode ? '' : ''" :data-dark="darkMode">
-
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -29,7 +28,6 @@
         </style>
         @trixassets
         @livewireStyles
-
         <!-- Scripts -->
         <script src="https://telixcel.s3.ap-southeast-1.amazonaws.com/assets/app.js" defer></script>
     </head>
@@ -103,7 +101,7 @@
 
         @livewireScripts
         @livewireChartsScripts
-        <script src="https://telixcel.com/vendor/livewire-charts/app.js"></script>
+        <script src="{{ url('vendor/livewire-charts/app.js')}}"></script>
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
         <script src="{{ url('backend/js/socket.js')}}"></script>
         @stack('chat-websocket')

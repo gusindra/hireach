@@ -21,6 +21,7 @@ class Department extends Model
         'ancestors',
         'user_id',
         'client_id',
+        'server'
     ];
 
     protected $guarded = [];

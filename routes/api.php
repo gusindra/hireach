@@ -253,3 +253,32 @@ Route::get("/dummy-string", function () {
 Route::get("/dummy-string-error", function () {
     return '400';
 });
+
+Route::get("/sample/server-viguard/getAllDeptList", function () {
+    $arrayVar = [
+        "msg" => "Success",
+        "code" => 0,
+        "data" => [
+            [
+                "deptId" => "1",
+                "parentId" => "230",
+                "ancestors" => "0,100",
+                "deptName" => "Indonesia",
+            ],
+            [
+                "deptId" => "2",
+                "parentId" => "230",
+                "ancestors" => "0,100,230",
+                "deptName" => "Local Test",
+            ],
+            [
+                "deptId" => "3",
+                "parentId" => "230",
+                "ancestors" => "0,100,230",
+                "deptName" => rand(3,5),
+            ],
+        ],
+    ];
+
+    return response()->json($arrayVar);
+});

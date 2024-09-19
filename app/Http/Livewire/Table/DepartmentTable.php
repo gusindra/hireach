@@ -20,8 +20,16 @@ class DepartmentTable extends LivewireDatatable
     public function columns()
     {
         return [
+            Column::callback(['id','name','user_id'], function ($id,$name,$user) {
+                return view('datatables::link', [
+                    'href' => url('admin/user/' . $user . '/dept/' . $id),
+                    'slot' => $name,
+                    'class' => 'uppercase'
+                ]);
+                //return $x;
+            })->label('Department')->searchable(),
             Column::name('source_id')->filterable()->label('ID'),
-            Column::name('name')->filterable()->label('Name'),
+            Column::name('server')->filterable()->label('Server'),
             Column::name('ancestors')->filterable()->label('Ancestors'),
             Column::name('parent')->filterable()->label('Parent'),
             Column::name('client_id')->filterable()->label('Client_id')->editable(),

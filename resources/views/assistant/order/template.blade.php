@@ -67,7 +67,7 @@
                         <div class="md:grid md:grid-cols-3 md:gap-6 my-4">
                             <div class="md:col-span-1 flex justify-between">
                                 <div class="px-4 sm:px-0">
-                                    @if ($data->company && $data->company->img_logo)
+                                    @if ($data->company && $data->company->logo)
                                         {{-- <img style="height:100px;" src="https://telixcel.s3.ap-southeast-1.amazonaws.com/{{$data->company->img_logo->file}}" /> --}}
                                         <img style="height:100px;" src="{{ url('/assets/img/logos/logo2.svg') }}" />
                                     @else
@@ -124,7 +124,8 @@
                                                 </tr>
                                                 <tr class="border-none">
                                                     <td class="text-sm whitespace-no-wrap"> NPWP :
-                                                         {{ $data->user->user && $data->user->user->userBilling ? @$data->user->user->userBilling->tax_id : '-' }} </td>
+                                                        {{ $data->user->user && $data->user->user->userBilling ? @$data->user->user->userBilling->tax_id : '-' }}
+                                                    </td>
                                                 </tr>
                                                 <tr class="border-none">
                                                     <td class="text-sm whitespace-no-wrap"> CN :
@@ -206,9 +207,15 @@
                                                     <th
                                                         class="px-3 py-2 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider w-1">
                                                         Price (IDR)</th>
-                                                    <th
-                                                        class="px-3 py-2 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider w-1">
-                                                        Qty</th>
+
+                                                    @if ($data->type === 'selling')
+                                                        <th
+                                                            class="px-3 py-2 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider w-1">
+                                                            Qty</th>
+                                                    @else
+                                                        <td></td>
+                                                    @endif
+
                                                     <th class="w-1"></th>
                                                     <th
                                                         class="px-3 py-2 bg-gray-50 text-right text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider w-1/4">
@@ -225,8 +232,17 @@
                                                         </td>
                                                         <td class="px-3 py-1 whitespace-no-wrap text-right">
                                                             {{ number_format($item->price) }} </td>
-                                                        <td class="px-3 py-1 whitespace-no-wrap">
-                                                            {{ number_format($item->qty) }} {{ $item->unit }} </td>
+
+
+                                                        @if ($data->type === 'selling')
+                                                            <td class="px-3 py-1 whitespace-no-wrap">
+                                                                {{ number_format($item->qty) }} {{ $item->unit }}
+                                                            </td>
+                                                        @else
+                                                            <td></td>
+                                                        @endif
+
+
                                                         <td class="px-3 py-1 whitespace-no-wrap text-center">
                                                             {{ $item->total_percentage == 100 ? '' : '(' . $item->total_percentage . '%)' }}
                                                         </td>
@@ -298,10 +314,12 @@
                                     <tbody class="bg-white divide-y divide-gray-200">
                                         <tr class="border-none">
                                             <td class="text-sm whitespace-no-wrap align-top">
-                                                @if($data->status=='paid')
-                                                    <p class="text-center">Transaction Date : {{$data->paid_at}}}</p>
+                                                @if ($data->status == 'paid')
+                                                    <p class="text-center">Transaction Date : {{ $data->paid_at }}}
+                                                    </p>
                                                 @else
-                                                <h3 class="text-sm font-medium text-gray-900">PLEASE REMIT PAYMENT DIRECTLY TO</h3>
+                                                    <h3 class="text-sm font-medium text-gray-900">PLEASE REMIT PAYMENT
+                                                        DIRECTLY TO</h3>
                                                 @endif
                                             </td>
                                         </tr>
