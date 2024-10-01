@@ -21,8 +21,8 @@ class WaUpdateImport implements ToCollection, WithHeadingRow
     public function collection(Collection $rows)
     {
         foreach ($rows as $row) {
-            $phone_number = trim($row['no_hp'] ?? '');
-            $status_wa = $row['status'] ?? null;
+            $phone_number = trim($row['phone_number'] ?? '');
+            $status_wa = $row['wa_status'] ?? null;
 
             $contact = Contact::where('phone_number', $phone_number)->first();
             if ($contact) {

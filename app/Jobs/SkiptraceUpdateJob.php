@@ -39,11 +39,11 @@ class SkiptraceUpdateJob implements ShouldQueue
     {
         // Extract file name from file path
         $fileName = basename($this->filePath);
-
+        $file = Storage::disk('ftp')->path($this->filePath);
         // Import the data using SkiptraceUpdateImport
-        Excel::import(new SkiptraceUpdateImport($fileName), $this->filePath);
+        Excel::import(new SkiptraceUpdateImport($fileName), $file);
 
         // Optionally, delete the file after processing
-        Storage::delete($this->filePath);
+        Storage::disk('ftp')->delete($this->filePath);
     }
 }

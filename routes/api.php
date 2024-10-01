@@ -281,4 +281,8 @@ Route::get("/sample/server-viguard/getAllDeptList", function () {
     ];
 
     return response()->json($arrayVar);
+    // curl -X POST -H "Content-Type: application/json" -d '{"msg_type":"text","content":{"text":"Department request example"}}' https://open.larksuite.com/open-apis/bot/v2/hook/83c76cb2-da54-4626-9a7c-66c30e4f2ed1
+    // curl -X POST -H "Content-Type: application/json" \
+    // -d '{"msg_type":"text","content":{"text":"request example"}}' \
+    // https://open.larksuite.com/open-apis/bot/v2/hook/****
 });

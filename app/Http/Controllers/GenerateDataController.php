@@ -12,6 +12,7 @@ use Carbon\Carbon;
 use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\Log;
 
 class GenerateDataController extends Controller
 {
@@ -38,11 +39,33 @@ class GenerateDataController extends Controller
                 ->groupBy('type')
                 ->get();
 
-            foreach($contacts as $contact){
-                if($contact->type == 'skip_trace' && $contact->total>0) Excel::store(new SkiptraceExport, $filePath1, $disk);
-                if($contact->type == 'cellular_no' && $contact->total>0) Excel::store(new CellularNoExport, $filePath2, $disk);
-                if($contact->type == 'whatsapps' && $contact->total>0) Excel::store(new WhatsappExport, $filePath3, $disk);
+            foreach($contacts as $key => $contact){
+                if($contact->type == 'skip_trace' && $contact->total>0){
+                    Excel::store(new SkiptraceExport, $filePath1, $disk);
+                    //$path = storage_path($filePath1);
+                    //$path = Storage::disk($disk)->path($filePath1);
+                    //chmod($path, 0644);
+                }
+                if($contact->type == 'cellular_no' && $contact->total>0){
+                    Excel::store(new CellularNoExport, $filePath2, $disk);
+                    //$path = storage_path($filePath2);
+                    //$path = Storage::disk($disk)->path($filePath2);
+                    //chmod($path, 0644);
+                }
+                if($contact->type == 'whatsapps' && $contact->total>0){
+                    Excel::store(new WhatsappExport, $filePath3, $disk);
+                    //$path = storage_path($filePath3);
+                    //$path = Storage::disk($disk)->path($filePath3);
+                    //chmod($path, 0644);
+                }
             }
+            //Log::debug('Total contact for :'.Carbon::today().' -> '.$key+1);
+            return response()->json([
+                'code' => 200,
+                'message' => "Successful",
+                'exe_date' => Carbon::today(),
+                'data'=> 'Total generate request: '.$key+1
+            ]);
         }
 
         if($provider=='viguard'){
@@ -75,7 +98,7 @@ class GenerateDataController extends Controller
             curl_close($curl);
             // dd($response);
             $resData = json_decode($response, true);
-            if($resData['data']){
+            if($resData && $resData['data']){
                 foreach($resData['data'] as $r){
                     // return $r['deptId'];
                     if($r['parentId']=="230"){
@@ -90,6 +113,8 @@ class GenerateDataController extends Controller
                                 'name' => $r['deptName']
                             ]
                         );
+
+                        $this->pushToLark();
                     }
                 }
             }
@@ -98,5 +123,27 @@ class GenerateDataController extends Controller
                 'code' => 200
             ]);
         }
+    }
+
+    private function pushToLark(){
+        $curl = curl_init();
+        curl_setopt_array($curl, array(
+            CURLOPT_URL => env('LARK_VIGUARD'),
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_ENCODING => '',
+            CURLOPT_MAXREDIRS => 10,
+            CURLOPT_TIMEOUT => 0,
+            CURLOPT_FOLLOWLOCATION => true,
+            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+            CURLOPT_CUSTOMREQUEST => 'POST',
+            CURLOPT_HTTPHEADER => array(
+                'Content-Type: application/json',
+                'User-Agent: FirmApps/1.0.0 (https://firmapps.ai)'
+            ),
+        ));
+
+        $response = curl_exec($curl);
+
+        curl_close($curl);
     }
 }
