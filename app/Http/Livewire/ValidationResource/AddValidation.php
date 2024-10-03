@@ -16,7 +16,7 @@ class AddValidation extends Component
 
     protected $rules = [
         'file' => 'required|file|mimes:xlsx,xls,csv',
-        'type' => 'required|in:cellular_no,whatsapps',
+        'type' => 'required|in:cellular_no,whatsapps,geolocation_tagging,recycle_status',
     ];
 
     public function openModal()

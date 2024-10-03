@@ -17,239 +17,263 @@ paths:
     post:
       tags:
         - One Way
-      summary: 'Send notification to recipients with one object request'
+      summary: "Send notification to recipients with one object request"
       operationId: postOneWayResource
       requestBody:
-        $ref: '#/components/requestBodies/OneWay'
+        $ref: "#/components/requestBodies/OneWay"
       responses:
-        '200':
-          description: 'successful operation'
+        "200":
+          description: "successful operation"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ApiResponse'
+                $ref: "#/components/schemas/ApiResponse"
       security:
         - bearerAuth: []
     get:
       tags:
         - One Way
-      summary: 'Get all one way resource'
+      summary: "Get all one way resource"
       operationId: getOneWayResource
       parameters:
-        -
-          name: page
+        - name: page
           in: query
           required: true
           default: 0
           schema:
             type: integer
-        -
-          name: pageSize
+        - name: pageSize
           in: query
           required: true
           default: 10
           schema:
             type: integer
-        -
-          name: order
+        - name: order
           in: query
           required: false
           schema:
             type: string
             enum: [id, newest, oldnest]
       responses:
-        '200':
-          description: 'successful operation'
+        "200":
+          description: "successful operation"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/SingleSms'
+                $ref: "#/components/schemas/SingleSms"
             application/xml:
               schema:
-                $ref: '#/components/schemas/SingleSms'
-        '400':
-          description: 'Invalid supplied'
-        '404':
-          description: 'Record not found'
+                $ref: "#/components/schemas/SingleSms"
+        "400":
+          description: "Invalid supplied"
+        "404":
+          description: "Record not found"
       security:
         - bearerAuth: []
   /one-way/campaign:
     get:
       tags:
         - One Way
-      summary: 'Get campaign has been create using one way resource'
+      summary: "Get campaign has been create using one way resource"
       operationId: getOneWayCampaign
       parameters:
-        -
-          name: value
+        - name: value
           in: query
           required: true
           schema:
             type: string
-        -
-          name: request
+        - name: request
           in: query
           required: false
           schema:
             type: boolean
             enum: [true, false]
       responses:
-        '200':
-          description: 'successful operation'
+        "200":
+          description: "successful operation"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/GetCampaign'
+                $ref: "#/components/schemas/GetCampaign"
             application/xml:
               schema:
-                $ref: '#/components/schemas/GetCampaign'
-        '400':
-          description: 'Invalid supplied'
-        '404':
-          description: 'Record not found'
+                $ref: "#/components/schemas/GetCampaign"
+        "400":
+          description: "Invalid supplied"
+        "404":
+          description: "Record not found"
       security:
         - bearerAuth: []
   /one-way/group:
     post:
       tags:
         - One Way
-      summary: 'Send notification to list of recipients mobile number with given csv/exel file'
+      summary: "Send notification to list of recipients mobile number with given csv/exel file"
       operationId: postGroupOneWayResource
       requestBody:
-        $ref: '#/components/requestBodies/OneWayArray'
+        $ref: "#/components/requestBodies/OneWayArray"
       responses:
-        '200':
-          description: 'successful operation'
+        "200":
+          description: "successful operation"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ApiResponse'
+                $ref: "#/components/schemas/ApiResponse"
       security:
         - bearerAuth: []
   /two-way:
     post:
       tags:
         - Two Way
-      summary: 'Send sms to list of recipients mobile number with given input array'
+      summary: "Send sms to list of recipients mobile number with given input array"
       operationId: TwoWayPost
       requestBody:
-        $ref: '#/components/requestBodies/TwoWay'
+        $ref: "#/components/requestBodies/TwoWay"
       responses:
-        '200':
-          description: 'successful operation'
+        "200":
+          description: "successful operation"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ApiResponse'
+                $ref: "#/components/schemas/ApiResponse"
       security:
         - bearerAuth: []
     get:
       tags:
         - Two Way
-      summary: 'Get all two way resource'
+      summary: "Get all two way resource"
       operationId: getTwoWayResource
       parameters:
-        -
-          name: phone
+        - name: phone
           in: query
           required: true
           schema:
             type: string
-        -
-          name: page
+        - name: page
           in: query
           required: true
           default: 0
           schema:
             type: integer
-        -
-          name: pageSize
+        - name: pageSize
           in: query
           required: true
           default: 10
           schema:
             type: integer
-        -
-          name: order
+        - name: order
           in: query
           required: false
           schema:
             type: string
             enum: [id, newest, oldnest]
       responses:
-        '200':
-          description: 'successful operation'
+        "200":
+          description: "successful operation"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/SingleSms'
+                $ref: "#/components/schemas/SingleSms"
             application/xml:
               schema:
-                $ref: '#/components/schemas/SingleSms'
-        '400':
-          description: 'Invalid supplied'
-        '404':
-          description: 'Record not found'
+                $ref: "#/components/schemas/SingleSms"
+        "400":
+          description: "Invalid supplied"
+        "404":
+          description: "Record not found"
       security:
         - bearerAuth: []
   /two-way/campaign:
     get:
       tags:
         - Two Way
-      summary: 'Get campaign has been create using tow way resource'
+      summary: "Get campaign has been create using tow way resource"
       operationId: getTwoWayCampaign
       parameters:
-        -
-          name: value
+        - name: value
           in: query
           required: true
           schema:
             type: string
-        -
-          name: request
+        - name: request
           in: query
           required: false
           schema:
             type: boolean
             enum: [true, false]
       responses:
-        '200':
-          description: 'successful operation'
+        "200":
+          description: "successful operation"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/GetCampaign'
+                $ref: "#/components/schemas/GetCampaign"
             application/xml:
               schema:
-                $ref: '#/components/schemas/GetCampaign'
-        '400':
-          description: 'Invalid supplied'
-        '404':
-          description: 'Record not found'
+                $ref: "#/components/schemas/GetCampaign"
+        "400":
+          description: "Invalid supplied"
+        "404":
+          description: "Record not found"
       security:
         - bearerAuth: []
   /two-way/group:
     post:
       tags:
         - Two Way
-      summary: 'Send two way blast notification to list of recipients mobile number with given csv/exel file'
+      summary: "Send two way blast notification to list of recipients mobile number with given csv/exel file"
       operationId: postGroupOneWayResource
       requestBody:
-        $ref: '#/components/requestBodies/OneWayArray'
+        $ref: "#/components/requestBodies/OneWayArray"
       responses:
-        '200':
-          description: 'successful operation'
+        "200":
+          description: "successful operation"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ApiResponse'
+                $ref: "#/components/schemas/ApiResponse"
       security:
         - bearerAuth: []
+  /resources/skiptrace:
+    post:
+      tags:
+        - Resources
+      summary: false
+      operationId: postSkiptraceResource
+      requestBody:
+        $ref: "#/components/requestBodies/ResourceSkiptraceArray"
+      responses:
+        "200":
+          description: "successful operation"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ResourceRequest"
+      security:
+        - bearerAuth: []
+  /resources/validation:
+    post:
+      tags:
+        - Resources
+      summary: false
+      operationId: postValidationResource
+      requestBody:
+        $ref: "#/components/requestBodies/ResourceValidationArray"
+      responses:
+        "200":
+          description: "successful operation"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ResourceRequest"
+      security:
+        - bearerAuth: []
+
 components:
   schemas:
     ApiResponse:
-      title: 'Api response'
-      description: 'Api response'
+      title: "Api response"
+      description: "Api response"
       properties:
         code:
           title: Code
@@ -275,8 +299,8 @@ components:
             type: string
       type: object
     SingleSms:
-      title: 'Single SMS Response'
-      description: 'Single SMS model'
+      title: "Single SMS Response"
+      description: "Single SMS model"
       required:
         - type
         - to
@@ -290,45 +314,45 @@ components:
           type: integer
           format: int64
         type:
-          title: 'Type'
-          description: 'Character type for text'
+          title: "Type"
+          description: "Character type for text"
           type: integer
           format: int64
         title:
-          title: 'Title'
-          description: 'Broadcast Title'
+          title: "Title"
+          description: "Broadcast Title"
           type: string
         servid:
-          title: 'ServId'
-          description: 'ServID'
+          title: "ServId"
+          description: "ServID"
           type: string
         text:
-          title: 'Text'
-          description: 'Message Content'
+          title: "Text"
+          description: "Message Content"
           type: string
         to:
-          title: 'To'
-          description: 'Sending request to (email or phone or id). Phone number must have the country code (without the “+” sign)'
+          title: "To"
+          description: "Sending request to (email or phone or id). Phone number must have the country code (without the “+” sign)"
           type: string
         status:
-          title: 'Status'
-          description: 'Broadcast status'
+          title: "Status"
+          description: "Broadcast status"
           type: string
         date:
-          title: 'Date'
-          description: 'Broadcast date'
+          title: "Date"
+          description: "Broadcast date"
           type: string
           format: date-time
         otp:
-          title: 'OTP'
-          description: 'SMS Type OTP or NON OTP'
+          title: "OTP"
+          description: "SMS Type OTP or NON OTP"
           type: boolean
       type: object
       xml:
         name: SingleSms
     BulkSms:
-      title: 'Bulk SMS model'
-      description: 'Bulk SMS model'
+      title: "Bulk SMS model"
+      description: "Bulk SMS model"
       required:
         - type
         - to
@@ -337,41 +361,41 @@ components:
         - servid
       properties:
         type:
-          title: 'Type'
-          description: 'Character type for text'
+          title: "Type"
+          description: "Character type for text"
           type: integer
           format: int64
         title:
-          title: 'Title'
-          description: 'Broadcast Title'
+          title: "Title"
+          description: "Broadcast Title"
           type: string
         servid:
-          title: 'ServId'
-          description: 'ServID'
+          title: "ServId"
+          description: "ServID"
           type: string
         text:
-          title: 'Text'
-          description: 'Message Content'
+          title: "Text"
+          description: "Message Content"
           type: string
         from:
-          title: 'From'
-          description: 'Sender Name'
+          title: "From"
+          description: "Sender Name"
           type: string
         to:
-          title: 'To'
-          description: 'The recipient`s mobile number must have the country code (without the “+” sign).'
+          title: "To"
+          description: "The recipient`s mobile number must have the country code (without the “+” sign)."
           type: string
           format: msisdn
         otp:
-          title: 'OTP'
-          description: 'SMS Type OTP or NON OTP'
+          title: "OTP"
+          description: "SMS Type OTP or NON OTP"
           type: boolean
       type: object
       xml:
         name: BulkSms
     OneWayRequest:
-      title: 'One Way Model'
-      description: 'One Way Model'
+      title: "One Way Model"
+      description: "One Way Model"
       required:
         - channel
         - type
@@ -380,70 +404,70 @@ components:
         - title
       properties:
         channel:
-          title: 'channel'
-          description: 'Channel resource to send content.'
+          title: "channel"
+          description: "Channel resource to send content."
           type: string
-          required: 'Yes'
-          default: 'email'
-          option: 'email, wa, sms_otp_sid, sms_notp_sid, sms'
+          required: "Yes"
+          default: "email"
+          option: "email, wa, sms_otp_sid, sms_notp_sid, sms"
         type:
-          title: 'type'
-          description: 'Type for content.'
+          title: "type"
+          description: "Type for content."
           type: integer
-          required: 'Yes'
+          required: "Yes"
           format: int64
           default: 0
-          option: '0 : text, 1: object'
+          option: "0 : text, 1: object"
         title:
-          title: 'title'
-          description: 'Broadcast Title'
+          title: "title"
+          description: "Broadcast Title"
           type: string
-          required: 'Yes'
-          example: 'New Product Launch'
+          required: "Yes"
+          example: "New Product Launch"
         text:
-          title: 'text'
-          description: 'Message Content'
+          title: "text"
+          description: "Message Content"
           type: string
-          required: 'Yes'
-          example: 'Hi, {client_name}, your account has been updated with the following features in March. Find out more on our website!'
+          required: "Yes"
+          example: "Hi, {client_name}, your account has been updated with the following features in March. Find out more on our website!"
         templateid:
-          title: 'templateid'
-          description: 'Your template id in HiReach'
+          title: "templateid"
+          description: "Your template id in HiReach"
           type: integer
-          required: 'No'
+          required: "No"
           default: 1
         to:
-          title: 'to'
-          description: 'The recipient`s contact, if mobile number must have the country code (without the “+” sign).'
+          title: "to"
+          description: "The recipient`s contact, if mobile number must have the country code (without the “+” sign)."
           type: string
-          required: 'Yes'
+          required: "Yes"
           format: msisdn,email
-          sample: '6281223344556 / jhon@example.com'
+          sample: "6281223344556 / jhon@example.com"
         from:
-          title: 'from'
-          description: 'Sender Name. Required for using channel email, sms_otp_sid, sms_notp_sid.'
+          title: "from"
+          description: "Sender Name. Required for using channel email, sms_otp_sid, sms_notp_sid."
           type: string
           format: string,username,email
-          required: 'for channel email, sms_otp_sid, sms_notp_sid'
-          sample: 'HIREACH / noreply@hireach.archeeshop.com'
+          required: "for channel email, sms_otp_sid, sms_notp_sid"
+          sample: "HIREACH / noreply@hireach.archeeshop.com"
         provider:
-          title: 'provider'
-          description: 'Provider is to sending Notification given by HiReach. Default will set by system.'
-          required: 'Yes'
+          title: "provider"
+          description: "Provider is to sending Notification given by HiReach. Default will set by system."
+          required: "Yes"
           type: string
         otp:
-          title: 'otp'
-          description: 'SMS Type OTP for verification, authentication and security or NON OTP for normal notification text.'
+          title: "otp"
+          description: "SMS Type OTP for verification, authentication and security or NON OTP for normal notification text."
           type: boolean
-          required: 'No'
+          required: "No"
           default: 0
-          option: '0:OTP, 1:NON OTP'
+          option: "0:OTP, 1:NON OTP"
       type: object
       xml:
         name: BlastNotification
     TwoWayRequest:
-      title: 'Two Way Model'
-      description: 'Two Way Model'
+      title: "Two Way Model"
+      description: "Two Way Model"
       required:
         - channel
         - type
@@ -452,63 +476,70 @@ components:
         - title
       properties:
         channel:
-          title: 'channel'
-          description: 'Channel resource to send content.'
+          title: "channel"
+          description: "Channel resource to send content."
           type: string
-          required: 'Yes'
-          default: 'web'
-          option: 'web, wa'
+          required: "Yes"
+          default: "web"
+          option: "web, wa"
         type:
-          title: 'type'
-          description: 'Type for content.'
+          title: "type"
+          description: "Type for content."
           type: integer
-          required: 'Yes'
+          required: "Yes"
           format: int64
           default: 0
-          option: '0 : text, 1: object'
+          option: "0 : text, 1: object"
         title:
-          title: 'title'
-          description: 'Broadcast Title'
+          title: "title"
+          description: "Broadcast Title"
           type: string
-          required: 'Yes'
-          example: 'New Product Launch'
+          required: "Yes"
+          example: "New Product Launch"
         text:
-          title: 'text'
-          description: 'Message Content'
+          title: "text"
+          description: "Message Content"
           type: string
-          required: 'Yes'
-          example: 'Hi, {client_name}, your account has been updated with the following features in March. Find out more on our website!'
+          required: "Yes"
+          example: "Hi, {client_name}, your account has been updated with the following features in March. Find out more on our website!"
         templateid:
-          title: 'templateid'
-          description: 'Your template id in HiReach'
+          title: "templateid"
+          description: "Your template id in HiReach"
           type: integer
-          required: 'No'
+          required: "No"
           default: 1
         to:
-          title: 'to'
-          description: 'The recipient`s contact, if mobile number must have the country code (without the “+” sign).'
+          title: "to"
+          description: "The recipient`s contact, if mobile number must have the country code (without the “+” sign)."
           type: string
-          required: 'Yes'
+          required: "Yes"
           format: msisdn,email
-          sample: '6281223344556 / jhon@example.com'
+          sample: "6281223344556 / jhon@example.com"
         from:
-          title: 'from'
-          description: 'Sender Name. Required for using channel email, sms_otp_sid, sms_notp_sid.'
+          title: "from"
+          description: "Sender Name. Required for using channel email, sms_otp_sid, sms_notp_sid."
           type: string
           format: string,username,email
-          required: 'for channel email, sms_otp_sid, sms_notp_sid'
-          sample: 'HIREACH / noreply@hireach.archeeshop.com'
+          required: "for channel email, sms_otp_sid, sms_notp_sid"
+          sample: "HIREACH / noreply@hireach.archeeshop.com"
         provider:
-          title: 'provider'
-          description: 'Provider is to sending Notification given by HiReach. Default will set by system.'
-          required: 'No'
+          title: "provider"
+          description: "Provider is to sending Notification given by HiReach. Default will set by system."
+          required: "No"
           type: string
       type: object
       xml:
         name: BlastNotification
+    ResourceRequest:
+      title: "Import data resource"
+      type: object
+      properties:
+        message:
+          type: string
+          example: "Data Import Successfully"
     SendSms:
-      title: 'Send SMS model'
-      description: 'Send SMS model'
+      title: "Send SMS model"
+      description: "Send SMS model"
       required:
         - type
         - to
@@ -517,80 +548,80 @@ components:
         - servid
       properties:
         type:
-          title: 'Type'
-          description: 'Character type for text: 0 - ASCII 5 - Unicode'
+          title: "Type"
+          description: "Character type for text: 0 - ASCII 5 - Unicode"
           type: integer
           format: int64
           example: 0
         servid:
-          title: 'ServId'
-          description: 'ServID'
+          title: "ServId"
+          description: "ServID"
           type: string
         to:
-          title: 'To'
-          description: 'The recipient’s mobile number must have the country code (without the “+” sign).'
+          title: "To"
+          description: "The recipient’s mobile number must have the country code (without the “+” sign)."
           type: string
           format: msisdn
           example: "6281339668556"
         from:
-          title: 'from'
-          description: 'Sender’s name, Sender’s ID or Sender’s number'
+          title: "from"
+          description: "Sender’s name, Sender’s ID or Sender’s number"
           type: string
         title:
-          title: 'Title'
-          description: 'Broadcast Title'
+          title: "Title"
+          description: "Broadcast Title"
           type: string
           example: "First Broadcast"
         text:
-          title: 'Text'
-          description: 'Message Content'
+          title: "Text"
+          description: "Message Content"
           type: string
           example: "Hello World!"
         otp:
-          title: 'OTP'
-          description: 'Is SMS Type OTP'
+          title: "OTP"
+          description: "Is SMS Type OTP"
           type: boolean
           example: "true / false / 1 / 0"
       type: object
       xml:
         name: SingleSms
     Chat:
-      title: 'Chat model'
-      description: 'Chat model'
+      title: "Chat model"
+      description: "Chat model"
       required:
         - text
         - phone
       properties:
         phone:
-          title: 'Phone'
-          description: 'Phone User from'
+          title: "Phone"
+          description: "Phone User from"
           type: string
         reply:
-          title: 'Reply'
-          description: 'User Message Reply'
+          title: "Reply"
+          description: "User Message Reply"
           type: string
         date:
-          title: 'Date'
-          description: 'Broadcast date'
+          title: "Date"
+          description: "Broadcast date"
           type: string
           format: date-time
       type: object
       xml:
         name: Chat
     InvalidInputChat:
-      title: 'Invalid Chat'
-      description: 'Chat model'
+      title: "Invalid Chat"
+      description: "Chat model"
       required:
         - text
         - phone
       properties:
         message:
-          title: 'Phone'
-          description: 'Phone User from'
+          title: "Phone"
+          description: "Phone User from"
           type: string
         errors:
-          title: 'Errors'
-          description: 'Errors'
+          title: "Errors"
+          description: "Errors"
           type: array
           items:
             type: string
@@ -598,88 +629,88 @@ components:
       xml:
         name: InvalidInputChat
     GetCampaign:
-      title: 'Get Campaign Status'
-      description: 'Get Campaign Data'
+      title: "Get Campaign Status"
+      description: "Get Campaign Data"
       required:
         - value
         - request
       properties:
         code:
-          title: 'Status'
-          description: 'Campaign status'
+          title: "Status"
+          description: "Campaign status"
           type: string
         message:
-          title: 'Status'
-          description: 'Campaign status'
+          title: "Status"
+          description: "Campaign status"
           type: string
         errors:
-          title: 'Errors'
-          description: 'Errors'
+          title: "Errors"
+          description: "Errors"
           type: array
           items:
             status:
-              title: 'Status'
-              description: 'Campaign status'
+              title: "Status"
+              description: "Campaign status"
               type: string
             id:
               title: UUID
               description: UUID
               type: string
             type:
-              title: 'Type'
-              description: 'Character type for text'
+              title: "Type"
+              description: "Character type for text"
               type: integer
               format: int64
             title:
-              title: 'Title'
-              description: 'Broadcast Title'
+              title: "Title"
+              description: "Broadcast Title"
               type: string
             provider:
-              title: 'Provider'
-              description: 'Provoder'
+              title: "Provider"
+              description: "Provoder"
               type: string
             channel:
-              title: 'Channel'
-              description: 'Channel'
+              title: "Channel"
+              description: "Channel"
               type: string
             text:
-              title: 'Text'
-              description: 'Message Content'
+              title: "Text"
+              description: "Message Content"
               type: string
             to:
-              title: 'To'
-              description: 'Sending request to (email or phone or id). Phone number must have the country code (without the “+” sign)'
+              title: "To"
+              description: "Sending request to (email or phone or id). Phone number must have the country code (without the “+” sign)"
               type: string
             date:
-              title: 'Date'
-              description: 'Broadcast date'
+              title: "Date"
+              description: "Broadcast date"
               type: string
               format: date-time
             otp:
-              title: 'OTP'
-              description: 'SMS Type OTP or NON OTP'
+              title: "OTP"
+              description: "SMS Type OTP or NON OTP"
               type: boolean
       type: object
       xml:
         name: GetCampaign
     SmsArray:
     OneWay:
-      description: 'List of one way request'
+      description: "List of one way request"
       required: true
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/OneWayRequest'
+            $ref: "#/components/schemas/OneWayRequest"
     TwoWay:
-      description: 'List of two way request'
+      description: "List of two way request"
       required: true
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/TwoWayRequest'
+            $ref: "#/components/schemas/TwoWayRequest"
     OneWayArray:
-      title: 'One Way Model'
-      description: 'One Way Model'
+      title: "One Way Model"
+      description: "One Way Model"
       required:
         - channel
         - type
@@ -688,153 +719,193 @@ components:
         - title
       properties:
         channel:
-          title: 'channel'
-          description: 'Channel resource to send content.'
+          title: "channel"
+          description: "Channel resource to send content."
           type: string
-          required: 'Yes'
-          default: 'email'
-          option: 'email, wa, sms_otp_sid, sms_notp_sid, sms'
+          required: "Yes"
+          default: "email"
+          option: "email, wa, sms_otp_sid, sms_notp_sid, sms"
         type:
-          title: 'type'
-          description: 'Type for content.'
+          title: "type"
+          description: "Type for content."
           type: integer
-          required: 'Yes'
+          required: "Yes"
           format: int64
           default: 0
-          option: '0 : text, 1: object'
+          option: "0 : text, 1: object"
         title:
-          title: 'title'
-          description: 'Broadcast Title'
+          title: "title"
+          description: "Broadcast Title"
           type: string
-          required: 'Yes'
-          example: 'New Product Launch'
+          required: "Yes"
+          example: "New Product Launch"
         text:
-          title: 'text'
-          description: 'Message Content'
+          title: "text"
+          description: "Message Content"
           type: string
-          required: 'Yes'
-          example: 'Hi, {client_name}, your account has been updated with the following features in March. Find out more on our website!'
+          required: "Yes"
+          example: "Hi, {client_name}, your account has been updated with the following features in March. Find out more on our website!"
         templateid:
-          title: 'templateid'
-          description: 'Your template id in HiReach'
+          title: "templateid"
+          description: "Your template id in HiReach"
           type: integer
-          required: 'No'
+          required: "No"
           default: 1
         to:
-          title: 'to'
-          description: 'The recipient`s contact, if mobile number must have the country code (without the “+” sign).'
+          title: "to"
+          description: "The recipient`s contact, if mobile number must have the country code (without the “+” sign)."
           type: string
-          required: 'Yes'
+          required: "Yes"
           format: msisdn,email
-          sample: '6281223344556 / jhon@example.com'
+          sample: "6281223344556 / jhon@example.com"
         from:
-          title: 'from'
-          description: 'Sender Name. Required for using channel email, sms_otp_sid, sms_notp_sid.'
+          title: "from"
+          description: "Sender Name. Required for using channel email, sms_otp_sid, sms_notp_sid."
           type: string
           format: string,username,email
-          required: 'for channel email, sms_otp_sid, sms_notp_sid'
-          sample: 'HIREACH / noreply@hireach.archeeshop.com'
+          required: "for channel email, sms_otp_sid, sms_notp_sid"
+          sample: "HIREACH / noreply@hireach.archeeshop.com"
         provider:
-          title: 'provider'
-          description: 'Provider is to sending Notification given by HiReach. Default will set by system.'
-          required: 'Yes'
+          title: "provider"
+          description: "Provider is to sending Notification given by HiReach. Default will set by system."
+          required: "Yes"
           type: string
         otp:
-          title: 'otp'
-          description: 'SMS Type OTP for verification, authentication and security or NON OTP for normal notification text.'
+          title: "otp"
+          description: "SMS Type OTP for verification, authentication and security or NON OTP for normal notification text."
           type: boolean
-          required: 'No'
+          required: "No"
           default: 0
-          option: '0:OTP, 1:NON OTP'
+          option: "0:OTP, 1:NON OTP"
       type: object
       xml:
         name: BlastNotification
   requestBodies:
     OneWay:
-      description: 'List of one way request'
+      description: "List of one way request"
       required: true
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/OneWayRequest'
+            $ref: "#/components/schemas/OneWayRequest"
     TwoWay:
-      description: 'List of two way request'
+      description: "List of two way request"
       required: true
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/TwoWayRequest'
+            $ref: "#/components/schemas/TwoWayRequest"
+    ResourceSkiptraceArray:
+      description: "List of one way request"
+      required: true
+      content:
+        multipart/form-data:
+          schema:
+            type: object
+            properties:
+              contact:
+                title: "Contact NIK data file excel"
+                description: "Upload file excel with NIK data"
+                type: string
+                format: binary
+    ResourceValidationArray:
+      description: "List of one way request"
+      required: true
+      content:
+        multipart/form-data:
+          schema:
+            type: object
+            properties:
+              file:
+                title: "Contact phone Number data file excel"
+                description: "Upload file excel with phone Number data"
+                type: string
+                format: binary
+              type:
+                title: "type"
+                description: "Channel resource to send content."
+                type: "string"
+                enum: ["cellular_no", "whatsapps", "geolocation_tagging", "recycle_status"]
+                required: "Yes"
+                default: false
     OneWayArray:
-      description: 'List of one way request'
+      description: "List of one way request"
       required: true
       content:
         #application/json:
-          #schema:
-            #type: array
-            #items:
-              #$ref: '#/components/schemas/OneWayArray'
+        #schema:
+        #type: array
+        #items:
+        #$ref: '#/components/schemas/OneWayArray'
         multipart/form-data:
           schema:
             type: object
             properties:
               # 'file' will be the field name in this multipart request
               contact:
-                title: 'Contact file csv / excel'
-                description: 'The recipient`s contact, if mobile number must have the country code (without the “+” sign).'
+                title: "Contact file csv / excel"
+                description: "The recipient`s contact, if mobile number must have the country code (without the “+” sign)."
                 type: string
                 format: binary
               channel:
-                title: 'channel'
-                description: 'Channel resource to send content.'
+                title: "channel"
+                description: "Channel resource to send content."
                 type: "string"
-                enum: [ "email", "sender_id_wa", "long_wa", "sender_id_sms", "long_sms"]
-                required: 'Yes'
-                default: 'email'
+                enum:
+                  [
+                    "email",
+                    "sender_id_wa",
+                    "long_wa",
+                    "sender_id_sms",
+                    "long_sms",
+                  ]
+                required: "Yes"
+                default: "email"
               type:
-                title: 'type'
-                description: 'Type for content.'
+                title: "type"
+                description: "Type for content."
                 type: integer
-                required: 'Yes'
+                required: "Yes"
                 format: int64
                 example: 0
               title:
-                title: 'title'
-                description: 'Broadcast Title'
+                title: "title"
+                description: "Broadcast Title"
                 type: string
-                required: 'Yes'
-                example: 'New Product Launch'
+                required: "Yes"
+                example: "New Product Launch"
               text:
-                title: 'text'
-                description: 'Message Content'
+                title: "text"
+                description: "Message Content"
                 type: string
-                required: 'Yes'
-                example: 'Hi, {client_name}, your account has been updated with the following features in March. Find out more on our website!'
+                required: "Yes"
+                example: "Hi, {client_name}, your account has been updated with the following features in March. Find out more on our website!"
               #to:
-                #title: 'to'
-                ##description: 'The recipient`s contact, if mobile number must have the country code (without the “+” sign).'
-                #type: string
-                #required: 'Yes'
-                #format: msisdn,email
-                #sample: '6281223344556 / jhon@example.com'
+              #title: 'to'
+              ##description: 'The recipient`s contact, if mobile number must have the country code (without the “+” sign).'
+              #type: string
+              #required: 'Yes'
+              #format: msisdn,email
+              #sample: '6281223344556 / jhon@example.com'
               from:
-                title: 'from'
-                description: 'Sender Name. Required for using channel email, sms_otp_sid, sms_notp_sid.'
+                title: "from"
+                description: "Sender Name. Required for using channel email, sms_otp_sid, sms_notp_sid."
                 type: string
                 format: string,username,email
-                required: 'for channel email, sms_otp_sid, sms_notp_sid'
-                sample: 'HIREACH / noreply@hireach.archeeshop.com'
+                required: "for channel email, sms_otp_sid, sms_notp_sid"
+                sample: "HIREACH / noreply@hireach.archeeshop.com"
               provider:
-                title: 'provider'
-                description: 'Provider is to sending Notification given by HiReach. Default will set by system.'
-                required: 'Yes'
+                title: "provider"
+                description: "Provider is to sending Notification given by HiReach. Default will set by system."
+                required: "Yes"
                 type: string
               otp:
-                title: 'otp'
-                description: 'SMS Type OTP for verification, authentication and security or NON OTP for normal notification text.'
+                title: "otp"
+                description: "SMS Type OTP for verification, authentication and security or NON OTP for normal notification text."
                 type: boolean
-                required: 'No'
+                required: "No"
                 default: 0
-                option: '0:OTP, 1:NON OTP'
+                option: "0:OTP, 1:NON OTP"
                 example: false
   securitySchemes:
     bearerAuth:
@@ -842,9 +913,9 @@ components:
       scheme: bearer
       bearerFormat: JWT
 tags:
-  -
-    name: One Way
-    description: '1 Way Channel Sending (SMS, Email, WA, WABA)'
-  -
-    name: Two Way
-    description: '2 Way Channel Sending Confersation (WA, WABA, WEBCHAT, EMAIL)'
+  - name: One Way
+    description: "1 Way Channel Sending (SMS, Email, WA, WABA)"
+  - name: Two Way
+    description: "2 Way Channel Sending Confersation (WA, WABA, WEBCHAT, EMAIL)"
+  - name: Resources
+    description: "Validation data Resource like contact & ID"

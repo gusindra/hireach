@@ -39,6 +39,8 @@ class SkiptraceExport  extends DefaultValueBinder implements FromCollection, Wit
      */
     public function collection()
     {
-        return Contact::select('no_ktp')->where('no_ktp', '!=', '')->whereNull('phone_number')->whereBetween('created_at', [date('Y-m-d H:i:s',strtotime("-23 hours")), date('Y-m-d H:i:s')])->get();
+        $contact = Contact::select('no_ktp')->where('no_ktp', '!=', '')->whereNull('phone_number')->whereBetween('created_at', [date('Y-m-d H:i:s',strtotime("-23 hours")), date('Y-m-d H:i:s')])->get();
+        if(count($contact)>0) return $contact;
+        return null;
     }
 }

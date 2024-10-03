@@ -10,6 +10,7 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
 
 class ProcessValidation implements ShouldQueue
 {
@@ -31,7 +32,7 @@ class ProcessValidation implements ShouldQueue
     {
         $this->filePath = $filePath;
         $this->type = $type;
-        Log::debug($this->type);
+        // Log::debug($this->type);
         $this->userId = $userId;
     }
 
@@ -46,6 +47,6 @@ class ProcessValidation implements ShouldQueue
         Excel::import(new PhoneNumberImport($this->userId, $this->type), $this->filePath);
 
         // Optional: Delete the file after processing
-        // Storage::delete($this->filePath);
+        Storage::delete($this->filePath);
     }
 }

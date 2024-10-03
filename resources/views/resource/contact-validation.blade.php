@@ -34,10 +34,16 @@
             <div class="bg-white dark:bg-slate-600 overflow-hidden sm:rounded-b-lg border">
                 <div class="p-6 mx-auto">
                     <div class="flex justify-between">
-                        <div class="pb-4 flex gap-2">
-                            @livewire('validation-resource.add-contact')
-                            @livewire('validation-resource.add-validation')
-                            @livewire('validation-resource.convert-to-client')
+                        <div class="pb-4 flex justify-between  w-full">
+                            <div class="flex gap-2">
+                                @livewire('validation-resource.add-contact')
+                                @livewire('validation-resource.add-validation')
+                                @livewire('validation-resource.convert-to-client')
+
+                            </div>
+                            <div>
+                                @livewire('validation-resource.loading')
+                            </div>
 
 
                         </div>

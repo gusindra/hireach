@@ -24,8 +24,8 @@
                         <option value="" disabled>Select a type</option>
                         <option value="cellular_no">Cellular Number Validation</option>
                         <option value="whatsapps">WhatsApp Screening</option>
-                        <option disabled value="geolocation">Geolocation Tagging</option>
-                        <option disabled value="recycle">Mobile No. Recycle</option>
+                        <option value="geolocation_tagging">Geolocation Tagging</option>
+                        <option value="recycle_status">Mobile No. Recycle</option>
                     </select>
                     <x-jet-input-error for="type" class="mt-2" />
                 </div>

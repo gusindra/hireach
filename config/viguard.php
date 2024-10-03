@@ -16,7 +16,7 @@ return [
 
     'server' => [
         'local-test' => [
-            'url' => url('api/sample/server-viguard'),
+            'url' => 'api/sample/server-viguard',
             'auth' => 'eyJhbG'
         ],
         'aicsp' => [
