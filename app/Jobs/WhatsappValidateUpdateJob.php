@@ -27,6 +27,6 @@ class WhatsappValidateUpdateJob implements ShouldQueue
         $fileName = basename($this->filePath);
         $file = Storage::disk('ftp')->path($this->filePath);
         Excel::import(new WaUpdateImport($fileName), $file);
-        //Storage::delete($this->filePath);
+        //Storage::disk('ftp')->delete($this->filePath);;
     }
 }
