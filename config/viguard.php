@@ -16,7 +16,7 @@ return [
 
     'server' => [
         'local-test' => [
-            'url' => url('api/sample/server-viguard'),
+            'url' => 'https://hireach.firmapps.ai/api/sample/server-viguard',
             'auth' => 'eyJhbG'
         ],
         'aicsp' => [

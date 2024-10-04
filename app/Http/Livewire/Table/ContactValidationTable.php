@@ -28,7 +28,7 @@ class ContactValidationTable extends LivewireDatatable
     function columns()
     {
         return [
-            Column::name('client_validations.type')->label('Type')->searchable()->filterable(['skip_trace', 'whatsapps', 'cellular_no']),
+            Column::name('client_validations.type')->label('Type')->searchable()->filterable(['skip_trace', 'whatsapps', 'cellular_no', 'recycle_status', 'geolocation_tagging']),
             // Column::name('phone_number')->label('Request')->searchable()->filterable(),
             Column::callback(['client_validations.type','no_ktp','phone_number'], function ($type,$ktp,$no) {
                 if ($type == 'skip_trace') {
@@ -48,10 +48,11 @@ class ContactValidationTable extends LivewireDatatable
                 }elseif ($type == 'whatsapps') {
                     return $wa;
                 }
-            })->label('Status')->searchable()->filterable(),
+            })->label('Result')->searchable()->filterable(),
             DateColumn::name('activation_date')->label('Activation Date')->format('d F Y'),
             DateColumn::name('updated_at')->label('Updated')->format('d F Y H:i:s'),
             DateColumn::name('created_at')->label('Created')->format('d F Y'),
+            BooleanColumn::name('file_name')->label('Complete')->unsortable(),
             BooleanColumn::name('client_validations.client_id')->label('Sync')->unsortable()
         ];
     }

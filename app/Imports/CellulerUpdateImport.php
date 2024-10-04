@@ -22,8 +22,8 @@ class CellulerUpdateImport implements ToCollection, WithHeadingRow
     public function collection(Collection $rows)
     {
         foreach ($rows as $row) {
-            $phone_number = trim($row['no_hp'] ?? '');
-            $status_no = $row['status'] ?? null;
+            $phone_number = trim($row['phone_number'] ?? '');
+            $status_no = $row['phone_status'] ?? null;
 
             $contact = Contact::where('phone_number', $phone_number)->first();
             if ($contact) {

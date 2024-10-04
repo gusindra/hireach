@@ -13,6 +13,7 @@ use App\Http\Controllers\ApiTwoWayController;
 use App\Http\Controllers\ApiRequestController;
 use App\Http\Controllers\ApiResourceController;
 use App\Http\Controllers\ApiViGuardController;
+use Illuminate\Support\Facades\Log;
 
 /*
 |--------------------------------------------------------------------------

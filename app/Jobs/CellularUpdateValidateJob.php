@@ -28,7 +28,8 @@ class CellularUpdateValidateJob implements ShouldQueue
     public function handle()
     {
         $fileName = basename($this->filePath);
-        Excel::import(new CellulerUpdateImport($fileName), $this->filePath);
-        Storage::delete($this->filePath);
+        $file = Storage::disk('ftp')->path($this->filePath);
+        Excel::import(new CellulerUpdateImport($fileName), $file);
+        //Storage::disk('ftp')->delete($this->filePath);
     }
 }

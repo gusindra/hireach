@@ -33,13 +33,24 @@ class SkiptraceUpdateImport implements ToCollection, WithHeadingRow
         foreach ($rows as $row) {
 
             $no_ktp = $row['no_ktp'] ?? null;
-            $phone_number = trim($row['no_hp'] ?? '');
-            $activation_date = $row['age'] ? Carbon::instance(Date::excelToDateTimeObject($row['age'])) : null;
+            $phone_number = @$row['no_hp'] ? trim($row['no_hp']) : '';
+            $activation_date = @$row['reg_date'] ? Carbon::instance(Date::excelToDateTimeObject($row['reg_date'])) : null;
+            $status = @$row['result'] ? $row['result'] : '';
 
             $status_no = null;
-            if (in_array($phone_number, ['NIK_NOT_VALID', '#N/A'], true)) {
+            if (in_array($phone_number, ['NIK_NOT_VALID', '#N/A', 'NIK NOT VALID', 'NO DATA FOUND'], true)) {
                 $status_no = $phone_number;
+                if($status_no==''){
+                    $status_no = $status;
+                }
                 $phone_number = null;
+            }else{
+                if(in_array($status, ['NIK_NOT_VALID', '#N/A', 'NIK NOT VALID', 'NO DATA FOUND'], false)){
+                    $phone_number = null;
+                    $status_no = $status;
+                }else{
+                    $phone_number = @$row['result'] ? trim($row['result']) : '';
+                }
             }
 
             $ktp = Contact::where('no_ktp', $no_ktp)->first();

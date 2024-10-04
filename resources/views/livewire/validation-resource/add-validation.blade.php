@@ -22,10 +22,72 @@
                     <select id="type" wire:model="type"
                         class="mt-2 block w-full border-gray-300 rounded-md shadow-sm focus:border-purple-300 focus:ring focus:ring-purple-200 focus:ring-opacity-50">
                         <option value="" disabled>Select a type</option>
-                        <option value="cellular_no">Cellular Number</option>
-                        <option value="whatsapps">WhatsApp</option>
+                        <option value="cellular_no">Cellular Number Validation</option>
+                        <option value="whatsapps">WhatsApp Screening</option>
+                        <option value="geolocation_tagging">Geolocation Tagging</option>
+                        <option value="recycle_status">Mobile No. Recycle</option>
                     </select>
                     <x-jet-input-error for="type" class="mt-2" />
+                </div>
+
+                <div class="my-4 p-4 bg-slate-50">
+                    <div class="text-sm font-bold mb-2">Sample</div>
+                    <div class="relative overflow-x-auto">
+                        <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+                            <thead class="text-xs text-gray-700 uppercase bg-gray-100 dark:bg-gray-700 dark:text-gray-400">
+                                <tr>
+                                    <th scope="col" class="px-6 py-3 text-center border w-4"> </th>
+                                    <th scope="col" class="px-6 py-3 text-center border">
+                                    A
+                                    </th>
+                                    <th scope="col" class="px-6 py-3 text-center border">
+                                        B
+                                    </th>
+                                    <th scope="col" class="px-6 py-3 text-center border">
+                                        C
+                                    </th>
+                                    <th scope="col" class="px-6 py-3 text-center border">
+                                    D
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="bg-white border dark:bg-gray-800 dark:border-gray-700">
+                                    <th scope="row" class="px-6 py-2 font-medium bg-gray-100 text-gray-900 whitespace-nowrap dark:text-white">1</th>
+                                    <td class="px-6 py-2 border">
+                                        no_hp
+                                    </td>
+                                    <td class="px-6 py-2 border"> </td>
+                                    <td class="px-6 py-2 border"> </td>
+                                </tr>
+                                <tr class="bg-white border dark:bg-gray-800 dark:border-gray-700">
+                                    <th scope="row" class="px-6 py-2 font-medium bg-gray-100 text-gray-900 whitespace-nowrap dark:text-white">2</th>
+                                    <td class="px-6 py-2 border">
+                                        628266116xxxx
+                                    </td>
+                                    <td class="px-6 py-2 border"> </td>
+                                    <td class="px-6 py-2 border"> </td>
+                                </tr>
+                                <tr class="bg-white border dark:bg-gray-800 dark:border-gray-700">
+                                    <th scope="row" class="px-6 py-2 font-medium bg-gray-100 text-gray-900 whitespace-nowrap dark:text-white">...</th>
+                                    <td class="px-6 py-2 border">
+                                        ....
+                                    </td>
+                                    <td class="px-6 py-2 border"> </td>
+                                    <td class="px-6 py-2 border"> </td>
+                                </tr>
+                                <tr class="bg-white border dark:bg-gray-800">
+                                    <th scope="row" class="px-6 py-2 font-medium bg-gray-100 text-gray-900 whitespace-nowrap dark:text-white">1000</th>
+                                    <td class="px-6 py-2 border">
+                                    628266956xxxx
+                                    </td>
+                                    <td class="px-6 py-2 border"> </td>
+                                    <td class="px-6 py-2 border"> </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
                 </div>
             </div>
         </x-slot>
