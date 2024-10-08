@@ -41,9 +41,10 @@ class ContactValidationTable extends LivewireDatatable
             // Column::name('status_no')->label('Status No')->searchable(),
             // Column::name('status_wa')->label('Status WA')->searchable(),
             Column::callback(['client_validations.type','status_no','status_wa','no_ktp','activation_date','phone_number'], function ($type,$no,$wa,$ktp,$date,$pn) {
-                if ($type == 'skip_trace' ) {
-                    return $pn;
-                }elseif ($type == 'cellular_no') {
+                if ($type == 'skip_trace') {
+                    return $pn ?: ($no ?: $wa);
+                }
+                elseif ($type == 'cellular_no') {
                     return $no;
                 }elseif ($type == 'whatsapps') {
                     return $wa;
