@@ -38,7 +38,7 @@ class ContactValidationResutController extends Controller
             //$filePathSource = Storage::disk('ftp')->path('/Out');
             //File::copyDirectory($filePathSource, $pathDestination);
         }else{
-            $filePath1 = storage_path('app/datawiz/RESULT SKIPTRACE_NO_20240820.xlsx');
+            $filePath1 = storage_path('app/datawiz/RESULT SKIPTRACE_NO_20241005.xlsx');
             $filePath2 = storage_path('app/datawiz/RESULT CELLULARNO_20240819.xlsx');
             $filePath3 = storage_path('app/datawiz/RESULT WHATSAPP_20240819.xlsx');
             $filePath4 = storage_path('app/datawiz/RESULT GEOLOCATION_20240819.xlsx');
