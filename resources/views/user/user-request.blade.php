@@ -7,8 +7,8 @@
     <div class="grid grid-cols-12">
 
         @includeWhen(auth()->user()->isSuper || (auth()->user()->team && str_contains(auth()->user()->activeRole->role->name, 'Admin')),
-        'menu.admin-menu-user-profile',
-        []
+            'menu.admin-menu-user-profile',
+            []
         )
 
 
@@ -42,7 +42,7 @@
                         </div>
                     </div>
                     <div class="m-3">
-                        <h3 class="my-4">SMS Blast</h3>
+                        <h3 class="my-4">Blast Message</h3>
                         <livewire:table.sms-blast-table :filterMonth="$filterMonth" :userId="$user->id" searchable="name, description" exportable />
                     </div>
                 </div>

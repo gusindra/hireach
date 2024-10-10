@@ -5,15 +5,13 @@
         </h2>
     </x-slot>
 
-
-
     <div class="grid grid-cols-12">
         @includeWhen(auth()->user(), 'menu.admin-menu-dashboard', [])
 
         <div class="col-span-12 px-3 ml-24 mt-2">
             <div class="mx-auto">
                 <div class="p-4">
-                    @includeWhen(auth()->user()->isSuper || (auth()->user()->team && str_contains(auth()->user()->activeRole->role->name, 'Admin')) && auth()->user()->super->first()->role == 'superadmin',
+                    @includeWhen((auth()->user()->team && auth()->user()->activeRole && str_contains(auth()->user()->activeRole->role->name, 'Admin')),
                         'dashboard.online',
                         ['status' => 'complete']
                     )

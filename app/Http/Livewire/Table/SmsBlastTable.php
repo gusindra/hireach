@@ -34,12 +34,17 @@ class SmsBlastTable extends LivewireDatatable
             $month = substr($this->filterMonth, 5, 2);
         }
 
-        if (auth()->user()->super && auth()->user()->super->first() && auth()->user()->super->first()->role == 'superadmin') {
+        if (auth()->user()->super && auth()->user()->super->first() && auth()->user()->super->first()->role == 'Super Admin') {
             if($this->userId != 0){
+                dd(1);
                 $query->where('blast_messages.user_id', $this->userId)->orderBy('created_at', 'desc');
             }else{
+                dd(2);
+
                 $query->orderBy('created_at', 'desc');
             }
+            dd(3);
+
             $query->withTrashed();
         } elseif (auth()->user()->activeRole && str_contains(auth()->user()->activeRole->role->name, "Admin")) {
             $query->orderBy('created_at', 'desc');

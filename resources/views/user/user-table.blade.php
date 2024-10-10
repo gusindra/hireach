@@ -23,6 +23,7 @@
                     <div class="p-4">
                         @livewire('user.add', ['role' => request()->get('role')])
                     </div> 
+                    {{request()->get('role')}}
                     <div class="m-3">
                         <livewire:table.users-table searchable="id, name, email, phone" exportable />
                         {{-- <livewire:table.client-datatables searchable="name, email, gender" exportable /> --}}

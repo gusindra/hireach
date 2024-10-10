@@ -34,28 +34,36 @@
                                 @if ($data->count())
                                     <div class="shadow overflow-hidden border-b border-gray-200 sm:rounded-lg">
                                         <table class="min-w-full divide-y divide-gray-200 mt-2">
-                                            <thead>
-                                                <tr>
-                                                    <th
-                                                        class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                                        Provider Code
-                                                    </th>
-                                                    <th
-                                                        class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                                        Name
-                                                    </th>
-                                                    <th
-                                                        class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                                        Channel
-                                                    </th>
-                                                    <th
-                                                        class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                                        From / Sender ID
-                                                    </th>
-                                                    <th class="px-6 py-4"></th> <!-- Empty header for action buttons -->
-                                                </tr>
-                                            </thead>
+                                             
                                             <tbody class="bg-white dark:bg-slate-700 divide-y divide-gray-200">
+                                                <tr>
+                                                    <td class="w-full px-6 py-4 text-sm whitespace-no-wrap">
+                                                        <div class="">
+                                                            <div class="grid grid-cols-4 gap-4">
+                                                                <span class="text-gray-400">
+                                                                    Provider Code
+                                                                </span>
+
+                                                                <span class="text-gray-400">
+                                                                    Name
+                                                                </span>
+
+                                                                <span class="text-gray-400">
+                                                                    Channel
+                                                                </span>
+
+                                                                <span class="text-gray-400"> 
+                                                                    From / Sender ID
+                                                                </span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                                <td class="flex items-center justify-end px-4 py-3 text-right sm:px-6">
+                                                    <div class="flex items-center">
+                                                        Action
+                                                    </div>
+                                                </td>
                                                 @foreach ($data as $item)
                                                     @if ($item)
                                                         <tr>
@@ -79,20 +87,20 @@
                                                                         </span>
                                                                     </div>
                                                                 </div>
-                                    </div>
-                                    </td>
-                                    <td class="flex items-center justify-end px-4 py-3 text-right sm:px-6">
-                                        <div class="flex items-center">
-                                            <x-link-button :disabled="!userAccess('USER', 'delete')" class="cursor-pointer ml-6 text-sm"
-                                                wire:click="deleteShowModal('{{ $item->id }}')">
-                                                {{ __('Delete') }}
-                                            </x-link-button>
-                                        </div>
-                                    </td>
-                                    </tr>
-                                @endif
-                                @endforeach
-                                </tbody>
+                                                            </div>
+                                                        </td>
+                                                        <td class="flex items-center justify-end px-4 py-3 text-right sm:px-6">
+                                                            <div class="flex items-center">
+                                                                <x-link-button :disabled="!userAccess('USER', 'delete')" class="cursor-pointer ml-6 text-sm"
+                                                                    wire:click="deleteShowModal('{{ $item->id }}')">
+                                                                    {{ __('Delete') }}
+                                                                </x-link-button>
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                @endif
+                                        @endforeach
+                                    </tbody>
                                 </table>
                             </div>
                             @endif
@@ -100,9 +108,9 @@
                         </div>
                     </div>
                 </div>
-    </div>
+            </div>
 
-    </x-slot>
+        </x-slot>
     </x-jet-action-section>
 </div>
 
