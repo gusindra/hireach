@@ -39,7 +39,7 @@ class ProcessEmail implements ShouldQueue
     {
         if($this->type=="create_order" || $this->type=="payment_order"){
             $notif = $this->request->notifications('unread')->count();
-            $email = 'support@telixcel.com';
+            $email = 'support@firmapps.com';
             //$mail = Mail::to($email);
             // if($notif && $notif>0){
             //     $mail->cc('finance@telixcel.com','mirza@telixcel.com','elly@goldeunion.group');

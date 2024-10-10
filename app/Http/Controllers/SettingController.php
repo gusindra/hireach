@@ -30,14 +30,15 @@ class SettingController extends Controller
 
     public function index()
     {
-        return view('role.role-table', ['page' => 'role']);
+        return view('settings.company.companies');
+        // return view('role.role-table', ['page' => 'role']);
     }
 
     /**
      * show
      *
      * @param  mixed $page
-     * @return View
+     * @return mixed
      */
     public function show($page)
     {
@@ -77,7 +78,7 @@ class SettingController extends Controller
      * companyShow
      *
      * @param  App\Models\Company $company
-     * @return View
+     * @return mixed
      */
     public function companyShow(Company $company)
     {
@@ -88,7 +89,7 @@ class SettingController extends Controller
      * commerceItemShow
      *
      * @param  App\Models\CommerceItem $commerceItem
-     * @return View
+     * @return mixed
      */
     public function commerceItemShow(CommerceItem $commerceItem)
     {
@@ -99,7 +100,7 @@ class SettingController extends Controller
      * productLineShow
      *
      * @param  App\Models\ProductLine $productLine
-     * @return View
+     * @return mixed
      */
     public function productLineShow(ProductLine $productLine)
     {

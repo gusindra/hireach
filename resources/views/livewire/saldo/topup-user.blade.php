@@ -2,7 +2,7 @@
     <form wire:submit.prevent="create">
         <div class="md:grid md:grid-cols-3 md:gap-6 mt-8 sm:mt-0">
             <div class="md:col-span-2 py-5 shadow sm:rounded-tl-md sm:rounded-tr-md">
-                <div class="px-4 py-5 bg-white dark:bg-slate-600 sm:p-10">
+                <div class="px-4 py-5 bg-white dark:bg-slate-700 sm:p-10">
 
                     <div class="col-span-6 sm:col-span-4 mb-8">
                         <div class="col-span-12 sm:col-span-1">
@@ -35,7 +35,7 @@
                 </div>
             </div>
 
-            <div class="md:col-span-1 px-4 py-5 bg-white dark:bg-slate-600 sm:p-6 shadow sm:rounded-tl-md sm:rounded-tr-md">
+            <div class="md:col-span-1 px-4 py-5 bg-white dark:bg-slate-700 sm:p-6 shadow sm:rounded-tl-md sm:rounded-tr-md">
                 <div class="px-4 sm:px-0 mb-4">
                     <h3 class="font-semibold text-xl text-gray-900 dark:text-slate-300 mb-4">Ringkasan Top up</h3>
 

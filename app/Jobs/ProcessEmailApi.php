@@ -92,7 +92,7 @@ class ProcessEmailApi implements ShouldQueue
             );
             curl_setopt($curl, CURLOPT_POSTFIELDS, json_encode(array(
                 "api_key" => env('SMTP2GO_API_KEY', 'A'),
-                "sender" => $request['from'] == '' ? $request['from'] : "noreply@hireach.archeeshop.com",
+                "sender" => $request['from'] == '' ? $request['from'] : "noreply@firmapps.ai",
                 "to" => array(
                     0 => $request['to']
                 ),

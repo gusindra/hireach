@@ -1,7 +1,7 @@
 <div>
     <div class="flex items-center text-right">
         <x-jet-button wire:click="actionShowModal">
-            {{ __('Setting Contact') }}
+            {{ __('Add Contact to Department') }}
         </x-jet-button>
     </div>
 
@@ -15,7 +15,7 @@
             <div class="col-span-6 sm:col-span-4 p-2">
                 <x-jet-label for="search" value="{{ __('Department') }}" />
                 <x-jet-input autocomplete="off" id="search" type="text" class="mt-1 block w-full"
-                    list="department" wire:model.debunce.800ms="search" autofocus />
+                    list="department" wire:model.debunce.800ms="search" autofocus placeholder="Department Name Keyword" />
                 <!-- <datalist id="department">
                     @foreach($depts as $key => $dp)
                         <option value="{{$dp->id}}">{{$dp->name}}</option>
@@ -31,21 +31,53 @@
             </div>
             <div class="col-span-6 sm:col-span-4 p-2">
                 <x-jet-label for="contact" value="{{ __('Contact') }}" />
-                <x-jet-input autocomplete="off" id="contact" type="text" class="mt-1 block w-full"
+                <x-jet-input autocomplete="off" id="contact" type="text" class="mt-1 block w-full" placeholder="Existing Contact Keyword"
                     list="client" wire:model.debunce.800ms="contact" autofocus />
                 <!-- <datalist id="client">
                     @foreach($data as $key => $da)
                         <option value="{{$da->id}}">{{$da->name}}</option>
                     @endforeach
                 </datalist> -->
-                <table class="my-2">
-                    @foreach($data as $da)
-                    <tr>
-                        <td class="flex gap-8"><input wire:model.debunce.800ms="selectContact" id="contact-{{$da->id}}" type="radio" name="contact" value="{{$da->id}}" /><label for="contact-{{$da->id}}"><b>{{$da->name}}</b> ({{$da->phone}} - {{$da->email}})</label></td>
-                        <td><img class="h-8" src="{{$da->profile_photo_url}}" /></td>
-                    </tr>
-                    @endforeach
+                <table class="my-2"> 
+                    @if(count($data)>0)
+                        @foreach($data as $da)
+                        <tr>
+                            <td class="flex gap-8"><input wire:model.debunce.800ms="selectContact" id="contact-{{$da->id}}" type="radio" name="contact" value="{{$da->id}}" /><label for="contact-{{$da->id}}"><b>{{$da->name}}</b> ({{$da->phone}} - {{$da->email}})</label></td>
+                            <td><img class="h-8" src="{{$da->profile_photo_url}}" /></td>
+                        </tr>
+                        @endforeach
+                    @else
+                        <tr>
+                            <td class="flex gap-8"><input wire:model.debunce.800ms="new" id="contact-new" type="checkbox" name="contact" value="0" /><label for="contact-0">New Contact</label></td>
+                            <td></td>
+                        </tr>
+                    @endif
                 </table>
+
+                @if ($new)
+                <div class="flex">
+                    <div class="col-span-6 sm:col-span-4 p-2">
+                        <div class="col-span-12 sm:col-span-2">
+                            <x-jet-label for="input.name" value="{{ __('Name') }}" />
+                            <x-jet-input id="client_name" type="text" class="mt-1 block w-full" wire:model="input.name"
+                                wire:model.defer="input.name" wire:model.debunce.800ms="input.name" />
+                            <x-jet-input-error for="input.name" class="mt-2" />
+                        </div>
+                    </div>
+                    <div class="col-span-6 sm:col-span-4 p-2">
+                        <x-jet-label for="input.email" value="{{ __('Email') }}" />
+                        <x-jet-input autocomplete="off" id="input.email" type="text" class="mt-1 block w-full"
+                            wire:model.debunce.800ms="input.email" autofocus />
+                        <x-jet-input-error for="input.email" class="mt-2" />
+                    </div>
+                    <div class="col-span-6 sm:col-span-4 p-2">
+                        <x-jet-label for="input.phone" value="{{ __('Phone') }}" />
+                        <x-jet-input autocomplete="off" id="input.phone" type="text" class="mt-1 block w-full"
+                            wire:model.debunce.800ms="input.phone" autofocus />
+                        <x-jet-input-error for="input.phone" class="mt-2" />
+                    </div>
+                </div>
+                @endif
             </div>
         </x-slot>
 

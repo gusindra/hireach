@@ -102,7 +102,12 @@ class DashboardController extends Controller
             return view('admin');
         }
     }
-
+    
+    /**
+     * getOutBound
+     *
+     * @return mixed
+     */
     public function getOutBound()
     {
         $currentMonth = now()->format('Y-m');
@@ -179,7 +184,12 @@ class DashboardController extends Controller
             )
         );
     }
-
+    
+    /**
+     * getInBound
+     *
+     * @return mixed
+     */
     public function getInBound()
     {
 
@@ -223,7 +233,12 @@ class DashboardController extends Controller
             )
         );
     }
-
+    
+    /**
+     * activeUser
+     *
+     * @return mixed
+     */
     public function activeUser()
     {
         return view('user.user-active-user');

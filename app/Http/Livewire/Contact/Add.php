@@ -48,7 +48,7 @@ class Add extends Component
     /**
      * create
      *
-     * @return redirect
+     * @return mixed
      */
     public function create()
     {
@@ -62,8 +62,8 @@ class Add extends Component
             'uuid' => Str::uuid()
         ]);
         return redirect(request()->header('Referer'));
-        $this->resetForm();
-        $this->emit('refreshLivewireDatatable');
+        // $this->resetForm();
+        // $this->emit('refreshLivewireDatatable');
     }
 
     /**

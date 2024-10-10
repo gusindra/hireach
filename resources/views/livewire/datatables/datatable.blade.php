@@ -6,7 +6,7 @@
                 @if($this->searchableColumns()->count())
                     <div class="flex rounded-lg w-96 shadow-sm">
                         <div class="flex focus-within:z-10">
-                            <input wire:model.debounce.500ms="search" class="block w-full py-3 text-sm border-gray-300 leading-4 rounded-md shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50 focus:outline-none" placeholder="{{__('Search in')}} {{ $this->searchableColumns()->map->label->join(', ') }}" type="text" />
+                            <input wire:model.debounce.500ms="search" class="block w-full py-3 text-sm border-gray-300 leading-4 rounded-md shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50 focus:outline-none text-black" placeholder="{{__('Search in')}} {{ $this->searchableColumns()->map->label->join(', ') }}" type="text" />
                             <div class=" inset-y-0 right-0 flex items-center pr-2">
                                 <button wire:click="$set('search', null)" class="text-gray-300 hover:text-red-600 focus:outline-none">
                                     <x-icons.x-circle class="w-5 h-5 stroke-current" />
@@ -194,7 +194,7 @@
                     {{-- check if there is any data --}}
                     @if(count($this->results))
                         <div class="flex items-center my-2 sm:my-0">
-                            <select name="perPage" class="block w-full py-2 pl-3 pr-10 mt-1 text-base border-gray-300 form-select leading-6 focus:outline-none focus:shadow-outline-blue focus:border-blue-300 sm:text-sm sm:leading-5" wire:model="perPage">
+                            <select name="perPage" class="block w-full py-2 pl-3 pr-10 mt-1 text-base border-gray-300 form-select leading-6 focus:outline-none focus:shadow-outline-blue focus:border-blue-300 sm:text-sm sm:leading-5 text-black" wire:model="perPage">
                                 @foreach(config('livewire-datatables.per_page_options', [ 10, 25, 50, 100 ]) as $per_page_option)
                                     <option value="{{ $per_page_option }}">{{ $per_page_option }}</option>
                                 @endforeach
