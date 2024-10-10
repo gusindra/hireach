@@ -58,7 +58,7 @@
             </li>
             <li class="text-center flex items-center">
                 <a href="{{ route('user.show.dept', $user->id) }}" type="button"
-                    class="{{ url()->full() == route('user.show.dept', $user->id) ? 'bg-slate-100' : '' }} items-center p-2 w-full text-base font-normal text-gray-600 rounded-lg transition duration-75 group hover:bg-gray-100 dark:text-white dark:hover:bg-slate-700"
+                    class="{{ url()->full() == route('user.show.dept', $user->id) ? 'bg-slate-100' : '' }} items-center p-2 w-full text-base font-normal text-gray-600 rounded-lg transition duration-75 group hover:bg-gray-100 dark:text-white dark:hover:bg-slate-700 dark:bg-slate-600"
                     aria-controls="dropdown-pages" data-collapse-toggle="dropdown-pages">
                     <center>
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-6">
@@ -71,7 +71,7 @@
             </li>
             <li class="text-center flex items-center">
                 <a href="{{ route('user.show.request', $user->id) }}" type="button"
-                    class="{{ url()->full() == route('user.show.client', $user->id) ? 'bg-slate-100' : '' }} items-center p-2 w-full text-base font-normal text-gray-600 rounded-lg transition duration-75 group hover:bg-gray-100 dark:text-white dark:hover:bg-slate-700"
+                    class="{{ url()->full() == route('user.show.client', $user->id) ? 'bg-slate-100' : '' }} items-center p-2 w-full text-base font-normal text-gray-600 rounded-lg transition duration-75 group hover:bg-gray-100 dark:text-white dark:hover:bg-slate-700 dark:bg-slate-600"
                     aria-controls="dropdown-pages" data-collapse-toggle="dropdown-pages">
                     <center>
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-6">

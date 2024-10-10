@@ -71,7 +71,7 @@ class Flow extends Component
     /**
      * The read function.
      *
-     * @return void
+     * @return mixed
      */
     public function readData()
     {

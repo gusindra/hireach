@@ -90,7 +90,7 @@
         </div>
 
         <div class="mt-2 md:mt-0 md:col-span-4">
-            <div class="px-4 py-5 bg-white dark:bg-slate-600 sm:p-6 shadow sm:rounded-tl-md sm:rounded-tr-md">
+            <div class="px-4 py-5 bg-white dark:bg-slate-700 sm:p-6 shadow sm:rounded-tl-md sm:rounded-tr-md">
                 <div>
 
                     @livewire('image-upload', ['model' => 'company', 'model_id' => $company->id])

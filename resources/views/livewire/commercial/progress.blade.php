@@ -1,7 +1,7 @@
 <div wire:poll>
     @if ($model->status == 'draft' || ($model->status == 'unpaid' && $model_type == 'commission'))
         @if (auth()->user()->isSuper || (auth()->user()->team && str_contains(auth()->user()->isNoAdmin->role, 'admin')))
-        <div class="px-4 py-5 bg-white dark:bg-slate-600 sm:p-6 shadow sm:rounded-md">
+        <div class="px-4 py-5 bg-white dark:bg-slate-700 sm:p-6 shadow sm:rounded-md">
 
             <div class="sm:px-0">
                 <h3 class="text-base font-bold text-gray-900 dark:text-slate-300">Submission Process</h3>
@@ -24,7 +24,7 @@
 
     @if ($approvals->count() > 0)
         <div
-            class="{{ auth()->user()->super->first() && auth()->user()->super->first()->role == 'superadmin' ? 'sm:block' : '' }} sm:block hidden px-4 py-5 bg-white dark:bg-slate-600 sm:p-6 shadow sm:rounded-tl-md sm:rounded-tr-md">
+            class="{{ auth()->user()->super->first() && auth()->user()->super->first()->role == 'superadmin' ? 'sm:block' : '' }} sm:block hidden px-4 py-5 bg-white dark:bg-slate-700 sm:p-6 shadow sm:rounded-tl-md sm:rounded-tr-md">
             <div class="px-4 pb-6 sm:px-0">
                 <h3 class="text-sm font-bold text-gray-900 dark:text-slate-300">Approval Process</h3>
             </div>
@@ -275,7 +275,7 @@
     @if ($model->status != 'draft' && $approval && $model->approval && empty($approval->status))
         @if ($model->status == 'submit' || $model->status == 'submit')
             <!--  -->
-            <div class="px-4 py-5 bg-white dark:bg-slate-600 sm:p-6 shadow sm:rounded-tl-md sm:rounded-tr-md mt-4">
+            <div class="px-4 py-5 bg-white dark:bg-slate-700 sm:p-6 shadow sm:rounded-tl-md sm:rounded-tr-md mt-4">
                 <div class="sm:px-0">
                     <h3 class="text-base font-medium text-gray-900 dark:text-slate-300">
                         {{ $model->approval->task != '' ? $model->approval->task : 'Next Process' }}</h3>

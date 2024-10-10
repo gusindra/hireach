@@ -7,15 +7,15 @@
 
     <div class="grid grid-cols-12">
         @includeWhen(auth()->user()->isSuper || str_contains(auth()->user()->activeRole->role->name, 'Admin'),
-            'menu.admin-menu-user',
+            'menu.admin-menu-asset',
             []
         )
 
         <div class="col-span-12 px-3 lg:ml-24 mt-2">
             <div class="bg-white dark:bg-slate-600 overflow-hidden shadow-xl sm:rounded-lg">
-                <div class="mx-auto">
+                <div class="m-3">
                     <a href="{{ route('admin.contact-duplicate') }}"
-                        class="inline-block px-6 py-3 bg-blue-500 text-white font-semibold text-sm rounded-lg shadow hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 transition">
+                        class="inline-flex items-center px-4 py-2 bg-gray-800 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-gray-700 active:bg-gray-900 focus:outline-none focus:border-gray-900 focus:shadow-outline-gray disabled:opacity-25 transition">
                         Resolve Duplicate
                     </a>
 

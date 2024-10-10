@@ -10,6 +10,7 @@ use App\Models\Project;
 use App\Models\Request as Message;
 use App\Models\SaldoUser;
 use App\Models\TeamUser;
+use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 
@@ -251,7 +252,7 @@ function disableInput($status)
 function balance($user, $team_id = 0, $type = 'total')
 {
     if ($type == 'total') {
-        $balance = 0;
+        $balance = 0; 
         if ($user->balance($team_id)->first()) {
             if ($team_id > 0) {
                 $balance = $user->balance($team_id)->first()->balance;
@@ -277,6 +278,10 @@ function balance($user, $team_id = 0, $type = 'total')
         } else {
             return $user->balance($team_id)->get();
         }
+    }
+    if($type=='id'){
+        $user = User::find($user);
+        return $user->balance(0)->first() ? $user->balance(0)->first()->balance : 0;
     }
     return $user->balance($team_id)->orderBy('id', 'desc')->get();
 }
@@ -439,7 +444,7 @@ function filterInput($content, $type = 'med')
  *
  * @param  mixed $menu
  * @param  mixed $user
- * @return void
+ * @return boolean
  */
 function userAccess($menu, $action = 'view', $level = '')
 {

@@ -39,8 +39,7 @@ class Add extends Component
     public function rules()
     {
         return [
-            'input.name' => 'required',
-            'input.name' => 'required',
+            'input.name' => 'required', 
             'input.password' => 'required',
         ];
     }
@@ -62,7 +61,7 @@ class Add extends Component
     /**
      * create
      *
-     * @return void
+     * @return mixed
      */
     public function create()
     {
@@ -147,7 +146,6 @@ class Add extends Component
 
     public function createFormUser()
     {
-
         $customer = Client::create([
             'title' => $this->inputclient['title'],
             'name' => $this->inputclient['name'],

@@ -17,7 +17,7 @@
         <div class="py-3">
             <div class="md:grid md:grid-cols-4 md:gap-6 mt-8 sm:mt-0">
                 <div class="md:col-span-1"></div>
-                <div class="md:col-span-2 px-4 py-5 bg-white dark:bg-slate-600 sm:p-6 shadow sm:rounded-tl-md sm:rounded-tr-md">
+                <div class="md:col-span-2 px-4 py-5 bg-white dark:bg-slate-700 sm:p-6 shadow sm:rounded-tl-md sm:rounded-tr-md">
                     <div class="px-4 sm:px-0 mb-4">
                         <div class="flex justify-between my-1">
                             <span class="font-semibold text-xl text-gray-900 dark:text-slate-300 mb-4">Transfer Bank</span>
@@ -98,7 +98,7 @@
                 </div>
                 <div class="md:col-span-1"></div>
                 <div class="md:col-span-1"></div>
-                <div class="md:col-span-2 px-4 py-5 bg-white dark:bg-slate-600 sm:p-6 shadow sm:rounded-tl-md sm:rounded-tr-md">
+                <div class="md:col-span-2 px-4 py-5 bg-white dark:bg-slate-700 sm:p-6 shadow sm:rounded-tl-md sm:rounded-tr-md">
                     <div class="px-4 sm:px-0 mb-4">
                         @if($order->status=='unpaid')
                             <h3 class="font-semibold text-xl text-gray-900 dark:text-slate-300 mb-2">Cara pembayaran</h3>

@@ -16,7 +16,7 @@
 
                 <div class="py-3">
                     <div class="md:grid md:grid-cols-3 md:gap-6 mt-8 sm:mt-0">
-                        <div class="md:col-span-1 px-4 py-5 bg-white dark:bg-slate-600 sm:p-6 shadow sm:rounded-tl-md sm:rounded-tr-md">
+                        <div class="md:col-span-1 px-4 py-5 bg-white dark:bg-slate-700 sm:p-6 shadow sm:rounded-tl-md sm:rounded-tr-md">
                             <form class="mt-3 p-6" method="POST" action="{{ route('admin.post.import.status') }}" enctype="multipart/form-data">
                                 @csrf
                                 <div class="px-4 sm:px-0 mb-4">
@@ -40,7 +40,7 @@
                             </form>
                         </div> 
                             <div class="mt-2 md:mt-0 md:col-span-2">
-                                <div class="px-4 py-5 bg-white dark:bg-slate-600 sm:p-10 shadow sm:rounded-tl-md sm:rounded-tr-md">
+                                <div class="px-4 py-5 bg-white dark:bg-slate-700 sm:p-10 shadow sm:rounded-tl-md sm:rounded-tr-md">
                                     <div class="flex flex-col">
                                         <div class="overflow-x-auto sm:-mx-6 lg:-mx-8">
                                             <div class="inline-block min-w-full py-2 sm:px-6 lg:px-8">

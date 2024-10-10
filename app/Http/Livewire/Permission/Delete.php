@@ -15,7 +15,6 @@ class Delete extends Component
 
     public function mount($permission)
     {
-
         $this->permission = $permission;
     }
 
@@ -34,11 +33,8 @@ class Delete extends Component
 
     public function actionShowDeleteModal()
     {
-
         $this->modalDeleteVisible = true;
     }
-
-
 
     public function render()
     {

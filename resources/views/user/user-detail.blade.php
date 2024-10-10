@@ -69,7 +69,7 @@
         )
 
         <div class="col-span-12 px-3 lg:ml-24 mt-2 space-y-3">
-            <div class="bg-white col-8 mt-3">
+            <div class="bg-white dark:bg-slate-600 col-8 mt-3">
                 <div class="px-6 py-4 mx-auto my-3 rounded-lg shadow">
                     @livewire('saldo.topup', ['user' => $user, 'id' => $id])
                 </div>
