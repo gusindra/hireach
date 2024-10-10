@@ -12,10 +12,23 @@ class DepartmentUserTable extends LivewireDatatable
 {
     public $model = Department::class;
     public $userId;
+    public $departmentId = 0;
 
     public function builder()
     {
-        return Department::query()->with('client')->where('departments.user_id', $this->userId);
+        $data = Department::query()
+        ->leftJoin('clients', 'clients.id', '=', 'departments.client_id')
+        ->where('departments.user_id', $this->userId);
+        if($this->departmentId!=0){
+            $source = Department::find($this->departmentId);
+            $data = $data->where('parent', $source->source_id);
+            if($data->count()==0 && $this->departmentId!=0){
+                return Department::query()
+                    ->leftJoin('clients', 'clients.id', '=', 'departments.client_id')
+                    ->where('departments.id', $this->departmentId);
+            }
+        }
+        return $data;
     }
 
     public function columns()
@@ -30,7 +43,7 @@ class DepartmentUserTable extends LivewireDatatable
                 ]);
                 //return $x;
             })->label('Department')->searchable(),
-            Column::callback(['client.id','client.name','user_id'], function ($id,$name,$user) {
+            Column::callback(['clients.id','clients.name','user_id'], function ($id,$name,$user) {
                 return view('datatables::link', [
                     'href' => url('admin/user/' . $user . '/client/' . $id),
                     'slot' => $name,

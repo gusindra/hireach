@@ -33,11 +33,13 @@ class UsersTable extends LivewireDatatable
                     'href' => "/admin/user/" . $id,
                     'slot' => $name
                 ]);
-                //return $x;
             })->label('Name ID')->filterable()->searchable(),
-            Column::name('email')->filterable()->label('Email'),
-            Column::name('phone_no')->filterable()->label('Phone Number'),
-            DateColumn::name('created_at')->label('Creation Date')
+            Column::name('email')->filterable()->label('Email')->searchable(),
+            Column::name('phone_no')->filterable()->label('Phone Number')->searchable(), 
+            Column::callback(['id'], function ($name) {
+                return balance($name, 0, 'id');
+            })->label('Balance')->searchable(),
+            DateColumn::name('created_at')->label('Creation Date')->searchable()
         ];
     }
 }

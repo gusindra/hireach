@@ -139,7 +139,7 @@
             </div>
             @if ($order->type == 'topup' && $order->status == 'draft')
                 <div class="col-span-6 sm:col-span-4">
-                    <div class="px-4 py-5 bg-white dark:bg-slate-600 sm:p-10">
+                    <div class="px-4 py-5 bg-white dark:bg-slate-700 sm:p-10">
 
                         <div class="col-span-6 sm:col-span-4 mb-8">
                             <div class="col-span-12 sm:col-span-1">

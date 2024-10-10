@@ -1,8 +1,10 @@
 <div>
     @if (userAccess('USER', 'create'))
-        <x-jet-button :show="userAccess('USER', 'create')" :disabled="!userAccess('USER', 'create')" wire:click="actionShowModal">
-            {{$role == 'admin' ? 'Add Admin' : 'Add User'}}
-        </x-jet-button>
+        <div class="flex flex-row-reverse">
+            <x-add-button :show="userAccess('USER', 'create')" :disabled="!userAccess('USER', 'create')" wire:click="actionShowModal">
+                {{$role == 'admin' ? 'Add Admin' : 'Add User'}}
+            </x-add-button>
+        </div>
     @endif
 
 

@@ -22,7 +22,7 @@
         </div>
         <div class="text-right">
             <a wire:click="actionShowModal"
-                class="inline-flex items-center px-3 py-1 bg-green-800 border border-transparent rounded font-normal text-xs text-white 1g-widest hover:bg-green-700 active:bg-green-900 focus:outline-none focus:border-gray-900 focus:shadow-outline-gray disabled:opacity-25 transition">
+                class="inline-flex items-center cursor-pointer px-3 py-1 bg-green-800 border border-transparent rounded font-normal text-xs text-white 1g-widest hover:bg-green-700 active:bg-green-900 focus:outline-none focus:border-gray-900 focus:shadow-outline-gray disabled:opacity-25 transition">
                 <span>Top Up</span>
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6 ml-1">
                     <path fill-rule="evenodd"

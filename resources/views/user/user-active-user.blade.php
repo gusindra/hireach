@@ -13,7 +13,7 @@
         <div class="col-span-12 px-3 ml-24 mt-2">
             <div class="mx-auto">
                 <div class="p-4">
-                    @includeWhen(auth()->user()->super->first() && auth()->user()->super->first()->role == 'superadmin',
+                    @includeWhen(auth()->user()->isSuper || (auth()->user()->team && str_contains(auth()->user()->activeRole->role->name, 'Admin')) && auth()->user()->super->first()->role == 'superadmin',
                         'dashboard.online',
                         ['status' => 'complete']
                     )

@@ -176,13 +176,13 @@
         </x-slot>
 
         <x-slot name="content">
-            <div class="flex items-center justify-between">
-                <div class="w-full max-w-xs">
+            <div class="flex items-center justify-between w-full">
+                <div class="w-full">
                     <x-jet-input id="inviteLink" type="text" class="mt-1 block w-full" wire:model.defer="inviteLink"
                         readonly />
                 </div>
                 <div>
-                    <button class="ml-2 px-4 py-2 bg-yellow-800 w-16 text-white rounded-md flex items-center"
+                    <button class="ml-2 px-4 py-2 w-16 text-white rounded-md flex items-center"
                         onclick="copyToClipboard()">
                         {{ __('Copy') }}
                     </button>

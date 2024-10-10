@@ -91,6 +91,9 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
         Route::get('/user/{user}/dept/{dept}', [UserController::class, 'departmentClient'])->name('user.show.dept.client');
 
         Route::get('/department', [UserController::class, 'listDepartment'])->name('admin.department');
+        
+        Route::get('/asset', [UserController::class, 'contact'])->name('admin.asset');
+        
         Route::get('/contact', [UserController::class, 'contact'])->name('admin.contact');
         Route::get('/contact/duplicate', [UserController::class, 'duplicateContact'])->name('admin.contact-duplicate');
         Route::get('/contact/edit/{contact}', [UserController::class, 'contactEdit'])->name('admin.contact-edit');
@@ -116,12 +119,12 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
         Route::get('/setting/log', [SettingController::class, 'logChange'])->name('settings.logChange');
         Route::get('/setting/log/export', [SettingController::class, 'logExport'])->name('settings.log.export');
         Route::get('/settings/providers/{provider}', [ProviderController::class, 'show'])->name('admin.settings.provider.show');
-        Route::get('setting/product-line/{productLine}', [SettingController::class, 'productLineShow'])->name('settings.productLine.show');
-        Route::get('setting/commerce-item/{commerceItem}', [SettingController::class, 'commerceItemShow'])->name('settings.commerceItem.show');
+        Route::get('/setting/product-line/{productLine}', [SettingController::class, 'productLineShow'])->name('settings.productLine.show');
+        Route::get('/setting/commerce-item/{commerceItem}', [SettingController::class, 'commerceItemShow'])->name('settings.commerceItem.show');
 
         Route::get('/permission', [PermissionController::class, 'index'])->name('permission.index');
         Route::get('/setting/company', [SettingController::class, 'company'])->name('settings.company');
-        Route::get('setting/company/{company}', [SettingController::class, 'companyShow'])->name('settings.company.show');
+        Route::get('/setting/company/{company}', [SettingController::class, 'companyShow'])->name('settings.company.show');
 
         Route::get('/flow/{model}', [FlowController::class, 'show'])->name('flow.show');
 
@@ -149,11 +152,11 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
         Route::get('/commercial', [CommercialController::class, 'index'])->name('commercial');
         Route::get('/commercial/{key}', [CommercialController::class, 'show'])->name('commercial.show');
         Route::get('/commercial/{key}/{id}', [CommercialController::class, 'template'])->name('invoice');
-        Route::get('commercial/{key}/{id}', [CommercialController::class, 'edit'])->name('commercial.edit.show');
-        Route::get('commercial/{id}/{type}/print', [CommercialController::class, 'template'])->name('commercial.print');
+        Route::get('/commercial/{key}/{id}', [CommercialController::class, 'edit'])->name('commercial.edit.show');
+        Route::get('/commercial/{id}/{type}/print', [CommercialController::class, 'template'])->name('commercial.print');
 
-        Route::get('product/commercial/syn', [CommercialController::class, 'sync'])->name('commercial.sync');
-        Route::post('product/commercial/syn', [CommercialController::class, 'syncPost'])->name('commercial.sync.post');
+        Route::get('/product/commercial/syn', [CommercialController::class, 'sync'])->name('commercial.sync');
+        Route::post('/product/commercial/syn', [CommercialController::class, 'syncPost'])->name('commercial.sync.post');
     });
 
     /** ------------------------------------------

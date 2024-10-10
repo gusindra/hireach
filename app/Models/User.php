@@ -118,7 +118,7 @@ class User extends Authenticatable
     /**
      * User has one Chat Session
      *
-     * @return void
+     * @return mixed
      */
     public function chatsession()
     {
@@ -144,7 +144,7 @@ class User extends Authenticatable
     /**
      * User is Superuser
      *
-     * @return void
+     * @return mixed
      */
     public function isSuper()
     {
@@ -160,7 +160,7 @@ class User extends Authenticatable
     /**
      * teams
      *
-     * @return void
+     * @return mixed
      */
     public function teams()
     {
@@ -170,7 +170,7 @@ class User extends Authenticatable
     /**
      * list teams
      *
-     * @return void
+     * @return mixed
      */
     public function listTeams()
     {
@@ -184,7 +184,7 @@ class User extends Authenticatable
     /**
      * billings
      *
-     * @return void
+     * @return mixed
      */
     public function billings()
     {
@@ -194,7 +194,7 @@ class User extends Authenticatable
     /**
      * User Has many Role
      *
-     * @return void
+     * @return mixed
      */
     public function role()
     {
@@ -208,7 +208,7 @@ class User extends Authenticatable
     /**
      * User get active Role
      *
-     * @return void
+     * @return mixed
      */
     public function activeRoles()
     {
@@ -223,7 +223,7 @@ class User extends Authenticatable
     /**
      * User Has many Balance
      *
-     * @return void
+     * @return mixed
      */
     public function balance($team_id = 0)
     {
@@ -236,7 +236,7 @@ class User extends Authenticatable
     /**
      * balanceTeam
      *
-     * @return void
+     * @return mixed
      */
     public function balanceTeam()
     {
@@ -246,7 +246,7 @@ class User extends Authenticatable
     /**
      * User is client
      *
-     * @return void
+     * @return mixed
      */
     public function isClient()
     {
@@ -256,7 +256,7 @@ class User extends Authenticatable
     /**
      * User has one profile billing
      *
-     * @return void
+     * @return mixed
      */
     public function userBilling()
     {
@@ -266,7 +266,7 @@ class User extends Authenticatable
     /**
      * photo
      *
-     * @return void
+     * @return mixed
      */
     public function photo()
     {
@@ -276,7 +276,7 @@ class User extends Authenticatable
     /**
      * getProfilePhotoUrlAttribute
      *
-     * @return void
+     * @return mixed
      */
     public function getProfilePhotoUrlAttribute()
     {
@@ -292,7 +292,7 @@ class User extends Authenticatable
     /**
      * Has Companies
      *
-     * @return void
+     * @return mixed
      */
     public function company()
     {
@@ -302,7 +302,7 @@ class User extends Authenticatable
     /**
      * Many API Credential
      *
-     * @return void
+     * @return mixed
      */
     public function credential()
     {

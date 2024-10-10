@@ -29,12 +29,11 @@ class UserController extends Controller
         });
     }
 
-
     /**
      * index
      *
      * @param  mixed $request
-     * @return void
+     * @return mixed
      */
     public function index(Request $request)
     {
@@ -49,20 +48,18 @@ class UserController extends Controller
      * listDepartment
      *
      *
-     * @return void
+     * @return mixed
      */
     public function listDepartment()
     {
         return view('user.department');
     }
 
-
-
-        /**
+    /**
      * contact
      *
      *
-     * @return void
+     * @return mixed
      */
     public function contact()
     {
@@ -73,29 +70,30 @@ class UserController extends Controller
      * duplicateContact
      *
      *
-     * @return void
+     * @return mixed
      */
     public function duplicateContact()
     {
         return view('user.manage-duplicate-contact');
     }
 
-        /**
+    /**
      * contact
      *
      *
-     * @return void
+     * @return mixed
      */
     public function contactEdit($id)
     {
         $contact = Contact::find($id);
         return view('user.contact-edit',['contact'=>$contact]);
     }
+
     /**
      * getDepartment
      *
      *
-     * @return void
+     * @return mixed
      */
     public function getDepartment(Request $request)
     {
@@ -167,7 +165,7 @@ class UserController extends Controller
      *
      * @param  mixed $request
      * @param  mixed $id
-     * @return void
+     * @return mixed
      */
     public function show(Request $request, $id)
     {
@@ -190,7 +188,7 @@ class UserController extends Controller
      * profile
      *
      * @param  mixed $user
-     * @return void
+     * @return mixed
      */
     public function profile(User $user)
     {
@@ -204,7 +202,7 @@ class UserController extends Controller
      * client
      *
      * @param  mixed $user
-     * @return void
+     * @return mixed
      */
     public function client(User $user)
     {
@@ -218,7 +216,7 @@ class UserController extends Controller
      *
      * @param  mixed $user
      * @param  mixed $client
-     * @return void
+     * @return mixed
      */
     public function clientUser(User $user, $client)
     {
@@ -230,7 +228,7 @@ class UserController extends Controller
      * client
      *
      * @param  mixed $user
-     * @return void
+     * @return mixed
      */
     public function request(User $user)
     {
@@ -244,7 +242,7 @@ class UserController extends Controller
      * client
      *
      * @param  mixed $user
-     * @return void
+     * @return mixed
      */
     public function order(User $user)
     {
@@ -256,7 +254,7 @@ class UserController extends Controller
      * provider
      *
      * @param  mixed $user
-     * @return void
+     * @return mixed
      */
     public function provider(User $user)
     {
@@ -268,12 +266,11 @@ class UserController extends Controller
      *
      * @param  mixed $id
      * @param  mixed $request
-     * @return void
+     * @return mixed
      */
     public function balance($id, Request $request)
     {
         $user = User::find($id);
-
         return view('user.user-balance', ['user' => $user, 'id' => $id, 'team' => $request->has('team') ? $request->team : 0]);
     }
 
@@ -281,7 +278,7 @@ class UserController extends Controller
      * department
      *
      * @param  mixed $user
-     * @return void
+     * @return mixed
      */
     public function department(User $user)
     {
@@ -301,10 +298,10 @@ class UserController extends Controller
      *
      * @param  mixed $user
      * @param  mixed $dept
-     * @return void
+     * @return mixed
      */
     public function departmentClient(User $user, Department $dept)
-    {
+    { 
         if(cache('viguard_id')){
             $userId = cache('viguard_id');
         }else{
