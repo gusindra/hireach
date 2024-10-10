@@ -34,8 +34,8 @@
             </li>
             
             <li class="text-center flex items-center">
-                <a href="{{ route('admin.settings') }}" type="button"
-                    class="{{ url()->full() == route('admin.settings') ? 'bg-slate-100' : '' }} items-center p-2 w-full text-base font-normal text-gray-600 rounded-lg transition duration-75 group hover:bg-gray-100 dark:text-white dark:hover:bg-slate-700 dark:bg-slate-600"
+                <a href="{{ route('role.index') }}" type="button"
+                    class="{{ url()->full() == route('role.index') ? 'bg-slate-100' : '' }} items-center p-2 w-full text-base font-normal text-gray-600 rounded-lg transition duration-75 group hover:bg-gray-100 dark:text-white dark:hover:bg-slate-700 dark:bg-slate-600"
                     aria-controls="dropdown-pages" data-collapse-toggle="dropdown-pages">
                     <center>
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"

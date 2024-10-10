@@ -30,7 +30,6 @@ class Search extends Component
      */
     public function updatedSearch($value)
     {
-        dd(3);
         $client = Client::where('name', 'like', '%' . $value . '%')->orWhere('phone', 'like', '%' . $value . '%')->orWhere('email', 'like', '%' . $value . '%')->limit(5)->get();
         $this->data = $client;
     }
