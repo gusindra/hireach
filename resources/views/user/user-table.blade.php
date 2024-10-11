@@ -19,11 +19,11 @@
         @endif
         <div class="col-span-12 px-3 lg:ml-24 mt-2">
             <div class="bg-white dark:bg-slate-600 overflow-hidden shadow-xl sm:rounded-lg">
-                <div class="mx-auto"> 
+                <div class="mx-auto">
                     <div class="p-4">
                         @livewire('user.add', ['role' => request()->get('role')])
-                    </div> 
-                    {{request()->get('role')}}
+                    </div>
+                    {{-- {{request()->get('role')}} --}}
                     <div class="m-3">
                         <livewire:table.users-table searchable="id, name, email, phone" exportable />
                         {{-- <livewire:table.client-datatables searchable="name, email, gender" exportable /> --}}

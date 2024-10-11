@@ -133,6 +133,7 @@ class Add extends Component
         $this->modalActionVisible = false;
         $this->resetForm();
         $this->emit('refreshLivewireDatatable');
+        return redirect('/admin/user?role=admin');
     }
 
     public function generatePassword()
