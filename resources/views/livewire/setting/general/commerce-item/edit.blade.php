@@ -174,9 +174,9 @@
                     class="border-gray-300 dark:bg-slate-800 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 rounded-md shadow-sm mt-1 block w-full"
                     wire:model.debunce.800ms="input.status">
                     <option selected>-- Select Status --</option>
-                    <option value="draft">Draft</option>
-                    <option value="active">Active</option>
-                    <option value="compleated">Disabled</option>
+                    <option value="null">Draft</option>
+                    <option value="1">Active</option>
+                    <option value="0">Disabled</option>
                 </select>
                 <x-jet-input-error for="input.status" class="mt-2" /> 
             </div>

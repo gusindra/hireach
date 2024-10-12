@@ -51,11 +51,12 @@ class Edit extends Component
         $this->emit('saved');
     }
     public function delete()
-    {
+    { 
         $this->authorize('DELETE_SETTING', 'SETTING');
         $this->productLine->delete();
         $this->modalActionVisible = false;
-        return redirect()->route('settings.company');
+        return redirect()->to('admin/settings/company');
+        // return redirect()->route('settings.company');
     }
     public function render()
     {

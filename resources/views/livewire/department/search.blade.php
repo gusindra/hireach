@@ -1,5 +1,5 @@
 <div>
-    <div class="flex items-center text-right p-3">
+    <div class="flex items-center text-right">
         <x-add-button wire:click="actionShowModal">
             {{ __('Add Contact to Department') }}
         </x-add-button>

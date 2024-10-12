@@ -200,14 +200,16 @@
 
                             <x-jet-dropdown-link href="{{ route('profile.show') }}">
                                 {{ __('Profile') }}
-                            </x-jet-dropdown-link>
-                            @if (balance(auth()->user()) > 0)
+                            </x-jet-dropdown-link> 
+
+                            @if (balance(auth()->user()) > 0 && auth()->user()->activeRole->role->name!='Super Admin')
                                 <x-jet-dropdown-link href="{{ route('payment.deposit') }}"
                                     class="flex justify-between">
                                     <span>{{ __('Balance') }}</span> <small>Rp
                                         {{ number_format(balance(auth()->user())) }}</small>
                                 </x-jet-dropdown-link>
                             @endif
+
                             @if (Auth::user()->hasTeamRole(Auth::user()->currentTeam, 'admin'))
                                 @if (auth()->user()->currentTeam &&
                                         Laravel\Jetstream\Jetstream::hasApiFeatures() &&

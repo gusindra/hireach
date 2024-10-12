@@ -26,7 +26,7 @@
         <div class="col-span-12 px-3 lg:ml-24 mt-2">
             <div class="bg-white dark:bg-slate-600 overflow-hidden shadow-xl sm:rounded-lg">
                 <div class="mx-auto">
-                    <div class="flex gap-3 p-3">
+                    <div class="flex gap-3 p-3 justify-between">
                         <div class="p-4 hidden">
                             <form method="GET" action="{{ route('admin.department.get')}}">
                                 @csrf

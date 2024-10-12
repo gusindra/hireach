@@ -41,7 +41,7 @@ class UserController extends Controller
             return view('main-side.user');
         } 
         return view('user.user-table');
-        return view('user.admin-table');
+        // return view('user.admin-table');
     }
 
     /**

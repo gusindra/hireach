@@ -4,7 +4,7 @@
         <div class="flex items-center justify-between mb-1">
             <div class="flex items-center h-10">
                 @if($this->searchableColumns()->count())
-                    <div class="flex rounded-lg w-96 shadow-sm">
+                    <div class="flex rounded-lg w-96">
                         <div class="flex focus-within:z-10">
                             <input wire:model.debounce.500ms="search" class="block w-full py-3 text-sm border-gray-300 leading-4 rounded-md shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50 focus:outline-none text-black" placeholder="{{__('Search in')}} {{ $this->searchableColumns()->map->label->join(', ') }}" type="text" />
                             <div class=" inset-y-0 right-0 flex items-center pr-2">

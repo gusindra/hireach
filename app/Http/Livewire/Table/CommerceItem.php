@@ -12,6 +12,7 @@ use Mediconesystems\LivewireDatatables\NumberColumn;
 class CommerceItem extends LivewireDatatable
 {
     public $model = ModelsCommerceItem::class;
+    // public $complex = true;
 
     public function builder()
     {
@@ -37,6 +38,7 @@ class CommerceItem extends LivewireDatatable
             })->label('Type')->filterable(["SKU", "NOSKU", "ONE_TIME", "MONTHLY", "YEARLY"]),
             Column::name('sku')->filterable()->label('SKU')->editable(),
             Column::name('unit_price')->label('Unit Price')->editable(),
+            Column::name('spec')->label('Spesification')->editable(),
             Column::name('general_discount')->label('Discount')->editable(),
             Column::name('productLine.name')->filterable($productLine)->label('Produc Line'),
 
