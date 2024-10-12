@@ -1,6 +1,6 @@
 <div class="px-4 pt-6">
-    <h1 class="font-bold">Data Company</h1>
-    <div class="flex flex-row-reverse">
+    <div class="flex justify-between">
+        <h1 class="font-bold">Data Company</h1>
         <x-add-button :disabled="!userAccess('SETTING', 'create')" wire:click="actionShowModal">
             {{ __('Add Company') }}
         </x-add-button>

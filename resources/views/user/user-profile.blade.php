@@ -5,7 +5,23 @@
         </h2>
     </x-slot>
     <div class="grid grid-cols-12">
-
+        @if( Route::currentRouteName() == 'admin.asset' )
+            @includeWhen(auth()->user()->isSuper || str_contains(auth()->user()->activeRole->role->name, 'Admin'),
+                'menu.admin-menu-asset',
+                []
+            )
+        @elseif( Route::currentRouteName() == 'autor.show' || Route::currentRouteName() == 'autor.show.profile' )
+            @includeWhen(auth()->user()->isSuper || str_contains(auth()->user()->activeRole->role->name, 'Admin'),
+                'menu.admin-menu',
+                []
+            ) 
+        @else
+            @includeWhen(auth()->user()->isSuper || str_contains(auth()->user()->activeRole->role->name, 'Admin'),
+                'menu.admin-menu-user',
+                []
+            )
+        @endif
+        
         @includeWhen(auth()->user()->isSuper || (auth()->user()->team && str_contains(auth()->user()->activeRole->role->name, 'Admin')),
             'menu.admin-menu-user-profile',
             ['user' => $user]

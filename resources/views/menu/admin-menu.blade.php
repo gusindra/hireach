@@ -4,18 +4,58 @@
     <div
         class="overflow-y-auto py-2 px-2 h-full bg-white dark:bg-slate-800 border-r border-gray-200 dark:bg-gray-800 dark:border-gray-700">
         <ul class="space-y-2">
-            @foreach (config('menu.list.navigation.admin.users.submenu') as $menu)
-            <li class="text-center flex items-center">
-                <a href="{{ route($menu['url']) }}" type="button"
-                    class="{{ url()->full() == route($menu['url']) ? 'bg-slate-100' : '' }} items-center p-2 w-full text-base font-normal text-gray-600 rounded-lg transition duration-75 group hover:bg-gray-100 dark:text-white dark:hover:bg-slate-700 dark:bg-slate-600"
-                    aria-controls="dropdown-pages" data-collapse-toggle="dropdown-pages">
-                    <center>
-                        {!!$menu['icon']!!}
-                        <span class="text-left whitespace-nowrap text-xs">{{$menu['title']}}</span>
-                    </center>
-                </a>
-            </li>
-            @endforeach
+            @if( Route::currentRouteName() == 'admin.asset' )
+                @php $config='menu.list.side.admin.user' @endphp
+            @elseif(Route::currentRouteName() == 'admin.asset')
+                @php $config='menu.list.side.admin.user' @endphp
+                
+            @elseif(str_contains(Route::currentRouteName(), 'report'))
+                @php $config='menu.list.navigation.admin.reports.submenu' @endphp
+                @foreach (config($config) as $menu)
+                    <li class="text-center flex items-center">
+                        <a href="{{ url($menu['url']) }}" type="button"
+                            class="{{ url()->full() == url($menu['url']) ? 'bg-slate-100' : '' }} items-center p-2 w-full text-base font-normal text-gray-600 rounded-lg transition duration-75 group hover:bg-gray-100 dark:text-white dark:hover:bg-slate-700 dark:bg-slate-600"
+                            aria-controls="dropdown-pages" data-collapse-toggle="dropdown-pages">
+                            <center>
+                                {!!$menu['icon']!!}
+                                <span class="text-left whitespace-nowrap text-xs">{{$menu['title']}}</span>
+                            </center>
+                        </a>
+                    </li>
+                @endforeach
+            @elseif(Route::currentRouteName() == 'admin.asset')
+                @php $config='menu.list.side.admin.user' @endphp
+            @elseif( Route::currentRouteName() == 'admin.autor' || Route::currentRouteName() == 'role.show'  || Route::currentRouteName() == 'autor.show.profile' || Route::currentRouteName() == 'autor.show' || Route::currentRouteName() == 'role.index' || Route::currentRouteName() == 'permission.index')
+                @php $config='menu.list.navigation.admin.authorization.submenu' @endphp
+                @foreach (config($config) as $menu)
+                    <li class="text-center flex items-center">
+                        <a href="{{ url($menu['url']) }}" type="button"
+                            class="{{ url()->full() == url($menu['url']) ? 'bg-slate-100' : '' }} items-center p-2 w-full text-base font-normal text-gray-600 rounded-lg transition duration-75 group hover:bg-gray-100 dark:text-white dark:hover:bg-slate-700 dark:bg-slate-600"
+                            aria-controls="dropdown-pages" data-collapse-toggle="dropdown-pages">
+                            <center>
+                                {!!$menu['icon']!!}
+                                <span class="text-left whitespace-nowrap text-xs">{{$menu['title']}}</span>
+                            </center>
+                        </a>
+                    </li>
+                @endforeach
+            @else
+                @php $config='menu.list.navigation.admin.providers.submenu' @endphp
+                @foreach (config($config) as $menu)
+                    <li class="text-center flex items-center">
+                        <a href="{{ route($menu['url']) }}" type="button"
+                            class="{{ url()->full() == route($menu['url']) ? 'bg-slate-100' : '' }} items-center p-2 w-full text-base font-normal text-gray-600 rounded-lg transition duration-75 group hover:bg-gray-100 dark:text-white dark:hover:bg-slate-700 dark:bg-slate-600"
+                            aria-controls="dropdown-pages" data-collapse-toggle="dropdown-pages">
+                            <center>
+                                {!!$menu['icon']!!}
+                                <span class="text-left whitespace-nowrap text-xs">{{$menu['title']}}</span>
+                            </center>
+                        </a>
+                    </li>
+                @endforeach
+            @endif
+
+            
             
         </ul>
         <ul class="pt-5 mt-5 space-y-2 border-t border-gray-200 dark:border-gray-700">

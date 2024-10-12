@@ -40,12 +40,12 @@
 
                     @if ($data['notif']->count() > 0)
                         @foreach ($data['notif'] as $item)
-                            <a class="block px-4 py-2 text-sm leading-5 text-gray-700 dark:bg-blue-600  dark:text-slate-800 {{ $item->status == 'unread' ? 'bg-green-200' : '' }} {{ $item->status == 'new' ? 'bg-gray-200' : '' }} hover:bg-gray-300 focus:outline-none focus:bg-gray-100 transition"
+                            <a class="block px-4 py-2 text-sm leading-5 text-gray-700 dark:bg-blue-600 dark:text-slate-800 {{ $item->status == 'unread' ? 'bg-green-200' : '' }} {{ $item->status == 'new' ? 'bg-gray-200' : '' }} hover:bg-gray-100 focus:outline-none focus:bg-gray-100 transition"
                                 href="{{ $item->type == 'admin' ? '#' : route('notification.read', [$item->id]) }}"
                                 {{ $item->type == 'admin' ? 'wire:click=actionShowModal(' . $item->id . ')' : '' }}>
                                 <div class="flex items-center">
                                     <div class="truncate1">
-                                        <span class="uppercase">{{ $item->type }}
+                                        <span class="uppercase text-xs font-bold">{{ $item->type }}
                                             {{ $item->ticket && $item->ticket->request && $item->ticket->request->client ? $item->ticket->request->client->name : '' }}</span>
                                         <br>
                                         <span class="capitalize text-xs"

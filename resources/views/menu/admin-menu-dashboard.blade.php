@@ -4,7 +4,19 @@
     <div
         class="overflow-y-auto py-2 px-2 h-full bg-white dark:bg-slate-800 border-r border-gray-200 dark:bg-gray-800 dark:border-gray-700">
         <ul class="space-y-2">
-            <li class="text-center flex items-center">
+            @foreach (config('menu.list.navigation.admin.dashboard.submenu') as $menu)
+                <li class="text-center flex items-center">
+                    <a href="{{ url($menu['url']) }}" type="button"
+                        class="{{ url()->full() == url($menu['url']) ? 'bg-slate-100' : '' }} items-center p-2 w-full text-base font-normal text-gray-600 rounded-lg transition duration-75 group hover:bg-gray-100 dark:text-white dark:hover:bg-slate-700 dark:bg-slate-600"
+                        aria-controls="dropdown-pages" data-collapse-toggle="dropdown-pages">
+                        <center>
+                            {!!$menu['icon']!!}
+                            <span class="text-left whitespace-nowrap text-xs">{{$menu['title']}}</span>
+                        </center>
+                    </a>
+                </li>
+            @endforeach
+            {{-- <li class="text-center flex items-center">
                 <a href="{{ route('dashboard.active.user') }}" type="button"
                     class="{{ url()->full() == route('dashboard.active.user') ? 'bg-slate-100' : '' }} items-center p-2 w-full text-base font-normal text-gray-600 rounded-lg transition duration-75 group hover:bg-gray-100 dark:text-white dark:hover:bg-slate-700 dark:bg-slate-600"
                     aria-controls="dropdown-pages" data-collapse-toggle="dropdown-pages">
@@ -59,7 +71,7 @@
                         <span class="text-left whitespace-nowrap text-xs">Report</span>
                     </center>
                 </a>
-            </li>
+            </li> --}}
         </ul>
         <ul class="pt-5 mt-5 space-y-2 border-t border-gray-200 dark:border-gray-700">
             <li class="text-center flex items-center">
