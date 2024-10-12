@@ -39,6 +39,7 @@
                                 @livewire('validation-resource.add-contact')
                                 @livewire('validation-resource.add-validation')
                                 @livewire('validation-resource.convert-to-client')
+                                <livewire:contact.export-result-contact />
 
                             </div>
                             <div>

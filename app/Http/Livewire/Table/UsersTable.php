@@ -11,12 +11,13 @@ use Mediconesystems\LivewireDatatables\DateColumn;
 class UsersTable extends LivewireDatatable
 {
     public $model = User::class;
+    public $type = 'user';
 
     public function builder()
     {
         $user = User::query();
-        $role = request()->get('role');
-        if ($role === 'admin') {
+        // $role = $this->type;
+        if ($this->type == "admin") {
             $user->whereHas('super');
         } else {
             $user->whereDoesntHave('super');
@@ -30,7 +31,7 @@ class UsersTable extends LivewireDatatable
         return [
             Column::callback(['name','id'], function ($name, $id) {
                 return view('datatables::link', [
-                    'href' => "/admin/user/" . $id,
+                    'href' => $this->type == "admin" ? "/admin/autor/" . $id : "/admin/user/" . $id,
                     'slot' => $name
                 ]);
             })->label('Name ID')->filterable()->searchable(),

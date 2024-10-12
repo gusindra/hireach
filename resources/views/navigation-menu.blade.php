@@ -1,9 +1,6 @@
 <nav x-data="{ open: false }"
     class="w-full bg-slate-100 lg:bg-white dark:text-white border-b border-gray-100 dark:border-slate-50/[0.06] supports-backdrop-blur:bg-slate-100/60 dark:bg-slate-800 fixed">
-    <!-- Primary Navigation Menu -->
-    <!-- Primary Navigation Menu -->
-    <!-- Primary Navigation Menu -->
-    <!-- Primary Navigation Menu -->
+    <!-- Primary Navigation Menu --> 
     <div class="mx-auto px-4 sm:px-6 lg:px-4">
         <div class="flex justify-between h-16">
             <div class="flex">
@@ -19,21 +16,11 @@
                 <!-- Navigation Links -->
                 <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
                     @if (Auth::user()->activeRole && str_contains(auth()->user()->activeRole->role->name, 'Admin'))
-                        <x-jet-nav-link href="{{ route('admin') }}" :active="request()->routeIs('admin')">
-                            {{ __('Dashboard') }}
-                        </x-jet-nav-link>
-                        <x-jet-nav-link href="{{ route('admin.user') }}" :active="request()->routeIs('admin.user')">
-                            {{ __('User') }}
-                        </x-jet-nav-link>
-                        <x-jet-nav-link href="{{ route('admin.asset') }}" :active="request()->routeIs('admin.asset')">
-                            {{ __('Assets') }}
-                        </x-jet-nav-link>
-                        <x-jet-nav-link href="{{ route('admin.order') }}" :active="request()->routeIs('admin.order')">
-                            {{ __('Order') }}
-                        </x-jet-nav-link>
-                        <x-jet-nav-link href="{{ route('admin.settings') }}" :active="request()->routeIs('admin.settings')">
-                            {{ __('Setting') }}
-                        </x-jet-nav-link>
+                        @foreach (config('menu.list.navigation.admin') as $menu)
+                            <x-jet-nav-link href="{{ route($menu['url']) }}" :active="request()->routeIs($menu['url'])">
+                                {{ __($menu['title']) }}
+                            </x-jet-nav-link>
+                        @endforeach   
                     @else
                         <x-jet-nav-link href="{{ route('dashboard') }}" :active="request()->routeIs('dashboard')">
                             {{ __('Dashboard') }}
@@ -213,14 +200,16 @@
 
                             <x-jet-dropdown-link href="{{ route('profile.show') }}">
                                 {{ __('Profile') }}
-                            </x-jet-dropdown-link>
-                            @if (balance(auth()->user()) > 0)
+                            </x-jet-dropdown-link> 
+
+                            @if (balance(auth()->user()) > 0 && auth()->user()->activeRole->role->name!='Super Admin')
                                 <x-jet-dropdown-link href="{{ route('payment.deposit') }}"
                                     class="flex justify-between">
                                     <span>{{ __('Balance') }}</span> <small>Rp
                                         {{ number_format(balance(auth()->user())) }}</small>
                                 </x-jet-dropdown-link>
                             @endif
+
                             @if (Auth::user()->hasTeamRole(Auth::user()->currentTeam, 'admin'))
                                 @if (auth()->user()->currentTeam &&
                                         Laravel\Jetstream\Jetstream::hasApiFeatures() &&

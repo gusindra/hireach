@@ -128,16 +128,16 @@ class User extends Authenticatable
     /**
      * User Has many Team
      *
-     * @return TeamUser
+     * @return mixed
      */
     public function super()
     {
-        return $this->hasMany('App\Models\TeamUser', 'user_id')->where('team_id', env('IN_HOUSE_TEAM_ID'));
+        return $this->hasMany('App\Models\TeamUser', 'user_id')->where('team_id', env('IN_HOUSE_TEAM_ID', 1));
     }
 
     public function isNoAdmin()
     {
-        return $this->hasOne('App\Models\TeamUser', 'user_id')->where('team_id', '!=', env('IN_HOUSE_TEAM_ID'));
+        return $this->hasOne('App\Models\TeamUser', 'user_id')->where('team_id', '!=', env('IN_HOUSE_TEAM_ID', 1));
     }
 
 

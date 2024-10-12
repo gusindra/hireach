@@ -6,6 +6,18 @@
     </x-slot>
 
     <div class="grid grid-cols-12">
+        @if( Route::currentRouteName() == 'admin.asset' )
+            @includeWhen(auth()->user()->isSuper || str_contains(auth()->user()->activeRole->role->name, 'Admin'),
+                'menu.admin-menu-asset',
+                []
+            )
+        @else
+            @includeWhen(auth()->user()->isSuper || str_contains(auth()->user()->activeRole->role->name, 'Admin'),
+                'menu.admin-menu-user',
+                []
+            )
+        @endif
+        
         @includeWhen(auth()->user()->isSuper || str_contains(auth()->user()->activeRole->role->name, 'Admin'),
             'menu.admin-menu-user',
             []
@@ -14,8 +26,8 @@
         <div class="col-span-12 px-3 lg:ml-24 mt-2">
             <div class="bg-white dark:bg-slate-600 overflow-hidden shadow-xl sm:rounded-lg">
                 <div class="mx-auto">
-                    <div class="flex justify-between">
-                        <div class="p-4">
+                    <div class="flex gap-3 p-3 justify-between">
+                        <div class="p-4 hidden">
                             <form method="GET" action="{{ route('admin.department.get')}}">
                                 @csrf
                                 <div>
@@ -32,7 +44,8 @@
                                 </div>
                             </form>
                         </div>
-                        @livewire('contact.search')
+                        @livewire('department.update')
+                        @livewire('department.setting-contact')
 
                     </div>
                     <div class="m-3">
