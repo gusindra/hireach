@@ -6,6 +6,18 @@
     </x-slot>
 
     <div class="grid grid-cols-12">
+        @if( Route::currentRouteName() == 'admin.asset' )
+            @includeWhen(auth()->user()->isSuper || str_contains(auth()->user()->activeRole->role->name, 'Admin'),
+                'menu.admin-menu-asset',
+                []
+            )
+        @else
+            @includeWhen(auth()->user()->isSuper || str_contains(auth()->user()->activeRole->role->name, 'Admin'),
+                'menu.admin-menu-user',
+                []
+            )
+        @endif
+        
         @includeWhen(auth()->user()->isSuper || str_contains(auth()->user()->activeRole->role->name, 'Admin'),
             'menu.admin-menu-user-profile',
             []

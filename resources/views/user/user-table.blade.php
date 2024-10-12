@@ -7,25 +7,36 @@
 
     <div class="grid grid-cols-12">
         @if( Route::currentRouteName() == 'admin.asset' )
-        @includeWhen(auth()->user()->isSuper || str_contains(auth()->user()->activeRole->role->name, 'Admin'),
-            'menu.admin-menu-asset',
-            []
-        )
+            @includeWhen(auth()->user()->isSuper || str_contains(auth()->user()->activeRole->role->name, 'Admin'),
+                'menu.admin-menu-asset',
+                []
+            )
+        @elseif( Route::currentRouteName() == 'admin.autor' )
+            @includeWhen(auth()->user()->isSuper || str_contains(auth()->user()->activeRole->role->name, 'Admin'),
+                'menu.admin-menu-setting',
+                []
+            ) 
+            @includeWhen(auth()->user()->isSuper || (auth()->user()->team && str_contains(auth()->user()->activeRole->role->name, 'Admin')),
+                'menu.admin-submenu',
+                []
+            )
         @else
-        @includeWhen(auth()->user()->isSuper || str_contains(auth()->user()->activeRole->role->name, 'Admin'),
-            'menu.admin-menu-user',
-            []
-        )
+            @includeWhen(auth()->user()->isSuper || str_contains(auth()->user()->activeRole->role->name, 'Admin'),
+                'menu.admin-menu-user',
+                []
+            )
         @endif
-        <div class="col-span-12 px-3 lg:ml-24 mt-2">
-            <div class="bg-white dark:bg-slate-600 overflow-hidden shadow-xl sm:rounded-lg">
+
+        
+        
+        <div class="col-span-12 px-2 lg:ml-24">
+            <div class="bg-white dark:bg-slate-600 overflow-hidden shadow-sm sm:rounded-sm border-l border-r border-b pb-4">
                 <div class="mx-auto"> 
                     <div class="p-4">
                         @livewire('user.add', ['role' => request()->get('role')])
                     </div> 
-                    {{request()->get('role')}}
                     <div class="m-3">
-                        <livewire:table.users-table searchable="id, name, email, phone" exportable />
+                        <livewire:table.users-table :type="Route::currentRouteName()=='admin.autor' ? 'admin':'user'" searchable="id, name, email, phone" exportable />
                         {{-- <livewire:table.client-datatables searchable="name, email, gender" exportable /> --}}
                         {{-- <livewire:table.team-table searchable="name, email, gender" exportable /> --}}
                     </div>

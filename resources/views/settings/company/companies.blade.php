@@ -8,7 +8,7 @@
         )
         <div class="col-span-12 px-3 lg:ml-24 mt-2  mb-14">
             <div class="grid grid-cols-4 gap-4">
-                <div class="col-span-3 space-y-6">
+                <div class="col-span-4 space-y-6">
                     <div class="bg-white dark:bg-slate-600  overflow-hidden shadow-md sm:rounded-lg">
                         <div class="mx-auto">
                             <div class="">
@@ -41,14 +41,7 @@
                             </div>
                         </div>
                     </div>
-                </div>
-                <div class="bg-white dark:bg-slate-600  overflow-hidden sm:rounded-lg">
-                    <div class="mx-auto">
-                        <div class="">
-                            @livewire('setting.add')
-                        </div>
-                    </div>
-                </div>
+                </div> 
             </div>
         </div>
     </div>
