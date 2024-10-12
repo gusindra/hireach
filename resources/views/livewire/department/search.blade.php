@@ -1,8 +1,8 @@
 <div>
-    <div class="flex items-center text-right">
-        <x-jet-button wire:click="actionShowModal">
+    <div class="flex items-center text-right p-3">
+        <x-add-button wire:click="actionShowModal">
             {{ __('Add Contact to Department') }}
-        </x-jet-button>
+        </x-add-button>
     </div>
 
     <!-- Form Action Modal -->
@@ -42,13 +42,13 @@
                     @if(count($data)>0)
                         @foreach($data as $da)
                         <tr>
-                            <td class="flex gap-8"><input wire:model.debunce.800ms="selectContact" id="contact-{{$da->id}}" type="radio" name="contact" value="{{$da->id}}" /><label for="contact-{{$da->id}}"><b>{{$da->name}}</b> ({{$da->phone}} - {{$da->email}})</label></td>
+                            <td class="flex gap-2"><input wire:model.debunce.800ms="selectContact" id="contact-{{$da->id}}" type="radio" name="contact" value="{{$da->id}}" /><label for="contact-{{$da->id}}"><b>{{$da->name}}</b> ({{$da->phone}} - {{$da->email}})</label></td>
                             <td><img class="h-8" src="{{$da->profile_photo_url}}" /></td>
                         </tr>
                         @endforeach
                     @else
                         <tr>
-                            <td class="flex gap-8"><input wire:model.debunce.800ms="new" id="contact-new" type="checkbox" name="contact" value="0" /><label for="contact-0">New Contact</label></td>
+                            <td class="flex gap-2"><input wire:model.debunce.800ms="new" id="contact-new" type="checkbox" name="contact" value="0" /><label for="contact-0">New Contact</label></td>
                             <td></td>
                         </tr>
                     @endif

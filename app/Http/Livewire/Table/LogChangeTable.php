@@ -12,7 +12,6 @@ class LogChangeTable extends LivewireDatatable
     {
         return LogChange::query()->with('user')->orderBy('created_at', 'desc');
     }
-
     public function columns()
     {
         return [
@@ -27,7 +26,7 @@ class LogChangeTable extends LivewireDatatable
                 return $model;
             })->label('Model')->searchable()->filterable(),
             Column::name('model_id')->label('Model ID')->filterable(),
-            Column::name('before')->label('Before')->filterable(),
+            Column::name('before')->truncate(150)->label('Before')->filterable(),
             Column::callback(['user_id'], function ($id) {
                 return view('datatables::link', [
                     'href' => "/admin/user/" . $id,

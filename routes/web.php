@@ -79,6 +79,7 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
         // Route::resource('users', 'Backend\UserController');
         Route::get('/autor', [UserController::class, 'index'])->name('admin.autor');
         Route::get('/autor/{user}', [UserController::class, 'show'])->name('autor.show');
+        Route::get('/autor/{user}/profile', [UserController::class, 'profile'])->name('autor.show.profile');
         Route::get('/user', [UserController::class, 'index'])->name('admin.user');
         Route::get('/user/{user}', [UserController::class, 'show'])->name('user.show');
         Route::get('/user/{user}/balance', [UserController::class, 'balance'])->name('user.show.balance');
@@ -92,6 +93,8 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
         Route::get('/user/{user}/dept/{dept}', [UserController::class, 'departmentClient'])->name('user.show.dept.client');
 
         Route::get('/department', [UserController::class, 'listDepartment'])->name('admin.department');
+        Route::get('/department/{dept}', [UserController::class, 'listDepartment'])->name('admin.department.profile');
+        Route::get('/department/{dept}/message', [UserController::class, 'listDepartment'])->name('admin.department.message');
         
         Route::get('/asset', [UserController::class, 'contact'])->name('admin.asset');
         
@@ -102,7 +105,7 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
 
         // Route::get('/settings/clear-cache', 'Backend\SettingController@clearCache')->name('settings.clear-cache');
         // Route::get('/settings/rebuild-cache', 'Backend\SettingController@rebuildCache')->name('settings.rebuild-cache');
-        //Route::resource('settings', 'Backend\SettingController', ['only' => ['index', 'update']]);
+        // Route::resource('settings', 'Backend\SettingController', ['only' => ['index', 'update']]);
 
         Route::get('/user-billing', [UserBillingController::class, 'index'])->name('user.billing.index');
         Route::get('/user-billing/generate', [UserBillingController::class, 'generate'])->name('user.billing.generate');
@@ -129,6 +132,8 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
 
         Route::get('/flow/{model}', [FlowController::class, 'show'])->name('flow.show');
 
+        Route::get('/order', [OrderController::class, 'index'])->name('admin.order');
+        Route::get('/order/filter/{type}', [OrderController::class, 'index'])->name('admin.order.filter'); 
         Route::get('/order', [OrderController::class, 'index'])->name('admin.order');
         Route::get('/order/{order}', [OrderController::class, 'show'])->name('show.order');
 

@@ -14,7 +14,7 @@ use Mediconesystems\LivewireDatatables\DateColumn;
 class NotificationTable extends LivewireDatatable
 {
     public $model = Notice::class;
-public $noticeId;
+    public $noticeId;
 
     public $filterDate = null;
     public $statusFilter = 'All';
@@ -23,7 +23,7 @@ public $noticeId;
     /**
      * builder
      *
-     * @return void
+     * @return mixed
      */
     public function builder()
     {
@@ -54,7 +54,7 @@ public $noticeId;
      * deleteNotification
      *
      * @param  mixed $id
-     * @return void
+     * @return mixed
      */
     public function deleteNotification($id)
     {
@@ -72,23 +72,21 @@ public $noticeId;
     {
         $this->emit('refreshLivewireDatatable');
     }
-public function delete($id)
-{
-    $notification = Notice::where('id', $id)
-                          ->whereNull('deleted_at')
-                          ->first();
+    public function delete($id)
+    {
+        $notification = Notice::where('id', $id)
+                            ->whereNull('deleted_at')
+                            ->first();
 
-    if ($notification) {
-        $notification->update(['status' => 'deleted']);
-        $notification->delete();
+        if ($notification) {
+            $notification->update(['status' => 'deleted']);
+            $notification->delete();
 
-        $this->emit('updateSavedQueries', $this->getSavedQueries());
-    } else {
-        return redirect(request()->header('Referer'));
+            $this->emit('updateSavedQueries', $this->getSavedQueries());
+        } else {
+            return redirect(request()->header('Referer'));
+        }
     }
-}
-
-
     public function getSavedQueries()
     {
         return Notice::query()->find($this->noticeId);

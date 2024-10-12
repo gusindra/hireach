@@ -10,9 +10,9 @@
                 'menu.admin-menu-asset',
                 []
             )
-        @elseif( Route::currentRouteName() == 'autor.show' )
+        @elseif( Route::currentRouteName() == 'autor.show' || Route::currentRouteName() == 'autor.show.profile' )
             @includeWhen(auth()->user()->isSuper || str_contains(auth()->user()->activeRole->role->name, 'Admin'),
-                'menu.admin-menu-setting',
+                'menu.admin-menu',
                 []
             ) 
         @else

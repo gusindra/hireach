@@ -19,7 +19,7 @@
         @endif
         
         @includeWhen(auth()->user()->isSuper || str_contains(auth()->user()->activeRole->role->name, 'Admin'),
-            'menu.admin-menu-user-profile',
+            'menu.admin-submenu',
             []
         )
 

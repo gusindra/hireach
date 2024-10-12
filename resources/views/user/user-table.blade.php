@@ -13,13 +13,9 @@
             )
         @elseif( Route::currentRouteName() == 'admin.autor' )
             @includeWhen(auth()->user()->isSuper || str_contains(auth()->user()->activeRole->role->name, 'Admin'),
-                'menu.admin-menu-setting',
+                'menu.admin-menu',
                 []
             ) 
-            @includeWhen(auth()->user()->isSuper || (auth()->user()->team && str_contains(auth()->user()->activeRole->role->name, 'Admin')),
-                'menu.admin-submenu',
-                []
-            )
         @else
             @includeWhen(auth()->user()->isSuper || str_contains(auth()->user()->activeRole->role->name, 'Admin'),
                 'menu.admin-menu-user',
@@ -27,8 +23,6 @@
             )
         @endif
 
-        
-        
         <div class="col-span-12 px-2 lg:ml-24">
             <div class="bg-white dark:bg-slate-600 overflow-hidden shadow-sm sm:rounded-sm border-l border-r border-b pb-4">
                 <div class="mx-auto"> 

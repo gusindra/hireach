@@ -6,14 +6,14 @@
                 @if(count($user->super)>0) 
                 @php $type='admin' @endphp
                 @endif
-                @foreach (config('menu.list.subnavigation.admin.user-profile') as $menu)
+                @foreach (config('menu.list.tabmenu.admin.user-profile') as $menu)
                     <li class="me-2"> 
                         @if(str_contains($menu['type'], $type)) 
                             <a href="{{ route($menu['url'], $user->id) }}" type="button"
                                 class="{{ url()->full() != route($menu['url'], $user->id) ? 'bg-slate-100 text-slate-800 hover:bg-white border border-gray-100' : 'border-l border-r border-t border-gray-100 hover:bg-white' }} inline-block py-3 px-4 rounded-t-lg hover:text-gray-600 dark:hover:bg-gray-800 dark:hover:text-gray-300"
                                 aria-controls="dropdown-pages" data-collapse-toggle="dropdown-pages">
                                 <center> 
-                                    <span class="text-left whitespace-nowrap text-xs">{{$menu['title']}}</span></span>
+                                    <span class="text-left whitespace-nowrap text-sm font-bold">{{$menu['title']}}</span></span>
                                 </center>
                             </a>
                         @endif
