@@ -2,6 +2,7 @@
 
 namespace App\Http\Livewire\Provider;
 
+use App\Models\CommerceItem;
 use App\Models\Provider;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Livewire\Component;
@@ -17,7 +18,10 @@ class Edit extends Component
     public $channel;
     public $uuid;
     public $modalDeleteVisible = false;
-
+    public $selectedSku;
+    public $selectedChannels = [];
+    public $commerceItem;
+    public $item;
     /**
      * mount
      *
@@ -33,6 +37,9 @@ class Edit extends Component
         $this->company = $this->provider->company;
         $this->channel = $this->provider->channel;
         $this->status = $this->provider->status;
+        $this->commerceItem = CommerceItem::all();
+        $this->selectedChannels = explode(',', $this->provider->channel);
+
     }
 
     /**
@@ -121,6 +128,33 @@ class Edit extends Component
     }
 
 
+    public function updatedSelectedSku($value)
+    {
+        $value = strtoupper($value);
+
+        if ($value && !in_array($value, $this->selectedChannels)) {
+            $this->selectedChannels[] = $value;
+            $this->saveChannel();
+        }
+
+        $this->selectedSku = null;
+    }
+
+    public function removeChannel($sku)
+    {
+        $this->selectedChannels = array_filter($this->selectedChannels, function ($item) use ($sku) {
+            return $item !== $sku;
+        });
+
+        $this->saveChannel();
+    }
+
+    public function saveChannel()
+    {
+        $this->provider->channel = implode(',', $this->selectedChannels);
+        $this->provider->save();
+    }
+
     /**
      * render
      *
@@ -130,4 +164,5 @@ class Edit extends Component
     {
         return view('livewire.provider.edit');
     }
+
 }

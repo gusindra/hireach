@@ -28,7 +28,8 @@ class CommerceItem extends Model
         'way_import',
         'status',
         'product_line',
-        'user_id'
+        'user_id',
+        'operator_id'
     ];
 
     public static $searchable=[
@@ -57,4 +58,9 @@ class CommerceItem extends Model
         return $this->hasMany('App\Models\Stock', 'product_id');
     }
 
+
+    public function operator()
+    {
+        return $this->belongsTo(OperatorPhoneNumber::class, 'operator_id');
+    }
 }
