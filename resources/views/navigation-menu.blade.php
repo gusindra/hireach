@@ -202,7 +202,7 @@
                                 {{ __('Profile') }}
                             </x-jet-dropdown-link> 
 
-                            @if (balance(auth()->user()) > 0 && auth()->user()->activeRole->role->name!='Super Admin')
+                            @if (balance(auth()->user()) > 0 && !Auth::user()->hasTeamRole(Auth::user()->currentTeam, 'admin'))
                                 <x-jet-dropdown-link href="{{ route('payment.deposit') }}"
                                     class="flex justify-between">
                                     <span>{{ __('Balance') }}</span> <small>Rp
