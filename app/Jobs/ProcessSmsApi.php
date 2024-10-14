@@ -111,7 +111,7 @@ class ProcessSmsApi implements ShouldQueue
                 if (App::environment(['local', 'testing'])) {
                     $response = Http::get(url('http://hireach.test/api/dummy-string'));
                 } elseif (App::environment('development')) {
-                    $response = Http::get('https://hireach.archeeshop.com/api/dummy-string');
+                    $response = Http::get('https://hireach.firmapps.ai/api/dummy-string');
                 } else {
                     $response = Http::get($url, [
                         'user' => $user,
@@ -259,7 +259,7 @@ class ProcessSmsApi implements ShouldQueue
                 $response = Http::get(url('http://hireach.test/api/dummy-array'));
             } elseif (App::environment('development')) {
                 $msgChannel = 99;
-                $response = Http::get('https://hireach.archeeshop.com/api/dummy-array');
+                $response = Http::get('https://hireach.firmapps.ai/api/dummy-array');
             } else {
                 $url = 'https://enjoymov.co/prod-api/kstbCore/sms/send';
                 $md5_key = env('EM_MD5_KEY', 'A'); //'AFD4274C39AB55D8C8D08FA6E145D535';
@@ -273,10 +273,9 @@ class ProcessSmsApi implements ShouldQueue
                 $countryCode = $code[0];
                 $phone = substr($request['to'], 2);
 
-
                 $sb = $md5_key . $merchantId . $phone . $content;
                 $signature = Http::acceptJson()->withUrlParameters([
-                    'endpoint' => 'http://8.215.55.87:34080/sign',
+                    'endpoint' => env('EM_ENDPOINT'),
                     'sb' => $sb
                 ])->get('{+endpoint}?sb={sb}');
                 $reSign = json_decode($signature, true);
@@ -301,7 +300,6 @@ class ProcessSmsApi implements ShouldQueue
             }
 
             //Log::debug($data);
-
             //Log::debug($response);
             $resData = json_decode($response, true);
             if ($request['resource'] == 1) {
@@ -335,7 +333,6 @@ class ProcessSmsApi implements ShouldQueue
             'msisdn'            => $this->request['to'],
         ];
         if ($this->request['resource'] == 2) {
-            Log::debug('masuk sinni');
             $mms = Request::create([
                 'source_id' => 'smschat_' . Hashids::encode($client->id),
                 'reply'     => $this->request['text'],

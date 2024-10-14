@@ -26,7 +26,7 @@ class PhoneNumberImport implements ToModel
      */
     public function model(array $row)
     {
-        Log::debug($this->type);
+        //Log::debug($this->type);
         $phone_number = $row[0] ?? null;
 
         if (empty($phone_number)) {

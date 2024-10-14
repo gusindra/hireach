@@ -14,7 +14,7 @@ class ClientValidationObserver
      */
     public function created(ClientValidation $clientValidation)
     {
-        //
+        //PROCESS PENGURANGAN SALDO KETIKA PEMBUATAN DATA JIKA CONTACT SUDAH VALID
     }
 
     /**
