@@ -4,6 +4,8 @@ namespace App\Http\Livewire\User;
 
 use App\Models\BillingUser;
 use App\Models\Client;
+use App\Models\Role;
+use App\Models\RoleUser;
 use App\Models\Team;
 use App\Models\User;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
@@ -23,23 +25,32 @@ class Add extends Component
     public $model;
     public $role;
     public $source;
+
+    public $roleId;
     public $showClients = false;
     public $is_modal = true;
 
 
+    public $roles;
+
     public function mount($role, $model = null)
     {
+        
+
+        $roles = Role::all();
+
         if ($model != null) {
             $this->showClients = true;
         }
 
+        $this->roles = $roles;
         $this->role = $role;
     }
 
     public function rules()
     {
         return [
-            'input.name' => 'required', 
+            'input.name' => 'required',
             'input.password' => 'required',
         ];
     }
@@ -51,6 +62,7 @@ class Add extends Component
      */
     public function createUser()
     {
+
         $this->validate();
         User::create($this->modelData());
         $this->modalActionVisible = false;
@@ -65,11 +77,21 @@ class Add extends Component
      */
     public function create()
     {
+
+
         $this->authorize('CREATE_USER', 'USER');
         $this->validate();
 
         $user = User::create($this->modelData());
         $team = Team::find(1);
+
+
+        RoleUser::create([
+            'user_id' => $user->id,
+            'role_id' => $this->roleId,
+            'team_id' => $team->id,
+        ]);
+
         $newTeamMember = Jetstream::findUserByEmailOrFail($user->email);
         $team->users()->attach(
             $newTeamMember,
@@ -112,6 +134,7 @@ class Add extends Component
         $this->modalActionVisible = false;
         $this->resetForm();
         $this->emit('refreshLivewireDatatable');
+
     }
 
     public function generatePassword()
@@ -124,6 +147,7 @@ class Add extends Component
         $data = [
             'name' => $this->input['name'],
             'email' => $this->input['email'],
+            'roleId' => $this->roleId,
             'password' => Hash::make($this->input['password']),
         ];
         return $data;
