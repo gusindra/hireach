@@ -49,7 +49,7 @@
         </x-slot>
 
         <x-slot name="form">
-            <div class="col-span-6 grid grid-cols-2">
+            <div class="col-span-6 flex flex-col">
                 <!-- Provider Code -->
                 <div class="col-span-12 sm:col-span-1">
                     <x-jet-label for="code" value="{{ __('Code') }}" />
@@ -60,7 +60,7 @@
             </div>
 
 
-            <div class="col-span-6 grid grid-cols-2">
+            <div class="col-span-6 flex flex-col">
                 <!-- Provider Name -->
                 <div class="col-span-12 sm:col-span-1">
                     <x-jet-label for="name" value="{{ __('Name') }}" />
@@ -70,7 +70,7 @@
                 </div>
             </div>
 
-            <div class="col-span-6 grid grid-cols-2">
+            <div class="col-span-6 flex flex-col">
                 <!-- Provider Company -->
                 <div class="col-span-12 sm:col-span-1">
                     <x-jet-label for="company" value="{{ __('Company') }}" />
@@ -81,15 +81,36 @@
             </div>
 
 
-            <div class="col-span-6 grid grid-cols-2">
+            <div class="col-span-6 flex flex-col">
                 <!-- Provider Channel -->
                 <div class="col-span-12 sm:col-span-1">
                     <x-jet-label for="channel" :value="__('Channel')" />
-                    <x-jet-input id="channel" type="text" class="mt-1 block w-full" wire:model="channel"
-                        wire:model.defer="channel" wire:model.debunce.800ms="channel" />
+                    <select id="channel" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" wire:model="selectedSku">
+                        <option value="">{{ __('Select a Channel') }}</option>
+                        @foreach($commerceItem as $item)
+                            @if(!in_array($item->sku, $selectedChannels))
+                                <option value="{{ $item->sku }}">{{ strtoupper($item->sku) }}</option>
+                            @endif
+                        @endforeach
+                    </select>
                     <x-jet-input-error for="channel" class="mt-2" />
                 </div>
+
+                <div class="flex w-full flex-nowrap overflow-x-auto gap-3 mt-4">
+                    @foreach($selectedChannels as $sku)
+                        <!-- Item Tag -->
+                        <div class="flex items-center rounded-lg bg-blue-100 px-4 py-2 text-black shadow whitespace-nowrap">
+                            <span class="text-sm">{{ $sku }}</span>
+                            <button wire:click="removeChannel('{{ $sku }}')" class="ml-2 flex h-6 w-6 items-center justify-center rounded-md bg-red-500 text-white hover:bg-red-600 focus:outline-none">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                                </svg>
+                            </button>
+                        </div>
+                    @endforeach
+                </div>
             </div>
+
 
 
 
