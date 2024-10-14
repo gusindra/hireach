@@ -1,12 +1,12 @@
  <div class="mx-auto">
      <!-- Settings List -->
 
-     <div class="bg-white shadow rounded-lg p-6">
+     <div class="bg-white dark:bg-slate-600 shadow rounded-lg p-6">
          <h1 class="font-bold">Data General Setting</h1>
 
          <div class="overflow-x-auto mt-4">
-             <table class="min-w-full bg-white shadow-md rounded-lg overflow-hidden">
-                 <thead class="bg-gray-50 text-slate-600">
+             <table class="min-w-full bg-white dark:bg-slate-500 shadow-md rounded-lg overflow-hidden">
+                 <thead class="bg-gray-50 dark:bg-slate-500 text-slate-600">
                      <tr>
                          <th class="w-1/4 py-2 px-4 text-left">Key</th>
                          <th class="w-1/2 py-2 px-4 text-left">Value</th>

@@ -46,12 +46,19 @@ class SettingController extends Controller
         if ($page == "company") {
             return view('settings.company.companies', ['page' => $page]);
         }
+        if ($page == "general") {
+            return view('settings.general', ['page' => $page]);
+        }
         return view('role.role-detail', ['page' => $page]);
     }
 
-    public function company()
+    public function company(Request $request)
     {
-        return view('settings.company.companies');
+        return $request;
+        if($request->page=='price'){
+            return view('settings.company.companies');
+        }
+        return view('settings.general');
     }
 
     public function logChange()

@@ -11,12 +11,12 @@
     <!-- Form Action Modal -->
     <x-jet-dialog-modal wire:model="modalActionVisible">
         <x-slot name="title">
-            {{ __('New User') }}
+            {{ __('Add new user') }}
         </x-slot>
 
         <x-slot name="content">
             <div class="col-span-6 sm:col-span-4 p-3">
-                <x-jet-label for="input.name" value="{{ __('Name') }}" />
+                <x-jet-label for="input.name" value="{{ __('Full Name') }}" />
                 <x-jet-input id="input.name" type="text" class="mt-1 block w-full"
                     wire:model.debunce.800ms="input.name" autofocus />
                 <x-jet-input-error for="input.name" class="mt-2" />
@@ -66,7 +66,7 @@
                 <div class="col-span-1">
                     <x-jet-secondary-button class="mt-6 py-3" wire:click="generatePassword"
                         wire:loading.attr="disabled">
-                        {{ __('Auto Password') }}
+                        {{ __('Generate Random') }}
                     </x-jet-secondary-button>
                 </div>
             </div>

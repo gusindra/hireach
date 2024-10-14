@@ -39,9 +39,9 @@ class UserController extends Controller
     {
         if ($request->has('v')) {
             return view('main-side.user');
-        }
-        //return view('user.company-table');
+        } 
         return view('user.user-table');
+        // return view('user.admin-table');
     }
 
     /**

@@ -34,7 +34,7 @@ class Edit extends Component
         'input.name' => 'required|string|max:255',
         'input.type' => 'required|string|max:255',
         'input.unit' => 'required|max:50',
-        'input.status' => 'required|string|max:50',
+        'input.status' => 'required',
         'input.unit_price' => 'required|numeric',
         'input.spec' => 'nullable|string|max:255',
         'input.description' => 'nullable|string',

@@ -73,13 +73,12 @@
                         <x-jet-input-error for="status" class="mt-2" />
                     </div>
 
-                    <!-- Unit Price -->
-                    <div class="col-span-12 sm:col-span-1 p-3">
+                    {{-- <div class="col-span-12 sm:col-span-1 p-3">
                         <x-jet-label for="way_import" value="{{ __('Way Import') }}" />
                         <x-jet-input id="way_import" type="text" class="mt-1 block w-full"
                             wire:model.debounce.800ms="input.way_import" autofocus />
                         <x-jet-input-error for="way_import" class="mt-2" />
-                    </div>
+                    </div> --}}
                 </div>
 
 
@@ -169,27 +168,24 @@
         </x-slot>
 
         <x-slot name="form">
-            <div class="col-span-6 grid grid-cols-2">
-                <div class="col-span-12 sm:col-span-1">
-                    <x-jet-label for="sku" value="{{ __('SKU') }}" />
-                    <x-jet-input id="sku" type="text" class="mt-1 block w-full" wire:model="input.sku"
-                        wire:model.defer="input.sku" wire:model.debunce.800ms="input.sku" />
-                    <x-jet-input-error for="input.sku" class="mt-2" />
-                </div>
-                <div class="col-span-12 sm:col-span-1 mx-4">
-                    <x-jet-label for="type" value="{{ __('Status') }}" />
-                    <select name="status" id="status"
-                        class="border-gray-300 dark:bg-slate-800 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 rounded-md shadow-sm mt-1 block w-full"
-                        wire:model.debunce.800ms="input.status">
-                        <option selected>-- Select Status --</option>
-                        <option value="draft">Draft</option>
-                        <option value="active">Active</option>
-                        <option value="compleated">Disabled</option>
-                    </select>
-                    <x-jet-input-error for="input.status" class="mt-2" />
-                </div>
+            <div class="col-span-6 sm:col-span-4"> 
+                <x-jet-label for="type" value="{{ __('Status') }}" />
+                <select name="status" id="status"
+                    class="border-gray-300 dark:bg-slate-800 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 rounded-md shadow-sm mt-1 block w-full"
+                    wire:model.debunce.800ms="input.status">
+                    <option selected>-- Select Status --</option>
+                    <option value="null">Draft</option>
+                    <option value="1">Active</option>
+                    <option value="0">Disabled</option>
+                </select>
+                <x-jet-input-error for="input.status" class="mt-2" /> 
             </div>
-
+            <div class="col-span-6 sm:col-span-4"> 
+                <x-jet-label for="sku" value="{{ __('SKU') }}" />
+                <x-jet-input id="sku" type="text" class="mt-1 block w-full" wire:model="input.sku"
+                    wire:model.defer="input.sku" wire:model.debunce.800ms="input.sku" />
+                <x-jet-input-error for="input.sku" class="mt-2" /> 
+            </div>
             <div class="col-span-6 sm:col-span-4">
                 <x-jet-label for="type" value="{{ __('Type') }}" />
                 <select name="type" id="type"
@@ -205,7 +201,7 @@
                 <x-jet-input-error for="input.type" class="mt-2" />
             </div>
 
-            <div class="col-span-6 sm:col-span-4">
+            {{-- <div class="col-span-6 sm:col-span-4">
                 <x-jet-label for="import" value="{{ __('Import') }}" />
                 <select name="import" id="import"
                     class="border-gray-300 dark:bg-slate-800 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 rounded-md shadow-sm mt-1 block w-full"
@@ -216,7 +212,7 @@
                     <option value="ddp">DDP (Delivered Duty Paid)</option>
                 </select>
                 <x-jet-input-error for="input.way_import" class="mt-2" />
-            </div>
+            </div> --}}
 
         </x-slot>
 
