@@ -40,19 +40,19 @@
                                                     <td class="w-full px-6 py-4 text-sm whitespace-no-wrap">
                                                         <div class="">
                                                             <div class="grid grid-cols-4 gap-4">
-                                                                <span class="text-gray-400">
+                                                                <span class="text-gray-400 text-xs">
                                                                     Provider Code
                                                                 </span>
 
-                                                                <span class="text-gray-400">
+                                                                <span class="text-gray-400 text-xs">
                                                                     Name
                                                                 </span>
 
-                                                                <span class="text-gray-400">
+                                                                <span class="text-gray-400 text-xs">
                                                                     Channel
                                                                 </span>
 
-                                                                <span class="text-gray-400"> 
+                                                                <span class="text-gray-400 text-xs"> 
                                                                     From / Sender ID
                                                                 </span>
                                                             </div>
@@ -60,7 +60,7 @@
                                                     </div>
                                                 </td>
                                                 <td class="flex items-center justify-end px-4 py-3 text-right sm:px-6">
-                                                    <div class="flex items-center">
+                                                    <div class="flex items-center text-gray-400 text-xs">
                                                         Action
                                                     </div>
                                                 </td>
@@ -154,8 +154,9 @@
             <div>
                 <x-jet-label for="from" value="{{ __('From/Sender ID') }}" />
                 <x-jet-input id="from" type="text" class="mt-1 block w-full"
-                    wire:model.debunce.800ms="input.from" autofocus />
-                <x-jet-input-error for="from" class="mt-2" />
+                    wire:model.debunce.800ms="input.from" autofocus placeholder="noreply@firmapps.ai" />
+                <x-input-helper value="Optional if already have Sender ID for SMS/WABA or register email address. Keep blank for using default setting." />
+                <x-jet-input-error for="from" class="mt-2" /> 
             </div>
         </div>
 

@@ -339,11 +339,11 @@ return [
                     //     'title' => 'Requests',
                     //     'type' => 'user'
                     // ],
-                    // '7' => [
-                    //     'url' =>  'user.show.order' ,
-                    //     'title' => 'Order',
-                    //     'type' => 'user'
-                    // ],
+                    '7' => [
+                        'url' =>  'admin.quotation' ,
+                        'title' => 'Quotation',
+                        'type' => 'user'
+                    ],
                     '8' => [
                         'url' =>  'user.show.order' ,
                         'title' => 'Campaign',

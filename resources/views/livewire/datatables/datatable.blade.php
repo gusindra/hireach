@@ -190,7 +190,7 @@
 
         @unless($this->hidePagination)
             <div class="max-w-screen bg-white @unless($complex) rounded-b-lg @endunless border-4 border-t-0 border-b-0 @if($this->activeFilters) border-blue-500 @else border-transparent @endif">
-                <div class="items-center justify-between p-2 sm:flex">
+                <div class="items-center justify-between p-2 sm:flex dark:bg-slate-600 dark:text-white">
                     {{-- check if there is any data --}}
                     @if(count($this->results))
                         <div class="flex items-center my-2 sm:my-0">
@@ -212,7 +212,7 @@
                             </div>
                         </div>
 
-                        <div class="flex justify-end text-gray-600">
+                        <div class="flex justify-end text-gray-600 dark:text-white">
                             {{__('Results')}} {{ $this->results->firstItem() }} - {{ $this->results->lastItem() }} {{__('of')}}
                             {{ $this->results->total() }}
                         </div>
