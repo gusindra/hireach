@@ -28,6 +28,8 @@
                 <x-jet-input-error for="input.email" class="mt-2" />
             </div>
 
+
+
             @if ($role==="admin")
 
             <div class="col-span-6 sm:col-span-4 p-3">
@@ -43,7 +45,7 @@
 
                 <x-jet-input-error for="role" class="mt-2" />
             </div>
-            @endif
+          @endif
 
 
             <div class="col-span-6 sm:col-span-4 p-3 grid grid-cols-3 gap-3">

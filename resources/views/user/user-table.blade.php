@@ -27,7 +27,11 @@
             <div class="bg-white dark:bg-slate-600 overflow-hidden shadow-sm sm:rounded-sm border-l border-r border-b pb-4">
                 <div class="mx-auto">
                     <div class="p-4">
-                        @livewire('user.add', ['role' => request()->get('role')])
+                        @if (Route::currentRouteName()=='admin.autor')
+                        @livewire('user.add', ['role' => 'admin'])
+                        @else
+                        @livewire('user.add', ['role' => 'user'])
+                        @endif
                     </div>
                     <div class="m-3">
                         <livewire:table.users-table :type="Route::currentRouteName()=='admin.autor' ? 'admin':'user'" searchable="id, name, email, phone" exportable />

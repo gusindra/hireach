@@ -35,6 +35,7 @@ class Add extends Component
 
     public function mount($role, $model = null)
     {
+        
 
         $roles = Role::all();
 
@@ -77,12 +78,12 @@ class Add extends Component
     public function create()
     {
 
+
         $this->authorize('CREATE_USER', 'USER');
         $this->validate();
 
         $user = User::create($this->modelData());
         $team = Team::find(1);
-
 
 
         RoleUser::create([
@@ -133,7 +134,7 @@ class Add extends Component
         $this->modalActionVisible = false;
         $this->resetForm();
         $this->emit('refreshLivewireDatatable');
-        return redirect('/admin/user?role=admin');
+
     }
 
     public function generatePassword()
