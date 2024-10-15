@@ -167,7 +167,7 @@
 
 
 
-            @if ($role)
+            @if ($role==="admin")
                 <x-jet-button class="ml-2" wire:click="create" wire:loading.attr="disabled">
                     {{ __('Create Admin') }}
                 </x-jet-button>

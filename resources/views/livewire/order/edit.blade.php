@@ -208,11 +208,16 @@
                     <div class="col-span-12 sm:col-span-1 mx-4">
                         <x-jet-label for="input.customer_id" value="{{ __('Client') }}" />
                         <div x-data="{ open: false, search: @entangle('search') }" @click.away="open = false" class="relative">
-                            <input type="text" x-model="search" @focus="open = true"
-                                @input.debounce.300ms="open = true" @keydown.escape.window="open = false"
-                                placeholder="Search Client..."
-                                class="form-input block w-full mt-1 rounded-md shadow-sm border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
-                                wire:model.debounce.800ms="search" {{ $disable ? 'disabled' : '' }} />
+                            <input type="text"
+                            x-model="search"
+                            @focus="open = true"
+                            @input.debounce.300ms="open = true"
+                            @keydown.escape.window="open = false"
+                            placeholder="Search Client..."
+                            class="form-input block w-full mt-1 rounded-md shadow-sm border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+                            wire:model.debounce.800ms="search"
+                            {{ in_array($order->status, ['unpaid', 'paid']) ? 'disabled' : '' }} />
+
 
                             <div x-show="open" class="absolute z-10 w-full mt-1 bg-white rounded-md shadow-lg">
                                 <ul class="max-h-60 overflow-auto">

@@ -8,7 +8,7 @@
                         {{ number_format($saldoUser->balance, 0, ',', '.') }}</span></a>
                 @if (balance($user) != 0)
                     <p class="text-xs">
-                        {{ __('Estimation') }} :
+                        {{ __('') }} :
                         @foreach (estimationSaldo() as $product)
                             <span class="capitalize">{{ $product->name }}
                                 ({{ number_format(balance($user) / $product->unit_price) }} SMS)

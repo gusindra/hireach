@@ -74,6 +74,7 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
         Route::get('/dashboard/active-user', [DashboardController::class, 'activeUser'])->name('dashboard.active.user');
         Route::get('/dashboard/order', [DashboardController::class, 'orderSummary'])->name('dashboard.order');
         Route::get('/dashboard/provider', [DashboardController::class, 'providerSummary'])->name('dashboard.provider');
+        Route::get('/dashboard/consumption', [DashboardController::class, 'consumptionSummary'])->name('dashboard.consumption');
         //Route::get('logout', 'Backend\AuthController@logout');
         //Route::resource('change-password', 'Backend\ChangePasswordController');
         // Route::resource('users', 'Backend\UserController');
@@ -95,9 +96,9 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
         Route::get('/department', [UserController::class, 'listDepartment'])->name('admin.department');
         Route::get('/department/{dept}', [UserController::class, 'listDepartment'])->name('admin.department.profile');
         Route::get('/department/{dept}/message', [UserController::class, 'listDepartment'])->name('admin.department.message');
-        
+
         Route::get('/asset', [UserController::class, 'contact'])->name('admin.asset');
-        
+
         Route::get('/contact', [UserController::class, 'contact'])->name('admin.contact');
         Route::get('/contact/duplicate', [UserController::class, 'duplicateContact'])->name('admin.contact-duplicate');
         Route::get('/contact/edit/{contact}', [UserController::class, 'contactEdit'])->name('admin.contact-edit');
@@ -133,7 +134,7 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
         Route::get('/flow/{model}', [FlowController::class, 'show'])->name('flow.show');
 
         Route::get('/order', [OrderController::class, 'index'])->name('admin.order');
-        Route::get('/order/filter/{type}', [OrderController::class, 'index'])->name('admin.order.filter'); 
+        Route::get('/order/filter/{type}', [OrderController::class, 'index'])->name('admin.order.filter');
         Route::get('/order', [OrderController::class, 'index'])->name('admin.order');
         Route::get('/order/{order}', [OrderController::class, 'show'])->name('show.order');
 
