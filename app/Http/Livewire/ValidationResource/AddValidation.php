@@ -13,11 +13,24 @@ class AddValidation extends Component
     public $file;
     public $type;
     public $showModal = false;
+    public $disabled = true;
+    public $validationType = [];
 
     protected $rules = [
         'file' => 'required|file|mimes:xlsx,xls,csv',
-        'type' => 'required|in:cellular_no,whatsapps,geolocation_tagging,recycle_status',
+        'type' => 'required',
     ];
+
+    public function mount()
+    {
+        foreach(auth()->user()->providerUser as $p){
+            if($p->provider->name=="Atlasat"){
+                $this->disabled = false;
+                $this->validationType = $p;
+            }
+        }
+        dd(auth()->user()->providerUser->pluck('channel'));
+    }
 
     public function openModal()
     {

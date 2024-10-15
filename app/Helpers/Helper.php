@@ -252,7 +252,8 @@ function disableInput($status)
 function balance($user, $team_id = 0, $type = 'total')
 {
     if ($type == 'total') {
-        $balance = 0; 
+        $balance = 0;
+
         if ($user->balance($team_id)->first()) {
             if ($team_id > 0) {
                 $balance = $user->balance($team_id)->first()->balance;
@@ -270,6 +271,7 @@ function balance($user, $team_id = 0, $type = 'total')
             }
         }
         return $balance;
+
     }
     if ($type == 'test') {
         // return count($user->balance($team_id)->groupBy('team_id')->get());
@@ -281,7 +283,16 @@ function balance($user, $team_id = 0, $type = 'total')
     }
     if($type=='id'){
         $user = User::find($user);
-        return $user->balance(0)->first() ? $user->balance(0)->first()->balance : 0;
+        $billing = $user->userBilling;
+        if($billing){
+            if($billing->type=='prepaid'){
+                return $user->balance(0)->first() ? $user->balance(0)->first()->balance : 0;
+            }else{
+                return 'PostPaid';
+            }
+        }else{
+            return 'Not Set Billing';
+        }
     }
     return $user->balance($team_id)->orderBy('id', 'desc')->get();
 }

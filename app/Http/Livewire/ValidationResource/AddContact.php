@@ -14,10 +14,18 @@ class AddContact extends Component
     public $file;
     public $storedPath='';
     public $showModal = false;
+    public $disabled = true;
 
     protected $rules = [
         'file' => 'required|mimes:xlsx,xls,csv',
     ];
+
+    public function mount()
+    {
+        foreach(auth()->user()->providerUser as $p){
+            if($p->provider->name=="Atlasat" && $p->provider=="HR-DST") $this->disabled = false;
+        }
+    }
 
     public function openModal()
     {
@@ -37,8 +45,6 @@ class AddContact extends Component
 
     public function uploadFile()
     {
-        // $this->validate();
-
         $this->storedPath = $this->file->store('uploads');
         $this->dispatchJob( $this->storedPath);
 
@@ -48,6 +54,12 @@ class AddContact extends Component
         return redirect()->back();
     }
 
+    /**
+     * dispatchJob
+     *
+     * @param  mixed $path
+     * @return void
+     */
     protected function dispatchJob($path)
     {
         ProcessSkiptrace::dispatch($path, auth()->id());

@@ -62,6 +62,11 @@ class Profile extends Component
         $this->emit('user_saved');
     }
 
+    /**
+     * saveClient
+     *
+     * @return void
+     */
     public function saveClient()
     {
         $this->authorize('UPDATE_USER', 'USER');

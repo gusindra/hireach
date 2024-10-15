@@ -1,7 +1,9 @@
 <div>
     <!-- Button to open modal -->
+    @if($disabled)
+    <x-jet-button disabled wire:click="openModal">Add KTP</x-jet-button>
+    @else
     <x-jet-button wire:click="openModal">Add KTP</x-jet-button>
-
     <!-- Jetstream Modal -->
     <x-jet-dialog-modal wire:model="showModal">
         <x-slot name="title">
@@ -91,4 +93,5 @@
             </div>
         </x-slot>
     </x-jet-dialog-modal>
+    @endif
 </div>

@@ -26,7 +26,7 @@ class ExportResultContact extends Component
 
     public function updatedTypeInput($value)
     {
-        $allFiles = Contact::pluck('file_name')->unique()->toArray();
+        $allFiles = Contact::where('user_id', auth()->user()->id)->pluck('file_name')->unique()->toArray();
         $this->files = array_filter($allFiles, function($file) use ($value) {
             $pattern = '/' . preg_quote(str_replace('_', '', strtolower($value)), '/') . '/i';
             return preg_match($pattern, str_replace('_', '', strtolower($file))) === 1;
@@ -45,7 +45,7 @@ class ExportResultContact extends Component
         $this->showModal = true;
     }
 
-    public function closeModal()
+    public function hideModal()
     {
         $this->showModal = false;
     }

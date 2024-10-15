@@ -15,7 +15,7 @@ class UsersTable extends LivewireDatatable
 
     public function builder()
     {
-        $user = User::query();
+        $user = User::query()->orderBy('created_at', 'desc');
         // $role = $this->type;
         if ($this->type == "admin") {
             $user->whereHas('super');
@@ -36,7 +36,7 @@ class UsersTable extends LivewireDatatable
                 ]);
             })->label('Name ID')->filterable()->searchable(),
             Column::name('email')->filterable()->label('Email')->searchable(),
-            Column::name('phone_no')->filterable()->label('Phone Number')->searchable(), 
+            Column::name('phone_no')->filterable()->label('Phone Number')->searchable(),
             Column::callback(['id'], function ($name) {
                 return balance($name, 0, 'id');
             })->label('Balance')->searchable(),
