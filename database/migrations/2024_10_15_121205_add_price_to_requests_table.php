@@ -13,8 +13,7 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::table('client_validations', function (Blueprint $table) {
-            $table->tinyInteger('status')->default(0);
+        Schema::table('requests', function (Blueprint $table) {
             $table->float('price', 8, 2)->default(0.00);
         });
     }
@@ -26,8 +25,7 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::table('client_validations', function (Blueprint $table) {
-            $table->dropColumn('status');
+        Schema::table('requests', function (Blueprint $table) {
             $table->dropColumn('price');
         });
     }

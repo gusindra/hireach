@@ -86,7 +86,9 @@
                 <x-jet-secondary-button wire:click="closeModal" wire:loading.attr="disabled">
                     Cancel
                 </x-jet-secondary-button>
-
+                <x-jet-action-message class="mr-3" on="no_balance">
+                    {{ __('Your balance is not enough') }}
+                </x-jet-action-message>
                 <x-jet-button class="ml-2" wire:click="uploadFile" wire:loading.attr="disabled">
                     Upload
                 </x-jet-button>

@@ -6,6 +6,7 @@ use Livewire\Component;
 use App\Models\Contact;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Exports\ContactsExport;
+use App\Models\ClientValidation;
 
 class ExportResultContact extends Component
 {
@@ -26,7 +27,7 @@ class ExportResultContact extends Component
 
     public function updatedTypeInput($value)
     {
-        $allFiles = Contact::where('user_id', auth()->user()->id)->pluck('file_name')->unique()->toArray();
+        $allFiles = ClientValidation::where('user_id', auth()->user()->id)->leftJoin('contacts', 'contacts.id', 'client_validations.contact_id')->pluck('file_name')->unique()->toArray();
         $this->files = array_filter($allFiles, function($file) use ($value) {
             $pattern = '/' . preg_quote(str_replace('_', '', strtolower($value)), '/') . '/i';
             return preg_match($pattern, str_replace('_', '', strtolower($file))) === 1;

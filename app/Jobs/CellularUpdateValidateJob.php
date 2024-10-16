@@ -10,6 +10,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Storage;
 
 class CellularUpdateValidateJob implements ShouldQueue
@@ -28,7 +29,11 @@ class CellularUpdateValidateJob implements ShouldQueue
     public function handle()
     {
         $fileName = basename($this->filePath);
-        $file = Storage::disk('ftp')->path($this->filePath);
+        if (App::environment('production')) {
+            $file = Storage::disk('ftp')->path($this->filePath);
+        }else{
+            $file = $this->filePath;
+        }
         Excel::import(new CellulerUpdateImport($fileName), $file);
         //Storage::disk('ftp')->delete($this->filePath);
     }

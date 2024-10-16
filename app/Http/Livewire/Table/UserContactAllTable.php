@@ -15,6 +15,7 @@ class UserContactAllTable extends LivewireDatatable
     public $model = Contact::class;
     public $export_name = 'DATA_CONTACT';
     public $hideable = 'select';
+    public $perPage = "20";
 
     public function builder()
     {

@@ -70,14 +70,14 @@ class SkiptraceUpdateImport implements ToCollection, WithHeadingRow
                     'file_name' => $this->fileName,
                 ]);
             } elseif (empty($pn->phone_number)) {
-                $contact=Contact::create([
-                    'no_ktp' => $no_ktp,
-                    'phone_number' => $phone_number,
-                    'status_no' => $status_no,
-                    'activation_date' => $activation_date,
-                    'type' => 'skip_trace',
-                    'file_name' => $this->fileName,
-                ]);
+                // $contact=Contact::create([
+                //     'no_ktp' => $no_ktp,
+                //     'phone_number' => $phone_number,
+                //     'status_no' => $status_no,
+                //     'activation_date' => $activation_date,
+                //     'type' => 'skip_trace',
+                //     'file_name' => $this->fileName,
+                // ]);
                 // ClientValidation::updateOrCreate([
                 //     'contact_id' => $contact->id,
                 //     'user_id' => $this->userId,
@@ -92,11 +92,11 @@ class SkiptraceUpdateImport implements ToCollection, WithHeadingRow
                     }
                     if($clientRequest){
                         foreach( $clientRequest as $cr){
-                            ClientValidation::updateOrCreate([
-                                'contact_id' => $gk->id,
-                                'user_id' => $cr->user_id,
-                                'type' => 'skip_trace'
-                            ],['updated_at' => date('Y-m-d H:i:s')]);
+                            // ClientValidation::updateOrCreate([
+                            //     'contact_id' => $gk->id,
+                            //     'user_id' => $cr->user_id,
+                            //     'type' => 'skip_trace'
+                            // ],['updated_at' => date('Y-m-d H:i:s')]);
                         }
                     }
                 }

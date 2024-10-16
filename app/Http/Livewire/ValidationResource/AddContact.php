@@ -15,6 +15,7 @@ class AddContact extends Component
     public $storedPath='';
     public $showModal = false;
     public $disabled = true;
+    public $type;
 
     protected $rules = [
         'file' => 'required|mimes:xlsx,xls,csv',
@@ -23,7 +24,12 @@ class AddContact extends Component
     public function mount()
     {
         foreach(auth()->user()->providerUser as $p){
-            if($p->provider->name=="Atlasat" && $p->provider=="HR-DST") $this->disabled = false;
+            if($p->provider->name=="Atlasat" && $p->channel=="HR-DST"){
+                if($p->provider->status){
+                    $this->disabled = false;
+                }
+                $this->type = $p->channel;
+            }
         }
     }
 
@@ -45,13 +51,17 @@ class AddContact extends Component
 
     public function uploadFile()
     {
+        $this->validate();
+
+        $this->checkBalance();
+
         $this->storedPath = $this->file->store('uploads');
         $this->dispatchJob( $this->storedPath);
 
         $this->closeModal();
         $this->resetFields();
 
-        return redirect()->back();
+        return redirect(request()->header('Referer'));
     }
 
     /**
@@ -62,7 +72,13 @@ class AddContact extends Component
      */
     protected function dispatchJob($path)
     {
-        ProcessSkiptrace::dispatch($path, auth()->id());
+        ProcessSkiptrace::dispatch($path, $this->type, auth()->id());
+    }
+
+    private function checkBalance()
+    {
+        $this->emit('no_balance');
+        return false;
     }
 
     public function render()

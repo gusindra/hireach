@@ -12,7 +12,7 @@ class Loading extends Component
 
     private function readJob()
     {
-        $queue = \Illuminate\Support\Facades\DB::table(config('queue.connections.database.table'))->where('payload', 'like', '%ProcessValidation%')->get();
+        $queue = \Illuminate\Support\Facades\DB::table(config('queue.connections.database.table'))->where('payload', 'like', '%:'.auth()->user()->id.'%')->get();
         foreach($queue as $q){
             $payload = json_decode($q->payload,true);
             $payload1 = $payload['data']['command'];
@@ -23,7 +23,7 @@ class Loading extends Component
             }
         }
         $this->showLoading = false;
-        return false;
+        return redirect(request()->header('Referer'));
     }
 
     public function render()

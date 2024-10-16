@@ -11,6 +11,7 @@ class AddValidation extends Component
     use WithFileUploads;
 
     public $file;
+    public $storedPath='';
     public $type;
     public $showModal = false;
     public $disabled = true;
@@ -25,11 +26,12 @@ class AddValidation extends Component
     {
         foreach(auth()->user()->providerUser as $p){
             if($p->provider->name=="Atlasat"){
-                $this->disabled = false;
-                $this->validationType = $p;
+                if($p->provider->status){
+                    $this->disabled = false;
+                }
+                if($p->channel!="HR-DST") $this->validationType[$p->channel] = $p->commerceItem->name;
             }
         }
-        dd(auth()->user()->providerUser->pluck('channel'));
     }
 
     public function openModal()
@@ -53,13 +55,24 @@ class AddValidation extends Component
     {
         $this->validate();
 
-        $path = $this->file->store('uploads');
-        ProcessValidation::dispatch($path, $this->type, auth()->id());
+        $this->storedPath = $this->file->store('uploads');
+        $this->dispatchJob( $this->storedPath);
 
         $this->closeModal();
         $this->resetFields();
 
         return redirect(request()->header('Referer'));
+    }
+
+    /**
+     * dispatchJob
+     *
+     * @param  mixed $path
+     * @return void
+     */
+    protected function dispatchJob($path)
+    {
+        ProcessValidation::dispatch($path, $this->type, auth()->id());
     }
 
     public function render()

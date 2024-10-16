@@ -24,10 +24,9 @@
                         <select id="type" wire:model="type"
                             class="mt-2 block w-full border-gray-300 rounded-md shadow-sm focus:border-purple-300 focus:ring focus:ring-purple-200 focus:ring-opacity-50">
                             <option value="" disabled>Select a type</option>
-                            <option value="cellular_no">Cellular Number Validation</option>
-                            <option value="whatsapps">WhatsApp Screening</option>
-                            <option value="geolocation_tagging">Geolocation Tagging</option>
-                            <option value="recycle_status">Mobile No. Recycle</option>
+                            @foreach($validationType as $key => $vt)
+                            <option value="{{$key}}">{{$vt}}</option>
+                            @endforeach
                         </select>
                         <x-jet-input-error for="type" class="mt-2" />
                     </div>
@@ -43,10 +42,10 @@
                                         A
                                         </th>
                                         <th scope="col" class="px-6 py-3 text-center border">
-                                            B
+                                        B
                                         </th>
                                         <th scope="col" class="px-6 py-3 text-center border">
-                                            C
+                                        C
                                         </th>
                                         <th scope="col" class="px-6 py-3 text-center border">
                                         D
@@ -56,14 +55,6 @@
                                 <tbody>
                                     <tr class="bg-white border dark:bg-gray-800 dark:border-gray-700">
                                         <th scope="row" class="px-6 py-2 font-medium bg-gray-100 text-gray-900 whitespace-nowrap dark:text-white">1</th>
-                                        <td class="px-6 py-2 border">
-                                            no_hp
-                                        </td>
-                                        <td class="px-6 py-2 border"> </td>
-                                        <td class="px-6 py-2 border"> </td>
-                                    </tr>
-                                    <tr class="bg-white border dark:bg-gray-800 dark:border-gray-700">
-                                        <th scope="row" class="px-6 py-2 font-medium bg-gray-100 text-gray-900 whitespace-nowrap dark:text-white">2</th>
                                         <td class="px-6 py-2 border">
                                             628266116xxxx
                                         </td>
@@ -89,7 +80,6 @@
                                 </tbody>
                             </table>
                         </div>
-
                     </div>
                 </div>
             </x-slot>
@@ -98,7 +88,9 @@
                 <x-jet-secondary-button wire:click="closeModal" wire:loading.attr="disabled">
                     Cancel
                 </x-jet-secondary-button>
-
+                <x-jet-action-message class="mr-3" on="no_balance">
+                    {{ __('Your balance is not enough') }}
+                </x-jet-action-message>
                 <x-jet-button class="ml-2" type="submit" wire:click="uploadFile" wire:loading.attr="disabled">
                     Upload
                 </x-jet-button>

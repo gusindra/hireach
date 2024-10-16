@@ -14,6 +14,8 @@ class ClientValidation extends Model
         'client_id',
         'user_id',
         'type',
+        'status',
+        'price'
     ];
 
     public function contact()

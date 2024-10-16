@@ -3,16 +3,25 @@ namespace App\Imports;
 
 use App\Models\Contact;
 use App\Models\ClientValidation;
+use App\Models\CommerceItem;
+use App\Models\User;
+use Illuminate\Support\Facades\Log;
 use Maatwebsite\Excel\Concerns\ToModel;
 
 class SkiptraceImport implements ToModel
 {
     protected $userId;
+    protected $type;
+    protected $user;
+    protected $price;
     protected $hasSkippedHeader = false;
 
-    public function __construct($userId)
+    public function __construct($userId, $type, $user = null, $price = 0)
     {
+        $this->user = is_null($user) ? User::find($userId) : $user;
         $this->userId = $userId;
+        $this->type = $type;
+        $this->price = $price;
     }
 
     /**
@@ -41,27 +50,37 @@ class SkiptraceImport implements ToModel
             return null;
         }
 
-        // Check if a contact with the given 'no_ktp' already exists
-        $contact = Contact::where('no_ktp', $no_ktp)->first();
+        // CHECK BALANCE FIRST BEFORE ADD
+        if($balance = checkBalance($this->user->id)){
 
-        if (!$contact) {
-            // If no contact exists, create a new one
-            $contact = Contact::create([
-                'no_ktp' => $no_ktp,
-                'type' => 'skip_trace',
-            ]);
+            if($balance || ($balance > 0 && $balance > $this->price)){
+                Log::debug($balance );
+                Log::debug($this->price);
+
+                // Check if a contact with the given 'no_ktp' already exists
+                $contact = Contact::where('no_ktp', $no_ktp)->first();
+                if (!$contact) {
+                    // If no contact exists, create a new one
+                    $contact = Contact::create([
+                        'no_ktp' => $no_ktp,
+                        'type' => $this->type,
+                    ]);
+                }
+
+                // Link the contact with the ClientValidation table
+                ClientValidation::updateOrCreate(
+                    [
+                        'contact_id' => $contact->id,
+                        'user_id' => $this->userId,
+                        'type' => $this->type,
+                        'price' => $this->type,
+                    ],
+                    // Add additional fields if necessary
+                    []
+                );
+
+            }
         }
-
-        // Link the contact with the ClientValidation table
-        ClientValidation::updateOrCreate(
-            [
-                'contact_id' => $contact->id,
-                'user_id' => $this->userId,
-                'type' => 'skip_trace',
-            ],
-            // Add additional fields if necessary
-            []
-        );
 
         return $contact;
     }

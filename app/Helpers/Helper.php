@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\BillingUser;
 use App\Models\BlastMessage;
 use App\Models\Company;
 use App\Models\LogChange;
@@ -282,11 +283,11 @@ function balance($user, $team_id = 0, $type = 'total')
         }
     }
     if($type=='id'){
-        $user = User::find($user);
-        $billing = $user->userBilling;
-        if($billing){
+        $client = User::find($user);
+        $billing = BillingUser::where('user_id', $client->id)->first();
+        if($user && $billing){
             if($billing->type=='prepaid'){
-                return $user->balance(0)->first() ? $user->balance(0)->first()->balance : 0;
+                return $client->balance(0)->first() ? $client->balance(0)->first()->balance : 0;
             }else{
                 return 'PostPaid';
             }
@@ -498,4 +499,22 @@ function userAccess($menu, $action = 'view', $level = '')
         return true;
     }
     return false;
+}
+
+/**
+ * checkBalance
+ *
+ * @return void
+ */
+function checkBalance($user){
+    // INI UNTUK DATAWIZ PROSEDURE
+    // SUM PRICE DI CLIENT VALIDATION UNTUK REQUEST DI HARI INI
+    $balance = balance($user, 0, 'id');
+    if($balance == 'Not Set Billing'){
+        return false;
+    }elseif($balance == 'PostPaid'){
+        return true;
+    }else{
+        return $balance;
+    }
 }
