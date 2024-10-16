@@ -53,9 +53,7 @@ class SkiptraceImport implements ToModel
         // CHECK BALANCE FIRST BEFORE ADD
         if($balance = checkBalance($this->user->id)){
 
-            if($balance || ($balance > 0 && $balance > $this->price)){
-                Log::debug($balance );
-                Log::debug($this->price);
+            if((is_bool($balance) && $balance==true) || (is_numeric($balance) && $balance > 0 && $balance > $this->price)){
 
                 // Check if a contact with the given 'no_ktp' already exists
                 $contact = Contact::where('no_ktp', $no_ktp)->first();
@@ -73,16 +71,15 @@ class SkiptraceImport implements ToModel
                         'contact_id' => $contact->id,
                         'user_id' => $this->userId,
                         'type' => $this->type,
-                        'price' => $this->type,
                     ],
                     // Add additional fields if necessary
                     []
                 );
 
+                return $contact;
             }
         }
 
-        return $contact;
     }
 
     /**

@@ -44,9 +44,7 @@ class PhoneNumberImport implements ToModel
         // CHECK BALANCE FIRST BEFORE ADD
         if($balance = checkBalance($this->user->id)){
 
-            if($balance || ($balance > 0 && $balance > $this->price)){
-                Log::debug($balance );
-                Log::debug($this->price);
+            if((is_bool($balance) && $balance==true) || (is_numeric($balance) && $balance > 0 && $balance > $this->price)){
 
                 $contact = Contact::firstOrCreate(
                     ['phone_number' => $phone_number],

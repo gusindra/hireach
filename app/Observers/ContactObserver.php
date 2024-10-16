@@ -39,16 +39,16 @@ class ContactObserver
             $setprice = true;
             $price = 0;
 
-
             if($cv->status==0){
-                $cvalid = ClientValidation::find($cv->id)->update(['status'=>1]);
+                $cvalid = ClientValidation::find($cv->id);
+                $cvupdate = $cvalid->update(['status'=>1]);
                 if($cvalid && $setprice){
-                    if($cv->type && !empty($contact->no_ktp)){
+                    if($cv->type && !empty($contact->no_ktp) && !empty($contact->status_no)){
                         // KTP TIDAK VALID PRICE  = 0
                         if(!in_array($contact->phone, ["NIK_NOT_VALID", "#N/A"])){
                             $price = $cvalid->price;
                         }
-                    }elseif($cv->type && !empty($contact->status_no)){
+                    }elseif($cv->type && !empty($contact->status_no) && !empty($contact->activation_date)){
                         // PHONE TIDAK VALID PRICE  = 0
                         if(!in_array($contact->status_no, ["NOT_VALID", "#N/A"])){
                             $price = $cvalid->price;

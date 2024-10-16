@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Jobs\CellularUpdateValidateJob;
+use App\Jobs\GeolocationValidateJob;
+use App\Jobs\RecycleStatusValidateJob;
 use App\Jobs\SkiptraceUpdateJob;
 use App\Jobs\WhatsappValidateUpdateJob;
 use Illuminate\Http\Request;
@@ -38,9 +40,9 @@ class ContactValidationResutController extends Controller
             //$filePathSource = Storage::disk('ftp')->path('/Out');
             //File::copyDirectory($filePathSource, $pathDestination);
         }else{
-            $filePath1 = storage_path('app/datawiz/RESULT SKIPTRACE_NO_20241005.xlsx');
-            $filePath2 = storage_path('app/datawiz/RESULT CELLULARNO_20240819.xlsx');
-            // $filePath3 = storage_path('app/datawiz/RESULT WHATSAPP_20240819.xlsx');
+            // $filePath1 = storage_path('app/datawiz/RESULT SKIPTRACE_NO_20241005.xlsx');
+            // $filePath2 = storage_path('app/datawiz/RESULT CELLULARNO_20240819.xlsx');
+            $filePath3 = storage_path('app/datawiz/RESULT WHATSAPP_20240819.xlsx');
             // $filePath4 = storage_path('app/datawiz/RESULT GEOLOCATION_20240819.xlsx');
             // $filePath5 = storage_path('app/datawiz/RESULT RECYCLING_20240819.xlsx');
         }
@@ -78,7 +80,7 @@ class ContactValidationResutController extends Controller
         }
 
         if ($filePath4) {
-            WhatsappValidateUpdateJob::dispatch($filePath4);
+            GeolocationValidateJob::dispatch($filePath4);
             $msg [3] = $filePath4.' running, ';
         } else {
             Log::debug('File not found: '.$filePath4);
@@ -87,7 +89,7 @@ class ContactValidationResutController extends Controller
         }
 
         if ($filePath5) {
-            WhatsappValidateUpdateJob::dispatch($filePath5);
+            RecycleStatusValidateJob::dispatch($filePath5);
             $msg[4] = $filePath5.' running, ';
         } else {
             Log::debug('File not found: '.$filePath5);

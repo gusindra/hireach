@@ -2,7 +2,7 @@
 
 namespace App\Jobs;
 
-use App\Imports\WaUpdateImport;
+use App\Imports\GeolocationUpdateImport;
 use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -11,9 +11,8 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\App;
-use Illuminate\Support\Facades\Log;
 
-class WhatsappValidateUpdateJob implements ShouldQueue
+class GeolocationValidateJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
@@ -35,8 +34,7 @@ class WhatsappValidateUpdateJob implements ShouldQueue
         }else{
             $file = $this->filePath;
         }
-        Log::debug($fileName);;
-        Excel::import(new WaUpdateImport($fileName), $file);
+        Excel::import(new GeolocationUpdateImport($fileName), $file);
         //Storage::disk('ftp')->delete($this->filePath);;
     }
 }

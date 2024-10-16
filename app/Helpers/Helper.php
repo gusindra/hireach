@@ -504,7 +504,7 @@ function userAccess($menu, $action = 'view', $level = '')
 /**
  * checkBalance
  *
- * @return void
+ * @return mixed
  */
 function checkBalance($user){
     // INI UNTUK DATAWIZ PROSEDURE
