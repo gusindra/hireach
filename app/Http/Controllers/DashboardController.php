@@ -9,8 +9,11 @@ use App\Models\Company;
 use App\Models\Contract;
 use App\Models\Order;
 use App\Models\Project;
+use App\Models\Provider;
 use App\Models\Request as ModelsRequest;
+use App\Models\SaldoUser;
 use App\Models\User;
+
 use Auth;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -19,6 +22,8 @@ use Illuminate\Support\Facades\Auth as FacadesAuth;
 class DashboardController extends Controller
 {
     public $user_info;
+
+
     public function __construct()
     {
         $this->middleware(function ($request, $next) {
@@ -102,7 +107,7 @@ class DashboardController extends Controller
             return view('admin');
         }
     }
-    
+
     /**
      * getOutBound
      *
@@ -184,7 +189,7 @@ class DashboardController extends Controller
             )
         );
     }
-    
+
     /**
      * getInBound
      *
@@ -233,7 +238,7 @@ class DashboardController extends Controller
             )
         );
     }
-    
+
     /**
      * activeUser
      *
@@ -248,9 +253,45 @@ class DashboardController extends Controller
     {
         return view('dashboard-order-summary', ['user' => $user]);
     }
-
     public function providerSummary()
     {
-        return view('dashboard-provider-summary');
+        // Ambil semua provider beserta saldo terbaru dan blast messages
+        $providers = Provider::with(['saldoUsers' => function ($query) {
+            $query->orderBy('created_at', 'desc');
+        }, 'blastMessages'])->get();
+
+        foreach ($providers as $provider) {
+            $provider->latestBalance = $provider->saldoUsers->isNotEmpty() ? $provider->saldoUsers->first()->balance : 0;
+            $provider->totalUsage = $provider->blastMessages->sum('price');
+        }
+
+
+        return view('dashboard-provider-summary', compact('providers'));
     }
+
+
+
+    public function consumptionSummary(){
+        $providers = Provider::with(['saldoUsers' => function ($query) {
+            $query->orderBy('created_at', 'desc');
+        }, 'blastMessages'])->get();
+
+        $providers = Provider::with(['saldoUsers' => function ($query) {
+            $query->orderBy('created_at', 'desc');
+        }, 'blastMessages'])->get();
+
+        $oneWay = BlastMessage::count();
+        $twoWay = ModelsRequest::count();
+        foreach ($providers as $provider) {
+            $provider->latestBalance = $provider->saldoUsers->isNotEmpty() ? $provider->saldoUsers->first()->balance : 0;
+            $provider->totalUsage = count( $provider->blastMessages);
+        }
+        $all = $oneWay + $twoWay;
+
+        return view('dashboard-consumption-summary',compact('providers','oneWay','twoWay','all'));
+
+    }
+
+
+
 }

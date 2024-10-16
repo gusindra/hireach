@@ -80,6 +80,17 @@
                 </div>
             </div>
 
+            <div class="col-span-6">
+                <x-jet-label for="type" value="{{ __('Type') }}" />
+                <select id="type" class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm"
+                    wire:model="type">
+                    <option value="">{{ __('Select Type') }}</option>
+                    <option value="prepaid">{{ __('Prepaid') }}</option>
+                    <option value="postpaid">{{ __('Postpaid') }}</option>
+                </select>
+                <x-jet-input-error for="type" class="mt-2" />
+            </div>
+
 
             <div class="col-span-6 flex flex-col">
                 <!-- Provider Channel -->
@@ -129,6 +140,52 @@
 
     <x-jet-section-border />
     @livewire('provider.add-setting-provider', ['provider' => $provider])
+    <x-jet-section-border />
+
+    <x-jet-form-section submit="topupProvider({{ $provider->id }})">
+        <x-slot name="title">
+            {{ __('Top-up Provider') }}
+        </x-slot>
+
+        <x-slot name="description">
+            {{ __('This is for adding funds to the provider\'s balance.') }}
+        </x-slot>
+
+        <x-slot name="form">
+            <div class="col-span-6">
+                <h3 class="text-lg font-medium text-gray-900 dark:text-slate-300">
+                    Top-up balance for <span class="uppercase">{{ $provider->name }}</span>.
+                </h3>
+                <div class="mt-3 max-w-xl text-sm text-gray-600 dark:text-slate-300">
+                    <p>
+                        Enter the top-up amount to add to this provider's balance. This amount will be available for transactions made through this provider.
+                    </p>
+                </div>
+                <div class="mt-4 flex items-center">
+                    <span class="mr-2 text-gray-600 dark:text-slate-300">Rp.</span>
+                    <x-jet-input
+                        type="text"
+                        wire:model.defer="topupAmount"
+                        placeholder="Enter top-up amount"
+                        class="block w-full mt-1"
+                        min="0"
+                        step="1"
+                    />
+                    <x-jet-input-error for="topupAmount" class="mt-2" />
+                </div>
+            </div>
+        </x-slot>
+
+        <x-slot name="actions">
+            <x-jet-action-message class="mr-3" on="topupSuccess">
+                {{ __('Top-up successful.') }}
+            </x-jet-action-message>
+            <x-jet-button :disabled="!userAccess('PROVIDER', 'create')" class="">
+                {{ __('Top-up') }}
+            </x-jet-button>
+        </x-slot>
+    </x-jet-form-section>
+
     <x-jet-section-border />
 
     <x-jet-form-section submit="actionShowDeleteModal">

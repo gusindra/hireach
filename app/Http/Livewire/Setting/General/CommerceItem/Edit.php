@@ -126,7 +126,7 @@ class Edit extends Component
         $this->authorize('DELETE_SETTING', 'SETTING');
         $this->commerceItem->delete();
         $this->modalActionVisible = false;
-        return redirect()->route('settings.company');
+        return redirect('/admin/settings');
     }
 
     public function render()
