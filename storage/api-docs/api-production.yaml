@@ -825,7 +825,6 @@ components:
                 title: "type"
                 description: "Channel resource to send content."
                 type: "string"
-                enum: ["cellular_no", "whatsapps", "geolocation_tagging", "recycle_status"]
                 required: "Yes"
                 default: false
     OneWayArray:
