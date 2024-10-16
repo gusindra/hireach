@@ -103,7 +103,12 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
         Route::get('/contact/duplicate', [UserController::class, 'duplicateContact'])->name('admin.contact-duplicate');
         Route::get('/contact/edit/{contact}', [UserController::class, 'contactEdit'])->name('admin.contact-edit');
         Route::get('/get/api/department', [UserController::class, 'getDepartment'])->name('admin.department.get');
-
+        Route::get('/assets/messages', function () {
+            return view('assets.message');
+        });
+        Route::get('/assets/templates', function () {
+            return view('assets.templates');
+        });
         // Route::get('/settings/clear-cache', 'Backend\SettingController@clearCache')->name('settings.clear-cache');
         // Route::get('/settings/rebuild-cache', 'Backend\SettingController@rebuildCache')->name('settings.rebuild-cache');
         // Route::resource('settings', 'Backend\SettingController', ['only' => ['index', 'update']]);
