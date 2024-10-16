@@ -30,7 +30,7 @@
                             </div>
                             @php $total = $total+$balance[0]->balance; @endphp
                             @endforeach
-                            <div class="my-4">
+                            <div class="mb-4">
                                 <a href="#">Total {{ auth()->user()->userBilling->type=='prepaid' ? __('Balance'):__('Usage') }}: Rp {{number_format($total)}}</a>
                             </div>
                         </div>

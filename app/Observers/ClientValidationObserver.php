@@ -33,7 +33,7 @@ class ClientValidationObserver
             $items = OrderProduct::orderBy('id', 'asc')->where('model', 'Quotation')->where('model_id', $quote->id)->get();
             foreach($items as $item){
                 if($item->product && $item->product->sku == $clientValidation->type){
-                    if($clientValidation->type == "HR-DST" && $clientValidation->type==$item->product->sku && !empty($clientValidation->contact->no_ktp) && !empty($clientValidation->contact->status_no)){
+                    if($clientValidation->type == "HR-DST" && $clientValidation->type==$item->product->sku && !empty($clientValidation->contact->no_ktp) && !empty($clientValidation->contact->phone_number)){
                         if(in_array($clientValidation->contact->no_ktp, ["NIK_NOT_VALID", "#N/A"])){
                             $price = 0;
                         }else{
@@ -77,27 +77,27 @@ class ClientValidationObserver
         //==========================
         if($setprice){
             $price = CommerceItem::where('sku', $clientValidation->type)->first()->unit_price;
-            if($clientValidation->type && !empty($clientValidation->contact->no_ktp) && !empty($clientValidation->contact->status_no)){
+            if($clientValidation->type == "HR-DST" && !empty($clientValidation->contact->no_ktp) && !empty($clientValidation->contact->phone_number)){
                 if(in_array($clientValidation->contact->no_ktp, ["NIK_NOT_VALID", "#N/A"])){
                     $price = 0;
                 }
                 $setprice = false;
-            }elseif($clientValidation->type && !empty($clientValidation->contact->status_no)  && !empty($clientValidation->contact->activation_date)){
+            }elseif($clientValidation->type == "HR-CNV" && !empty($clientValidation->contact->status_no)  && !empty($clientValidation->contact->activation_date)){
                 if(in_array($clientValidation->contact->status_no, ["NOT_VALID", "#N/A"])){
                     $price = 0;
                 }
                 $setprice = false;
-            }elseif($clientValidation->type && !empty($clientValidation->contact->status_wa)){
+            }elseif($clientValidation->type == "HR-WAS" && !empty($clientValidation->contact->status_wa)){
                 if(in_array($clientValidation->contact->status_wa, ["NOT_VALID", "#N/A"])){
                     $price = 0;
                 }
                 $setprice = false;
-            }elseif($clientValidation->type && !empty($clientValidation->contact->geolocation_tag)){
+            }elseif($clientValidation->type == "HR-GLT" && !empty($clientValidation->contact->geolocation_tag)){
                 if(in_array($clientValidation->contact->geolocation_tag, ["NOT_VALID", "#N/A"])){
                     $price = 0;
                 }
                 $setprice = false;
-            }elseif($clientValidation->type && !empty($clientValidation->contact->status_recycle)){
+            }elseif($clientValidation->type == "HR-NRS" && !empty($clientValidation->contact->status_recycle)){
                 if(in_array($clientValidation->contact->status_recycle, ["NOT_VALID", "#N/A"])){
                     $price = 0;
                 }

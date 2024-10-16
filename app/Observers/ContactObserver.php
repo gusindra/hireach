@@ -43,29 +43,29 @@ class ContactObserver
                 $cvalid = ClientValidation::find($cv->id);
                 $cvupdate = $cvalid->update(['status'=>1]);
                 if($cvalid && $setprice){
-                    if($cv->type && !empty($contact->no_ktp) && !empty($contact->status_no)){
+                    if($cv->type && !empty($contact->no_ktp) && !empty($contact->phone_number)){
                         // KTP TIDAK VALID PRICE  = 0
-                        if(!in_array($contact->phone, ["NIK_NOT_VALID", "#N/A"])){
+                        if(!in_array($contact->phone, ["NIK_NOT_VALID", "#N/A", "NO_DATA_FOUND", "NO DATA FOUND", "NIK NOT VALID"])){
                             $price = $cvalid->price;
                         }
                     }elseif($cv->type && !empty($contact->status_no) && !empty($contact->activation_date)){
                         // PHONE TIDAK VALID PRICE  = 0
-                        if(!in_array($contact->status_no, ["NOT_VALID", "#N/A"])){
+                        if(!in_array($contact->status_no, ["NOT VALID", "NOT_VALID", "#N/A"])){
                             $price = $cvalid->price;
                         }
                     }elseif($cv->type && !empty($contact->status_wa)){
                         // PHONE TIDAK VALID PRICE  = 0
-                        if(!in_array($contact->status_wa, ["NOT_VALID", "#N/A"])){
+                        if(!in_array($contact->status_wa, ["NOT VALID", "NOT_VALID", "#N/A"])){
                             $price = $cvalid->price;
                         }
                     }elseif($cv->type && !empty($contact->geolocation_tag)){
                         // PHONE TIDAK VALID PRICE  = 0
-                        if(!in_array($contact->geolocation_tag, ["NOT_VALID", "#N/A"])){
+                        if(!in_array($contact->geolocation_tag, ["NOT VALID", "NOT_VALID", "#N/A"])){
                             $price = $cvalid->price;
                         }
                     }elseif($cv->type && !empty($contact->status_recycle)){
                         // PHONE TIDAK VALID PRICE  = 0
-                        if(!in_array($contact->status_recycle, ["NOT_VALID", "#N/A"])){
+                        if(!in_array($contact->status_recycle, ["NOT VALID", "NOT_VALID", "#N/A"])){
                             $price = $cvalid->price;
                         }
                     }

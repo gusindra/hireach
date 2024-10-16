@@ -78,7 +78,7 @@ class AddContact extends Component
     private function checkBalance()
     {
         $this->emit('no_balance');
-        return false;
+        // return false;
     }
 
     public function render()
