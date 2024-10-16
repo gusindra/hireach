@@ -16,6 +16,8 @@
                     <option value="skip_trace">Skip Trace</option>
                     <option value="whatsapp">WhatsApp</option>
                     <option value="celluler_no">Celluler No</option>
+                    <option value="geolocation_tagging">Geolocation Tagging</option>
+                    <option value="recycle_status">Mobile No. Recycle</option>
                 </select>
                 @error('type_input') <span class="text-red-500">{{ $message }}</span> @enderror
             </div>

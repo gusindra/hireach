@@ -151,9 +151,6 @@
                             @foreach ($model_list as $key => $item)
                                 <option value="{{ $key }}">{{ $item }}</option>
                             @endforeach
-
-
-
                         </select>
                         <x-jet-input-error for="model_id" class="mt-2" />
                     </div>
@@ -291,7 +288,10 @@
                 </x-jet-button>
         </x-slot>
     </x-jet-form-section>
+
     @if ($quote->status == 'draft')
+        <x-jet-section-border />
+
         <x-jet-form-section submit="actionShowDeleteModal">
             <x-slot name="title">
                 {{ __('Delete Quotation') }}

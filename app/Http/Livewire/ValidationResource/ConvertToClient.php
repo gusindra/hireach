@@ -67,6 +67,12 @@ class ConvertToClient extends Component
         $this->hideModal();
     }
 
+    /**
+     * addDataNoHp
+     *
+     * @param  mixed $contact
+     * @return void
+     */
     protected function addDataNoHp(Contact $contact)
     {
 
@@ -84,6 +90,13 @@ class ConvertToClient extends Component
         }
     }
 
+    /**
+     * addClientId
+     *
+     * @param  mixed $contact
+     * @param  mixed $withValidation
+     * @return void
+     */
     protected function addClientId(Contact $contact, $withValidation = true)
     {
         $client = Client::where('phone', $contact->phone_number)
@@ -100,6 +113,12 @@ class ConvertToClient extends Component
         }
     }
 
+    /**
+     * isValidContact
+     *
+     * @param  mixed $contact
+     * @return mixed
+     */
     protected function isValidContact(Contact $contact)
     {
         return !empty($contact->status_no) || !empty($contact->status_wa) || !empty($contact->activation_date);
