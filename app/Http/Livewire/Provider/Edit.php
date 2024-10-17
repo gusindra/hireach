@@ -2,6 +2,7 @@
 
 namespace App\Http\Livewire\Provider;
 
+use App\Models\BlastMessage;
 use App\Models\CommerceItem;
 use App\Models\Provider;
 use App\Models\SaldoUser;
@@ -26,6 +27,7 @@ class Edit extends Component
     public $type;
 
     public $topupAmount;
+    public $usageProviderData;
 
 
 
@@ -47,7 +49,7 @@ class Edit extends Component
         $this->status = $this->provider->status;
         $this->commerceItem = CommerceItem::all();
         $this->selectedChannels = explode(',', $this->provider->channel);
-
+        $this->usageProviderData = $this->usageProvider($uuid);
     }
 
     /**
@@ -191,6 +193,23 @@ class Edit extends Component
         return redirect('admin/dashboard/provider');
 
     }
+
+
+
+    public function usageProvider($providerId)
+    {
+        $totalUsage = BlastMessage::where('provider', $providerId)->get()->sum('price');
+        $latestSaldo = SaldoUser::where('model', 'Provider')
+                                ->where('model_id', $providerId)
+                                ->latest()
+                                ->first();
+
+        return [
+            'totalUsage' => $totalUsage,
+            'latestSaldo' => $latestSaldo ? $latestSaldo->balance : 0
+        ];
+    }
+
 
 
     /**
