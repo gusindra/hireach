@@ -86,6 +86,8 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
         Route::get('/user/{user}/balance', [UserController::class, 'balance'])->name('user.show.balance');
         Route::get('/user/{user}/profile', [UserController::class, 'profile'])->name('user.show.profile');
         Route::get('/user/{user}/provider', [UserController::class, 'provider'])->name('user.show.provider');
+        Route::get('/user/{user}/quotation', [UserController::class, 'quotation'])->name('user.show.quotation');
+        Route::get('/user/{user}/campaign', [UserController::class, 'campaign'])->name('user.show.campaign');
         Route::get('/user/{user}/order', [UserController::class, 'order'])->name('user.show.order');
         Route::get('/user/{user}/client', [UserController::class, 'client'])->name('user.show.client');
         Route::get('/user/{user}/client/{client}', [UserController::class, 'clientUser'])->name('client.create.user');
