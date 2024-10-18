@@ -161,6 +161,7 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
         Route::get('/project/{project}', [ProjectController::class, 'show'])->name('project.show');
 
         Route::get('report', [ReportController::class, 'index'])->name('admin.report');
+
         Route::get('report/{key}', [ReportController::class, 'show'])->name('report.show');
 
         Route::get('/commercial', [CommercialController::class, 'index'])->name('commercial');
