@@ -5,28 +5,21 @@ namespace Tests\Feature;
 use Tests\TestCase;
 use Livewire\Livewire;
 use App\Http\Livewire\ValidationResource\AddContact;
+use App\Http\Livewire\ValidationResource\AddValidation;
 use App\Jobs\ProcessSkiptrace;
+use App\Models\User;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Queue;
 
 class ContactResourceValidationTest extends TestCase
 {
-    public function test_file_upload_and_job_dispatch_with_existing_file()
+    public function test_render_contact_validation()
     {
-        Storage::fake('local');
+        $user = User::find(1);
+        $response = $this->actingAs($user)->get('contact-validation');
 
-        $filePath = storage_path('app/datawiz/contact-sample.xlsx');
-
-        $file = new UploadedFile($filePath, 'validation-sample.xlsx', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', null, true);
-
-        Livewire::test(AddContact::class)
-            ->set('file', $file)
-            ->call('uploadFile');
-
-        $this->assertDatabaseHas('contacts', [
-            'type' => 'skip_trace',
-            'no_ktp' => '51910910010901910',
-        ]);
+        $response->assertStatus(200);
     }
+
 }

@@ -54,8 +54,8 @@ class AddValidation extends Component
     public function uploadFile()
     {
         $this->validate();
-
-        $this->storedPath = $this->file->store('uploads');
+        $fileName = $this->file->getClientOriginalName();
+        $this->storedPath = $this->file->storeAs('uploads',$fileName);
         $this->dispatchJob( $this->storedPath);
 
         $this->closeModal();
