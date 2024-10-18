@@ -22,11 +22,13 @@ class Billing extends Component
     public $user;
     public $billing;
     public $userId;
+    public $postPaid;
 
 
     public function mount($id)
     {
         $this->billing = BillingUser::where('user_id', $id)->latest()->first();
+        $this->postPaid=  SaldoUser::where('user_id', $id)->latest()->first();
         if($this->billing){
             $this->user = $this->billing->user;
             $this->name = $this->billing->name;
@@ -82,6 +84,8 @@ class Billing extends Component
         ];
         return $data;
     }
+
+
 
 
     public function actionShowModal()

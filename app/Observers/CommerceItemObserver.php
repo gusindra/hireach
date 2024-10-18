@@ -24,22 +24,32 @@ class CommerceItemObserver
 
             $providers = Provider::all();
             foreach ($providers as $provider) {
-                $channels = explode(',', $provider->channel);
-                if (count($channels) === 2 && $channels[1] === $before['sku']) {
-                    $channels[1] = $newSku;
+                $channels = array_map('trim', explode(',', $provider->channel));
+
+                if ((count($channels) === 1 && $channels[0] === $before['sku']) ||
+                    (count($channels) === 2 && $channels[1] === $before['sku'])) {
+
+                    if (count($channels) === 1) {
+                        $channels[0] = $newSku;
+                    } else {
+                        $channels[1] = $newSku;
+                    }
+
                     $provider->channel = implode(',', $channels);
                     $provider->save();
                 }
             }
 
 
-            $providerUsers = ProviderUser::all();
-            foreach ($providerUsers as $providerUser) {
-                if ($providerUser->channel === $before['sku']) {
-                    $providerUser->channel = $newSku;
-                    $providerUser->save();
+                $providerUsers = ProviderUser::all();
+
+                foreach ($providerUsers as $providerUser) {
+
+                    if ($providerUser->channel === $before['sku']) {
+                        $providerUser->channel = $newSku;
+                        $providerUser->save();
+                    }
                 }
-            }
         }
     }
 

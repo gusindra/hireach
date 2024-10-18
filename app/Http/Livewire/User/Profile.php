@@ -32,7 +32,7 @@ class Profile extends Component
         $this->inputuser['email'] = $this->user->email ?? '';
         $this->inputuser['phone'] = $this->user->phone_no ?? '';
 
-        if ($this->user->isClient) {
+        if ($this->user->isClient||$this->user->userBilling) {
             $this->inputclient['title'] = $this->user->isClient->title ?? '';
             $this->inputclient['name'] = $this->user->isClient->name ?? '';
             $this->inputclient['phone'] = $this->user->isClient->phone ?? '';
