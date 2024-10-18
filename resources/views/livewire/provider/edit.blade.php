@@ -142,6 +142,8 @@
     @livewire('provider.add-setting-provider', ['provider' => $provider])
     <x-jet-section-border />
 
+
+    @if ($provider->type==='prepaid')
     <x-jet-form-section submit="topupProvider({{ $provider->id }})">
         <x-slot name="title">
             {{ __('Top-up Provider') }}
@@ -185,6 +187,42 @@
             </x-jet-button>
         </x-slot>
     </x-jet-form-section>
+    @endif
+
+    <x-jet-section-border />
+
+    <x-jet-action-section>
+        <x-slot name="title">
+            {{ __('Usage History') }}
+        </x-slot>
+
+        <x-slot name="description">
+            {{ __('Here you can view all your past activities and usage history.') }}
+        </x-slot>
+
+        <x-slot name="content">
+            <div>
+                @if ($provider->type==='prepaid')
+                <div class="flex justify-between">
+                    <div class="text-gray-700">
+                        <h2 class="text-base font-semibold">Saldo:</h2>
+                        <p class="text-base font-bold text-gray-800">Rp {{ number_format($usageProviderData['latestSaldo'], 0, ',', '.') }}</p>
+                    </div>
+                    <div class="text-right text-gray-700">
+                        <h2 class="text-base font-semibold">Usage:</h2>
+                        <p class="text-base font-bold text-gray-800">
+                            Rp {{ number_format($usageProviderData['totalUsage'], 0, ',', '.') }}
+                        </p>
+                    </div>
+                </div>
+
+                <x-jet-section-border />
+                @endif
+                @livewire('provider-usage-table',['provider'=>$provider])
+            </div>
+
+        </x-slot>
+    </x-jet-action-section>
 
     <x-jet-section-border />
 
