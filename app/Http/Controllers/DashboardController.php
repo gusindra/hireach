@@ -272,11 +272,7 @@ class DashboardController extends Controller
 
 
     public function consumptionSummary(){
-        $providers = Provider::with(['saldoUsers' => function ($query) {
-            $query->orderBy('created_at', 'desc');
-        }, 'blastMessages'])->get();
-
-        $providers = Provider::with(['saldoUsers' => function ($query) {
+            $providers = Provider::with(['saldoUsers' => function ($query) {
             $query->orderBy('created_at', 'desc');
         }, 'blastMessages'])->get();
 

@@ -20,7 +20,8 @@
                         </div>
                     </div>
                     <div class="px-4 py-1">
-                        <livewire:table.provider-table searchable="name" />
+                        <livewire:table.provider-table  searchable="name" />
+
                     </div>
                 </div>
             </div>
