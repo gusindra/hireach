@@ -2,7 +2,7 @@
     @if (userAccess('USER', 'create'))
         <div class="flex flex-row-reverse">
             <x-add-button :show="userAccess('USER', 'create')" :disabled="!userAccess('USER', 'create')" wire:click="actionShowModal">
-                {{$role == 'admin' ? 'Add Admin' : 'Add User'}}
+                {{$rl == 'admin' ? 'Add Admin' : 'Add User'}}
             </x-add-button>
         </div>
     @endif
@@ -30,7 +30,7 @@
 
 
 
-            @if ($role==="admin")
+            @if ($rl==="admin")
 
             <div class="col-span-6 sm:col-span-4 p-3">
                 <x-jet-label for="role" value="{{ __('Role') }}" />
@@ -167,7 +167,7 @@
 
 
 
-            @if ($role==="admin")
+            @if ($rl==="admin")
                 <x-jet-button class="ml-2" wire:click="create" wire:loading.attr="disabled">
                     {{ __('Create Admin') }}
                 </x-jet-button>

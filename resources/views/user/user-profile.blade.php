@@ -30,7 +30,13 @@
         <div class="col-span-12 px-3 lg:ml-24 mt-2">
             <div class="bg-white dark:bg-slate-600 overflow-hidden shadow-xl sm:rounded-lg">
                 <div class="mx-auto">
+                    @if (!$user->isSuper)
                     @livewire('user.generate-api-tokens', ['userId' => $user->id])
+                @endif
+
+
+
+
                     @livewire('user.profile', ['user' => $user])
                     @livewire('user.delete', ['userId' => $user->id])
                 </div>

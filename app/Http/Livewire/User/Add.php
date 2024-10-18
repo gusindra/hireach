@@ -23,7 +23,7 @@ class Add extends Component
     public $inputclient;
     public $entity;
     public $model;
-    public $role;
+    public $rl;
     public $source;
 
     public $roleId;
@@ -33,9 +33,9 @@ class Add extends Component
 
     public $roles;
 
-    public function mount($role, $model = null)
+    public function mount($rl, $model = null)
     {
-        
+
 
         $roles = Role::all();
 
@@ -44,7 +44,7 @@ class Add extends Component
         }
 
         $this->roles = $roles;
-        $this->role = $role;
+        $this->rl = $rl;
     }
 
     public function rules()

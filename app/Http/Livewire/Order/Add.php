@@ -18,7 +18,7 @@ class Add extends Component
     use AuthorizesRequests;
 
     public $modalActionVisible = false;
-    public $type;
+    public $type='topup';
     public $entity;
     public $model;
     public $source;
@@ -103,7 +103,7 @@ class Add extends Component
     public function modelData()
     {
         $data = [
-            'type' => $this->type ?? 'selling',
+            'type' => $this->type ?? 'topup',
             'name' => $this->name ?? 'Topup from Admin :  ' . Auth::user()->name,
             'entity_party' => $this->entity ?? '1',
             'no' => 'HAPP' . date("YmdHis"),

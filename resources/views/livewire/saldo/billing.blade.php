@@ -9,6 +9,7 @@
                     </div>
                 @else
                     <p class="text-base font-bold">POSTPAID</p>
+                    Yang Harus Dibayarkan Adalah: {{ 'Rp ' . number_format(abs($postPaid->balance), 0, ',', '.') }}
                 @endif
             @else
                 <p class="text-base">User ini belum memilih <b>Type Billing</b>. Silahkan setting terlebih dahulu agar dapat menentukan penagihan saat service digunakan.</p>
