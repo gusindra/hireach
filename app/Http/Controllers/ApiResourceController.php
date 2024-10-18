@@ -44,6 +44,7 @@ class ApiResourceController extends Controller
 
     public function validation(Request $request)
     {
+
         if($this->checkProvider()==0){
             return response()->json(['message' => 'Sorry, Provider is unable to use right now! Please ask Administrator.'], 400);
         }
@@ -60,6 +61,7 @@ class ApiResourceController extends Controller
         $path = $request->file('file')->store('uploads');
 
         if(in_array($request->type, $this->lisType->toArray())){
+
             ProcessValidation::dispatch($path, $request->type, $request->user()->id);
             return response()->json(['message' => 'Data Import Successfully'], 200);
         }

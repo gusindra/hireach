@@ -41,6 +41,11 @@ class ProviderUserSeeder extends Seeder
                 'user_id' => 2,
                 'channel' => 'SMS_OTP',
             ],
+            [
+                'provider_id' => 6,
+                'user_id' => 2,
+                'channel' => 'HR-DST',
+            ],
 
 
                 [

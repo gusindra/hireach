@@ -23,7 +23,9 @@ class AddContact extends Component
 
     public function mount()
     {
+
         foreach(auth()->user()->providerUser as $p){
+
             if($p->provider->name=="Atlasat" && $p->channel=="HR-DST"){
                 if($p->provider->status){
                     $this->disabled = false;
@@ -51,13 +53,13 @@ class AddContact extends Component
 
     public function uploadFile()
     {
+
         $this->validate();
 
         $this->checkBalance();
 
         $this->storedPath = $this->file->store('uploads');
         $this->dispatchJob( $this->storedPath);
-
         $this->closeModal();
         $this->resetFields();
 
