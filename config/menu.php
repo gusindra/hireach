@@ -340,12 +340,12 @@ return [
                     //     'type' => 'user'
                     // ],
                     '7' => [
-                        'url' =>  'admin.quotation' ,
+                        'url' =>  'user.show.quotation' ,
                         'title' => 'Quotation',
                         'type' => 'user'
                     ],
                     '8' => [
-                        'url' =>  'user.show.order' ,
+                        'url' =>  'user.show.campaign' ,
                         'title' => 'Campaign',
                         'type' => 'user'
                     ],
