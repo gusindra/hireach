@@ -47,4 +47,19 @@ class SaldoUser extends Model
     {
         return $this->belongsTo('App\Models\Team');
     }
+
+
+    public function provider()
+    {
+        return $this->belongsTo(Provider::class, 'model_id')->where('model', 'Provider');
+    }
+
+
+    public function request(){
+        return $this->belongsTo(Request::class, 'model_id');
+    }
+    public function blastMessage(){
+        return $this->belongsTo(BlastMessage::class, 'model_id');
+    }
+
 }

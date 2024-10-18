@@ -28,6 +28,10 @@ class ReportController extends Controller
     {
         return view('report.billing');
     }
+    public function client()
+    {
+        return view('report.billing');
+    }
 
     public function show(Request $request, $key)
     {
@@ -42,8 +46,22 @@ class ReportController extends Controller
             return view('report.sms_blast');
         } elseif ($key == 'billing') {
             return view('report.billing');
-        } else {
+        }
+        elseif ($key == 'clients') {
+            return view('report.client');
+        }
+        elseif ($key == 'orders') {
+            return view('report.order');
+        } elseif ($key == 'logs') {
+            return view('report.log-change');
+        } elseif ($key == 'assets') {
+            return view('report.assets');
+        }else {
             return view('report.log');
         }
     }
+
+
+
+
 }

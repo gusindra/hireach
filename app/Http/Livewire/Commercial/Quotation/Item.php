@@ -5,6 +5,7 @@ namespace App\Http\Livewire\Commercial\Quotation;
 use App\Models\CommerceItem;
 use App\Models\Input;
 use App\Models\OrderProduct;
+use App\Models\User;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Livewire\Component;
 use Illuminate\Support\Facades\Auth;
@@ -21,16 +22,16 @@ class Item extends Component
     public $qty;
     public $description;
     public $selectedProduct;
+    public $providers = [];
     public $modalVisible = false;
     public $modalProductVisible = false;
     public $confirmingModalRemoval = false;
 
     public function mount($data)
     {
-
         $this->data = $data;
-
         $this->products = CommerceItem::where('user_id', $data->user_id)->get();
+        $this->providers = $this->data->model == 'USER' ? User::find($this->data->model_id)->providerUser->pluck('channel') : [];
     }
 
     public function rules()
@@ -75,7 +76,7 @@ class Item extends Component
             'model' => 'Quotation',
             'product_id' => $product->id,
             'name' => $product->name,
-            'price' => $product->unit_price,
+            'price' => $this->price,
             'qty' => $this->qty,
             'unit' => $this->unit,
             'note' => $this->description,
@@ -104,6 +105,15 @@ class Item extends Component
         $this->modalVisible = false;
 
         $this->emit('saved');
+    }
+
+    public function updatedSelectedProduct($value)
+    {
+        $product = CommerceItem::find($this->selectedProduct);
+
+        $this->qty = 1;
+        $this->price = $product->unit_price;
+        $this->unit = $product->spec;
     }
 
     /**
@@ -159,7 +169,7 @@ class Item extends Component
     {
         $this->modalProductVisible = true;
         $this->modalVisible = false;
-        $this->resetForm();
+        // $this->resetForm();
         $this->item_id = null;
     }
 

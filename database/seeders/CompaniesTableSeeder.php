@@ -40,7 +40,7 @@ class CompaniesTableSeeder extends Seeder
 
         // Seed CommerceItems
         CommerceItem::create([
-            'sku' => 'SKU-001',
+            'sku' => 'HR-DST',
             'name' => 'Item 1',
             'spec' => 'Spec 1',
             'source_id' => 1,

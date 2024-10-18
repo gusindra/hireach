@@ -26,4 +26,9 @@ class ProviderUser extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    public function commerceItem()
+    {
+        return $this->belongsTo(CommerceItem::class, 'channel', 'sku');
+    }
 }

@@ -42,7 +42,7 @@ use App\Observers\TicketObserver;
 use App\Observers\ProjectObserver;
 use App\Observers\QuotationObserver;
 use App\Observers\SaldoUserObserver;
-use App\Observers\SmsBlastObserver;
+use App\Observers\BlastObserver;
 use App\Observers\CommissionObserver;
 use App\Observers\TeamUserObserver;
 use Laravel\Jetstream\Events\TeamUpdated;
@@ -79,7 +79,7 @@ class EventServiceProvider extends ServiceProvider
         Project::observe(ProjectObserver::class);
         Quotation::observe(QuotationObserver::class);
         SaldoUser::observe(SaldoUserObserver::class);
-        BlastMessage::observe(SmsBlastObserver::class);
+        BlastMessage::observe(BlastObserver::class);
         Attachment::observe(AttachmentObserver::class);
         Order::observe(OrderObserver::class);
         OrderProduct::observe(OrderProductObserver::class);

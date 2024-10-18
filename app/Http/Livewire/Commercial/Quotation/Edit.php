@@ -38,8 +38,6 @@ class Edit extends Component
     public $modalDeleteVisible = false;
     public $formName;
 
-
-
     public function mount($code, $source = null, $source_id = null)
     {
 
@@ -61,6 +59,7 @@ class Edit extends Component
         $this->created_role = $this->quote->created_role == '' ? '' : $this->quote->created_role;
         $this->addressed_name = $this->quote->addressed_name;
         $this->addressed_role = $this->quote->addressed_role;
+
         if ($source && $source_id) {
             $this->source = $source;
             $this->source_id = $source_id;
@@ -73,14 +72,10 @@ class Edit extends Component
 
     public function rules()
     {
-
-
         $data = [
             'quoteNo' => 'required',
             'name' => 'required',
             'valid_day' => 'required',
-
-
         ];
         if ($this->formName == 'customer') {
             $data = [
@@ -109,8 +104,6 @@ class Edit extends Component
                 'crated_by' => 'required',
             ];
         }
-
-
         return $data;
     }
 
@@ -147,6 +140,7 @@ class Edit extends Component
     {
         $this->modalDeleteVisible = true;
     }
+
     public function delete()
     {
         $this->authorize('DELETE_QUOTATION', 'QUOTATION');
@@ -157,7 +151,13 @@ class Edit extends Component
         return redirect()->route('admin.quotation');
     }
 
-
+    /**
+     * update
+     *
+     * @param  mixed $id
+     * @param  mixed $formName
+     * @return void
+     */
     public function update($id, $formName = 'basic')
     {
         $this->authorize('UPDATE_QUOTATION', 'QUOTATION');
@@ -202,7 +202,6 @@ class Edit extends Component
         }
         $this->quoteNo = $code . date('Ymd') . $this->quote->id;
     }
-
 
     /**
      * The read function.
@@ -256,7 +255,6 @@ class Edit extends Component
 
         return $this->addressed;
     }
-
 
     public function render()
     {

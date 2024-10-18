@@ -173,18 +173,24 @@
         <x-slot name="content">
             @if ($products)
                 <div class="col-span-6 sm:col-span-4 p-3">
-                    <x-jet-label for="selectedTemplate" value="{{ __('Product') }}" />
+                    <x-jet-label for="selectedProduct" value="{{ __('Product') }}" />
                     <select name="selectedProduct" id="selectedProduct"
                         class="border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 rounded-md shadow-sm mt-1 block w-full"
                         wire:model.debunce.800ms="selectedProduct">
                         <option selected>-- Select Product --</option>
                         @foreach ($products as $product)
-                            <option value="{{ $product->id }}">{{ $product->name }}</option>
+                            <option value="{{ $product->id }}">{{ $product->name }} @foreach($this->providers as $p) {{$product->sku == $p ? '(exsis)':''}} @endforeach</option>
                         @endforeach
                     </select>
                     <x-jet-input-error for="selectedProduct" class="mt-2" />
                 </div>
-                <div class="col-span-6 sm:col-span-4 p-3 grid grid-cols-2">
+                <div class="col-span-6 sm:col-span-4 p-3 grid grid-cols-3">
+                    <div class=" ">
+                        <x-jet-label for="price" value="{{ __('Price') }}" />
+                        <x-jet-input id="price" type="text" class="mt-1 block w-full"
+                            wire:model.debunce.800ms="price" autofocus />
+                        <x-jet-input-error for="price" class="mt-2" />
+                    </div>
                     <div class="mx-3">
                         <x-jet-label for="qty" value="{{ __('Qty') }}" />
                         <x-jet-input id="qty" type="text" class="mt-1 block w-full"

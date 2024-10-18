@@ -20,4 +20,9 @@ class OperatorPhoneNumber extends Model
     ];
 
     protected $guarded = [];
+
+    public function commerceItems()
+    {
+        return $this->hasMany(CommerceItem::class, 'operator_id');
+    }
 }

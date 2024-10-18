@@ -1,5 +1,5 @@
 <x-app-layout>
-    <x-slot name="header"></x-slot> 
+    <x-slot name="header"></x-slot>
 
     <div class="grid grid-cols-12">
         @if( Route::currentRouteName() == 'admin.asset' )
@@ -11,14 +11,14 @@
             @includeWhen(auth()->user()->isSuper || str_contains(auth()->user()->activeRole->role->name, 'Admin'),
                 'menu.admin-menu-setting',
                 []
-            )  
+            )
         @else
             @includeWhen(auth()->user()->isSuper || str_contains(auth()->user()->activeRole->role->name, 'Admin'),
                 'menu.admin-menu-user',
                 []
             )
         @endif
-        
+
         @includeWhen(auth()->user()->isSuper || (auth()->user()->team && str_contains(auth()->user()->activeRole->role->name, 'Admin')),
             'menu.admin-menu-user-profile',
             ['user' => $user]
@@ -27,20 +27,18 @@
         <div class="col-span-12 mx-4 px-4 lg:ml-24 space-y-3">
             <div class="border p-2">
                 <div class="bg-white dark:bg-slate-600 col-8 mt-2">
-                    <div class="px-6 py-4 mx-auto my-3 rounded-lg shadow">
-                        @livewire('saldo.topup', ['user' => $user, 'id' => $id])
-                    </div>
+                    @livewire('saldo.billing', ['user' => $user, 'id' => $id])
                 </div>
                 <div class="bg-white dark:bg-slate-600 overflow-hidden shadow-xl sm:rounded-lg pb-16">
                     <div class="mx-auto">
                         <div class="space-y-3">
                             @if ($user->id != 0)
                                 {{-- @livewire('user.edit', ['userId' => $user->id]) --}}
-    
+
                                 <div class="bg-white dark:bg-slate-600 overflow-hidden shadow-xl sm:rounded-lg">
                                     <div class="p-2 border-b border-gray-200">
-                                        <div class="text-2xl">
-                                            Overview for
+                                        <div class="text-2xl mb-4 mt-2">
+                                            Overview for <span class="bg-slate-200 p-3 text-base font-bold">{{$user->name}}</span>
                                         </div>
                                         <form method="get" action="{{ url('/admin/user/' . $user->id) }}">
                                             <select class="dark:bg-slate-800 dark:text-slate-300 h-10 rounded-sm" name="month"
@@ -115,7 +113,7 @@
                                                 class="px-2 py-1 bg-gray-800 text-white h-10 rounded-sm">Show</button>
                                         </form>
                                     </div>
-    
+
                                     <div
                                         class="p-6 sm:px-20 bg-gray-200 dark:bg-slate-600 bg-opacity-25 grid grid-cols-1 md:grid-cols-4">
                                         <div class="p-6">
@@ -139,7 +137,7 @@
                                                 </div>
                                             </div>
                                         </div>
-    
+
                                         <div class="p-6">
                                             <div class="flex items-center">
                                                 <a href="http://telixcel.com/message">
@@ -160,11 +158,11 @@
                                                     </div>
                                                 </div>
                                             </div>
-    
+
                                             <div class="ml-12">
                                             </div>
                                         </div>
-    
+
                                         <div class="p-6">
                                             <div class="flex items-center">
                                                 <a href="http://telixcel.com/message">
@@ -186,7 +184,7 @@
                                                 </div>
                                             </div>
                                         </div>
-    
+
                                         <div class="p-6">
                                             <div class="flex items-center">
                                                 <a href="http://telixcel.com/message">
@@ -210,7 +208,7 @@
                                                 @endif
                                             </div>
                                         </div>
-    
+
                                         <div class="p-6">
                                             <div class="flex items-center">
                                                 <a href="http://telixcel.com/report/sms">
@@ -231,7 +229,7 @@
                                                 </div>
                                             </div>
                                         </div>
-    
+
                                         <div class="p-6">
                                             <div class="flex items-center">
                                                 <a href="http://telixcel.com/report/sms">
@@ -252,7 +250,7 @@
                                                 </div>
                                             </div>
                                         </div>
-    
+
                                         <div class="p-6">
                                             <div class="flex items-center">
                                                 <a href="http://telixcel.com/report/sms">
@@ -274,7 +272,7 @@
                                                 </div>
                                             </div>
                                         </div>
-    
+
                                         <div class="p-6">
                                             <div class="flex items-center">
                                                 <a href="http://telixcel.com/report/sms">
@@ -298,7 +296,7 @@
                                         </div>
                                     </div>
                                 </div>
-    
+
                                 <div
                                     class="bg-white dark:bg-slate-600 overflow-hidden shadow-xl sm:rounded-sm col-span-3">
                                     <div class="p-2 border-b border-gray-200">
@@ -306,7 +304,7 @@
                                             Team
                                         </div>
                                     </div>
-    
+
                                     <div class="p-3">
                                         <div class="overflow-x-auto">
                                             <table class="table-auto w-full">
@@ -366,7 +364,7 @@
                                         </div>
                                     </div>
                                 </div>
-    
+
                             @endif
                         </div>
                     </div>

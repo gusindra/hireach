@@ -53,7 +53,7 @@ class AddProvider extends Component
     {
         $data = [
             'provider_id' => $this->provider_id,
-            'channel' => $this->channel,
+            'channel' => preg_replace('/\s+/', '', $this->channel),//str_replace(' ', '', $this->channel),
             'from' => $this->from,
             'user_id' => $this->userId
         ];
@@ -117,6 +117,8 @@ class AddProvider extends Component
      */
     public function create()
     {
+        dd(1);
+
         $this->authorize('CREATE_USER', 'USER');
         $action = ProviderUser::firstOrCreate($this->modelData(), $this->modelData());
         $this->modalActionVisible = false;
@@ -134,7 +136,7 @@ class AddProvider extends Component
 
 
     /**
-     * addProvider
+     * add Provider from Admin Client Detail
      *
      * @return void
      */
@@ -143,7 +145,7 @@ class AddProvider extends Component
         $this->authorize('CREATE_USER', 'USER');
         $action = ProviderUser::firstOrCreate([
             'provider_id' => $this->input['provider_id'],
-            'channel' => strtoupper($this->input['channel']),
+            'channel' => strtoupper(str_replace(' ', '', $this->input['channel'])),
             'from' => strtoupper($this->input['from']),
             'user_id' => $this->userId
         ]);

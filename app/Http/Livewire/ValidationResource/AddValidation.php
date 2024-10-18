@@ -11,13 +11,28 @@ class AddValidation extends Component
     use WithFileUploads;
 
     public $file;
+    public $storedPath='';
     public $type;
     public $showModal = false;
+    public $disabled = true;
+    public $validationType = [];
 
     protected $rules = [
         'file' => 'required|file|mimes:xlsx,xls,csv',
-        'type' => 'required|in:cellular_no,whatsapps,geolocation_tagging,recycle_status',
+        'type' => 'required',
     ];
+
+    public function mount()
+    {
+        foreach(auth()->user()->providerUser as $p){
+            if($p->provider->name=="Atlasat"){
+                if($p->provider->status){
+                    $this->disabled = false;
+                }
+                if($p->channel!="HR-DST") $this->validationType[$p->channel] = $p->commerceItem->name;
+            }
+        }
+    }
 
     public function openModal()
     {
@@ -39,14 +54,25 @@ class AddValidation extends Component
     public function uploadFile()
     {
         $this->validate();
-
-        $path = $this->file->store('uploads');
-        ProcessValidation::dispatch($path, $this->type, auth()->id());
+        $fileName = $this->file->getClientOriginalName();
+        $this->storedPath = $this->file->storeAs('uploads',$fileName);
+        $this->dispatchJob( $this->storedPath);
 
         $this->closeModal();
         $this->resetFields();
 
         return redirect(request()->header('Referer'));
+    }
+
+    /**
+     * dispatchJob
+     *
+     * @param  mixed $path
+     * @return void
+     */
+    protected function dispatchJob($path)
+    {
+        ProcessValidation::dispatch($path, $this->type, auth()->id());
     }
 
     public function render()

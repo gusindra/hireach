@@ -81,7 +81,7 @@ class CompanyEdit extends Component
             $this->company->delete();
         }
         $this->modalDeleteVisible = false;
-        return redirect()->route('settings.company');
+        return redirect('/admin/settings');
     }
 
     /**

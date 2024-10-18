@@ -11,6 +11,7 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\App;
 
 class SkiptraceUpdateJob implements ShouldQueue
 {
@@ -39,7 +40,11 @@ class SkiptraceUpdateJob implements ShouldQueue
     {
         // Extract file name from file path
         $fileName = basename($this->filePath);
-        $file = Storage::disk('ftp')->path($this->filePath);
+        if (App::environment('production')) {
+            $file = Storage::disk('ftp')->path($this->filePath);
+        }else{
+            $file = $this->filePath;
+        }
         // Import the data using SkiptraceUpdateImport
         Excel::import(new SkiptraceUpdateImport($fileName), $file);
 

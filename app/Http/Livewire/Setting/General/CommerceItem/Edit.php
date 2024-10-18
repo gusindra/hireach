@@ -3,6 +3,7 @@
 namespace App\Http\Livewire\Setting\General\CommerceItem;
 
 use App\Models\CommerceItem;
+use App\Models\OperatorPhoneNumber;
 use App\Models\ProductLine;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Livewire\Component;
@@ -12,10 +13,12 @@ class Edit extends Component
     use AuthorizesRequests;
     public $commerceItem;
     public $productLines;
+    public $operator;
     public $modalActionVisible = false;
     public $input = [
         'sku' => '',
         'name' => '',
+        'operator_id' => '',
         'spec' => '',
         'source_id' => '',
         'type' => '',
@@ -77,7 +80,9 @@ class Edit extends Component
         $this->input['status'] = $this->commerceItem->status ?? '';
         $this->input['product_line'] = $this->commerceItem->product_line ?? '';
         $this->input['user_id'] = $this->commerceItem->user_id ?? '';
+        $this->input['operator_id'] = $this->commerceItem->operator_id ?? '';
         $this->productLines = ProductLine::all();
+        $this->operator = OperatorPhoneNumber::all();
     }
 
     /**
@@ -121,7 +126,7 @@ class Edit extends Component
         $this->authorize('DELETE_SETTING', 'SETTING');
         $this->commerceItem->delete();
         $this->modalActionVisible = false;
-        return redirect()->route('settings.company');
+        return redirect('/admin/settings');
     }
 
     public function render()

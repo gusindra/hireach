@@ -6,10 +6,10 @@
         </x-slot>
 
         <x-slot name="content">
-            <div>
-                <x-jet-button wire:click="addAllDataNoHp" class="btn btn-success">To New Client</x-jet-button>
-                <x-jet-button wire:click="addAllClientIds" class="btn btn-info">Validate Client</x-jet-button>
-                <x-jet-button wire:click="performAllActions" class="btn btn-danger">Sync All</x-jet-button>
+            <div class="flex gap-3">
+                <x-jet-button wire:click="addAllDataNoHp" class="btn btn-success">Add only New Contact to Client</x-jet-button>
+                <x-jet-button wire:click="addAllClientIds" class="btn btn-info">Update only exsisting Client</x-jet-button>
+                <x-jet-button wire:click="performAllActions" class="btn btn-danger">Sync All Contact to Client</x-jet-button>
             </div>
         </x-slot>
 

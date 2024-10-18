@@ -22,6 +22,7 @@ class BillingUser extends Model
         'city',
         'address',
         'user_id',
+        'type',
     ];
 
     protected $guarded = [];

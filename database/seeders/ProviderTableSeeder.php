@@ -22,6 +22,7 @@ class ProviderTableSeeder extends Seeder
             ['id' => 3, 'code' => 'provider1', 'name' => 'smtp2go', 'channel' => 'EMAIL'],
             ['id' => 4, 'code' => 'provider2', 'name' => 'enjoymov', 'channel' => 'LONG_WA,LONG_SMS'],
             ['id' => 5, 'code' => 'provider3', 'name' => 'forCampaign', 'channel' => 'LONG_WA,LONG_SMS'],
+            ['id' => 6, 'code' => 'provider4', 'name' => 'Atlasat', 'channel' => 'HR-DST'],
         ]);
     }
 }

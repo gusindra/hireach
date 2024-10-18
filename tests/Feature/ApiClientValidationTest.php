@@ -12,17 +12,7 @@ use Tests\TestCase;
 
 class ApiClientValidationTest extends TestCase
 {
-    /**
-     * A basic feature test example.
-     *
-     * @return void
-     */
-    public function test_example()
-    {
-        $response = $this->get('/');
 
-        $response->assertStatus(200);
-    }
 
     public function test_api_skiptrace()
     {
@@ -30,6 +20,7 @@ class ApiClientValidationTest extends TestCase
         $user = User::find(2);
         $token = $user->createToken('Test Token', ['create', 'read']);
         $plainTextToken = explode('|', $token->plainTextToken, 2)[1];
+
 
 
         Storage::fake('local');
@@ -49,6 +40,7 @@ class ApiClientValidationTest extends TestCase
         ];
 
         $response = $this->actingAs($user, 'api')->post('/api/resources/skiptrace', $request, $headers);
+
         $response->assertStatus(200);
 
         $response->assertJson([
@@ -56,7 +48,7 @@ class ApiClientValidationTest extends TestCase
         ]);
 
         $this->assertDatabaseHas('contacts', [
-            'type' => 'skip_trace',
+            'type' => 'HR-DST',
             'no_ktp' => '51910910010901910',
         ]);
 
@@ -81,7 +73,7 @@ class ApiClientValidationTest extends TestCase
 
           $request = [
             'file' => $file,
-            'type' => 'cellular_no',
+            'type' => 'HR-DST',
         ];
 
         $headers = [
@@ -101,10 +93,10 @@ class ApiClientValidationTest extends TestCase
 
 
         $this->assertDatabaseHas('contacts', [
-            'type' => 'cellular_no',
+            'type' => 'HR-DST',
         ]);
 
-        $contact = Contact::where('type', 'cellular_no')->first();
+        $contact = Contact::where('type', 'HR-DST')->first();
 
         $this->assertDatabaseHas('client_validations', [
             'contact_id' => $contact->id,

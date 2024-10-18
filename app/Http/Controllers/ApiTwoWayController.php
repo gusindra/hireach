@@ -227,8 +227,6 @@ class ApiTwoWayController extends Controller
                 'code' => 400
             ]);
         }
-        // show result on progress
-        // show result on progress
 
         // return response()->json([
         //     'message' => "Successful, prepare sending to ".count($phones)." msisdn",

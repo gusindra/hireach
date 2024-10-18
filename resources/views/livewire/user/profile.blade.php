@@ -75,15 +75,27 @@
 
     <x-jet-form-section submit="saveClient">
         <x-slot name="title">
-            {{ __('Update Client') }}
+            {{ __('Update Client Billing') }}
         </x-slot>
 
         <x-slot name="description">
-            {{ __('Update user client information and billing address.') }}
+            {{ __('Update user billing information and billing address.') }}
         </x-slot>
 
         <x-slot name="form">
-
+            <div class="col-span-6 sm:col-span-3">
+                <div class="col-span-12 sm:col-span-1">
+                    <x-jet-label for="type" value="{{ __('Type') }}" />
+                    <select name="type" id="type"
+                        class="border-gray-300 dark:bg-slate-800 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 rounded-md shadow-sm mt-1 block w-full"
+                        wire:model.debunce.800ms="inputclient.type">
+                        <option selected>-- Select --</option>
+                        <option value="prepaid">PrePaid</option>
+                        <option value="postpaid">PostPaid</option>
+                    </select>
+                    <x-jet-input-error for="type" class="mt-2" />
+                </div>
+            </div>
             <!-- Name -->
             <div class="col-span-6 sm:col-span-3">
                 <div class="col-span-12 sm:col-span-1">

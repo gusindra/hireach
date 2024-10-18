@@ -9,6 +9,7 @@ use App\Models\Team;
 use App\Models\TeamUser;
 use App\Models\User;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
 
 class Add extends Component

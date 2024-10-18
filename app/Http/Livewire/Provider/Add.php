@@ -12,6 +12,7 @@ class Add extends Component
     public $modalActionVisible = false;
     public $code;
     public $name;
+    public $type;
 
     public function rules()
     {
@@ -37,6 +38,7 @@ class Add extends Component
         return [
             'code' => strtoupper($this->code),
             'name' => $this->name,
+            'type' => $this->type,
 
         ];
     }

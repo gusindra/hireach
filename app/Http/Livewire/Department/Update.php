@@ -7,6 +7,7 @@ use App\Models\Department;
 use App\Models\Setting;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Livewire\Component;
+use Illuminate\Support\Facades\Http;
 
 class Update extends Component
 {
@@ -37,63 +38,64 @@ class Update extends Component
         // $client = Client::where('name', 'like', '%' . $value . '%')->orWhere('phone', 'like', '%' . $value . '%')->orWhere('email', 'like', '%' . $value . '%')->limit(5)->get();
         // $this->data = $client;
 
-        if(cache('viguard_id')){
+        if (cache('viguard_id')) {
             $userId = cache('viguard_id');
-        }else{
-            $userId = cache()->remember('viguard_id', 6000, function (){
-                return Setting::where('key', 'viguard')->latest()->first()->value;
-            });
-        }
-        $curl = curl_init();
-        $code = $this->server;
-        $server = config('viguard.server.'.$code);
+        } else {
+            $userId = cache()->remember('viguard_id', 6000, function () {
+                $viguardSetting = Setting::where('key', 'viguard')->latest()->first();
 
-        if($server){
-            $auth = 'Authorization: '.$server["auth"];
-            curl_setopt_array($curl, array(
-                CURLOPT_URL => $server['url'].'/getAllDeptList',
-                CURLOPT_RETURNTRANSFER => true,
-                CURLOPT_ENCODING => '',
-                CURLOPT_MAXREDIRS => 10,
-                CURLOPT_TIMEOUT => 0,
-                CURLOPT_FOLLOWLOCATION => true,
-                CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-                CURLOPT_CUSTOMREQUEST => 'GET',
-                CURLOPT_HTTPHEADER => array(
-                    $auth,
-                    'User-Agent: Apifox/1.0.0 (https://hireach.firmapps.ai)'
-                ),
-            ));
+                if (!$viguardSetting) {
 
-            $response = curl_exec($curl);
+                    if (!$viguardSetting) {
+                        dd('Setting for viguard is not found. Please create a viguard setting.');
 
-            curl_close($curl);
-            // dd($response);
-            // Log::debug($response);
-            $resData = json_decode($response, true);
-            if($resData && $resData['data']){
-                foreach($resData['data'] as $r){
-                    // return $r['deptId'];
-                    if($r['parentId']=="230"){
-                        Department::updateOrCreate(
-                            [
-                                'source_id' => $r['deptId'],
-                                'user_id' => $userId,
-                                'server' => $code
-                            ],
-                            [
-                                'parent' => $r['parentId'],
-                                'ancestors' => $r['ancestors'],
-                                'name' => $r['deptName']
-                            ]
-                        );
                     }
                 }
+
+                return $viguardSetting->value;
+            });
+        }
+
+
+        $code = $this->server;
+        $server = config('viguard.server.' . $code);
+
+        if ($server) {
+            $auth = $server["auth"];
+            $response = Http::withHeaders([
+                'Authorization' => $auth,
+                'User-Agent' => 'Apifox/1.0.0 (https://hireach.firmapps.ai)',
+            ])->get($server['url'] . '/getAllDeptList');
+
+            if ($response->successful()) {
+                $resData = $response->json();
+
+                if ($resData && isset($resData['data'])) {
+                    foreach ($resData['data'] as $r) {
+                        if ($r['parentId'] == "230") {
+                            Department::updateOrCreate(
+                                [
+                                    'source_id' => $r['deptId'],
+                                    'user_id' => $userId,
+                                    'server' => $code,
+                                ],
+                                [
+                                    'parent' => $r['parentId'],
+                                    'ancestors' => $r['ancestors'],
+                                    'name' => $r['deptName'],
+                                ]
+                            );
+                        }
+                    }
+                }
+                $this->emit('dept_updated');
+            } else {
+                $this->emit('dept_fail');
             }
-            $this->emit('dept_updated');
-        }else{
+        } else {
             $this->emit('dept_fail');
         }
+
         $this->modalActionVisible = false;
         $this->emit('refreshLivewireDatatable');
     }

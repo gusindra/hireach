@@ -21,7 +21,7 @@
 
                 </div>
                 <div class="m-3">
-                    <livewire:table.user-contact-all-table exportable />
+                    <livewire:table.user-contact-all-table per-page="20" exportable />
                 </div>
             </div>
         </div>

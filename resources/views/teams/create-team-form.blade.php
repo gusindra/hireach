@@ -30,7 +30,7 @@
 
     <x-slot name="actions">
         <x-jet-button>
-            {{ __('Create') }}
+            {{ __('Continue') }}
         </x-jet-button>
     </x-slot>
 </x-jet-form-section>

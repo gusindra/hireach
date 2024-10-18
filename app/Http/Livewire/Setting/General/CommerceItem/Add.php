@@ -14,8 +14,8 @@ class Add extends Component
     public $sku;
     public $name;
     public $spec;
-    public $general_discount;
-    public $fs_price;
+    public $general_discount = 0;
+    public $fs_price = 0;
     public $unit_price;
     public $product_line;
     public $productLine = [];

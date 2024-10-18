@@ -168,7 +168,7 @@
         </x-slot>
 
         <x-slot name="form">
-            <div class="col-span-6 sm:col-span-4"> 
+            <div class="col-span-6 sm:col-span-4">
                 <x-jet-label for="type" value="{{ __('Status') }}" />
                 <select name="status" id="status"
                     class="border-gray-300 dark:bg-slate-800 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 rounded-md shadow-sm mt-1 block w-full"
@@ -178,13 +178,13 @@
                     <option value="1">Active</option>
                     <option value="0">Disabled</option>
                 </select>
-                <x-jet-input-error for="input.status" class="mt-2" /> 
+                <x-jet-input-error for="input.status" class="mt-2" />
             </div>
-            <div class="col-span-6 sm:col-span-4"> 
+            <div class="col-span-6 sm:col-span-4">
                 <x-jet-label for="sku" value="{{ __('SKU') }}" />
                 <x-jet-input id="sku" type="text" class="mt-1 block w-full" wire:model="input.sku"
                     wire:model.defer="input.sku" wire:model.debunce.800ms="input.sku" />
-                <x-jet-input-error for="input.sku" class="mt-2" /> 
+                <x-jet-input-error for="input.sku" class="mt-2" />
             </div>
             <div class="col-span-6 sm:col-span-4">
                 <x-jet-label for="type" value="{{ __('Type') }}" />
@@ -349,6 +349,41 @@
             </div>
         </div>
     </div>
+
+    <x-jet-section-border />
+    <x-jet-form-section submit="update({{ $commerceItem->id }})">
+        <x-slot name="title">Operator</x-slot>
+
+        <x-slot name="description">
+            {{ __('Select the operator for this product.') }}
+        </x-slot>
+
+        <x-slot name="form">
+            <div class="col-span-6 sm:col-span-4">
+                <x-jet-label for="operator_id" value="{{ __('Operator') }}" />
+                <select id="operator_id" class="mt-1 block w-full bg-white border-gray-300 dark:bg-slate-700 dark:text-slate-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                    wire:model="input.operator_id">
+                    <option value="">-- Select Operator --</option>
+                    @foreach($operator as $item)
+                        <option value="{{ $item->id }}">{{ $item->operator }}</option>
+                    @endforeach
+                </select>
+                <x-jet-input-error for="input.operator_id" class="mt-2" />
+            </div>
+        </x-slot>
+
+        <x-slot name="actions">
+            <x-jet-action-message class="mr-3" on="saved">
+                {{ __('Operator saved.') }}
+            </x-jet-action-message>
+
+            <x-jet-button class="bg-red-600">
+                {{ __('Save') }}
+            </x-jet-button>
+        </x-slot>
+    </x-jet-form-section>
+
+
 
     <x-jet-section-border />
     <div class="hidden">

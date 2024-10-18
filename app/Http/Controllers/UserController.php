@@ -39,7 +39,7 @@ class UserController extends Controller
     {
         if ($request->has('v')) {
             return view('main-side.user');
-        } 
+        }
         return view('user.user-table');
         // return view('user.admin-table');
     }
@@ -301,7 +301,7 @@ class UserController extends Controller
      * @return mixed
      */
     public function departmentClient(User $user, Department $dept)
-    { 
+    {
         if(cache('viguard_id')){
             $userId = cache('viguard_id');
         }else{
@@ -310,5 +310,15 @@ class UserController extends Controller
             });
         }
         return view('user.user-depart-client', ['viguard'=>$userId, 'user' => $user, 'department' => $dept]);
+    }
+
+
+    public function quotation(User $user)
+    {
+        return view('user.user-quotation', ['user' => $user]);
+    }
+    public function campaign(User $user)
+    {
+        return view('user.user-campaign', ['user' => $user]);
     }
 }

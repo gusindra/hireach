@@ -16,43 +16,44 @@
             <div class="col-span-6 grid grid-cols-2">
                 <div class="col-span-12 sm:col-span-1 p-3">
                     <x-jet-label for="sku" value="{{ __('SKU') }}" />
-                    <x-jet-input id="sku" type="text" class="mt-1 block w-full" wire:model.debounce.800ms="sku"
+                    <x-jet-input id="sku" type="text" placeholder="HR-SKU-SF" class="mt-1 block w-full" wire:model.debounce.800ms="sku"
                         autofocus />
                     <x-jet-input-error for="sku" class="mt-2" />
                 </div>
                 <div class="col-span-12 sm:col-span-1 p-3">
-                    <x-jet-label for="name" value="{{ __('Name') }}" />
+                    <x-jet-label for="name" value="{{ __('Product Name') }}" />
                     <x-jet-input id="name" type="text" class="mt-1 block w-full"
-                        wire:model.debounce.800ms="name" autofocus />
+                        wire:model.debounce.800ms="name" placeholder="HiReach Push Notification" autofocus />
                     <x-jet-input-error for="name" class="mt-2" />
                 </div>
             </div>
             <div class="col-span-6 grid grid-cols-2">
                 <div class="col-span-12 sm:col-span-1 p-3">
-                    <x-jet-label for="spec" value="{{ __('Spec') }}" />
+                    <x-jet-label for="unit_price" value="{{ __('Unit Price') }}" />
+                    <x-jet-input id="unit_price" type="text" class="mt-1 block w-full"
+                        wire:model.debounce.800ms="unit_price" autofocus />
+                    <x-jet-input-error for="unit_price" class="mt-2" placeholder="1000" />
+                </div>
+                <div class="col-span-12 sm:col-span-1 p-3">
+                    <x-jet-label for="spec" value="{{ __('Specification') }}" />
                     <x-jet-input id="spec" type="text" class="mt-1 block w-full"
-                        wire:model.debounce.800ms="spec" autofocus />
+                        wire:model.debounce.800ms="spec" autofocus placeholder="per notification" />
                     <x-jet-input-error for="spec" class="mt-2" />
+                </div>
+                
+            </div>
+            <div class="col-span-6 grid grid-cols-2">
+                <div class="col-span-12 sm:col-span-1 p-3">
+                    <x-jet-label for="fs_price" value="{{ __('Flash Sale Price') }}" />
+                    <x-jet-input id="fs_price" type="text" class="mt-1 block w-full"
+                        wire:model.debounce.800ms="fs_price" autofocus />
+                    <x-jet-input-error for="fs_price" class="mt-2" />
                 </div>
                 <div class="col-span-12 sm:col-span-1 p-3">
                     <x-jet-label for="general_discount" value="{{ __('General Discount') }}" />
                     <x-jet-input id="general_discount" type="text" class="mt-1 block w-full"
                         wire:model.debounce.800ms="general_discount" autofocus />
                     <x-jet-input-error for="general_discount" class="mt-2" />
-                </div>
-            </div>
-            <div class="col-span-6 grid grid-cols-2">
-                <div class="col-span-12 sm:col-span-1 p-3">
-                    <x-jet-label for="fs_price" value="{{ __('FS Price') }}" />
-                    <x-jet-input id="fs_price" type="text" class="mt-1 block w-full"
-                        wire:model.debounce.800ms="fs_price" autofocus />
-                    <x-jet-input-error for="fs_price" class="mt-2" />
-                </div>
-                <div class="col-span-12 sm:col-span-1 p-3">
-                    <x-jet-label for="unit_price" value="{{ __('Unit Price') }}" />
-                    <x-jet-input id="unit_price" type="text" class="mt-1 block w-full"
-                        wire:model.debounce.800ms="unit_price" autofocus />
-                    <x-jet-input-error for="unit_price" class="mt-2" />
                 </div>
             </div>
             <div class="col-span-6 sm:col-span-4 p-3">

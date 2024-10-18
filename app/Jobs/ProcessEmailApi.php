@@ -140,7 +140,7 @@ class ProcessEmailApi implements ShouldQueue
                 $result = $response->body();
             }
 
-            Log::debug($result);
+            //Log::debug($result);
             $response = json_decode($result, true);
             // Log::debug($response);
             // $response=$result['data']['succeeded'];
@@ -158,7 +158,7 @@ class ProcessEmailApi implements ShouldQueue
                     'msg_id'    => $response['request_id'],
                     'user_id'   => $this->user->id,
                     'client_id' => $client->uuid,
-                    'sender_id' => $request['from'],
+                    'sender_id' => 'HR-EML:'.$request['from'],
                     'type'      => $request['type'],
                     'otp'       => $request['otp'],
                     'status'    => "SUCCESS",
@@ -173,7 +173,7 @@ class ProcessEmailApi implements ShouldQueue
                 // Log::debug($modelData);
                 if (array_key_exists('resource', $this->data) && $this->data['resource'] == 2) {
                     $bm = Request::create([
-                        'source_id' => 'emailchat_' . Hashids::encode($client->id),
+                        'source_id' => 'HR-EML_' . Hashids::encode($client->id),
                         'reply'     => $request['text'],
                         'from'      => $client->id,
                         'user_id'   => $this->user->id,

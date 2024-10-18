@@ -49,7 +49,7 @@
         </x-slot>
 
         <x-slot name="form">
-            <div class="col-span-6 grid grid-cols-2">
+            <div class="col-span-6 flex flex-col">
                 <!-- Provider Code -->
                 <div class="col-span-12 sm:col-span-1">
                     <x-jet-label for="code" value="{{ __('Code') }}" />
@@ -60,7 +60,7 @@
             </div>
 
 
-            <div class="col-span-6 grid grid-cols-2">
+            <div class="col-span-6 flex flex-col">
                 <!-- Provider Name -->
                 <div class="col-span-12 sm:col-span-1">
                     <x-jet-label for="name" value="{{ __('Name') }}" />
@@ -70,7 +70,7 @@
                 </div>
             </div>
 
-            <div class="col-span-6 grid grid-cols-2">
+            <div class="col-span-6 flex flex-col">
                 <!-- Provider Company -->
                 <div class="col-span-12 sm:col-span-1">
                     <x-jet-label for="company" value="{{ __('Company') }}" />
@@ -80,16 +80,48 @@
                 </div>
             </div>
 
+            <div class="col-span-6">
+                <x-jet-label for="type" value="{{ __('Type') }}" />
+                <select id="type" class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm"
+                    wire:model="type">
+                    <option value="">{{ __('Select Type') }}</option>
+                    <option value="prepaid">{{ __('Prepaid') }}</option>
+                    <option value="postpaid">{{ __('Postpaid') }}</option>
+                </select>
+                <x-jet-input-error for="type" class="mt-2" />
+            </div>
 
-            <div class="col-span-6 grid grid-cols-2">
+
+            <div class="col-span-6 flex flex-col">
                 <!-- Provider Channel -->
                 <div class="col-span-12 sm:col-span-1">
                     <x-jet-label for="channel" :value="__('Channel')" />
-                    <x-jet-input id="channel" type="text" class="mt-1 block w-full" wire:model="channel"
-                        wire:model.defer="channel" wire:model.debunce.800ms="channel" />
+                    <select id="channel" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" wire:model="selectedSku">
+                        <option value="">{{ __('Select a Channel') }}</option>
+                        @foreach($commerceItem as $item)
+                            @if(!in_array($item->sku, $selectedChannels))
+                                <option value="{{ $item->sku }}">{{ strtoupper($item->sku) }}</option>
+                            @endif
+                        @endforeach
+                    </select>
                     <x-jet-input-error for="channel" class="mt-2" />
                 </div>
+
+                <div class="flex w-full flex-nowrap overflow-x-auto gap-3 mt-4">
+                    @foreach($selectedChannels as $sku)
+                        <!-- Item Tag -->
+                        <div class="flex items-center rounded-lg bg-blue-100 px-4 py-2 text-black shadow whitespace-nowrap">
+                            <span class="text-sm">{{ $sku }}</span>
+                            <button wire:click="removeChannel('{{ $sku }}')" class="ml-2 flex h-6 w-6 items-center justify-center rounded-md bg-red-500 text-white hover:bg-red-600 focus:outline-none">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                                </svg>
+                            </button>
+                        </div>
+                    @endforeach
+                </div>
             </div>
+
 
 
 
@@ -108,6 +140,52 @@
 
     <x-jet-section-border />
     @livewire('provider.add-setting-provider', ['provider' => $provider])
+    <x-jet-section-border />
+
+    <x-jet-form-section submit="topupProvider({{ $provider->id }})">
+        <x-slot name="title">
+            {{ __('Top-up Provider') }}
+        </x-slot>
+
+        <x-slot name="description">
+            {{ __('This is for adding funds to the provider\'s balance.') }}
+        </x-slot>
+
+        <x-slot name="form">
+            <div class="col-span-6">
+                <h3 class="text-lg font-medium text-gray-900 dark:text-slate-300">
+                    Top-up balance for <span class="uppercase">{{ $provider->name }}</span>.
+                </h3>
+                <div class="mt-3 max-w-xl text-sm text-gray-600 dark:text-slate-300">
+                    <p>
+                        Enter the top-up amount to add to this provider's balance. This amount will be available for transactions made through this provider.
+                    </p>
+                </div>
+                <div class="mt-4 flex items-center">
+                    <span class="mr-2 text-gray-600 dark:text-slate-300">Rp.</span>
+                    <x-jet-input
+                        type="text"
+                        wire:model.defer="topupAmount"
+                        placeholder="Enter top-up amount"
+                        class="block w-full mt-1"
+                        min="0"
+                        step="1"
+                    />
+                    <x-jet-input-error for="topupAmount" class="mt-2" />
+                </div>
+            </div>
+        </x-slot>
+
+        <x-slot name="actions">
+            <x-jet-action-message class="mr-3" on="topupSuccess">
+                {{ __('Top-up successful.') }}
+            </x-jet-action-message>
+            <x-jet-button :disabled="!userAccess('PROVIDER', 'create')" class="">
+                {{ __('Top-up') }}
+            </x-jet-button>
+        </x-slot>
+    </x-jet-form-section>
+
     <x-jet-section-border />
 
     <x-jet-form-section submit="actionShowDeleteModal">

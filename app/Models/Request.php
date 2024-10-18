@@ -142,4 +142,9 @@ class Request extends Model
     {
         return $query->where('from','api');
     }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'user_id');
+    }
 }

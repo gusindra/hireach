@@ -244,7 +244,7 @@
                         wire:model.debunce.800ms="selectedProduct">
                         <option selected>-- Select Product --</option>
                         @foreach ($products as $product)
-                            <option value="{{ $product->id }}">{{ $product->name }}</option>
+                            <option value="{{ $product->id }}">{{ $product->name }} 1</option>
                         @endforeach
                     </select>
                     <x-jet-input-error for="selectedProduct" class="mt-2" />

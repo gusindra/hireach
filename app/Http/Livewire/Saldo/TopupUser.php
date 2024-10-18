@@ -84,39 +84,39 @@ class TopupUser extends Component
         }
         $this->validate();
 
-            $order = Order::create($this->dataOrder());
-            if ($order) {
-                OrderProduct::updateOrCreate(
-                    [
-                        'model' => 'Order',
-                        'model_id' => $order->id,
-                        'name' => 'Topup'
-                    ],
-                    [
-                        'qty' => 1,
-                        'unit' => 1,
-                        'price' => $this->nominal,
-                        'note' => 'Topup',
-                        'user_id' => 0,
-                    ]
-                );
-                OrderProduct::updateOrCreate(
-                    [
-                        'model' => 'Order',
-                        'model_id' => $order->id,
-                        'name' => 'Tax'
-                    ],
-                    [
-                        'qty' => 1,
-                        'unit' => 1,
-                        'price' => $this->nominal * ($vat->value / 100),
-                        'note' => 'VAT/PPN @ ' . $vat->value . '%',
-                        'user_id' => 0,
-                    ]
-                );
-            }
-            //ProcessEmail::dispatch($order, 'create_order');
-            return redirect()->to('/payment/invoice/' . $order->id);
+        $order = Order::create($this->dataOrder());
+        if ($order) {
+            OrderProduct::updateOrCreate(
+                [
+                    'model' => 'Order',
+                    'model_id' => $order->id,
+                    'name' => 'Topup'
+                ],
+                [
+                    'qty' => 1,
+                    'unit' => 1,
+                    'price' => $this->nominal,
+                    'note' => 'Topup',
+                    'user_id' => 0,
+                ]
+            );
+            OrderProduct::updateOrCreate(
+                [
+                    'model' => 'Order',
+                    'model_id' => $order->id,
+                    'name' => 'Tax'
+                ],
+                [
+                    'qty' => 1,
+                    'unit' => 1,
+                    'price' => $this->nominal * ($vat->value / 100),
+                    'note' => 'VAT/PPN @ ' . $vat->value . '%',
+                    'user_id' => 0,
+                ]
+            );
+        }
+        //ProcessEmail::dispatch($order, 'create_order');
+        return redirect()->to('/payment/invoice/' . $order->id);
 
     }
 

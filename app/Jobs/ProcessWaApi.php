@@ -50,11 +50,8 @@ class ProcessWaApi implements ShouldQueue
      */
     public function handle()
     {
-
-        // Log::debug($this->request);
         //filter OTP & Non OTP
         $provider = $this->request['provider'];
-        Log::debug($provider);
         if ($provider->code == 'provider1' || $this->request['otp']) {
             $this->MKProvider($this->request);
         } elseif ($provider->code == 'provider2') {
@@ -74,11 +71,10 @@ class ProcessWaApi implements ShouldQueue
     {
         $msg    = '';
         try {
-            $url = 'http://www.etracker.cc/bulksms/mesapi.aspx';
-            $url = 'https://www.etracker.cc/OTT/api/Send';
-            $sid    = $this->user->api_key; //"AC6c598c40bbbb22a9c3cb76fd7baa67b8";
-            $token  = $this->user->server_key; //"500107131bbdb25dee1992053e93409f";
-            $send_to =  $this->request['to']; //"6281339668556"
+            $url = env('MK_WABA_URL');
+            $sid    = $this->user->api_key;
+            $token  = $this->user->server_key;
+            $send_to =  $this->request['to'];
 
             $username = $this->user->credential;
             $password = $this->user->api_key;
@@ -212,7 +208,7 @@ class ProcessWaApi implements ShouldQueue
                 }
             }
 
-            Log::debug($response);
+            //Log::debug($response);
 
             /*if($response){
                 $response  = json_decode(json_encode(simplexml_load_string($response->getBody()->getContents())), true);
@@ -229,7 +225,7 @@ class ProcessWaApi implements ShouldQueue
                     'msg_id'    => $response['message_id'],
                     'user_id'   => $this->user->user_id,
                     'client_id' => $client->uuid,
-                    'sender_id' => '',
+                    'sender_id' => 'HR-WABA',
                     'type'      => $this->request['text'],
                     'otp'       => 0,
                     'status'    => "PROCESSED",
@@ -243,7 +239,7 @@ class ProcessWaApi implements ShouldQueue
                 // Log::debug($modelData);
                 if ($this->request['resource'] == 2) {
                     $mms = Request::create([
-                        'source_id' => 'wachat_' . Hashids::encode($client->id),
+                        'source_id' => 'HR-WABA_' . Hashids::encode($client->id),
                         'reply'     => $this->request['text'],
                         'from'      => $client->id,
                         'user_id'   => $this->user->user_id,
@@ -258,10 +254,9 @@ class ProcessWaApi implements ShouldQueue
                 $this->synCampaign($mms);
             } else {
                 Log::debug("failed msis format: ");
-                Log::debug($msg_msis);
             }
 
-            Log::debug("Respone MSG:");
+            //Log::debug("Respone MSG:");
             Log::debug($msg);
             if ($msg != '') {
                 $this->saveResult($msg);
@@ -269,7 +264,7 @@ class ProcessWaApi implements ShouldQueue
         } catch (\Exception $e) {
             Log::debug($e->getMessage());
             $this->saveResult('Reject invalid servid');
-            Log::debug('Reject invalid servid');
+           //Log::debug('Reject invalid servid');
         }
     }
 
@@ -349,7 +344,7 @@ class ProcessWaApi implements ShouldQueue
         $msg = $this->saveResult('Ready');
         if ($msg) {
 
-            $url = 'https://45.118.134.84:6005/';
+            $url = env('WT_ENDPOINT');
 
             $environment = config('app.env');
             if ($environment === 'local' || $environment === 'testing') {
@@ -429,7 +424,6 @@ class ProcessWaApi implements ShouldQueue
             'msisdn'            => $this->request['to'],
         ];
         if ($this->request['resource'] == 2) {
-
             $mms = Request::create([
                 'source_id' => 'wachat_' . Hashids::encode($client->id),
                 'reply'     => $this->campaign ? 'Campaign No:' . $this->campaign->id : $this->request['text'],

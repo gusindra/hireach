@@ -159,6 +159,10 @@ class ApiOneWayController extends Controller
                 $retriver = explode(",", strip_tags(filterInput($request->to)));
                 // Log::debug('retrive'. $retriver);
                 $allretriver = $request->to;
+
+                // =============
+                // PREPAID USAGE
+                // =============
                 $balance = (int)balance(auth()->user());
                 if($balance>500 && count($retriver)<$balance/1){
                     //CHECK OTP
@@ -198,7 +202,7 @@ class ApiOneWayController extends Controller
                     $phones = $retriver;
                     if(count($phones)>1){
 
-                        Log::info('masuk sini kalau phone >1');
+                        //Log::info('masuk sini kalau phone >1');
                         //GROUP RETRIVER
                         foreach($phones as $p){
                             $data = array(
@@ -311,26 +315,26 @@ class ApiOneWayController extends Controller
      * @param  mixed $request
      * @return object $campaign
      */
- private function campaignAdd($request, $audience_id = null)
-{
-    return Campaign::create([
-        'title'         => strip_tags(filterInput($request->title)),
-        'channel'       => strtoupper(strip_tags(filterInput($request->channel))),
-        'provider'      => strip_tags(filterInput($request->provider->code)),
-        'from'          => strip_tags(filterInput($request->from)),
-        'to'            => $audience_id ? 'Audience:'.strip_tags(filterInput($audience_id)) : strip_tags(filterInput($request->to)),
-        'audience_id'   => strip_tags(filterInput($audience_id)),
-        'text'          => strip_tags(filterInput($request->text)),
-        'is_otp'        => strip_tags(filterInput($request->otp ?? '')),
-        'request_type'  => 'api',
-        'status'        => 'starting',
-        'way_type'      => 1,
-        'type'          => strip_tags(filterInput($request->type)),
-        'template_id'   => strip_tags(filterInput($request->templateid)),
-        'user_id'       => auth()->user()->id,
-        'uuid'          => Str::uuid()
-    ]);
-}
+    private function campaignAdd($request, $audience_id = null)
+    {
+        return Campaign::create([
+            'title'         => strip_tags(filterInput($request->title)),
+            'channel'       => strtoupper(strip_tags(filterInput($request->channel))),
+            'provider'      => strip_tags(filterInput($request->provider->code)),
+            'from'          => strip_tags(filterInput($request->from)),
+            'to'            => $audience_id ? 'Audience:'.strip_tags(filterInput($audience_id)) : strip_tags(filterInput($request->to)),
+            'audience_id'   => strip_tags(filterInput($audience_id)),
+            'text'          => strip_tags(filterInput($request->text)),
+            'is_otp'        => strip_tags(filterInput($request->otp ?? '')),
+            'request_type'  => 'api',
+            'status'        => 'starting',
+            'way_type'      => 1,
+            'type'          => strip_tags(filterInput($request->type)),
+            'template_id'   => strip_tags(filterInput($request->templateid)),
+            'user_id'       => auth()->user()->id,
+            'uuid'          => Str::uuid()
+        ]);
+    }
 
 
 

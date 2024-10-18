@@ -6,7 +6,6 @@
 
         <div class="col-span-12 px-2 ml-24 mt-2">
             <header class="bg-white dark:bg-slate-900 flex">
-
                 <ul
                     class="flex gap-1 flex-wrap text-sm font-medium text-center text-gray-500 border-b border-gray-200 dark:border-gray-700 dark:text-gray-400">
                     <li class="me-2">
@@ -28,25 +27,23 @@
                         </a>
                     </li>
                 </ul>
-
-
             </header>
+
             <div class="bg-white dark:bg-slate-600 overflow-hidden sm:rounded-b-lg border">
                 <div class="p-6 mx-auto">
                     <div class="flex justify-between">
-                        <div class="pb-4 flex justify-between  w-full">
+                        <div class="pb-4 flex justify-between w-full">
                             <div class="flex gap-2">
                                 @livewire('validation-resource.add-contact')
                                 @livewire('validation-resource.add-validation')
-                                @livewire('validation-resource.convert-to-client')
-                                <livewire:contact.export-result-contact />
-
+                                @if(count(auth()->user()->clientValidations))
+                                    @livewire('validation-resource.convert-to-client')
+                                    <livewire:contact.export-result-contact />
+                                @endif
                             </div>
                             <div>
                                 @livewire('validation-resource.loading')
                             </div>
-
-
                         </div>
                     </div>
                     <div>

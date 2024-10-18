@@ -18,9 +18,9 @@ class SaldoUserObserver
     public function created(SaldoUser $request)
     {
         addLog($request, json_encode($request->toArray()));
-        Log::debug($request);
+        //Log::debug($request);
         $last = SaldoUser::where('id', '!=', $request->id)->where('user_id', $request->user_id)->where('team_id', $request->team_id)->orderBy('id', 'desc')->first();
-        Log::debug($last);
+        //Log::debug($last);
         if ($last) {
             $amount = $last->balance + $request->amount;
             if ($request->mutation == 'debit') {
@@ -32,19 +32,24 @@ class SaldoUserObserver
         }
 
         if ($request->mutation == 'debit') {
-            $notif_count = Notice::where('model', 'Balance')->where('user_id', $request->user_id)->count();
-            if (($notif_count == 1 && $request->balance <= 50000) || ($notif_count == 0 && $request->balance <= 100000)) {
-                $notif = Notice::create([
-                    'type' => 'email',
-                    'model_id' => $request->id,
-                    'model' => 'Balance',
-                    'notification' => 'Balance Alert. Your current balance remaining ' . $request->currency . '.' . number_format($request->balance),
-                    'user_id' => $request->user_id,
-                    'status' => 'unread',
-                ]);
+            //=================
+            // ONLY PREPAID USER
+            //================
+            if($request->user->userBilling && $request->user->userBilling->type=="prepaid"){
+                $notif_count = Notice::where('model', 'Balance')->where('user_id', $request->user_id)->count();
+                if (($notif_count == 1 && $request->balance <= 50000) || ($notif_count == 0 && $request->balance <= 100000)) {
+                    $notif = Notice::create([
+                        'type' => 'email',
+                        'model_id' => $request->id,
+                        'model' => 'Balance',
+                        'notification' => 'Balance Alert. Your current balance remaining ' . $request->currency . '.' . number_format($request->balance),
+                        'user_id' => $request->user_id,
+                        'status' => 'unread',
+                    ]);
 
-                if ($notif) {
-                    ProcessEmail::dispatch($request, 'alert_balance');
+                    if ($notif) {
+                        ProcessEmail::dispatch($request, 'alert_balance');
+                    }
                 }
             }
         }
@@ -53,7 +58,6 @@ class SaldoUserObserver
         }
 
         if ($request->mutation == 'credit') {
-
             Notice::create([
                 'type' => 'Top Up',
                 'model_id' => $request->id,
