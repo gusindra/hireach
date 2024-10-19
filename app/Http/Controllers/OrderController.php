@@ -29,7 +29,7 @@ class OrderController extends Controller
     }
 
 
-    public function index($type)
+    public function index($type = null)
     {
         if($type=='postpaid'){
             return view('assistant.order.invoice');
