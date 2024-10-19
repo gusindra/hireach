@@ -18,6 +18,11 @@ class Profile extends Component
     public $inputuser;
     public $inputclient;
 
+    protected $rules = [
+        'inputclient' => 'required',
+        'inputuser' => 'required',
+    ];
+
     public function mount($user)
     {
         $this->user = User::find($user->id);
@@ -27,13 +32,14 @@ class Profile extends Component
         $this->inputuser['email'] = $this->user->email ?? '';
         $this->inputuser['phone'] = $this->user->phone_no ?? '';
 
-        if ($this->user->isClient) {
+        if ($this->user->isClient||$this->user->userBilling) {
             $this->inputclient['title'] = $this->user->isClient->title ?? '';
             $this->inputclient['name'] = $this->user->isClient->name ?? '';
             $this->inputclient['phone'] = $this->user->isClient->phone ?? '';
             $this->inputclient['address'] = $this->user->isClient->address ?? '';
             $this->inputclient['notes'] = $this->user->isClient->note ?? '';
 
+            $this->inputclient['type'] = $this->user->userBilling->type ?? '';
             $this->inputclient['name'] = $this->user->userBilling->name ?? '';
             $this->inputclient['postcode'] = $this->user->userBilling->post_code ?? '';
             $this->inputclient['province'] = $this->user->userBilling->province ?? '';
@@ -45,7 +51,6 @@ class Profile extends Component
 
     public function saveUser($id)
     {
-
         $this->authorize('UPDATE_USER', 'USER');
         $user = User::find($id);
         if ($this->user->isClient && $user->email != $this->inputuser['email']) {
@@ -62,9 +67,15 @@ class Profile extends Component
         $this->emit('user_saved');
     }
 
+    /**
+     * saveClient
+     *
+     * @return void
+     */
     public function saveClient()
     {
         $this->authorize('UPDATE_USER', 'USER');
+        $this->validate();
         if ($this->user->isClient) {
             $this->user->isClient->update([
                 'title' => $this->inputclient['title'],
@@ -75,6 +86,7 @@ class Profile extends Component
             ]);
             if (!$this->user->userBilling) {
                 $billing = BillingUser::create([
+                    'type' => $this->inputclient['type'],
                     'tax_id' => $this->inputclient['tax_id'],
                     'name' => $this->inputclient['name'],
                     'post_code' => $this->inputclient['postcode'],
@@ -85,6 +97,7 @@ class Profile extends Component
                 ]);
             } else {
                 $this->user->userBilling->update([
+                    'type' => $this->inputclient['type'],
                     'tax_id' => $this->inputclient['tax_id'],
                     'name' => $this->inputclient['name'],
                     'post_code' => $this->inputclient['postcode'],
@@ -108,6 +121,7 @@ class Profile extends Component
             $customer->teams()->attach($team);
             if ($customer) {
                 $billing = BillingUser::create([
+                    'type' => $this->inputclient['type'],
                     'tax_id' => $this->inputclient['tax_id'],
                     'name' => $this->inputclient['name'],
                     'post_code' => $this->inputclient['postcode'],

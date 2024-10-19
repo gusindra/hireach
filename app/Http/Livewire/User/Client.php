@@ -19,15 +19,18 @@ class Client extends Component
     public $password;
     public $user;
     public $client;
+    public $isUser;
 
     public function mount(ClientModel $client, User $user)
     {
+
         $this->user = $user;
         $this->client = $client;
         $this->name = $client->name;
         $this->email = $client->email;
         $this->phone = $client->phone;
         $this->password = '';
+        $this->isUser = User::where('phone_no', $this->phone)->exists();
     }
 
     public function generatePassword()
@@ -83,6 +86,15 @@ class Client extends Component
             'password' => Hash::make($this->password),
         ]);
 
+        if($this->name != $this->client->name || $this->phone != $this->client->phone || $this->email != $this->client->email || $this->title != $this->client->title){
+            $this->client->update([
+                'name' => $this->name,
+                'phone' => $this->phone,
+                'email' => $this->email,
+                'title' => $this->title
+            ]);
+            $this->emit('user_saved');
+        }
         return redirect()->route('user.show.client', ['user' => $this->user->id]);
     }
 

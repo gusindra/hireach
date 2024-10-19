@@ -2,7 +2,7 @@
     @if (userAccess('USER', 'create'))
         <div class="flex flex-row-reverse">
             <x-add-button :show="userAccess('USER', 'create')" :disabled="!userAccess('USER', 'create')" wire:click="actionShowModal">
-                {{$role == 'admin' ? 'Add Admin' : 'Add User'}}
+                {{$rl == 'admin' ? 'Add Admin' : 'Add User'}}
             </x-add-button>
         </div>
     @endif
@@ -27,6 +27,27 @@
                     wire:model.debunce.800ms="input.email" autofocus />
                 <x-jet-input-error for="input.email" class="mt-2" />
             </div>
+
+
+
+            @if ($rl==="admin")
+
+            <div class="col-span-6 sm:col-span-4 p-3">
+                <x-jet-label for="role" value="{{ __('Role') }}" />
+
+                <!-- Dropdown untuk memilih role -->
+                <select id="roleId" wire:model="roleId" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+                    <option value="">{{ __('Select Role') }}</option>
+                    @foreach ($roles as $role)
+                        <option value="{{ $role->id }}">{{ $role->name }}</option>
+                    @endforeach
+                </select>
+
+                <x-jet-input-error for="role" class="mt-2" />
+            </div>
+          @endif
+
+
             <div class="col-span-6 sm:col-span-4 p-3 grid grid-cols-3 gap-3">
                 <div class="col-span-2">
                     <x-jet-label for="input.password" value="{{ __('Password') }}" />
@@ -146,9 +167,9 @@
 
 
 
-            @if ($role == 'admin')
+            @if ($rl==="admin")
                 <x-jet-button class="ml-2" wire:click="create" wire:loading.attr="disabled">
-                    {{ __('Create') }}
+                    {{ __('Create Admin') }}
                 </x-jet-button>
             @else
                 <x-jet-button class="ml-2" wire:click="createUser" wire:loading.attr="disabled">

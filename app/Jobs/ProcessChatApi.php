@@ -145,8 +145,8 @@ class ProcessChatApi implements ShouldQueue
                 }
                 $response = Http::withBasicAuth($this->user->credential, $password)->accept('application/xml')->post($url, $form);
             }
-            Log::debug("MK Respone API WA:");
-            Log::debug($response);
+            //Log::debug("MK Respone API WA:");
+            //Log::debug($response);
             if($response){
                 $response  = json_decode(json_encode(simplexml_load_string($response->getBody()->getContents())), true);
                 $chat = Chat::find($this->data->id);
@@ -157,14 +157,14 @@ class ProcessChatApi implements ShouldQueue
                     $chat->source_id = @$response['MessageID'];
                 }
                 $chat->save();
-                Log::debug($chat->id.' : '.@$response['message_id']);
+                //Log::debug($chat->id.' : '.@$response['message_id']);
             }
             // return $response;
             //Log::debug($response);
             // check response code
         }catch(\Exception $e){
             Log::debug($e->getMessage());
-            Log::debug('Reject invalid servid');
+            //Log::debug('Reject invalid servid');
         }
     }
 

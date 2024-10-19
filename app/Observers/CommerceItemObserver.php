@@ -3,6 +3,8 @@
 namespace App\Observers;
 
 use App\Models\CommerceItem;
+use App\Models\Provider;
+use App\Models\ProviderUser;
 
 class CommerceItemObserver
 {
@@ -15,7 +17,42 @@ class CommerceItemObserver
     {
         $before = $commerceItem->getOriginal();
         addLog($commerceItem, json_encode($commerceItem->toArray()), json_encode($before));
+
+        if ($commerceItem->isDirty('sku')) {
+            $newSku = $commerceItem->sku;
+
+
+            $providers = Provider::all();
+            foreach ($providers as $provider) {
+                $channels = array_map('trim', explode(',', $provider->channel));
+
+                if ((count($channels) === 1 && $channels[0] === $before['sku']) ||
+                    (count($channels) === 2 && $channels[1] === $before['sku'])) {
+
+                    if (count($channels) === 1) {
+                        $channels[0] = $newSku;
+                    } else {
+                        $channels[1] = $newSku;
+                    }
+
+                    $provider->channel = implode(',', $channels);
+                    $provider->save();
+                }
+            }
+
+
+                $providerUsers = ProviderUser::all();
+
+                foreach ($providerUsers as $providerUser) {
+
+                    if ($providerUser->channel === $before['sku']) {
+                        $providerUser->channel = $newSku;
+                        $providerUser->save();
+                    }
+                }
+        }
     }
+
 
     public function deleted(CommerceItem $commerceItem)
     {

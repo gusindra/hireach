@@ -12,7 +12,7 @@ use App\Models\SaldoUser;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 
-class SmsBlastObserver
+class BlastObserver
 {
     /**
      * Handle the SaldoUser "created" event.
@@ -22,10 +22,9 @@ class SmsBlastObserver
      */
     public function created(BlastMessage $request)
     {
-
         if ($request->code == "200") {
             $set_price = 0;
-            //check logic quotation for sms active here
+            // SET PRICE BASE ON QUOTATION OR BASIC PRICE
             if ($quote = Quotation::where('model', 'USER')->where('model_id', $request->user_id)->whereIn('status', ['reviewed','active'])->orderBy('id', 'desc')->first()) {
                 //get price for sms
                 $items = OrderProduct::orderBy('id', 'asc')->where('model', 'Quotation')->where('model_id', $quote->id)->get();
@@ -90,46 +89,111 @@ class SmsBlastObserver
                     }
                 }
             } else {
-                //else run this price
+                // =================================================================
+                // SET PRICE BASE ON BASIC PRICE
+                // =================================================================
                 $master = ProductLine::where('name', 'HiReach')->first();
                 $items = $master->items;
 
-                //check msisdn for $product items
+                // ====================================
+                // CHECK MSISDN FOR PRODUCT ITEMS
                 // CHARGE BY PRODUCT PRICE
+                // ====================================
                 if (count($items) > 0) {
                     foreach ($items as $product) {
+
                         if (str_contains($request->sender_id, $product->sku)) {
                             $this->addSaldo($product, $request);
                             $set_price = 1;
+                        }elseif (str_contains($request->sender_id, 'HR-SO') || str_contains($request->sender_id, 'HR-SNO')){
+                            // CHECK SMS BY PHONE NUMBER
+                            // $b = explode(",",$product->spec);
+                            // $p = $request->msisdn;
+                            // if(count($b)>0){
+                            //    foreach($b as $bs){
+                            //        if (strpos($p, $bs) !== false) {
+                            // Log::debug($product);
+                            // Log::debug($bs);
+                            //            $this->addSaldo($product, $request);
+                            //            $set_price = 1;
+                            //        }
+                            //   }
+                            // }
+                            $phoneNo = $request->msisdn;
+                            $phoneNo = substr($phoneNo, 0, 5);
+                            $opn = OperatorPhoneNumber::where('code', $phoneNo)->first();
+                            foreach ($items as $product) {
+                                // IF NON OTP
+                                if ($request->otp == 0) {
+                                    if ($opn && $opn->operator == $product->name) {
+                                        $this->addSaldo($product, $request);
+                                        $set_price = 1;
+                                        // Log::debug('hit non otp single operator');
+                                    } elseif (Str::contains($product->name, 'SMS NON OTP') || Str::contains($product->name, 'SMS_NON')) {
+                                        // Default by key SMS NON OTP
+                                        $this->addSaldo($product, $request);
+                                        $set_price = 1;
+                                        // Log::debug('hit non otp all operator');
+                                    } elseif (Str::contains($product->name, 'SMS_LONG')) {
+                                        // Default by key SMS NON OTP
+                                        $this->addSaldo($product, $request);
+                                        $set_price = 1;
+                                        // Log::debug('hit non otp all operator');
+                                    } elseif (Str::contains($product->name, 'WA_LONG')) {
+                                        // Default by key SMS NON OTP
+                                        $this->addSaldo($product, $request);
+                                        $set_price = 1;
+                                        // Log::debug('hit non otp all operator');
+                                    } elseif (Str::contains($product->name, 'EMAIL1')) {
+                                        // Default by key SMS NON OTP
+                                        $this->addSaldo($product, $request);
+                                        $set_price = 1;
+                                        // Log::debug('hit non otp all operator');
+                                    } elseif (Str::contains($product->name, 'EMAIL0')) {
+                                        // Default by key SMS NON OTP
+                                        $this->addSaldo($product, $request);
+                                        $set_price = 1;
+                                        // Log::debug('hit non otp all operator');
+                                    }
+                                } elseif ($request->otp == 1) {
+                                    //FIND WAY TO FILTER BY PHONE NUMBER BASE ON OPERATOR
+                                    if ($opn && $opn->operator == $product->name) {
+                                        $this->addSaldo($product, $request);
+                                        $set_price = 1;
+                                    } elseif (Str::contains($product->name, 'SMS OTP') || Str::contains($product->name, 'SMS_OTP')) {
+                                        $this->addSaldo($product, $request);
+                                        $set_price = 1;
+                                    } elseif (Str::contains($product->name, 'EMAIL1')) {
+                                        // Default by key SMS NON OTP
+                                        $this->addSaldo($product, $request);
+                                        $set_price = 1;
+                                    } elseif (Str::contains($product->name, 'EMAIL0')) {
+                                        // Default by key SMS NON OTP
+                                        $this->addSaldo($product, $request);
+                                        $set_price = 1;
+                                    }
+                                }
+                            }
                         }
-                        //}else{
-                        // CHECK SMS BY PHONE NUMBER
-                        //$b = explode(",",$product->spec);
-                        //$p = $request->msisdn;
-                        //if(count($b)>0){
-                        //    foreach($b as $bs){
-                        //        if (strpos($p, $bs) !== false) {
-                        // Log::debug($product);
-                        // Log::debug($bs);
-                        //            $this->addSaldo($product, $request);
-                        //            $set_price = 1;
-                        //        }
-                        //   }
-                        //}
-                        //}
                     }
                 }
             }
 
-            //IF THEREIS NO BALANCE UPDATE DEFAULT BY SMS PRICE
-            if ($set_price == 0) {
-                $this->addSaldo($request, $request, $request->currency);
-            }
+            //IF THERE IS NO BALANCE UPDATE DEFAULT BY PRICE
+            if ($set_price == 0) $this->addSaldo($request, $request, $request->currency);
         }
 
         //PUSH to Campaign
     }
 
+    /**
+     * addSaldo
+     *
+     * @param  mixed $product
+     * @param  mixed $request
+     * @param  mixed $currency
+     * @return void
+     */
     private function addSaldo($product, $request, $currency = 'IDR')
     {
         SaldoUser::create([

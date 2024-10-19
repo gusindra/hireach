@@ -85,6 +85,13 @@ class User extends Authenticatable
         }
         return $this->hasMany('App\Models\Client', 'user_id');
     }
+    /**
+     * inbounds
+     *
+     * @param  mixed $m
+     * @param  mixed $y
+     * @return void
+     */
     public function inbounds($m = null, $y = null)
     {
         if ($m && $y) {
@@ -92,6 +99,13 @@ class User extends Authenticatable
         }
         return $this->hasMany('App\Models\Request', 'user_id')->whereNotNull('sent_at');
     }
+    /**
+     * outbounds
+     *
+     * @param  mixed $m
+     * @param  mixed $y
+     * @return void
+     */
     public function outbounds($m = null, $y = null)
     {
         if ($m && $y) {
@@ -99,6 +113,14 @@ class User extends Authenticatable
         }
         return $this->hasMany('App\Models\Request', 'user_id')->whereNull('sent_at');
     }
+    /**
+     * sentsms
+     *
+     * @param  mixed $m
+     * @param  mixed $y
+     * @param  mixed $status
+     * @return void
+     */
     public function sentsms($m = null, $y = null, $status = null)
     {
         if ($status == 'total') {
@@ -135,6 +157,11 @@ class User extends Authenticatable
         return $this->hasMany('App\Models\TeamUser', 'user_id')->where('team_id', env('IN_HOUSE_TEAM_ID', 1));
     }
 
+    /**
+     * isNoAdmin
+     *
+     * @return void
+     */
     public function isNoAdmin()
     {
         return $this->hasOne('App\Models\TeamUser', 'user_id')->where('team_id', '!=', env('IN_HOUSE_TEAM_ID', 1));
@@ -152,6 +179,12 @@ class User extends Authenticatable
     }
 
 
+    /**
+     * scopeNoadmin
+     *
+     * @param  mixed $query
+     * @return void
+     */
     public function scopeNoadmin($query)
     {
         return $query->where('current_team_id', '!=', env('IN_HOUSE_TEAM_ID'))->orWhere('current_team_id', NULL);
@@ -176,6 +209,11 @@ class User extends Authenticatable
     {
         return $this->hasMany('App\Models\TeamUser', 'user_id');
     }
+    /**
+     * team
+     *
+     * @return void
+     */
     public function team()
     {
         return $this->belongsTo('App\Models\TeamUser', 'current_team_id', 'team_id')->where('user_id', $this->id);
@@ -200,6 +238,11 @@ class User extends Authenticatable
     {
         return $this->hasMany('App\Models\RoleUser', 'user_id');
     }
+    /**
+     * listRole
+     *
+     * @return void
+     */
     public function listRole()
     {
         return $this->hasMany('App\Models\RoleUser', 'user_id');
@@ -214,6 +257,11 @@ class User extends Authenticatable
     {
         return $this->hasOne('App\Models\RoleUser', 'user_id');
     }
+    /**
+     * activeRole
+     *
+     * @return void
+     */
     public function activeRole()
     {
         return $this->hasOne('App\Models\RoleUser', 'user_id')->orderBy('active', 'desc');
@@ -232,7 +280,7 @@ class User extends Authenticatable
         }
         return $this->hasMany('App\Models\SaldoUser', 'user_id')->orderBy('id', 'desc');
     }
-    
+
     /**
      * balanceTeam
      *
@@ -309,21 +357,41 @@ class User extends Authenticatable
         return $this->hasMany('App\Models\ApiCredential', 'user_id');
     }
 
+    /**
+     * providerUser
+     *
+     * @return void
+     */
     public function providerUser()
     {
         return $this->hasMany('App\Models\ProviderUser', 'user_id');
     }
 
+    /**
+     * browserSessionUser
+     *
+     * @return void
+     */
     public function browserSessionUser()
     {
         return $this->hasMany('App\Models\BrowserSession', 'user_id');
     }
-    
+
+    /**
+     * department
+     *
+     * @return void
+     */
     public function department()
     {
         return $this->hasMany('App\Models\Department', 'user_id');
     }
 
+
+    public function clientValidations()
+    {
+        return $this->hasMany('App\Models\ClientValidation', 'user_id');
+    }
     //=============
     //FROM TRAIT
     //=============

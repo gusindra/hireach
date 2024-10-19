@@ -1,7 +1,9 @@
 <div>
     <!-- Button to open modal -->
+    @if($disabled)
+    <x-jet-button disabled wire:click="openModal">Add KTP</x-jet-button>
+    @else
     <x-jet-button wire:click="openModal">Add KTP</x-jet-button>
-
     <!-- Jetstream Modal -->
     <x-jet-dialog-modal wire:model="showModal">
         <x-slot name="title">
@@ -84,11 +86,14 @@
                 <x-jet-secondary-button wire:click="closeModal" wire:loading.attr="disabled">
                     Cancel
                 </x-jet-secondary-button>
-
+                <x-jet-action-message class="mr-3" on="no_balance">
+                    {{ __('Your balance is not enough') }}
+                </x-jet-action-message>
                 <x-jet-button class="ml-2" wire:click="uploadFile" wire:loading.attr="disabled">
                     Upload
                 </x-jet-button>
             </div>
         </x-slot>
     </x-jet-dialog-modal>
+    @endif
 </div>

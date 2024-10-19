@@ -74,6 +74,7 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
         Route::get('/dashboard/active-user', [DashboardController::class, 'activeUser'])->name('dashboard.active.user');
         Route::get('/dashboard/order', [DashboardController::class, 'orderSummary'])->name('dashboard.order');
         Route::get('/dashboard/provider', [DashboardController::class, 'providerSummary'])->name('dashboard.provider');
+        Route::get('/dashboard/consumption', [DashboardController::class, 'consumptionSummary'])->name('dashboard.consumption');
         //Route::get('logout', 'Backend\AuthController@logout');
         //Route::resource('change-password', 'Backend\ChangePasswordController');
         // Route::resource('users', 'Backend\UserController');
@@ -85,6 +86,8 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
         Route::get('/user/{user}/balance', [UserController::class, 'balance'])->name('user.show.balance');
         Route::get('/user/{user}/profile', [UserController::class, 'profile'])->name('user.show.profile');
         Route::get('/user/{user}/provider', [UserController::class, 'provider'])->name('user.show.provider');
+        Route::get('/user/{user}/quotation', [UserController::class, 'quotation'])->name('user.show.quotation');
+        Route::get('/user/{user}/campaign', [UserController::class, 'campaign'])->name('user.show.campaign');
         Route::get('/user/{user}/order', [UserController::class, 'order'])->name('user.show.order');
         Route::get('/user/{user}/client', [UserController::class, 'client'])->name('user.show.client');
         Route::get('/user/{user}/client/{client}', [UserController::class, 'clientUser'])->name('client.create.user');
@@ -95,14 +98,19 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
         Route::get('/department', [UserController::class, 'listDepartment'])->name('admin.department');
         Route::get('/department/{dept}', [UserController::class, 'listDepartment'])->name('admin.department.profile');
         Route::get('/department/{dept}/message', [UserController::class, 'listDepartment'])->name('admin.department.message');
-        
+
         Route::get('/asset', [UserController::class, 'contact'])->name('admin.asset');
-        
+
         Route::get('/contact', [UserController::class, 'contact'])->name('admin.contact');
         Route::get('/contact/duplicate', [UserController::class, 'duplicateContact'])->name('admin.contact-duplicate');
         Route::get('/contact/edit/{contact}', [UserController::class, 'contactEdit'])->name('admin.contact-edit');
         Route::get('/get/api/department', [UserController::class, 'getDepartment'])->name('admin.department.get');
-
+        Route::get('/assets/messages', function () {
+            return view('assets.message');
+        });
+        Route::get('/assets/templates', function () {
+            return view('assets.templates');
+        });
         // Route::get('/settings/clear-cache', 'Backend\SettingController@clearCache')->name('settings.clear-cache');
         // Route::get('/settings/rebuild-cache', 'Backend\SettingController@rebuildCache')->name('settings.rebuild-cache');
         // Route::resource('settings', 'Backend\SettingController', ['only' => ['index', 'update']]);
@@ -133,7 +141,7 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
         Route::get('/flow/{model}', [FlowController::class, 'show'])->name('flow.show');
 
         Route::get('/order', [OrderController::class, 'index'])->name('admin.order');
-        Route::get('/order/filter/{type}', [OrderController::class, 'index'])->name('admin.order.filter'); 
+        Route::get('/order/filter/{type}', [OrderController::class, 'index'])->name('admin.order.filter');
         Route::get('/order', [OrderController::class, 'index'])->name('admin.order');
         Route::get('/order/{order}', [OrderController::class, 'show'])->name('show.order');
 
@@ -153,6 +161,7 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
         Route::get('/project/{project}', [ProjectController::class, 'show'])->name('project.show');
 
         Route::get('report', [ReportController::class, 'index'])->name('admin.report');
+
         Route::get('report/{key}', [ReportController::class, 'show'])->name('report.show');
 
         Route::get('/commercial', [CommercialController::class, 'index'])->name('commercial');

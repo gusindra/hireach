@@ -14,7 +14,8 @@ class Provider extends Model
         'name',
         'company',
         'channel',
-        'status'
+        'status',
+        'type'
     ];
 
     protected $casts = [
@@ -31,4 +32,17 @@ class Provider extends Model
     {
         return $this->hasMany(ProviderUser::class);
     }
+
+    public function saldoUsers()
+    {
+        return $this->hasMany(SaldoUser::class, 'model_id')->where('model', 'Provider');
+    }
+
+    public function blastMessages()
+    {
+        return $this->hasMany(BlastMessage::class, 'provider', 'id');
+    }
+
+
+
 }

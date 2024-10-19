@@ -33,30 +33,31 @@ class RequestObserver
         if ($request->team_id > 0) {
             $team = Team::find($request->team_id);
         }
+
+        // =================================================================
+        // PROCESS TO AUTO TEMPLATE SENDING
+        // =================================================================
         if ($team) {
-            //Log::debug($request->reply);
             $request->teams()->attach($team);
 
-            //Check if request from customer
+            // =================================================================
+            // MESSAGE IS FROM CUSTOMER ?
+            // =================================================================
             if ($request->source_id) {
-                // check if has first time template
                 $count = checkFirstRequest($request);
                 if ($count == 1) {
-                    //send welcome
+                    //WILL SEND WELCOME TEMPLATE
                     $template = Template::where('type', 'welcome')->where('user_id', $request->user_id)->with('teams')
                         ->whereHas('teams', function ($query) use ($request) {
                             $query->where([
                                 'teams.id' => $request->team_id
                             ]);
                         })->get();
-                    // Log::debug('gelooo');
-                    // Log::debug($template);
 
                     if ($template) {
                         foreach ($template as $trigger) {
                             if ($trigger->actions->count() > 0) {
                                 foreach ($trigger->actions as $action) {
-                                    //if chat type text
                                     $this->addRespond($action, $request, $trigger, true);
                                 }
                             }
@@ -64,7 +65,9 @@ class RequestObserver
                     }
                 }
 
-                //check if any template sent before
+                // =================================================================
+                // CHECK IF ANY TEMPLATE SENT BEFORE
+                // =================================================================
                 $last = getPreviousRequest($request);
                 if ($last && $last->id) {
                     //check if template if question
@@ -79,7 +82,6 @@ class RequestObserver
                                 // make request and input
                                 $data = '';
                                 $userInput = preg_split('/\r\n|\r|\n/', $request->reply);
-                                // var_dump($userInput);
                                 foreach ($template->endpoint->inputs as $ki => $input) {
                                     if ($ki > 0) {
                                         if (array_key_exists($ki, $userInput)) {
@@ -96,7 +98,6 @@ class RequestObserver
                             } elseif ($template->endpoint->request == 'put') {
                                 $data = '';
                                 $userInput = preg_split('/\r\n|\r|\n/', $request->reply);
-                                // var_dump($userInput);
                                 foreach ($template->endpoint->inputs as $ki => $input) {
                                     if ($ki > 0) {
                                         if (array_key_exists($ki, $userInput)) {
@@ -113,7 +114,6 @@ class RequestObserver
                             } else {
                                 $data = '';
                                 $userInput = preg_split('/\r\n|\r|\n/', $request->reply);
-                                // var_dump($userInput);
                                 foreach ($template->endpoint->inputs as $ki => $input) {
                                     if ($input->value != null) {
                                         $data = $data . '&' . $input->name . '=' . $input->value;
@@ -128,18 +128,17 @@ class RequestObserver
                                     }
                                 }
                                 $url = $url . '' . $data;
-                                // echo $url;
                                 $response = Http::asForm()->get($url);
                             }
-                            // make logic to check template from api
-                            Log::debug($url);
-                            Log::debug($response);
+                            // =================================================================
+                            // LOGIC TO CHECK TEMPLATE API
+                            // ========================================================
                             $trigger = Template::where('template_id', $template->id)->where('trigger', $response['code'])->first();
                             if ($trigger) {
                                 foreach ($trigger->actions as $action) {
+                                    // GET RESPONSE DATA IS ARRAY OR SINGLE
                                     if (!$action->is_multidata) {
-                                        Log::debug("check single data");
-                                        // return single data
+                                        // SINGLE
                                         $data = [];
                                         $message = $action->message;
                                         foreach ($action->data as $word) {
@@ -159,17 +158,14 @@ class RequestObserver
                                             }
                                         }
                                         $new = bind_to_template($data, $message);
-                                        // kirim message
-                                        // echo $new;
-                                        // echo $response['data']['month'].' '.$response['data']['year'];
+
                                         $this->sendRespondApi($new, $request, $trigger);
                                     } else {
-                                        Log::debug("check multi data");
+                                        // ARRAY
                                         $new = [];
                                         $data = [];
                                         $message = $action->message;
 
-                                        // find array data for looping
                                         $structureLoop = explode(',', $action->array_data);
                                         if (count($structureLoop) > 0) {
                                             $dataLoop = [];
@@ -204,9 +200,7 @@ class RequestObserver
 
                                             $new[$i] = bind_to_template($data, $message);
                                         }
-                                        //kirim message
-                                        //foreach by array new
-                                        // var_dump($new);
+
                                         if (count($new) > 0) {
                                             foreach ($new as $msg) {
                                                 $this->sendRespondApi($msg, $request, $trigger);
@@ -218,7 +212,9 @@ class RequestObserver
                                     }
                                 }
                             } else {
-                                // check error
+                                // =================================================================
+                                // AUTO SEND ERROR RESPONSE TEMPLATE
+                                // =================================================================
                                 $this->sendErrorRespond($request, $template);
                             }
                         } elseif ($template->type === 'question' || $template->type === 'error') {
@@ -227,7 +223,6 @@ class RequestObserver
                             if ($trigger) {
                                 if ($trigger->actions->count() > 0) {
                                     foreach ($trigger->actions as $action) {
-                                        //if chat type text
                                         $this->addRespond($action, $request, $trigger);
                                     }
                                 }
@@ -239,15 +234,16 @@ class RequestObserver
                 }
 
                 if (!$this->replyed) {
-                    //check if trigger contain reply if not a question
-                    //Log::debug('trigger contain reply if not a question '.$request->reply);
+                    // ======================================
+                    // TRIGGER CONTAIN REPLAY IF NOT QUESTION
+                    // ======================================
                     $template = Template::where('is_enabled', 1)->whereNull('template_id')->where('trigger_condition', 'like', '%equal%')->where('trigger', $request->reply)->with('teams')
                         ->whereHas('teams', function ($query) use ($request) {
                             $query->where([
                                 'teams.id' => $request->team_id
                             ]);
                         })->first();
-                    // Log::debug($template);
+
                     if (!$template) {
                         $contains = Template::where('is_enabled', 1)->whereNull('template_id')->where('trigger_condition', 'contain')->whereHas('teams', function ($query) use ($request) {
                             $query->where([
@@ -269,8 +265,6 @@ class RequestObserver
                         //                     'teams.id' => $request->team_id
                         //                 ]);
                         //             })->first();
-
-                        Log::debug($template);
                     }
                     if ($template) {
                         if ($template->actions->count() > 0) {
@@ -279,9 +273,9 @@ class RequestObserver
                                 $this->addRespond($action, $request, $template);
                             }
                         }
-                        Log::debug('done sending template ');
+                        //Log::debug('done sending template ');
                     } else {
-                        Log::debug('no response template ');
+                        //Log::debug('no response template ');
                     }
                 }
             } else {
@@ -291,8 +285,11 @@ class RequestObserver
             }
         }
 
+        // SET PRICE BASE ON QUOTATION OR BASIC PRICE
         if ($quote = Quotation::where('client_id', $request->user_id)->whereIn('status', ['reviewed'])->orderBy('id', 'desc')->first()) {
-            //get price for WA
+            // =================================================================================================
+            // GET PRICE FOR WA
+            // =================================================================================================
             $items = OrderProduct::orderBy('id', 'asc')->where('model', 'Quotation')->where('model_id', $quote->id)->get();
             foreach ($items as $product) {
                 if ($request->otp == 0 && $product->note == 'WA NON OTP') {
@@ -309,38 +306,38 @@ class RequestObserver
                 }
             }
         } else {
-            //else run this price
+            // =================================================================
+            // SET PRICE BASE ON BASIC PRICE
+            // =================================================================
             $master = ProductLine::where('name', 'HiReach')->first();
             $items = $master->items;
 
             //check msisdn for $product items
             // CHARGE BY PRODUCT WA PRICE
-            // if (count($items) > 0) {
-            //     foreach ($items as $product) {
             //         if ($product->sku == "WA") {
             //             // ALL WA Charge this Price
             //             $this->addSaldo($product->unit_price, $request);
             //             $set_price = 1;
             //         }
-            //     }
-            // }
-
-            //check msisdn for $product items
+            // ====================================
+            // CHECK MSISDN FOR PRODUCT ITEMS
             // CHARGE BY PRODUCT PRICE
+            // ====================================
             if (count($items) > 0) {
                 foreach ($items as $product) {
+                    // SKU IS CONTAIN IN REQUEST SOURCE ID, SKU BOT, SKU WEBCHAT
                     if (str_contains($request->source_id, $product->sku) || (($request->from == 'bot' || is_numeric($request->from)) && $product->sku == 'webchat')) {
-                        $this->addSaldo($product->unit_price, $request);
+                        $this->addSaldo($product->unit_price, $request);  // REDUCE USER BALANCE
                         $set_price = 1;
                     }
                 }
             }
         }
 
-        //IF THEREIS NO BALANCE UPDATE DEFAULT BY SMS PRICE
-        if ($set_price == 0) {
-            $this->addSaldo(0, $request);
-        }
+        // =================================================
+        // IF THEREIS NO BALANCE UPDATE DEFAULT BY SMS PRICE
+        // =================================================
+        if ($set_price == 0) $this->addSaldo(0, $request);
     }
 
     /**
@@ -409,7 +406,7 @@ class RequestObserver
     }
 
     /**
-     * sendToWhatsapp
+     * sendToWhatsapp is function to send message creation from admin/agent to the client.
      *
      * @return void
      */
@@ -463,7 +460,7 @@ class RequestObserver
     }
 
     /**
-     * addSaldo
+     * addSaldo is function to reduction balance user /
      *
      * @param  mixed $price
      * @param  mixed $request
