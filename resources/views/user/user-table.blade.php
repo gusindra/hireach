@@ -28,9 +28,9 @@
                 <div class="mx-auto">
                     <div class="p-4">
                         @if (Route::currentRouteName()=='admin.autor')
-                        @livewire('user.add', ['role' => 'admin'])
+                        @livewire('user.add', ['rl' => 'admin'])
                         @else
-                        @livewire('user.add', ['role' => 'user'])
+                        @livewire('user.add', ['rl' => 'user'])
                         @endif
                     </div>
                     <div class="m-3">
