@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\BlastMessage;
 use App\Models\Client;
 use App\Models\Contact;
 use App\Models\Department;
@@ -302,6 +303,8 @@ class UserController extends Controller
      */
     public function departmentClient(User $user, Department $dept)
     {
+        $blastCount = BlastMessage::where('user_id', $dept->user->id)->count();
+
         if(cache('viguard_id')){
             $userId = cache('viguard_id');
         }else{
@@ -309,7 +312,7 @@ class UserController extends Controller
                 return Setting::where('key', 'viguard')->latest()->first()->value;
             });
         }
-        return view('user.user-depart-client', ['viguard'=>$userId, 'user' => $user, 'department' => $dept]);
+        return view('user.user-depart-client', ['viguard'=>$userId, 'user' => $user, 'department' => $dept,'blastCount'=>$blastCount]);
     }
 
 
