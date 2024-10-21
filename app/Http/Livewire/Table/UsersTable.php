@@ -37,9 +37,9 @@ class UsersTable extends LivewireDatatable
             })->label('Name ID')->filterable()->searchable(),
             Column::name('email')->filterable()->label('Email')->searchable(),
             Column::name('phone_no')->filterable()->label('Phone Number')->searchable(),
-            Column::callback(['id'], function ($id) {
-                return balance($id, 0, 'id');
-            })->label('Balance')->searchable(),
+            // Column::callback(['id'], function ($id) {
+            //     return balance($id, 0, 'id');
+            // })->label('Balance')->searchable(),
             DateColumn::name('created_at')->label('Creation Date')->searchable()
         ];
     }
