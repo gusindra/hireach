@@ -29,7 +29,8 @@ class DatabaseSeeder extends Seeder
             ProviderUserSeeder::class,
             SettingVatSeeder::class,
             SaldoUserSeeder::class,
-            BillingUsersTableSeeder::class
+            BillingUsersTableSeeder::class,
+            $this->call(ActionsAndTemplatesSeeder::class)
 
         ]);
     }

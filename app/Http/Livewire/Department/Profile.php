@@ -16,7 +16,7 @@ class Profile extends Component
     public $server;
     public $client_id;
     public $clientSearch = '';
-    public $clients = [];
+    public $client;
 
     public function mount($departmentId)
     {
@@ -26,8 +26,11 @@ class Profile extends Component
         $this->ancestors = $this->department->ancestors;
         $this->parent = $this->department->parent;
         $this->server = $this->department->server;
-        $this->client_id = $this->department->client_id;
-        $this->clientSearch = $this->department->client->name ?? $this->department->client->phone ?? '';
+        $this->client = $this->department->client->phone
+        ?? $this->department->client->name
+        ?? $this->department->client->email
+        ?? null;
+
     }
 
     protected $rules = [
@@ -36,30 +39,10 @@ class Profile extends Component
         'ancestors' => 'required|string|max:50',
         'parent' => 'required|string|max:50',
         'server' => 'required|string|max:100',
-        'client_id' => 'required|exists:clients,id',
+
     ];
 
-    public function updatedClientSearch()
-    {
-        $cacheKey = 'clientDepartmentCache_' . md5($this->clientSearch);
 
-        $this->clients = cache()->remember($cacheKey, 600, function () {
-            return Client::where(function($query) {
-                $query->where('name', 'like', '%' . $this->clientSearch . '%')
-                      ->orWhere('phone', 'like', '%' . $this->clientSearch . '%');
-            })
-            ->limit(5)
-            ->get();
-        });
-    }
-
-    public function selectClient($id)
-    {
-        $client = Client::find($id);
-        $this->client_id = $client->id;
-        $this->clientSearch = $client->name ?? ($client->phone ?? null);
-        $this->clients = [];
-    }
 
     public function update()
     {
