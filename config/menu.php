@@ -344,7 +344,7 @@ return [
                 ],
                 'department' => [
                     '1' => [
-                        'url' =>  'admin.department.profile',
+                        'url' =>  'user.edit.dept.client',
                         'title' => 'Profile',
                         'type' => 'user,admin'
                     ],
@@ -352,6 +352,11 @@ return [
                         'url' =>  'admin.department.message',
                         'title' => 'Messaging',
                         'type' => 'user'
+                    ],
+                    '3' => [
+                        'url' =>  'admin.department.log',
+                        'title' => 'Log',
+                     'type' => 'user,admin'
                     ],
                 ],
                 'admin-user' => [

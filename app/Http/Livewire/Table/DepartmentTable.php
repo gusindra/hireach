@@ -22,7 +22,7 @@ class DepartmentTable extends LivewireDatatable
         return [
             Column::callback(['id','name','user_id'], function ($id,$name,$user) {
                 return view('datatables::link', [
-                    'href' => url('admin/user/' . $user . '/dept/' . $id),
+                    'href' => url('admin/department/' . $id . '/profile/'),
                     'slot' => $name,
                     'class' => 'uppercase'
                 ]);

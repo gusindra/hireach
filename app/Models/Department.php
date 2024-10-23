@@ -35,4 +35,9 @@ class Department extends Model
     {
         return $this->belongsTo('App\Models\User', 'user_id');
     }
+
+    public function resourcesDepartment()
+    {
+        return $this->hasMany(DepartmentResource::class);
+    }
 }

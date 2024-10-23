@@ -14,6 +14,7 @@ use App\Jobs\ProcessEmailApi;
 use App\Jobs\ProcessWaApi;
 use App\Models\Attachment;
 use App\Models\Department;
+use App\Models\LogChange;
 use App\Models\Setting;
 use Illuminate\Support\Facades\Storage;
 
@@ -149,6 +150,7 @@ class ApiViGuardController extends Controller
         $text = $action;
         $variable = [];
         foreach($request->all() as $key => $req){
+
             if($key=='image'){
                 $data = base64_decode($req);
                 $im = imagecreatefromstring($data);
@@ -209,6 +211,7 @@ class ApiViGuardController extends Controller
      */
     public function post(Request $request)
     {
+
         //get the request & validate parameters
         $rules = [
             'createDate' => 'required',
@@ -218,7 +221,7 @@ class ApiViGuardController extends Controller
             'aiModelId' => 'required',
             'aiModelName' => 'required',
             'alarmDetails' => 'required',
-            'image' => 'required',
+            // 'image' => 'required',
         ];
         /*$fields = $request->validate($rules);*/
         $validator = \Validator::make($request->all(), $rules);
@@ -235,6 +238,8 @@ class ApiViGuardController extends Controller
             $dept = Department::where('source_id', $request->deptId)->first();
             if($dept){
                 $customer = $dept->client;
+
+
                 if($customer){
                     if($customer->source=='email' && $customer->email){
                         $channel = 'email';
@@ -253,6 +258,7 @@ class ApiViGuardController extends Controller
                     });
                     $template = Template::where('name', 'saveAlarm')->where('user_id', $customer->user_id)->first();
                     if($template){
+                        $department=Department::where('source_id',$request->deptId)->first();
                         foreach($template->actions as $key => $action){
                             // send request using template prt action
                             $data[$key] = [
@@ -261,6 +267,7 @@ class ApiViGuardController extends Controller
                                 'to' => $to,
                                 'from' => $from,
                                 'type' => 0,
+                                'department_id'=>$department->id,
                                 'title' => $request->alarmDetails,
                                 'url_file' => $this->convertAttachment($request->image, $request->createDate),
                                 'text' => $this->convertText($request, $action->message),
@@ -301,6 +308,7 @@ class ApiViGuardController extends Controller
                     }else{
                         $template = Template::where('uuid', 'save-alarm')->first();
                         if($template){
+                            $department=Department::where('source_id',$request->deptId)->first();
                             foreach($template->actions as $key => $action){
                                 // send request using template prt action
                                 $data[$key] = [
@@ -309,12 +317,14 @@ class ApiViGuardController extends Controller
                                     'to' => $to,
                                     'from' => $from,
                                     'type' => 0,
+                                    'department_id'=>$department->id,
                                     'title' => $request->alarmDetails,
-                                    'url_file' => $this->convertAttachment($request->image, $request->createDate),
+                                    'url_file' => $request->image ? $this->convertAttachment($request->image, $request->createDate) : null,
                                     'text' => $this->convertText($request, $action->message),
                                     'templateid' => $template->id,
                                     'otp' => checkContentOtp($action->message)
                                 ];
+
 
                                 if($channel=='email'){
                                     $reqArr = json_encode($data[$key]);
@@ -340,12 +350,27 @@ class ApiViGuardController extends Controller
 
                                 }
                             }
+
+
+                            if($request->all()){
+                                LogChange::create([
+                                    'model' => 'Department',
+                                    'model_id' =>$department->id,
+                                    'before' =>json_encode($request->all(), JSON_PRETTY_PRINT),
+                                    'remark' => null,
+                                    'user_id' => auth()->check() ? auth()->user()->id : ''
+                                ]);
+                            }
+
+
                             //Return API Respon
                             return response()->json([
                                 'msg' => "Successful sending to ".$channel,
                                 'data' => $data,
                                 'code' => 0
                             ]);
+
+
                         }else{
                             return response()->json([
                                 'msg' => "Template Not Found",
@@ -354,6 +379,7 @@ class ApiViGuardController extends Controller
                         }
                     }
                 }elseif(!$customer){
+
                     return response()->json([
                         'msg' => "Phone Number Not Found",
                         'code' => 500
@@ -507,6 +533,7 @@ class ApiViGuardController extends Controller
 
                         }
                     }
+
                     //Return API Respon
                     return response()->json([
                         'msg' => "Successful sending to ".$channel,

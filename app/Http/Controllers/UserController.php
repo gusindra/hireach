@@ -312,6 +312,21 @@ class UserController extends Controller
         return view('user.user-depart-client', ['viguard'=>$userId, 'user' => $user, 'department' => $dept]);
     }
 
+    public function profileDepart(User $user, Department $dept){
+
+        return view('user.user-depart-client-profile', [ 'user' => $user, 'department' => $dept]);
+    }
+
+    public function messageDepart(User $user, Department $dept){
+
+        return view('user.user-depart-client-messages', [ 'user' => $user, 'department' => $dept]);
+    }
+    public function logDepart(User $user, Department $dept){
+
+        return view('user.user-depart-client-log', [ 'user' => $user, 'department' => $dept]);
+    }
+
+
 
     public function quotation(User $user)
     {
