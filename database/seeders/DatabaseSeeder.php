@@ -30,7 +30,7 @@ class DatabaseSeeder extends Seeder
             SettingVatSeeder::class,
             SaldoUserSeeder::class,
             BillingUsersTableSeeder::class,
-            $this->call(ActionsAndTemplatesSeeder::class)
+          ActionsAndTemplatesSeeder::class
 
         ]);
     }
