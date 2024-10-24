@@ -17,6 +17,7 @@ class Profile extends Component
     public $client_id;
     public $clientSearch = '';
     public $client;
+    public $account;
 
     public function mount($departmentId)
     {
@@ -26,10 +27,18 @@ class Profile extends Component
         $this->ancestors = $this->department->ancestors;
         $this->parent = $this->department->parent;
         $this->server = $this->department->server;
-        $this->client = $this->department->client->phone
-        ?? $this->department->client->name
-        ?? $this->department->client->email
-        ?? null;
+        $this->client = implode(' - ', array_filter([
+            $this->department->client->name ?? null,
+            $this->department->client->email ?? null,
+            null
+        ]));
+
+        $this->account = implode(' - ', array_filter([
+            $this->department->account->phone_no ?? null,
+            $this->department->account->name ?? null,
+            $this->department->account->email ?? null
+        ]));
+
 
     }
 

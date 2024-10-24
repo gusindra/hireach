@@ -19,6 +19,7 @@ class DepartmentLogTable extends LivewireDatatable
 
         return[
             Column::name('before')->label('LOG'),
+            Column::name('created_at')->label('Created'),
         ];
 
     }

@@ -23,6 +23,7 @@ class DepartmentBlastMessageTable extends LivewireDatatable
                 $parts = array_filter([$messageContent, $reply]);
                 return implode(' ', $parts);
             })->label('Message'),
+            Column::name('created_at')->label('Created'),
         ];
     }
 }
