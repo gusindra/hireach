@@ -97,7 +97,9 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
 
         Route::get('/department', [UserController::class, 'listDepartment'])->name('admin.department');
         Route::get('/department/{dept}', [UserController::class, 'listDepartment'])->name('admin.department.profile');
-        Route::get('/department/{dept}/message', [UserController::class, 'listDepartment'])->name('admin.department.message');
+        Route::get('/department/{dept}/message', [UserController::class, 'messageDepart'])->name('admin.department.message');
+        Route::get('department/{dept}/profile', [UserController::class, 'profileDepart'])->name('user.edit.dept.client');
+        Route::get('/department/{dept}/log', [UserController::class, 'logDepart'])->name('admin.department.log');
 
         Route::get('/asset', [UserController::class, 'contact'])->name('admin.asset');
 

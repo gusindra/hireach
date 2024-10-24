@@ -6,6 +6,7 @@ use App\Models\BlastMessage;
 use App\Models\Campaign;
 use App\Models\CampaignModel;
 use App\Models\Client;
+use App\Models\DepartmentResource;
 use App\Models\Request;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
@@ -53,6 +54,8 @@ class ProcessEmailApi implements ShouldQueue
      */
     public function handle()
     {
+        Log::info($this->data);
+
         //filter OTP & Non OTP
         $provider = $this->data['provider'];
         if ($provider->code == 'provider1') {
@@ -167,6 +170,7 @@ class ProcessEmailApi implements ShouldQueue
                     'currency'  => 'IDR',
                     'price'     => 0,
                     'balance'   => $balance,
+                    'template_id'   => $request['templateid'],
                     'msisdn'    => $request['to'],
                     'provider' => $this->data['provider']->id
                 ];
@@ -182,8 +186,10 @@ class ProcessEmailApi implements ShouldQueue
                         'sent_at'   => date('Y-m-d H:i:s'),
                         'team_id'   => $request['team_id']
                     ]);
+                    $this->storeResource($bm);
                 } else {
-                    $bm = BlastMessage::create($modelData);
+                    $bm = BlastMessage::create(attributes: $modelData);
+                    $this->storeResource($bm);
                 }
                 $this->synCampaign($bm);
             }
@@ -248,6 +254,7 @@ class ProcessEmailApi implements ShouldQueue
                     'sender_id' => $request['from'],
                     'type'      => $request['type'],
                     'otp'       => $request['otp'],
+                    'template_id'   => $request['templateid'],
                     'status'    => "SUCCESS",
                     'code'      => 200,
                     'message_content'  => $request['text'],
@@ -265,12 +272,15 @@ class ProcessEmailApi implements ShouldQueue
                         'from'      => $client->id,
                         'user_id'   => $this->user->id,
                         'type'      => 'text',
+                        'template_id'   => $request['templateid'],
                         'client_id' => $client->uuid,
                         'sent_at'   => date('Y-m-d H:i:s'),
                         'team_id'   => auth()->user()->currentTeam->id
                     ]);;
+                    $this->storeResource($bm);
                 } else {
                     $bm = BlastMessage::create($modelData);
+                    $this->storeResource($bm);
                 }
                 $this->synCampaign($bm);
             }
@@ -283,6 +293,19 @@ class ProcessEmailApi implements ShouldQueue
             $this->saveResult('Reject invalid servid');
         }
     }
+
+
+    public function storeResource($mms)
+    {
+        if (!empty($this->data['department_id'])) {
+            DepartmentResource::create([
+                'department_id' => $this->data['department_id'],
+                'model' => class_basename($mms),
+                'model_id' => $mms->id
+            ]);
+        }
+    }
+
 
     /**
      * saveResult
@@ -316,13 +339,17 @@ class ProcessEmailApi implements ShouldQueue
                 'from'      => $client->id,
                 'user_id'   => $user_id,
                 'type'      => 'text',
+                'template_id'   =>$this->data['templateid'],
                 'client_id' => $client->uuid,
                 'sent_at'   => date('Y-m-d H:i:s'),
                 'team_id'   => $this->data['team_id']
-            ]);;
+            ]);
+            $this->storeResource($mms);
         } else {
             $mms = BlastMessage::create($modelData);
+            $this->storeResource($mms);
         }
+
         $this->synCampaign($mms);
         return $mms;
     }

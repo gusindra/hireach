@@ -19,6 +19,7 @@ class BlastMessage extends Model
         'msg_id',
         'user_id',
         'client_id',
+        'template_id',
         'sender_id',
         'type',
         'status',
@@ -94,5 +95,10 @@ class BlastMessage extends Model
     public function user()
     {
         return $this->belongsTo(User::class, 'user_id');
+    }
+
+    public function departmentResources()
+    {
+        return $this->hasMany(DepartmentResource::class, 'model_id');
     }
 }

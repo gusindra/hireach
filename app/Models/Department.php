@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Department extends Model
+class   Department extends Model
 {
     use HasFactory;
 
@@ -21,6 +21,7 @@ class Department extends Model
         'ancestors',
         'user_id',
         'client_id',
+        'account_id',
         'server'
     ];
 
@@ -34,5 +35,14 @@ class Department extends Model
     public function user()
     {
         return $this->belongsTo('App\Models\User', 'user_id');
+    }
+    public function account()
+    {
+        return $this->belongsTo('App\Models\User', 'account_id');
+    }
+
+    public function resourcesDepartment()
+    {
+        return $this->hasMany(DepartmentResource::class);
     }
 }
