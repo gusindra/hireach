@@ -4,22 +4,19 @@
     <div
         class="overflow-y-auto py-2 px-2 h-full bg-white dark:bg-slate-800 border-r border-gray-200 dark:bg-gray-800 dark:border-gray-700">
         <ul class="space-y-2">
+            @foreach (config('menu.list.side.user.dashboard') as $menu)
             <li class="text-center flex items-center">
-                <a href="{{ route('dashboard') }}" type="button"
-                    class="items-center p-2 w-full text-base font-normal text-gray-600 rounded-lg transition duration-75 group hover:bg-gray-100 dark:text-white dark:hover:bg-slate-700 dark:bg-slate-600 dark:bg-slate-600"
+                <a href="{{ route($menu['url']) }}" type="button"
+                    class="{{ url()->full() == url($menu['url']) ? 'bg-slate-100' : '' }} items-center p-2 w-full text-base font-normal text-gray-600 rounded-lg transition duration-75 group hover:bg-gray-100 dark:text-white dark:hover:bg-slate-700 dark:bg-slate-600"
                     aria-controls="dropdown-pages" data-collapse-toggle="dropdown-pages">
-                    <center><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                            stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
-                            <path stroke-linecap="round" stroke-linejoin="round"
-                                d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178Z" />
-                            <path stroke-linecap="round" stroke-linejoin="round"
-                                d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
-                        </svg>
+                    <center>
+                        {!!$menu['icon']!!}
+                        <span class="text-left whitespace-nowrap text-xs">{{$menu['title']}}</span>
                     </center>
-                    <span class="text-left whitespace-nowrap text-xs">Overview</span>
                 </a>
             </li>
-            <li class="text-center flex items-center">
+        @endforeach
+            {{-- <li class="text-center flex items-center">
                 <a href="#" type="button"
                     class="hidden items-center p-2 w-full text-base font-normal text-gray-600 rounded-lg transition duration-75 group hover:bg-gray-100 dark:text-white dark:hover:bg-slate-700 dark:bg-slate-600 dark:bg-slate-600"
                     aria-controls="dropdown-pages" data-collapse-toggle="dropdown-pages">
@@ -61,7 +58,7 @@
                     </center>
                     <span class="text-left whitespace-nowrap text-xs">Outbound</span>
                 </a>
-            </li>
+            </li> --}}
 
         </ul>
         <ul class="pt-5 mt-5 space-y-2 border-t border-gray-200 dark:border-gray-700 hidden">

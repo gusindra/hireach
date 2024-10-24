@@ -4,22 +4,19 @@
     <div
         class="overflow-y-auto py-2 px-2 h-full bg-white dark:bg-slate-800 border-r border-gray-200 dark:bg-gray-800 dark:border-gray-700">
         <ul class="space-y-2">
+            @foreach (config('menu.list.side.user.content') as $menu)
             <li class="text-center flex items-center">
-                <a href="{{ route('template') }}" type="button"
-                    class="{{ request()->get('resource') == 1 ? 'bg-slate-100' : '' }} items-center p-2 w-full text-base font-normal text-gray-600 rounded-lg transition duration-75 group hover:bg-gray-100 dark:text-white dark:hover:bg-slate-700 dark:bg-slate-600 dark:bg-slate-600"
+                <a href="{{ url($menu['url']) }}" type="button"
+                    class="{{ url()->full() == url($menu['url']) ? 'bg-slate-100' : '' }} items-center p-2 w-full text-base font-normal text-gray-600 rounded-lg transition duration-75 group hover:bg-gray-100 dark:text-white dark:hover:bg-slate-700 dark:bg-slate-600"
                     aria-controls="dropdown-pages" data-collapse-toggle="dropdown-pages">
                     <center>
-
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                            stroke="currentColor" class="w-5 h-5">
-                            <path stroke-linecap="round" stroke-linejoin="round"
-                                d="M9 4.5v15m6-15v15m-10.875 0h15.75c.621 0 1.125-.504 1.125-1.125V5.625c0-.621-.504-1.125-1.125-1.125H4.125C3.504 4.5 3 5.004 3 5.625v12.75c0 .621.504 1.125 1.125 1.125Z" />
-                        </svg>
-                        <span class="text-left whitespace-nowrap text-xs">All</span>
+                        {!!$menu['icon']!!}
+                        <span class="text-left whitespace-nowrap text-xs">{{$menu['title']}}</span>
                     </center>
                 </a>
             </li>
-            <li class="text-center flex items-center">
+        @endforeach
+            {{-- <li class="text-center flex items-center">
                 <a href="{{ route('template') }}?resource=1" type="button"
                     class="{{ request()->get('resource') == 1 ? 'bg-slate-100' : '' }} items-center p-2 w-full text-base font-normal text-gray-600 rounded-lg transition duration-75 group hover:bg-gray-100 dark:text-white dark:hover:bg-slate-700 dark:bg-slate-600 dark:bg-slate-600"
                     aria-controls="dropdown-pages" data-collapse-toggle="dropdown-pages">
@@ -61,7 +58,7 @@
                         <span class="text-left whitespace-nowrap text-xs">Helper</span>
                     </center>
                 </a>
-            </li>
+            </li> --}}
 
         </ul>
         <ul class="pt-5 mt-5 space-y-2 border-t border-gray-200 dark:border-gray-700 hidden">
