@@ -253,6 +253,12 @@ class DashboardController extends Controller
     {
         return view('dashboard-order-summary', ['user' => $user]);
     }
+    public function revenueSummary(User $user,)
+    {
+
+        return view('dashboard-revenue-summary', ['user' => $user]);
+    }
+
     public function providerSummary()
     {
         // Ambil semua provider beserta saldo terbaru dan blast messages

@@ -58,7 +58,7 @@ return [
                             </svg>'
                         ],
                         '2' => [
-                            'url' =>  '#',
+                            'url' =>  'admin/dashboard/revenue',
                             'title' => 'Revenue',
                             'icon' => '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
                                 stroke="currentColor" class="w-6 h-6">
@@ -299,6 +299,8 @@ return [
                     'title' => 'Dashboard'
                 ]
             ],
+
+
             'admin' => [
                 'user-profile' => [
                     '1' => [
@@ -340,6 +342,23 @@ return [
                         'url' =>  'user.show.campaign' ,
                         'title' => 'Campaign',
                         'type' => 'user'
+                    ],
+                ],
+                'revenue'=>[
+                    '1' => [
+                        'url' =>  'admin/dashboard/revenue',
+                        'title' => 'Revenue',
+                        'type' => 'user,admin'
+                    ],
+                    '2' => [
+                        'url' =>  'admin/dashboard/revenue?status=unpaid',
+                        'title' => 'Unpaid',
+                        'type' => 'user,admin'
+                    ],
+                    '3' => [
+                        'url' =>  'admin/dashboard/revenue?status=paid',
+                        'title' => 'Paid',
+                        'type' => 'user,admin'
                     ],
                 ],
                 'department' => [
