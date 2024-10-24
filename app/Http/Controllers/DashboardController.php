@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Billing;
 use App\Models\BlastMessage;
 use App\Models\Client;
 use App\Models\CommerceItem;
@@ -253,11 +254,31 @@ class DashboardController extends Controller
     {
         return view('dashboard-order-summary', ['user' => $user]);
     }
-    public function revenueSummary(User $user,)
+    public function revenueSummary(User $user)
     {
+        $status = request('status', '');
 
-        return view('dashboard-revenue-summary', ['user' => $user]);
+        $totalOrders = Order::when($status !== '', function ($query) use ($status) {
+            return $query->where('status', $status);
+        })
+        ->whereBetween('date', [Carbon::now()->subMonth(), Carbon::now()])
+        ->sum('total');
+
+        $totalBillings = Billing::when($status !== '', function ($query) use ($status) {
+            return $query->where('status', $status);
+        })
+        ->whereBetween('created_at', [Carbon::now()->subMonth(), Carbon::now()])
+        ->sum('amount');
+
+        $totalRevenue = $totalOrders + $totalBillings;
+
+        return view('dashboard-revenue-summary', [
+            'user' => $user,
+            'totalRevenue' => $totalRevenue
+        ]);
     }
+
+
 
     public function providerSummary()
     {

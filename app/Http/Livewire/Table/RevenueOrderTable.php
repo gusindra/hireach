@@ -6,15 +6,19 @@ use App\Models\Order;
 use Mediconesystems\LivewireDatatables\Column;
 use Mediconesystems\LivewireDatatables\DateColumn;
 use Mediconesystems\LivewireDatatables\Http\Livewire\LivewireDatatable;
+use Carbon\Carbon;
+use Mediconesystems\LivewireDatatables\NumberColumn;
 
 class RevenueOrderTable extends LivewireDatatable
-{ public $status;
+{
+    public $status;
 
     public function builder()
     {
         return Order::when($this->status, function ($query) {
             return $query->where('status', $this->status);
-        });
+        })
+        ->whereBetween('date', [Carbon::now()->subMonth(), Carbon::now()]);
     }
 
     public function columns()
@@ -27,7 +31,7 @@ class RevenueOrderTable extends LivewireDatatable
             Column::name('total')->label('Total'),
             Column::name('status')->label('Status'),
             DateColumn::name('date')->label('Date')->filterable(),
-
+            NumberColumn::name('total:sum')->label('Sum Sum'),
         ];
     }
 }
